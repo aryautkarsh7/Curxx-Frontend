@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Curxx — Book Consultation (Select Slot)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "outline-variant": "#e5bdb9",
+            "error-container": "#ffdad6",
+            "secondary-fixed-dim": "#ffb3ad",
+            "on-secondary-fixed": "#410004",
+            "on-primary-container": "#ffd2ce",
+            "on-secondary-container": "#650009",
+            "surface-dim": "#e0d8d5",
+            "surface": "#fff8f5",
+            "on-surface-variant": "#5c403d",
+            "inverse-surface": "#33302d",
+            "on-tertiary-container": "#92efc7",
+            "tertiary-container": "#006f50",
+            "inverse-on-surface": "#f7efeb",
+            "secondary-container": "#fd625d",
+            "surface-container-low": "#faf2ee",
+            "primary-fixed": "#ffdad6",
+            "on-secondary-fixed-variant": "#8f0f18",
+            "surface-container-lowest": "#ffffff",
+            "tertiary": "#00543c",
+            "background": "#fff8f5",
+            "error": "#ba1a1a",
+            "primary-fixed-dim": "#ffb3ad",
+            "on-tertiary-fixed": "#002115",
+            "surface-tint": "#bd0d1d",
+            "surface-variant": "#e9e1dd",
+            "surface-container-high": "#eee7e3",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#ffdad7",
+            "primary": "#970012",
+            "on-secondary": "#ffffff",
+            "on-background": "#1e1b19",
+            "primary-container": "#c1121f",
+            "on-tertiary": "#ffffff",
+            "surface-container": "#f4ece8",
+            "on-primary": "#ffffff",
+            "tertiary-fixed-dim": "#7bd8b1",
+            "on-error-container": "#93000a",
+            "on-surface": "#1e1b19",
+            "on-tertiary-fixed-variant": "#00513a",
+            "on-primary-fixed-variant": "#930011",
+            "on-primary-fixed": "#410003",
+            "inverse-primary": "#ffb3ad",
+            "outline": "#906f6c",
+            "surface-container-highest": "#e9e1dd",
+            "tertiary-fixed": "#97f5cc",
+            "surface-bright": "#fff8f5",
+            "secondary": "#b12b2c"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "margin-desktop": "2rem",
+            "space-lg": "1.5rem",
+            "space-2xl": "3rem",
+            "space-base": "1rem",
+            "margin-tablet": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "space-md": "0.75rem",
+            "space-xl": "2rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "headline-h3": ["Inter"],
+            "body-default": ["Inter"],
+            "body-strong": ["Inter"],
+            "headline-h2": ["Inter"],
+            "caption-strong": ["Inter"],
+            "caption": ["Inter"],
+            "display": ["Inter"],
+            "headline-h1": ["Inter"],
+            "micro": ["Inter"]
+          },
+          "fontSize": {
+            "headline-h3": ["17px", {"lineHeight": "24px", "fontWeight": "600"}],
+            "body-default": ["15px", {"lineHeight": "22.5px", "fontWeight": "400"}],
+            "body-strong": ["15px", {"lineHeight": "22.5px", "fontWeight": "600"}],
+            "headline-h2": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "caption-strong": ["13px", {"lineHeight": "18px", "fontWeight": "600"}],
+            "caption": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+            "display": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "headline-h1": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700"}],
+            "micro": ["11px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#FAFAF9] text-[#1C1917] font-body-default text-body-default antialiased min-h-screen">
+<!-- CHECKOUT TOP HEADER (Linear journey - main app nav suppressed per destination rule) -->
+<header class="sticky top-0 z-50 bg-white border-b border-[#E7E5E4] h-16 shadow-sm">
+<div class="w-full max-w-[1200px] mx-auto px-4 sm:px-6 md:px-margin-desktop h-full flex items-center justify-between">
+<div class="flex items-center gap-3">
+<a class="flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-primary rounded" href="#">
+<span class="text-2xl font-bold tracking-tight text-[#1C1917]">curxx</span>
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container inline-block"></span>
+</a>
+<div class="h-5 w-[1px] bg-[#E7E5E4] mx-2 hidden sm:block"></div>
+<span class="hidden sm:inline-flex items-center text-caption font-caption text-[#78716C]">
+          Clinical Appointment Booking
+        </span>
+</div>
+<div class="flex items-center gap-2 text-caption font-caption text-[#78716C] bg-[#FAFAF9] px-3 py-1.5 rounded-full border border-[#E7E5E4]">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-caption-strong text-caption-strong text-[#1C1917]">256-Bit SSL</span>
+<span class="hidden md:inline">Secure Checkout</span>
+</div>
+</div>
+</header>
+<!-- 4-STEP PROGRESS BAR -->
+<section class="bg-white border-b border-[#E7E5E4] py-4">
+<div class="w-full max-w-[760px] mx-auto px-4">
+<ol class="flex items-center justify-between relative">
+<!-- Connecting line behind steps -->
+<div class="absolute left-6 right-6 top-3.5 -translate-y-1/2 h-[1.5px] bg-[#E7E5E4] -z-0"></div>
+<!-- Step 1: Active -->
+<li class="relative z-10 flex flex-col items-center gap-1.5 bg-white px-2">
+<div class="w-7 h-7 rounded-full bg-white ring-2 ring-primary-container ring-offset-2 text-primary-container font-headline-h3 text-xs flex items-center justify-center shadow-xs">
+            1
+          </div>
+<span class="text-caption-strong font-caption-strong text-[#1C1917]">Select Slot</span>
+</li>
+<!-- Step 2: Patient Details -->
+<li class="relative z-10 flex flex-col items-center gap-1.5 bg-white px-2">
+<div class="w-7 h-7 rounded-full border border-[#E7E5E4] bg-[#FAFAF9] text-[#78716C] text-micro font-micro flex items-center justify-center">
+            2
+          </div>
+<span class="text-caption font-caption text-[#78716C]">Patient Details</span>
+</li>
+<!-- Step 3: Payment -->
+<li class="relative z-10 flex flex-col items-center gap-1.5 bg-white px-2">
+<div class="w-7 h-7 rounded-full border border-[#E7E5E4] bg-[#FAFAF9] text-[#78716C] text-micro font-micro flex items-center justify-center">
+            3
+          </div>
+<span class="text-caption font-caption text-[#78716C]">Payment</span>
+</li>
+<!-- Step 4: Confirmation -->
+<li class="relative z-10 flex flex-col items-center gap-1.5 bg-white px-2">
+<div class="w-7 h-7 rounded-full border border-[#E7E5E4] bg-[#FAFAF9] text-[#78716C] text-micro font-micro flex items-center justify-center">
+            4
+          </div>
+<span class="text-caption font-caption text-[#78716C]">Confirmation</span>
+</li>
+</ol>
+</div>
+</section>
+<!-- MAIN BOOKING CANVAS -->
+<main class="w-full max-w-[900px] mx-auto px-4 py-8 space-y-6 pb-36">
+<!-- 1. DOCTOR SUMMARY CARD -->
+<div class="bg-white rounded-2xl border border-[#E7E5E4] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="relative flex-shrink-0">
+<img class="w-16 h-16 rounded-full object-cover border border-[#E7E5E4]" data-alt="Close-up professional portrait of Dr. Priya Sharma, an Indian female dermatologist in white lab coat with stethoscope, smiling gently against a bright clinical hospital background with soft ambient lighting and clean medical aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIlXbviVHjbxLSVgluPvx1kKrjHUer5LhzICejP81zXq8DJ5WfkUMAXadEXvLk75qFDBNsZlN6Lk4cDVd_ENFglG07lUrK544ILVsTinINlj14RmE0bZ6aJJeRH-S1pj1WQE3s4Jb1lKtLoUScaMiWMEwGxaBBjrRkzNHKZbKb1DNvy7xrDoZI9KEu4sN5YGRK-r-Z6uKDflVcFoG6SWqxCYv9yYj3ObmfMmg3nOH9yWIiOv8SWYB8"/>
+<div class="absolute -bottom-1 -right-1 bg-white p-0.5 rounded-full shadow-xs">
+<span class="material-symbols-outlined text-[#047857] text-[18px] block" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h1 class="text-headline-h3 font-headline-h3 text-[#1C1917]">Dr. Priya Sharma</h1>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro font-semibold">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+              NMC Verified
+            </span>
+</div>
+<p class="text-caption-strong font-caption-strong text-[#5c403d] mt-0.5">Senior Dermatologist · 14 Yrs Exp</p>
+<div class="flex items-center gap-2 mt-1 text-caption font-caption text-[#78716C] flex-wrap">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-[#78716C]" data-icon="apartment">apartment</span>
+              SkinCare Super Specialty Clinic, Indiranagar, Bengaluru
+            </span>
+<span class="text-[#E7E5E4]">•</span>
+<span class="inline-flex items-center gap-1 font-caption-strong text-caption-strong text-[#047857]">
+<span class="material-symbols-outlined text-[14px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+              98% (1,240 consults)
+            </span>
+</div>
+</div>
+</div>
+<div class="sm:text-right border-t sm:border-t-0 pt-3 sm:pt-0 border-[#E7E5E4] flex sm:flex-col justify-between sm:justify-center items-end">
+<div class="flex items-center gap-2">
+<span class="line-through text-caption font-caption text-[#78716C]">₹800</span>
+<span class="text-headline-h2 font-headline-h2 font-bold text-[#1C1917]">₹650</span>
+</div>
+<span class="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-[#FFF1F2] border border-[#F9C6C9] text-primary-container text-micro font-micro font-semibold">
+          Save ₹150
+        </span>
+</div>
+</div>
+<!-- 2. VISIT TYPE SEGMENTED TOGGLE -->
+<div class="bg-[#FAFAF9] p-1.5 border border-[#E7E5E4] rounded-xl grid grid-cols-2 max-w-md mx-auto shadow-xs">
+<button class="bg-white text-[#1C1917] font-body-strong text-body-strong rounded-lg py-2.5 shadow-sm border border-[#E7E5E4] flex items-center justify-center gap-2 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary-container" data-icon="local_hospital">local_hospital</span>
+        Clinic Visit (₹650)
+      </button>
+<button class="text-[#78716C] hover:text-[#1C1917] font-body-default text-body-default py-2.5 flex items-center justify-center gap-2 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px] text-[#78716C]" data-icon="videocam">videocam</span>
+        Video Consult (₹349)
+      </button>
+</div>
+<!-- 3. 7-DAY HORIZONTAL DATE STRIP -->
+<div class="bg-white rounded-2xl border border-[#E7E5E4] p-6 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]" data-icon="calendar_today">calendar_today</span>
+<h2 class="text-headline-h3 font-headline-h3 text-[#1C1917]">Select Appointment Date</h2>
+</div>
+<span class="text-caption-strong font-caption-strong text-[#78716C] bg-[#FAFAF9] border border-[#E7E5E4] px-3 py-1 rounded-full">
+          May 2025
+        </span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2.5">
+<!-- Day 1: SELECTED -->
+<div class="bg-primary-container text-white rounded-xl py-3 px-2 flex flex-col items-center justify-center shadow-sm cursor-pointer transition ring-2 ring-primary-container ring-offset-2">
+<span class="text-micro font-micro uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full mb-1">Today</span>
+<span class="text-headline-h3 font-headline-h3 font-bold">24</span>
+<span class="text-caption font-caption opacity-90">Mon</span>
+<div class="flex items-center gap-1 mt-1 text-[11px] text-white">
+<span class="w-1.5 h-1.5 rounded-full bg-white inline-block"></span>
+            9 slots
+          </div>
+</div>
+<!-- Day 2 -->
+<div class="border border-[#E7E5E4] bg-[#FAFAF9] hover:bg-white hover:border-[#1C1917] rounded-xl py-3 px-2 flex flex-col items-center justify-center cursor-pointer transition">
+<span class="text-caption font-caption text-[#78716C]">Tue</span>
+<span class="text-headline-h3 font-headline-h3 text-[#1C1917]">25</span>
+<span class="text-micro font-micro text-[#78716C]">May</span>
+<div class="flex items-center gap-1 mt-1 text-micro font-micro text-[#047857]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#047857] inline-block"></span>
+            8 slots
+          </div>
+</div>
+<!-- Day 3 -->
+<div class="border border-[#E7E5E4] bg-[#FAFAF9] hover:bg-white hover:border-[#1C1917] rounded-xl py-3 px-2 flex flex-col items-center justify-center cursor-pointer transition">
+<span class="text-caption font-caption text-[#78716C]">Wed</span>
+<span class="text-headline-h3 font-headline-h3 text-[#1C1917]">26</span>
+<span class="text-micro font-micro text-[#78716C]">May</span>
+<div class="flex items-center gap-1 mt-1 text-micro font-micro text-[#047857]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#047857] inline-block"></span>
+            12 slots
+          </div>
+</div>
+<!-- Day 4 -->
+<div class="border border-[#E7E5E4] bg-[#FAFAF9] hover:bg-white hover:border-[#1C1917] rounded-xl py-3 px-2 flex flex-col items-center justify-center cursor-pointer transition">
+<span class="text-caption font-caption text-[#78716C]">Thu</span>
+<span class="text-headline-h3 font-headline-h3 text-[#1C1917]">27</span>
+<span class="text-micro font-micro text-[#78716C]">May</span>
+<div class="flex items-center gap-1 mt-1 text-micro font-micro text-[#047857]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#047857] inline-block"></span>
+            10 slots
+          </div>
+</div>
+<!-- Day 5 -->
+<div class="border border-[#E7E5E4] bg-[#FAFAF9] hover:bg-white hover:border-[#1C1917] rounded-xl py-3 px-2 flex flex-col items-center justify-center cursor-pointer transition">
+<span class="text-caption font-caption text-[#78716C]">Fri</span>
+<span class="text-headline-h3 font-headline-h3 text-[#1C1917]">28</span>
+<span class="text-micro font-micro text-[#78716C]">May</span>
+<div class="flex items-center gap-1 mt-1 text-micro font-micro text-[#047857]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#047857] inline-block"></span>
+            6 slots
+          </div>
+</div>
+<!-- Day 6 -->
+<div class="border border-[#E7E5E4] bg-[#FAFAF9] hover:bg-white hover:border-[#1C1917] rounded-xl py-3 px-2 flex flex-col items-center justify-center cursor-pointer transition">
+<span class="text-caption font-caption text-[#78716C]">Sat</span>
+<span class="text-headline-h3 font-headline-h3 text-[#1C1917]">29</span>
+<span class="text-micro font-micro text-[#78716C]">May</span>
+<div class="flex items-center gap-1 mt-1 text-micro font-micro text-[#047857]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#047857] inline-block"></span>
+            14 slots
+          </div>
+</div>
+<!-- Day 7: CLOSED -->
+<div class="border border-[#E7E5E4] bg-[#FAFAF9] opacity-40 cursor-not-allowed rounded-xl py-3 px-2 flex flex-col items-center justify-center">
+<span class="text-caption font-caption text-[#78716C]">Sun</span>
+<span class="text-headline-h3 font-headline-h3 text-[#1C1917]">30</span>
+<span class="text-micro font-micro text-[#78716C]">May</span>
+<div class="flex items-center gap-1 mt-1 text-micro font-micro text-[#78716C]">
+            Closed
+          </div>
+</div>
+</div>
+</div>
+<!-- 4. TIME SLOTS MATRIX -->
+<div class="bg-white rounded-2xl border border-[#E7E5E4] p-6 space-y-6 shadow-sm">
+<!-- Section A: Morning -->
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-[#78716C]" data-icon="wb_twilight">wb_twilight</span>
+<h3 class="text-headline-h3 font-headline-h3 text-[#1C1917]">Morning</h3>
+<span class="text-caption font-caption text-[#78716C]">(10:00 AM - 12:30 PM)</span>
+</div>
+<span class="text-micro font-micro text-[#047857] bg-[#ECFDF5] px-2 py-0.5 rounded font-semibold">3 slots available</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<button class="border border-[#E7E5E4] bg-white hover:border-[#1C1917] py-3 rounded-lg text-center font-body-strong text-body-strong text-[#1C1917] transition shadow-xs" type="button">
+            10:00 AM
+          </button>
+<button class="border border-[#E7E5E4] bg-white hover:border-[#1C1917] py-3 rounded-lg text-center font-body-strong text-body-strong text-[#1C1917] transition shadow-xs" type="button">
+            10:30 AM
+          </button>
+<button class="border border-[#E7E5E4] bg-white hover:border-[#1C1917] py-3 rounded-lg text-center font-body-strong text-body-strong text-[#1C1917] transition shadow-xs" type="button">
+            11:15 AM
+          </button>
+<button class="border border-dashed border-[#E7E5E4] bg-[#F5F5F4] text-[#A8A29E] line-through py-3 rounded-lg text-center font-body-default text-body-default cursor-not-allowed" disabled="" type="button">
+            11:45 AM
+          </button>
+</div>
+</div>
+<hr class="border-[#E7E5E4]"/>
+<!-- Section B: Afternoon -->
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-[#78716C]" data-icon="wb_sunny">wb_sunny</span>
+<h3 class="text-headline-h3 font-headline-h3 text-[#1C1917]">Afternoon</h3>
+<span class="text-caption font-caption text-[#78716C]">(02:00 PM - 04:30 PM)</span>
+</div>
+<span class="text-micro font-micro text-[#047857] bg-[#ECFDF5] px-2 py-0.5 rounded font-semibold">2 slots available</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<button class="border border-dashed border-[#E7E5E4] bg-[#F5F5F4] text-[#A8A29E] line-through py-3 rounded-lg text-center font-body-default text-body-default cursor-not-allowed" disabled="" type="button">
+            02:00 PM
+          </button>
+<button class="border border-[#E7E5E4] bg-white hover:border-[#1C1917] py-3 rounded-lg text-center font-body-strong text-body-strong text-[#1C1917] transition shadow-xs" type="button">
+            02:45 PM
+          </button>
+<button class="border border-[#E7E5E4] bg-white hover:border-[#1C1917] py-3 rounded-lg text-center font-body-strong text-body-strong text-[#1C1917] transition shadow-xs" type="button">
+            03:30 PM
+          </button>
+<button class="border border-dashed border-[#E7E5E4] bg-[#F5F5F4] text-[#A8A29E] line-through py-3 rounded-lg text-center font-body-default text-body-default cursor-not-allowed" disabled="" type="button">
+            04:15 PM
+          </button>
+</div>
+</div>
+<hr class="border-[#E7E5E4]"/>
+<!-- Section C: Evening -->
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-[#78716C]" data-icon="nightlight">nightlight</span>
+<h3 class="text-headline-h3 font-headline-h3 text-[#1C1917]">Evening</h3>
+<span class="text-caption font-caption text-[#78716C]">(05:00 PM - 08:30 PM)</span>
+</div>
+<span class="text-micro font-micro text-[#047857] bg-[#ECFDF5] px-2 py-0.5 rounded font-semibold">3 slots available</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<button class="border border-[#E7E5E4] bg-white hover:border-[#1C1917] py-3 rounded-lg text-center font-body-strong text-body-strong text-[#1C1917] transition shadow-xs" type="button">
+            05:00 PM
+          </button>
+<!-- SELECTED SLOT -->
+<button class="bg-[#FFF1F2] border-2 border-primary-container text-primary-container font-headline-h3 font-bold py-3 rounded-lg text-center shadow-xs flex items-center justify-center gap-1.5 transition ring-1 ring-primary-container" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            05:45 PM
+          </button>
+<button class="border border-[#E7E5E4] bg-white hover:border-[#1C1917] py-3 rounded-lg text-center font-body-strong text-body-strong text-[#1C1917] transition shadow-xs" type="button">
+            06:30 PM
+          </button>
+<button class="border border-[#E7E5E4] bg-white hover:border-[#1C1917] py-3 rounded-lg text-center font-body-strong text-body-strong text-[#1C1917] transition shadow-xs" type="button">
+            07:15 PM
+          </button>
+</div>
+</div>
+</div>
+<!-- 5. SLOT HOLD NOTICE BANNER -->
+<div class="bg-[#FFF1F2] border border-[#F9C6C9] rounded-xl p-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-white border border-[#F9C6C9] flex items-center justify-center flex-shrink-0 text-primary-container">
+<span class="material-symbols-outlined text-[20px]" data-icon="timer">timer</span>
+</div>
+<div class="flex-1 text-caption font-caption text-[#1C1917]">
+<span class="font-caption-strong text-caption-strong text-primary-container">Evening slot: Today, 05:45 PM</span>
+        held for you. Reserving for <span class="font-caption-strong text-caption-strong font-mono text-primary-container" id="countdown-timer">08:00</span> minutes.
+      </div>
+<div class="hidden sm:flex items-center gap-1 text-micro font-micro text-[#78716C]">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified_user">verified_user</span>
+        Instant Guarantee
+      </div>
+</div>
+</main>
+<!-- STICKY BOTTOM BAR (Level 2 Floating Checkout Anchor) -->
+<aside aria-label="Booking Confirmation Bar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E7E5E4] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] z-40 py-4 px-6">
+<div class="w-full max-w-[900px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+<!-- Slot summary -->
+<div class="flex items-center gap-4 w-full sm:w-auto">
+<div class="w-10 h-10 rounded-full bg-[#FAFAF9] border border-[#E7E5E4] flex items-center justify-center flex-shrink-0 text-primary-container">
+<span class="material-symbols-outlined text-[22px]" data-icon="event_available">event_available</span>
+</div>
+<div>
+<div class="text-caption font-caption text-[#78716C] flex items-center gap-1.5">
+<span>Dr. Priya Sharma</span>
+<span>•</span>
+<span class="text-[#1C1917] font-caption-strong text-caption-strong">Clinic Visit</span>
+</div>
+<div class="text-body-strong font-body-strong text-[#1C1917] flex items-center gap-2">
+<span>Today, 24 May at 05:45 PM</span>
+<span class="text-primary-container font-headline-h3 font-headline-h3">₹650</span>
+</div>
+</div>
+</div>
+<!-- Action button -->
+<div class="w-full sm:w-auto flex items-center gap-3">
+<button class="w-full sm:w-auto bg-primary-container hover:bg-[#970012] text-white px-8 py-3.5 rounded-lg font-body-strong text-body-strong flex items-center justify-center gap-2 shadow-sm transition active:scale-98" type="button">
+<span>Continue to Patient Details</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- MICRO-INTERACTION SCRIPT FOR TIMER -->
+<script>
+    (function() {
+      let duration = 8 * 60; // 8 minutes
+      const display = document.getElementById('countdown-timer');
+      if (!display) return;
+
+      const timerInterval = setInterval(function () {
+        let minutes = parseInt(duration / 60, 10);
+        let seconds = parseInt(duration % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--duration < 0) {
+          clearInterval(timerInterval);
+          display.textContent = "00:00";
+        }
+      }, 1000);
+    })();
+  </script>
+</body></html>
+

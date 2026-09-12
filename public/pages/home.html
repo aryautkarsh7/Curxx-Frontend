@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Curxx Healthcare | Clinical Precision &amp; Warm Trust</title>
+<!-- Fonts & Material Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "error-container": "#ffdad6",
+            "on-tertiary": "#ffffff",
+            "on-secondary-fixed": "#410004",
+            "on-primary-container": "#ffd2ce",
+            "on-error-container": "#93000a",
+            "secondary": "#b12b2c",
+            "secondary-fixed-dim": "#ffb3ad",
+            "outline": "#906f6c",
+            "surface-container-low": "#faf2ee",
+            "surface-dim": "#e0d8d5",
+            "primary": "#970012",
+            "on-tertiary-fixed-variant": "#00513a",
+            "on-tertiary-container": "#92efc7",
+            "primary-fixed": "#ffdad6",
+            "on-surface": "#1e1b19",
+            "surface": "#fff8f5",
+            "on-secondary-container": "#650009",
+            "surface-variant": "#e9e1dd",
+            "inverse-primary": "#ffb3ad",
+            "on-background": "#1e1b19",
+            "secondary-fixed": "#ffdad7",
+            "on-primary-fixed": "#410003",
+            "on-error": "#ffffff",
+            "tertiary-fixed": "#97f5cc",
+            "surface-container-high": "#eee7e3",
+            "inverse-on-surface": "#f7efeb",
+            "surface-bright": "#fff8f5",
+            "tertiary-fixed-dim": "#7bd8b1",
+            "on-secondary": "#ffffff",
+            "tertiary-container": "#006f50",
+            "inverse-surface": "#33302d",
+            "on-secondary-fixed-variant": "#8f0f18",
+            "primary-fixed-dim": "#ffb3ad",
+            "secondary-container": "#fd625d",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed": "#002115",
+            "on-primary-fixed-variant": "#930011",
+            "background": "#fff8f5",
+            "tertiary": "#00543c",
+            "surface-container-highest": "#e9e1dd",
+            "primary-container": "#c1121f",
+            "surface-container-lowest": "#ffffff",
+            "outline-variant": "#e5bdb9",
+            "surface-container": "#f4ece8",
+            "surface-tint": "#bd0d1d",
+            "on-surface-variant": "#5c403d",
+            "error": "#ba1a1a"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "space-lg": "1.5rem",
+            "space-2xl": "3rem",
+            "space-md": "0.75rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "space-xs": "0.25rem",
+            "margin-desktop": "2rem",
+            "gutter-desktop": "1.5rem",
+            "margin-tablet": "1.5rem",
+            "space-base": "1rem",
+            "margin": "1rem"
+          },
+          fontFamily: {
+            "micro": ["Inter"],
+            "caption": ["Inter"],
+            "headline-h3": ["Inter"],
+            "display": ["Inter"],
+            "headline-h1": ["Inter"],
+            "caption-strong": ["Inter"],
+            "body-strong": ["Inter"],
+            "body-default": ["Inter"],
+            "headline-h2": ["Inter"]
+          },
+          fontSize: {
+            "micro": ["11px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500" }],
+            "caption": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "headline-h3": ["17px", { lineHeight: "24px", fontWeight: "600" }],
+            "display": ["28px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "headline-h1": ["24px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "700" }],
+            "caption-strong": ["13px", { lineHeight: "18px", fontWeight: "600" }],
+            "body-strong": ["15px", { lineHeight: "22.5px", fontWeight: "600" }],
+            "body-default": ["15px", { lineHeight: "22.5px", fontWeight: "400" }],
+            "headline-h2": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .pulse-emergency {
+      animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(238, 28, 37, 0.45); }
+      70% { box-shadow: 0 0 0 8px rgba(238, 28, 37, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(238, 28, 37, 0); }
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body-default text-body-default antialiased selection:bg-surface-variant selection:text-primary">
+<!-- TOP APP BAR -->
+<header class="docked full-width top-0 sticky z-50 bg-surface-container-lowest border-b border-surface-variant shadow-sm">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop flex items-center justify-between h-16">
+<!-- Left: Logo & Location -->
+<div class="flex items-center space-x-6">
+<a class="flex flex-col group" href="#">
+<div class="flex items-baseline tracking-tight">
+<span class="text-headline-h2 font-headline-h2 font-bold text-on-surface">cur</span>
+<span class="text-headline-h2 font-headline-h2 font-bold text-primary-container -ml-[1px]">xx</span>
+</div>
+<span class="text-micro font-micro text-on-surface-variant tracking-normal -mt-1">Care, confirmed.</span>
+</a>
+<!-- Location Selector Pill -->
+<div class="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-full border border-surface-variant bg-surface-container-low hover:border-outline transition-colors cursor-pointer text-caption font-caption">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="location_on">location_on</span>
+<span class="text-on-surface font-body-strong text-caption">Bengaluru, KA</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Center: Navigation Links -->
+<nav class="hidden md:flex items-center space-x-6">
+<a class="text-primary-container border-b-2 border-primary-container font-body-strong text-body-strong pb-1" href="#specialties">Specialties</a>
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-150 font-body-default text-body-default pb-1" href="#doctors">Doctors</a>
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-150 font-body-default text-body-default pb-1" href="#abha">ABHA ID</a>
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-150 font-body-default text-body-default pb-1" href="#emergency">Emergency 108</a>
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-150 font-body-default text-body-default pb-1" href="#medicines">Medicines</a>
+</nav>
+<!-- Right: SOS Action & Profiles -->
+<div class="flex items-center space-x-3">
+<!-- 24/7 HELPLINE 108 Chip -->
+<a class="pulse-emergency hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary font-caption-strong text-caption hover:opacity-95 transition-opacity" href="tel:108">
+<span class="w-2 h-2 rounded-full bg-surface-container-lowest animate-pulse"></span>
+<span>24/7 HELPLINE: 108</span>
+</a>
+<!-- Notification Bell -->
+<button aria-label="Notifications" class="p-2 rounded-lg border border-surface-variant text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+</button>
+<!-- User Profile Avatar -->
+<div class="flex items-center space-x-2 pl-2 cursor-pointer">
+<div class="w-9 h-9 rounded-lg border border-surface-variant bg-surface-container flex items-center justify-center text-caption-strong text-on-surface overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant text-[22px]" data-icon="account_circle">account_circle</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant hidden sm:block" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</div>
+</header>
+<main>
+<!-- HERO SECTION -->
+<section class="relative bg-surface-container-lowest overflow-hidden border-b border-surface-variant">
+<!-- Subtle radial accent in background -->
+<div class="absolute -top-32 right-0 w-[550px] h-[550px] rounded-full bg-error-container/20 blur-3xl pointer-events-none"></div>
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+<!-- Left Column (approx 55%) -->
+<div class="lg:col-span-7 flex flex-col space-y-6">
+<!-- Eyebrow Pill -->
+<div class="inline-flex items-center space-x-2.5 px-3 py-1 rounded-full bg-surface-container-low border border-surface-variant w-max">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-micro font-micro uppercase tracking-wider text-on-surface-variant font-semibold">
+              TELEHEALTH NETWORK · 3,420 DOCTORS ACTIVE NOW
+            </span>
+</div>
+<!-- Headline -->
+<div class="space-y-1">
+<h1 class="text-display font-display text-on-surface">Consult India's Top Doctors</h1>
+<h2 class="text-display font-display text-primary-container">Online, in 60 Seconds</h2>
+</div>
+<!-- Subcopy -->
+<p class="text-body-default font-body-default text-on-surface-variant max-w-xl">
+            Connect with verified specialists across 45+ clinical disciplines. Instant video consultations, seamless electronic prescriptions, and doorstep lab diagnostics.
+          </p>
+<!-- Dual-Field Search Bar Card -->
+<div class="p-2 bg-surface-container-lowest rounded-xl border border-surface-variant shadow-sm flex flex-col sm:flex-row gap-2">
+<!-- Left Field: Location -->
+<div class="flex-1 flex items-center px-3 py-2 rounded-lg border border-surface-variant bg-surface-container-low/40">
+<span class="material-symbols-outlined text-outline text-[20px] mr-2" data-icon="my_location">my_location</span>
+<div class="flex flex-col w-full text-left">
+<span class="text-micro font-micro text-on-surface-variant uppercase font-semibold">Location</span>
+<input class="bg-transparent border-none p-0 text-caption-strong font-caption-strong text-on-surface focus:ring-0 focus:outline-none w-full placeholder-on-surface-variant" type="text" value="Indiranagar, Bengaluru"/>
+</div>
+</div>
+<!-- Right Field: Specialty/Symptom -->
+<div class="flex-[1.5] flex items-center px-3 py-2 rounded-lg border border-surface-variant bg-surface-container-low/40">
+<span class="material-symbols-outlined text-outline text-[20px] mr-2" data-icon="search">search</span>
+<div class="flex flex-col w-full text-left">
+<span class="text-micro font-micro text-on-surface-variant uppercase font-semibold">Specialty / Symptom</span>
+<input class="bg-transparent border-none p-0 text-caption font-caption text-on-surface focus:ring-0 focus:outline-none w-full placeholder-on-surface-variant" placeholder="Fever, Dermatologist, Cough" type="text"/>
+</div>
+</div>
+<!-- CTA Button -->
+<button class="flex items-center justify-center space-x-2 px-6 py-3 rounded-lg bg-primary-container text-on-primary font-body-strong text-body-strong hover:bg-primary transition duration-150 active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="search">search</span>
+<span>Find Care</span>
+</button>
+</div>
+<!-- Popular Consultations Chips -->
+<div class="flex flex-col space-y-2 pt-1">
+<span class="text-micro font-micro text-on-surface-variant font-semibold tracking-wider uppercase">Popular Consultations:</span>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Cough &amp; Cold</span>
+<span class="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Skin Acne</span>
+<span class="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Depression &amp; Anxiety</span>
+<span class="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Stomach Ache</span>
+<span class="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Women's Health</span>
+<span class="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Chest Pain</span>
+</div>
+</div>
+<!-- Trust Stats Row -->
+<div class="pt-4 border-t border-surface-variant grid grid-cols-3 gap-4">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-outline text-[20px]" data-icon="verified_user">verified_user</span>
+<div>
+<div class="text-caption-strong font-caption-strong text-on-surface">3,420+ Verified</div>
+<div class="text-micro font-micro text-on-surface-variant">Active Indian MDs</div>
+</div>
+</div>
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-outline text-[20px]" data-icon="star">star</span>
+<div>
+<div class="text-caption-strong font-caption-strong text-on-surface">4.9/5 Rating</div>
+<div class="text-micro font-micro text-on-surface-variant">1.2M+ Consultations</div>
+</div>
+</div>
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-outline text-[20px]" data-icon="health_and_safety">health_and_safety</span>
+<div>
+<div class="text-caption-strong font-caption-strong text-on-surface">ABDM &amp; NABH</div>
+<div class="text-micro font-micro text-on-surface-variant">Certified Protocol</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Interactive Doctor Card (approx 45%) -->
+<div class="lg:col-span-5 relative">
+<div class="relative bg-surface-container-lowest rounded-2xl border border-surface-variant p-4 shadow-sm overflow-hidden">
+<!-- Doctor Portrait Image -->
+<div class="relative w-full h-[400px] rounded-xl overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Professional clinical headshot of an Indian female medical doctor wearing a white lab coat with a clean stethoscope around her neck, smiling warmly against a bright, modern clinic consultation room background with soft neutral lighting and high medical precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUZMYG3kDWBHUbrpKq_2tul0ZATsnUoLC2dMcTYZujo2wBOhz3Es5kMVhEEKFVZlHpV1PIV5YfbnD_rxRDtAB4nIY7VCGbOhW0vNF6_EnKpj9YkUh6WQfbbmrn1gXnn9QvtfkyJGbggis3CFH1T4GCcGTUaHguNKyjOyn0rw5jtjkYura65p47RJD4szM_PKYSyECs8cfHj_fZXEPw5CKO_W496Rc60HYMEgUtRYLMOLzY7uHqN_x1"/>
+<!-- Triage Badge in Top-Right -->
+<div class="absolute top-3 right-3 px-3 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm border border-surface-variant shadow-sm flex items-center space-x-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-micro font-micro font-semibold text-on-surface">120s Triage Active</span>
+</div>
+</div>
+<!-- Floating Video Queue Card at Bottom -->
+<div class="mt-3 p-3.5 bg-surface-container-low rounded-xl border border-surface-variant flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest border border-outline-variant flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]" data-icon="videocam">videocam</span>
+</div>
+<div>
+<div class="text-micro font-micro uppercase font-semibold text-on-surface-variant">Next Available GP</div>
+<div class="text-body-strong font-body-strong text-on-surface">Dr. Meera Nambiar, MD</div>
+</div>
+</div>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-caption-strong text-caption hover:bg-primary transition duration-150 active:scale-95 shadow-sm">
+                Join Queue
+              </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ECOSYSTEM SECTION -->
+<section class="bg-surface-container-low py-16 border-b border-surface-variant">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-10">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<span class="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Complete Care Ecosystem</span>
+<h2 class="text-headline-h1 font-headline-h1 text-on-surface mt-1">Everything you need for your family's health</h2>
+</div>
+<p class="text-body-default font-body-default text-on-surface-variant max-w-md md:text-right">
+            Clinical solutions integrated with real-time electronic medical records and verified doctors.
+          </p>
+</div>
+<!-- 4 Grid Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
+<div class="space-y-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]" data-icon="video_chat">video_chat</span>
+</div>
+<span class="text-micro font-micro uppercase font-semibold text-on-surface-variant">Instant Consult</span>
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface">Instant Video Consult</h3>
+<p class="text-caption font-caption text-on-surface-variant">
+                Connect in 60 seconds with certified Indian GPs and senior clinical specialists on secure video.
+              </p>
+</div>
+<a class="mt-6 inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container group-hover:underline" href="#">
+<span>Consult in 60s</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- Card 2 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
+<div class="space-y-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]" data-icon="local_hospital">local_hospital</span>
+</div>
+<span class="text-micro font-micro uppercase font-semibold text-on-surface-variant">In-Person Care</span>
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface">Book Clinic Visit</h3>
+<p class="text-caption font-caption text-on-surface-variant">
+                Zero wait-time appointments at 2,400+ accredited neighborhood hospitals and polyclinics.
+              </p>
+</div>
+<a class="mt-6 inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container group-hover:underline" href="#">
+<span>Find Clinics</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- Card 3 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group" id="medicines">
+<div class="space-y-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]" data-icon="medication">medication</span>
+</div>
+<span class="text-micro font-micro uppercase font-semibold text-on-surface-variant">Doorstep Pharmacy</span>
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface">Prescribed Medicines</h3>
+<p class="text-caption font-caption text-on-surface-variant">
+                100% authentic medicines dispensed by verified pharmacies and delivered within 2 hours.
+              </p>
+</div>
+<a class="mt-6 inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container group-hover:underline" href="#">
+<span>Order Medicines</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- Card 4 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
+<div class="space-y-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]" data-icon="biotechnology">chips</span>
+</div>
+<span class="text-micro font-micro uppercase font-semibold text-on-surface-variant">Diagnostic Labs</span>
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface">Home Lab Tests</h3>
+<p class="text-caption font-caption text-on-surface-variant">
+                Certified phlebotomist sample collection from your doorstep with digital reports in 6 hours.
+              </p>
+</div>
+<a class="mt-6 inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container group-hover:underline" href="#">
+<span>Book Lab Test</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- CLINICAL SPECIALTIES SECTION -->
+<section class="bg-surface-container-lowest py-16 border-b border-surface-variant" id="specialties">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-10">
+<!-- Section Header -->
+<div class="flex items-end justify-between">
+<div>
+<span class="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Clinical Specialties</span>
+<h2 class="text-headline-h1 font-headline-h1 text-on-surface mt-1">Consult Top Doctors Across 45+ Specialties</h2>
+</div>
+<a class="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline" href="#">
+<span>View All 45+ Specialties</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- 6x2 Specialties Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="stethoscope">stethoscope</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">General Physician</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹399</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="cardiology">cardiology</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">Cardiology</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹799</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="dermatology">dermatology</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">Dermatology</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹599</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="child_care">child_care</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">Pediatrics</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹499</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="female">female</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">Gynecology</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹649</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="bone">format_h4</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">Orthopedics</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹699</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="psychiatry">psychiatry</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">Psychiatry</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹899</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="hearing">hearing</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">ENT Specialist</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹499</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="gastroenterology">gastroenterology</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">Gastroenterology</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹749</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="neurology">neurology</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">Neurology</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹999</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="visibility">visibility</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">Ophthalmology</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹499</div>
+</div>
+<div class="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+<span class="material-symbols-outlined text-outline text-[28px] mb-2" data-icon="dentistry">dentistry</span>
+<div class="text-caption-strong font-caption-strong text-on-surface">Dental Care</div>
+<div class="text-micro font-micro text-on-surface-variant mt-1">From ₹349</div>
+</div>
+</div>
+</div>
+</section>
+<!-- VERIFIED DOCTORS SECTION -->
+<section class="bg-surface-container-lowest py-16 border-b border-surface-variant" id="doctors">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-10">
+<!-- Section Header -->
+<div class="flex items-end justify-between">
+<div>
+<span class="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Strict 4-Tier Verification</span>
+<h2 class="text-headline-h1 font-headline-h1 text-on-surface mt-1">Top Verified Doctors for You</h2>
+</div>
+<a class="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline" href="#">
+<span>View All 10,000+ Doctors</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- Doctor Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Doctor 1 -->
+<div class="p-5 rounded-xl border border-surface-variant bg-surface-container-lowest flex flex-col justify-between space-y-4 shadow-sm hover:border-outline transition">
+<div class="space-y-3">
+<div class="flex items-start space-x-3">
+<div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0 border border-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Doctor headshot of a middle-aged Indian woman doctor with neat hair and stethoscope against a bright hospital consultation clinic background, wearing professional attire and displaying clinical confidence in clean light mode." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6I-pDVrIg65IOFc-5a99zl63XLFGQ2XxPyRTkjvrf2hjwfgdpknnomLzrPeEjXc-Wnea7twWVAtBMZIoO21Fodc3g7tP5C2w0PsOJYg11tG7gLdjNOqDmM0Mf4ZIXS_uNLigJ6L-T79CqZ17mUWmF5J-S1xxs1Gc5YHDrOJrZK1EtuaysmqSXI1xVHWha0V0tocTG6zx_PxZuYT5VmbWfcrm35V0dNfsvFtNuPH8nS1TdbDMjH3P0"/>
+</div>
+<div>
+<div class="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary text-micro font-micro font-semibold">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle">check_circle</span>
+<span>Verified MD</span>
+</div>
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface mt-1">Dr. Rajeshwari Iyer</h3>
+<div class="text-caption font-caption text-on-surface-variant">MBBS, MD - General Medicine</div>
+</div>
+</div>
+<!-- Stats strip -->
+<div class="grid grid-cols-3 gap-2 p-2.5 bg-surface-container-low rounded-lg text-center border border-surface-variant/60">
+<div>
+<div class="text-micro font-micro text-on-surface-variant">Experience</div>
+<div class="text-caption-strong font-caption-strong text-on-surface">14 Yrs</div>
+</div>
+<div>
+<div class="text-micro font-micro text-on-surface-variant">Rating</div>
+<div class="text-caption-strong font-caption-strong text-tertiary">98% (840)</div>
+</div>
+<div>
+<div class="text-micro font-micro text-on-surface-variant">Fee</div>
+<div class="text-caption-strong font-caption-strong text-on-surface">₹499</div>
+</div>
+</div>
+<div class="text-caption font-caption text-on-surface-variant flex items-center space-x-1">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="location_on">location_on</span>
+<span>Indiranagar Clinic · Bengaluru</span>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<div class="px-3 py-1.5 rounded-lg bg-surface-container-low border border-surface-variant flex items-center space-x-2 text-micro font-micro text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="schedule">schedule</span>
+<span>Next Video Slot: <strong class="text-on-surface">Today, in 15 mins</strong></span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="py-2.5 px-3 rounded-lg border border-surface-variant bg-surface-container-lowest text-on-surface text-caption-strong font-caption-strong hover:bg-surface-container-low transition">
+                  Clinic Visit
+                </button>
+<button class="py-2.5 px-3 rounded-lg bg-primary-container text-on-primary text-caption-strong font-caption-strong hover:bg-primary transition">
+                  Consult Now
+                </button>
+</div>
+</div>
+</div>
+<!-- Doctor 2 -->
+<div class="p-5 rounded-xl border border-surface-variant bg-surface-container-lowest flex flex-col justify-between space-y-4 shadow-sm hover:border-outline transition">
+<div class="space-y-3">
+<div class="flex items-start space-x-3">
+<div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0 border border-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Doctor headshot of a seasoned Indian male orthopedic surgeon wearing medical scrub suit and stethoscope against clean surgical clinic interior background with bright neutral overhead illumination in warm minimalist tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzDrh61bm9KTMQKFjbpXuVRypxNJ2Hw03u-vU0s-oGaXmhlDxfKALCfUBEzyZIzzn33eCyjxfZy4iZYCEwwhrSe7CYgUP0VJdTR4mAtvis1xwllCnbi4m1L7tgylkAhT5IMyVDojAB9r1bac-twO7hW7Q7q2Uz9iniJmceAerLC5K9s92WIbRX_c5oFZIsiAJublo1jdopqbbBJMrwt3upzdQKTtddWw3HhRxfO294uj9sR2xn-Gud"/>
+</div>
+<div>
+<div class="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary text-micro font-micro font-semibold">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle">check_circle</span>
+<span>Verified MS</span>
+</div>
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface mt-1">Dr. Arvind Swaminathan</h3>
+<div class="text-caption font-caption text-on-surface-variant">MBBS, MS - Orthopedics</div>
+</div>
+</div>
+<!-- Stats strip -->
+<div class="grid grid-cols-3 gap-2 p-2.5 bg-surface-container-low rounded-lg text-center border border-surface-variant/60">
+<div>
+<div class="text-micro font-micro text-on-surface-variant">Experience</div>
+<div class="text-caption-strong font-caption-strong text-on-surface">18 Yrs</div>
+</div>
+<div>
+<div class="text-micro font-micro text-on-surface-variant">Rating</div>
+<div class="text-caption-strong font-caption-strong text-tertiary">99% (1.4K)</div>
+</div>
+<div>
+<div class="text-micro font-micro text-on-surface-variant">Fee</div>
+<div class="text-caption-strong font-caption-strong text-on-surface">₹799</div>
+</div>
+</div>
+<div class="text-caption font-caption text-on-surface-variant flex items-center space-x-1">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="location_on">location_on</span>
+<span>Koramangala Ortho Centre · Bengaluru</span>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<div class="px-3 py-1.5 rounded-lg bg-surface-container-low border border-surface-variant flex items-center space-x-2 text-micro font-micro text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="schedule">schedule</span>
+<span>Next Video Slot: <strong class="text-on-surface">Today, in 30 mins</strong></span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="py-2.5 px-3 rounded-lg border border-surface-variant bg-surface-container-lowest text-on-surface text-caption-strong font-caption-strong hover:bg-surface-container-low transition">
+                  Clinic Visit
+                </button>
+<button class="py-2.5 px-3 rounded-lg bg-primary-container text-on-primary text-caption-strong font-caption-strong hover:bg-primary transition">
+                  Consult Now
+                </button>
+</div>
+</div>
+</div>
+<!-- Doctor 3 -->
+<div class="p-5 rounded-xl border border-surface-variant bg-surface-container-lowest flex flex-col justify-between space-y-4 shadow-sm hover:border-outline transition">
+<div class="space-y-3">
+<div class="flex items-start space-x-3">
+<div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0 border border-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Doctor portrait of a young Indian female dermatologist in white clinical coat with gentle friendly demeanor, set in a bright sterile dermatology clinic consulting room with pristine medical lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2OyCMEL31fIBQNDuqrpXhDy8Zj0mID0s0zrVd1l4pTav45sCl8FXrH-mEQTWi4r3Wj8ZYqE9UYIrR-OCoeoNbaGQvINX8UlGSyD8ZlFTv-8QW9HJkA8CbCmdICCuUvBCg9qOrOrsaTqKXOQT6pW4zY1F2Vc-Qx3U5mH6VdTF9RHEw08GAarpad6QjOHXNLXd51um1flnwvDwKfVhwWZLbs8GhkbyFkhDqnVNZu68kUVmZu9RoonJb"/>
+</div>
+<div>
+<div class="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary text-micro font-micro font-semibold">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle">check_circle</span>
+<span>Verified DNB</span>
+</div>
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface mt-1">Dr. Ananya Sen</h3>
+<div class="text-caption font-caption text-on-surface-variant">MBBS, DNB - Dermatology</div>
+</div>
+</div>
+<!-- Stats strip -->
+<div class="grid grid-cols-3 gap-2 p-2.5 bg-surface-container-low rounded-lg text-center border border-surface-variant/60">
+<div>
+<div class="text-micro font-micro text-on-surface-variant">Experience</div>
+<div class="text-caption-strong font-caption-strong text-on-surface">11 Yrs</div>
+</div>
+<div>
+<div class="text-micro font-micro text-on-surface-variant">Rating</div>
+<div class="text-caption-strong font-caption-strong text-tertiary">97% (620)</div>
+</div>
+<div>
+<div class="text-micro font-micro text-on-surface-variant">Fee</div>
+<div class="text-caption-strong font-caption-strong text-on-surface">₹649</div>
+</div>
+</div>
+<div class="text-caption font-caption text-on-surface-variant flex items-center space-x-1">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="location_on">location_on</span>
+<span>HSR Layout Skin Care · Bengaluru</span>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<div class="px-3 py-1.5 rounded-lg bg-surface-container-low border border-surface-variant flex items-center space-x-2 text-micro font-micro text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="schedule">schedule</span>
+<span>Next Video Slot: <strong class="text-on-surface">Today, in 45 mins</strong></span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="py-2.5 px-3 rounded-lg border border-surface-variant bg-surface-container-lowest text-on-surface text-caption-strong font-caption-strong hover:bg-surface-container-low transition">
+                  Clinic Visit
+                </button>
+<button class="py-2.5 px-3 rounded-lg bg-primary-container text-on-primary text-caption-strong font-caption-strong hover:bg-primary transition">
+                  Consult Now
+                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- AI TRIAGE BAND -->
+<div class="p-6 md:p-8 bg-surface-container-low rounded-2xl border border-outline-variant/70 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+<div class="flex items-center space-x-5">
+<div class="w-14 h-14 rounded-xl bg-surface-container-lowest border border-surface-variant flex items-center justify-center text-primary-container flex-shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[30px]" data-icon="smart_toy">smart_toy</span>
+</div>
+<div class="space-y-1">
+<h3 class="text-headline-h2 font-headline-h2 text-on-surface">Unsure which doctor to visit? Check symptoms in 60s</h3>
+<p class="text-caption font-caption text-on-surface-variant max-w-xl">
+                Our clinical AI assistant follows ICMR guidelines to map your symptoms to the exact medical department, saving you unnecessary consultations.
+              </p>
+</div>
+</div>
+<button class="whitespace-nowrap px-6 py-3 rounded-lg bg-primary-container text-on-primary font-body-strong text-body-strong hover:bg-primary transition active:scale-95 shadow-sm">
+            Start Free AI Triage
+          </button>
+</div>
+</div>
+</section>
+<!-- ABHA / HEALTH ID INTEGRATION -->
+<section class="bg-surface-container-lowest py-16 border-b border-surface-variant" id="abha">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<!-- Left Column: Copy & Actions -->
+<div class="lg:col-span-7 space-y-6">
+<div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-surface-container-low border border-surface-variant">
+<span class="material-symbols-outlined text-outline text-[16px]" data-icon="shield">shield</span>
+<span class="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">
+              Ayushman Bharat Digital Mission (ABDM)
+            </span>
+</div>
+<h2 class="text-headline-h1 font-headline-h1 text-on-surface">
+            Create or Link Your 14-Digit ABHA Health ID
+          </h2>
+<p class="text-body-default font-body-default text-on-surface-variant">
+            Consolidate medical history, lab reports, and doctor prescriptions into India's unified health network. Share records seamlessly with consent.
+          </p>
+<div class="space-y-3 pt-2">
+<div class="flex items-center space-x-3">
+<div class="w-6 h-6 rounded-full bg-surface-container-low border border-surface-variant flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[16px]" data-icon="lock">lock</span>
+</div>
+<span class="text-caption-strong font-caption-strong text-on-surface">256-Bit HIPAA Compliant Consent-Based Architecture</span>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-6 h-6 rounded-full bg-surface-container-low border border-surface-variant flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[16px]" data-icon="sync">sync</span>
+</div>
+<span class="text-caption-strong font-caption-strong text-on-surface">Instant Lab Sync with Apollo, Max, Manipal &amp; SRL Diagnostics</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-4 pt-4">
+<button class="px-6 py-3 rounded-lg bg-primary-container text-on-primary font-body-strong text-body-strong hover:bg-primary transition active:scale-95 shadow-sm">
+              Create ABHA ID →
+            </button>
+<button class="px-6 py-3 rounded-lg border border-surface-variant bg-surface-container-lowest text-on-surface font-body-strong text-body-strong hover:bg-surface-container-low transition">
+              Link Existing ABHA
+            </button>
+</div>
+</div>
+<!-- Right Column: NHA Certified ABHA Card Mock -->
+<div class="lg:col-span-5">
+<div class="p-6 rounded-2xl border border-surface-variant bg-surface-container-low space-y-6 shadow-sm">
+<div class="flex items-center justify-between pb-4 border-b border-surface-variant">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-outline text-[24px]" data-icon="badge">badge</span>
+<span class="text-caption-strong font-caption-strong text-on-surface uppercase tracking-wide">National Health Authority</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary text-micro font-micro font-semibold">
+                GOVT CERTIFIED
+              </span>
+</div>
+<div class="space-y-2">
+<span class="text-micro font-micro uppercase text-on-surface-variant font-semibold">14-Digit ABHA Number</span>
+<div class="font-mono text-headline-h2 font-headline-h2 tracking-wider text-on-surface bg-surface-container-lowest p-3 rounded-lg border border-surface-variant">
+                91-4829-1029-XXXX
+              </div>
+</div>
+<div class="p-3 bg-surface-container-lowest rounded-lg border border-surface-variant space-y-2">
+<div class="text-caption-strong font-caption-strong text-on-surface">Linked Health Records (PHR)</div>
+<div class="flex justify-between text-micro font-micro text-on-surface-variant">
+<span>Prescriptions Linked: <strong>14</strong></span>
+<span>Diagnostics Linked: <strong>8</strong></span>
+</div>
+</div>
+<div class="text-micro font-micro text-on-surface-variant flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="verified">verified</span>
+<span>Fully synchronized with Ayushman Bharat ecosystem</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- HOW IT WORKS SECTION -->
+<section class="bg-surface-container-low py-16 border-b border-surface-variant">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-12 text-center">
+<div class="max-w-xl mx-auto space-y-2">
+<span class="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Transparent Process</span>
+<h2 class="text-headline-h1 font-headline-h1 text-on-surface">How Curxx Works</h2>
+<p class="text-body-default font-body-default text-on-surface-variant">
+            Three simple steps to verified medical attention without queueing at hospitals.
+          </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+<!-- Step 1 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant space-y-4 shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-h3">
+              1
+            </div>
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface">Search Verified Doctor</h3>
+<p class="text-caption font-caption text-on-surface-variant">
+              Filter by specialty, symptom, clinical experience, languages spoken, and clinic location in your neighborhood.
+            </p>
+<div class="pt-2 text-micro font-micro text-on-surface-variant border-t border-surface-variant">
+              100% Medical Council of India verified
+            </div>
+</div>
+<!-- Step 2 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant space-y-4 shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-h3">
+              2
+            </div>
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface">Consult Online or In-Person</h3>
+<p class="text-caption font-caption text-on-surface-variant">
+              Start an instant HD video consultation in 60s or book an appointment at an accredited polyclinic near you.
+            </p>
+<div class="pt-2 text-micro font-micro text-on-surface-variant border-t border-surface-variant">
+              Zero waiting room time guaranteed
+            </div>
+</div>
+<!-- Step 3 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant space-y-4 shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-h3">
+              3
+            </div>
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface">Get Digital Rx &amp; Follow-up</h3>
+<p class="text-caption font-caption text-on-surface-variant">
+              Receive a digitally signed e-prescription valid at any chemist, plus 7-day free chat follow-up with your doctor.
+            </p>
+<div class="pt-2 text-micro font-micro text-on-surface-variant border-t border-surface-variant">
+              Auto-synced to your ABHA health record
+            </div>
+</div>
+</div>
+</div>
+</section>
+<!-- PATIENT STORIES SECTION -->
+<section class="bg-surface-container-lowest py-16 border-b border-surface-variant">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-12">
+<div class="text-center max-w-xl mx-auto space-y-2">
+<span class="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Patient Stories</span>
+<h2 class="text-headline-h1 font-headline-h1 text-on-surface">Trusted by 1.2M+ Happy Patients Across India</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="p-6 rounded-xl border border-surface-variant bg-surface-container-lowest space-y-4 shadow-sm flex flex-col justify-between">
+<div class="space-y-3">
+<div class="flex text-primary-container space-x-1">
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-caption font-caption text-on-surface leading-relaxed">
+                "My 4-year-old had a sudden high fever at 11 PM. Within 90 seconds, Dr. Nambiar was on video, assessed his symptoms calmly, and the prescribed medicines arrived before midnight. Invaluable reassurance."
+              </p>
+</div>
+<div class="flex items-center space-x-3 pt-3 border-t border-surface-variant">
+<div class="w-9 h-9 rounded-full bg-surface-container-low border border-surface-variant flex items-center justify-center text-caption-strong text-primary-container">
+                PS
+              </div>
+<div>
+<div class="text-caption-strong font-caption-strong text-on-surface">Priya Sharma</div>
+<div class="text-micro font-micro text-on-surface-variant">Bengaluru, Karnataka</div>
+</div>
+</div>
+</div>
+<div class="p-6 rounded-xl border border-surface-variant bg-surface-container-lowest space-y-4 shadow-sm flex flex-col justify-between">
+<div class="space-y-3">
+<div class="flex text-primary-container space-x-1">
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-caption font-caption text-on-surface leading-relaxed">
+                "Connecting my existing ABHA card was completely seamless. All my previous spine reports were right there for Dr. Arvind to inspect. Avoided carrying heavy paper files."
+              </p>
+</div>
+<div class="flex items-center space-x-3 pt-3 border-t border-surface-variant">
+<div class="w-9 h-9 rounded-full bg-surface-container-low border border-surface-variant flex items-center justify-center text-caption-strong text-primary-container">
+                RM
+              </div>
+<div>
+<div class="text-caption-strong font-caption-strong text-on-surface">Rohan Mehta</div>
+<div class="text-micro font-micro text-on-surface-variant">Mumbai, Maharashtra</div>
+</div>
+</div>
+</div>
+<div class="p-6 rounded-xl border border-surface-variant bg-surface-container-lowest space-y-4 shadow-sm flex flex-col justify-between">
+<div class="space-y-3">
+<div class="flex text-primary-container space-x-1">
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-caption font-caption text-on-surface leading-relaxed">
+                "The AI triage feature directed me straight to a dermatologist instead of guessing. Dr. Sen resolved my persistent skin allergy within two weeks with the 7-day chat follow-up."
+              </p>
+</div>
+<div class="flex items-center space-x-3 pt-3 border-t border-surface-variant">
+<div class="w-9 h-9 rounded-full bg-surface-container-low border border-surface-variant flex items-center justify-center text-caption-strong text-primary-container">
+                KK
+              </div>
+<div>
+<div class="text-caption-strong font-caption-strong text-on-surface">Kavita Krishnan</div>
+<div class="text-micro font-micro text-on-surface-variant">Chennai, Tamil Nadu</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- APP DOWNLOAD BAND -->
+<section class="bg-primary text-on-primary py-12">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+<div class="md:col-span-8 space-y-4">
+<span class="text-micro font-micro uppercase tracking-widest text-on-primary/80 font-semibold">Always In Your Pocket</span>
+<h2 class="text-display font-display text-on-primary">Healthcare that moves at your pace</h2>
+<p class="text-body-default font-body-default text-on-primary/90 max-w-xl">
+            Download the Curxx app for 1-click video consultations, real-time medicine tracking, and SOS medical dispatch wherever you are in India.
+          </p>
+<div class="flex flex-wrap gap-3 pt-2">
+<button class="px-5 py-2.5 rounded-lg bg-surface-container-lowest text-on-surface font-caption-strong text-caption flex items-center space-x-2 hover:bg-surface-container-low transition">
+<span class="material-symbols-outlined text-[20px]" data-icon="phone_iphone">phone_iphone</span>
+<span>App Store</span>
+</button>
+<button class="px-5 py-2.5 rounded-lg bg-surface-container-lowest text-on-surface font-caption-strong text-caption flex items-center space-x-2 hover:bg-surface-container-low transition">
+<span class="material-symbols-outlined text-[20px]" data-icon="android">android</span>
+<span>Google Play</span>
+</button>
+</div>
+</div>
+<div class="md:col-span-4 flex justify-start md:justify-end">
+<div class="bg-surface-container-lowest text-on-surface p-4 rounded-xl shadow-md flex items-center space-x-4 border border-surface-variant">
+<div class="w-20 h-20 bg-surface-container flex items-center justify-center rounded-lg border border-surface-variant text-on-surface-variant">
+<span class="material-symbols-outlined text-[48px]" data-icon="qr_code_2">qr_code_2</span>
+</div>
+<div>
+<div class="text-caption-strong font-caption-strong text-on-surface">Scan to Download</div>
+<div class="text-micro font-micro text-on-surface-variant mt-0.5">Available on iOS &amp; Android</div>
+<div class="text-micro font-micro text-tertiary font-semibold mt-2">⭐ 4.9 · 100K+ Downloads</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- INSTITUTIONAL TRUST BAR & SOS 108 -->
+<section class="bg-surface-container-lowest py-8" id="emergency">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div class="bg-inverse-surface text-inverse-on-surface p-4 sm:p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-caption font-caption text-inverse-on-surface/90">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-[20px] text-tertiary-fixed" data-icon="verified">verified</span>
+<span>10,000+ Verified Indian MDs</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-[20px] text-tertiary-fixed" data-icon="encrypted">encrypted</span>
+<span>100% Encrypted Video Consult</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-[20px] text-tertiary-fixed" data-icon="replay">replay</span>
+<span>Free 7-Day Follow-Up Included</span>
+</div>
+</div>
+<a class="pulse-emergency flex items-center space-x-2 px-5 py-2.5 rounded-lg bg-primary-container text-on-primary font-caption-strong text-caption hover:opacity-95 whitespace-nowrap transition" href="tel:108">
+<span class="material-symbols-outlined text-[18px]" data-icon="emergency">emergency</span>
+<span>Emergency SOS: 108</span>
+</a>
+</div>
+</div>
+</section>
+</main>
+<!-- WEB FOOTER (from Shared Components JSON & Guidance) -->
+<footer class="w-full bg-surface-container-highest border-t border-surface-variant">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop py-space-2xl space-y-12">
+<!-- Top Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Left Brand Column -->
+<div class="md:col-span-4 space-y-4">
+<div class="flex flex-col">
+<div class="flex items-baseline tracking-tight">
+<span class="text-headline-h2 font-headline-h2 font-bold text-on-surface">cur</span>
+<span class="text-headline-h2 font-headline-h2 font-bold text-primary-container -ml-[1px]">xx</span>
+</div>
+<span class="text-caption font-caption text-on-surface-variant">Care, confirmed.</span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant max-w-sm">
+            India's unified clinical telehealth network connecting patients with accredited practitioners, diagnostic labs, and 24/7 medical response.
+          </p>
+<div class="flex flex-wrap gap-2 pt-2">
+<span class="px-2.5 py-1 rounded bg-surface-container-lowest border border-surface-variant text-micro font-micro text-on-surface-variant">
+              NABH Partner Network
+            </span>
+<span class="px-2.5 py-1 rounded bg-surface-container-lowest border border-surface-variant text-micro font-micro text-on-surface-variant">
+              ISO 27001 Certified
+            </span>
+<span class="px-2.5 py-1 rounded bg-surface-container-lowest border border-surface-variant text-micro font-micro text-on-surface-variant">
+              HIPAA Compliant
+            </span>
+</div>
+</div>
+<!-- Links Column 1: Clinical Specialties -->
+<div class="md:col-span-3 space-y-3">
+<div class="text-caption-strong font-caption-strong text-on-surface uppercase tracking-wider">Clinical Specialties</div>
+<ul class="space-y-2 text-caption font-caption text-on-surface-variant">
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">General Medicine</a></li>
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">Dermatology &amp; Cosmetology</a></li>
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">Pediatrics &amp; Neonatology</a></li>
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">Obstetrics &amp; Gynecology</a></li>
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">Orthopedics &amp; Joint Care</a></li>
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">Cardiology &amp; Vascular</a></li>
+</ul>
+</div>
+<!-- Links Column 2: Patients & Doctors -->
+<div class="md:col-span-2 space-y-3">
+<div class="text-caption-strong font-caption-strong text-on-surface uppercase tracking-wider">Network Links</div>
+<ul class="space-y-2 text-caption font-caption text-on-surface-variant">
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">Emergency Care (108)</a></li>
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">Clinical Specialties</a></li>
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">Verified Doctors</a></li>
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">ABHA Integration</a></li>
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">Teleconsultation Policy</a></li>
+<li><a class="hover:text-primary-container transition-colors duration-150" href="#">Hospital Network</a></li>
+</ul>
+</div>
+<!-- Emergency Support Contact Box -->
+<div class="md:col-span-3">
+<div class="p-5 rounded-xl border border-surface-variant bg-surface-container-lowest space-y-3">
+<div class="text-micro font-micro font-semibold text-primary-container uppercase tracking-wider">Medical Dispatch</div>
+<div class="text-headline-h3 font-headline-h3 text-on-surface font-mono font-bold">+91 80 4719 0108</div>
+<p class="text-micro font-micro text-on-surface-variant">
+              Trained emergency medical coordinators standing by 24x7 across all major Indian metros.
+            </p>
+</div>
+</div>
+</div>
+<!-- Bottom Bar: Exact Copyright & Legal -->
+<div class="pt-8 border-t border-surface-variant flex flex-col sm:flex-row items-center justify-between text-caption font-caption text-on-surface-variant gap-4">
+<div>© 2025 Curxx Healthcare Technologies Pvt. Ltd. NHA &amp; ABHA Certified. 24x7 Medical Dispatch Active.</div>
+<div class="flex space-x-6">
+<a class="hover:text-primary-container transition-colors duration-150" href="#">Privacy Policy</a>
+<a class="hover:text-primary-container transition-colors duration-150" href="#">Terms of Service</a>
+<a class="hover:text-primary-container transition-colors duration-150" href="#">Medical Council Regulations</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>
+

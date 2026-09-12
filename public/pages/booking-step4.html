@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Curxx — Appointment Confirmed</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "outline-variant": "#e5bdb9",
+            "error-container": "#ffdad6",
+            "secondary-fixed-dim": "#ffb3ad",
+            "on-secondary-fixed": "#410004",
+            "on-primary-container": "#ffd2ce",
+            "on-secondary-container": "#650009",
+            "surface-dim": "#e0d8d5",
+            "surface": "#fff8f5",
+            "on-surface-variant": "#5c403d",
+            "inverse-surface": "#33302d",
+            "on-tertiary-container": "#92efc7",
+            "tertiary-container": "#006f50",
+            "inverse-on-surface": "#f7efeb",
+            "secondary-container": "#fd625d",
+            "surface-container-low": "#faf2ee",
+            "primary-fixed": "#ffdad6",
+            "on-secondary-fixed-variant": "#8f0f18",
+            "surface-container-lowest": "#ffffff",
+            "tertiary": "#00543c",
+            "background": "#fff8f5",
+            "error": "#ba1a1a",
+            "primary-fixed-dim": "#ffb3ad",
+            "on-tertiary-fixed": "#002115",
+            "surface-tint": "#bd0d1d",
+            "surface-variant": "#e9e1dd",
+            "surface-container-high": "#eee7e3",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#ffdad7",
+            "primary": "#970012",
+            "on-secondary": "#ffffff",
+            "on-background": "#1e1b19",
+            "primary-container": "#c1121f",
+            "on-tertiary": "#ffffff",
+            "surface-container": "#f4ece8",
+            "on-primary": "#ffffff",
+            "tertiary-fixed-dim": "#7bd8b1",
+            "on-error-container": "#93000a",
+            "on-surface": "#1e1b19",
+            "on-tertiary-fixed-variant": "#00513a",
+            "on-primary-fixed-variant": "#930011",
+            "on-primary-fixed": "#410003",
+            "inverse-primary": "#ffb3ad",
+            "outline": "#906f6c",
+            "surface-container-highest": "#e9e1dd",
+            "tertiary-fixed": "#97f5cc",
+            "surface-bright": "#fff8f5",
+            "secondary": "#b12b2c"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "margin-desktop": "2rem",
+            "space-lg": "1.5rem",
+            "space-2xl": "3rem",
+            "space-base": "1rem",
+            "margin-tablet": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "space-md": "0.75rem",
+            "space-xl": "2rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem"
+          },
+          fontFamily: {
+            "headline-h3": ["Inter", "sans-serif"],
+            "body-default": ["Inter", "sans-serif"],
+            "body-strong": ["Inter", "sans-serif"],
+            "headline-h2": ["Inter", "sans-serif"],
+            "caption-strong": ["Inter", "sans-serif"],
+            "caption": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "headline-h1": ["Inter", "sans-serif"],
+            "micro": ["Inter", "sans-serif"]
+          },
+          fontSize: {
+            "headline-h3": ["17px", { lineHeight: "24px", fontWeight: "600" }],
+            "body-default": ["15px", { lineHeight: "22.5px", fontWeight: "400" }],
+            "body-strong": ["15px", { lineHeight: "22.5px", fontWeight: "600" }],
+            "headline-h2": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "caption-strong": ["13px", { lineHeight: "18px", fontWeight: "600" }],
+            "caption": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            "display": ["28px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "headline-h1": ["24px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "700" }],
+            "micro": ["11px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-default min-h-screen antialiased flex flex-col justify-between">
+<!-- ==================== HEADER (Checkout Simplified) ==================== -->
+<header class="bg-surface-container-lowest border-b border-surface-variant h-16 sticky top-0 z-50">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop h-full flex items-center justify-between">
+<!-- Left: Brand Logo -->
+<a class="flex items-center gap-1.5 focus:outline-none" href="#">
+<span class="text-headline-h2 font-headline-h2 font-bold text-primary tracking-tight">curxx</span>
+<span class="w-2 h-2 rounded-full bg-primary-container inline-block"></span>
+</a>
+<!-- Right: Security Credential Badge -->
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-full border border-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="lock">lock</span>
+<span class="text-caption-strong font-caption-strong text-on-surface-variant">256-Bit SSL Secure Checkout</span>
+</div>
+</div>
+</header>
+<!-- ==================== PROGRESS BAR ==================== -->
+<section class="bg-surface-container-lowest border-b border-surface-variant py-4">
+<div class="w-full max-w-[760px] mx-auto px-margin">
+<div class="flex items-center justify-between relative">
+<!-- Background Track Line -->
+<div class="absolute top-1/2 left-4 right-4 -translate-y-1/2 h-[2px] bg-primary-container z-0"></div>
+<!-- Step 1: Select Slot -->
+<div class="flex items-center gap-2 relative z-10 bg-surface-container-lowest px-2">
+<div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center text-xs font-bold shadow-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="check">check</span>
+</div>
+<span class="text-caption-strong font-caption-strong text-on-surface hidden sm:inline">Select Slot</span>
+</div>
+<!-- Step 2: Patient Details -->
+<div class="flex items-center gap-2 relative z-10 bg-surface-container-lowest px-2">
+<div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center text-xs font-bold shadow-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="check">check</span>
+</div>
+<span class="text-caption-strong font-caption-strong text-on-surface hidden sm:inline">Patient Details</span>
+</div>
+<!-- Step 3: Payment -->
+<div class="flex items-center gap-2 relative z-10 bg-surface-container-lowest px-2">
+<div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center text-xs font-bold shadow-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="check">check</span>
+</div>
+<span class="text-caption-strong font-caption-strong text-on-surface hidden sm:inline">Payment</span>
+</div>
+<!-- Step 4: Confirmation -->
+<div class="flex items-center gap-2 relative z-10 bg-surface-container-lowest px-2">
+<div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center text-xs font-bold ring-4 ring-primary-fixed shadow-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="check">check</span>
+</div>
+<span class="text-caption-strong font-caption-strong text-on-surface font-bold">Confirmation</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== MAIN CONFIRMATION CONTENT ==================== -->
+<main class="w-full max-w-[720px] mx-auto px-4 py-10 space-y-6 flex-grow">
+<!-- 1. SUCCESS BANNER & BOOKING ID -->
+<div class="text-center space-y-3">
+<!-- Animated Ripple Pulse Ring Checkmark -->
+<div class="relative inline-flex items-center justify-center">
+<div class="absolute w-20 h-20 rounded-full bg-primary-fixed animate-ping opacity-60"></div>
+<div class="relative w-16 h-16 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[36px]" data-icon="check">check</span>
+</div>
+</div>
+<div class="space-y-1">
+<h1 class="text-display font-display text-on-surface">Appointment Confirmed!</h1>
+<p class="text-body-default font-body-default text-on-surface-variant">Your in-clinic consultation with Dr. Priya Sharma is booked.</p>
+</div>
+<!-- Booking Reference Pill -->
+<div class="pt-1">
+<div class="bg-surface-container-lowest border border-surface-variant rounded-full px-4 py-2 inline-flex flex-wrap items-center justify-center gap-2 shadow-sm text-sm">
+<span class="text-caption-strong font-caption-strong text-on-surface">Booking ID: <span class="font-mono text-primary font-bold">CRX-849201BLR</span></span>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center" onclick="navigator.clipboard?.writeText('CRX-849201BLR')" title="Copy Booking ID" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+<span class="text-surface-variant">|</span>
+<div class="flex items-center gap-1.5 text-caption font-caption text-tertiary">
+<span class="material-symbols-outlined text-[16px]" data-icon="verified">verified</span>
+<span>SMS &amp; WhatsApp confirmed to <strong class="font-semibold text-on-surface">+91 98765 43210</strong></span>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. DETAILED APPOINTMENT CARD -->
+<section class="bg-surface-container-lowest rounded-2xl border border-surface-variant p-6 shadow-sm space-y-5">
+<!-- Top Row: Doctor Profile -->
+<div class="flex items-center gap-4 pb-4 border-b border-surface-variant">
+<div class="relative w-[60px] h-[60px] rounded-xl overflow-hidden border border-surface-variant flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A dignified professional studio portrait of Dr. Priya Sharma, an Indian female dermatologist wearing a tailored clinical white coat with a stethoscope around her neck. The setting is clean, modern, and warmly lit with subtle clinical neutral tones, conveying authority, empathy, and absolute precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQzTqKgcELt2NMTX9KL03joxMVgTSlFBD3sk-Nh7Q3oeFayCL_c28uoDmtn5p9Yuczor0LnmQjYfxVbJBw6HsbhAWbkurzQg1TZwKXMzv2XzvfQkA5qwMTmrRECBuTt14n8xDaAG4vm5bItKiNOsll0UHk2arOE9mAlGTwT4qyMb7X6c3MnOzC36wOIq_3fu2MsEGHRNx-Tr5Je7Cpm2hcBMDf0FzAyxJCPg8vrfOy89beIAs1nx-7"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2">
+<h2 class="text-headline-h3 font-headline-h3 text-on-surface">Dr. Priya Sharma</h2>
+<span class="inline-flex items-center gap-1 bg-tertiary-fixed text-on-tertiary-fixed text-[11px] font-semibold px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[12px]" data-icon="verified">verified</span>
+              Verified
+            </span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant">MBBS, MD - Dermatology</p>
+<p class="text-caption-strong font-caption-strong text-on-surface mt-0.5">SkinCare Super Specialty Clinic</p>
+</div>
+</div>
+<!-- Grid of 4 Key Details -->
+<div class="bg-surface-container-low p-4 rounded-xl border border-surface-variant grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant mt-0.5" data-icon="calendar_today">calendar_today</span>
+<div>
+<p class="text-caption font-caption text-on-surface-variant">Date</p>
+<p class="text-body-strong font-body-strong text-on-surface">Today, Monday, 24 May 2025</p>
+</div>
+</div>
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant mt-0.5" data-icon="schedule">schedule</span>
+<div>
+<p class="text-caption font-caption text-on-surface-variant">Time Slot</p>
+<p class="text-body-strong font-body-strong text-on-surface">05:45 PM - 06:15 PM</p>
+</div>
+</div>
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant mt-0.5" data-icon="person">person</span>
+<div>
+<p class="text-caption font-caption text-on-surface-variant">Patient</p>
+<p class="text-body-strong font-body-strong text-on-surface">Kavita Ramanathan (32 Yrs, Female)</p>
+</div>
+</div>
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant mt-0.5" data-icon="meeting_room">meeting_room</span>
+<div>
+<p class="text-caption font-caption text-on-surface-variant">Consultation Mode</p>
+<p class="text-body-strong font-body-strong text-on-surface">In-Clinic Visit (Room 204)</p>
+</div>
+</div>
+</div>
+<!-- Address Block -->
+<div class="flex items-start gap-2.5 px-1">
+<span class="material-symbols-outlined text-[20px] text-primary-container mt-0.5 flex-shrink-0" data-icon="location_on">location_on</span>
+<div>
+<p class="text-caption font-caption text-on-surface-variant">Clinic Address</p>
+<p class="text-body-default font-body-default text-on-surface">100ft Road, HAL 2nd Stage, Indiranagar, Bengaluru, Karnataka 560038</p>
+</div>
+</div>
+<!-- Amount Paid Summary -->
+<div class="flex items-center justify-between bg-surface-container-lowest border border-surface-variant p-3.5 rounded-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-tertiary" data-icon="check_circle">check_circle</span>
+<span class="text-body-default font-body-default text-on-surface">
+            Amount Paid: <strong class="font-body-strong text-on-surface">₹650</strong>
+<span class="text-caption font-caption text-on-surface-variant block sm:inline sm:ml-1">(Paid via UPI: kavita@okhdfcbank · Trans ID: TXN940281)</span>
+</span>
+</div>
+<span class="text-caption-strong font-caption-strong text-tertiary px-2 py-0.5 bg-tertiary-fixed rounded">Successful</span>
+</div>
+<!-- 3 Outlined Action Buttons -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+<button class="border border-surface-variant rounded-lg py-2.5 px-3 flex items-center justify-center gap-1.5 text-body-strong font-body-strong text-on-surface bg-surface-container-lowest hover:bg-surface-container-low transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant" data-icon="event">event</span>
+          Add to Calendar
+        </button>
+<button class="border border-surface-variant rounded-lg py-2.5 px-3 flex items-center justify-center gap-1.5 text-body-strong font-body-strong text-on-surface bg-surface-container-lowest hover:bg-surface-container-low transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant" data-icon="directions">directions</span>
+          Get Directions
+        </button>
+<button class="border border-surface-variant rounded-lg py-2.5 px-3 flex items-center justify-center gap-1.5 text-body-strong font-body-strong text-on-surface bg-surface-container-lowest hover:bg-surface-container-low transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant" data-icon="receipt_long">receipt_long</span>
+          Download Receipt
+        </button>
+</div>
+</section>
+<!-- 3. 'WHAT HAPPENS NEXT' 3-STEP GUIDE -->
+<section class="bg-surface-container-lowest rounded-2xl border border-surface-variant p-6 space-y-4 shadow-sm">
+<h3 class="text-headline-h3 font-headline-h3 text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="help_outline">help_outline</span>
+        What happens next?
+      </h3>
+<div class="space-y-4">
+<!-- Step 1 -->
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+            1
+          </div>
+<div>
+<h4 class="text-body-strong font-body-strong text-on-surface">Instant ABHA Linkage</h4>
+<p class="text-caption font-caption text-on-surface-variant mt-0.5">Your visit token and digital health record are synced to your ABHA ID for seamless nationwide porting.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+            2
+          </div>
+<div>
+<h4 class="text-body-strong font-body-strong text-on-surface">Arrive 10 Mins Prior</h4>
+<p class="text-caption font-caption text-on-surface-variant mt-0.5">Show your booking ID or registered phone number at the clinic reception desk for instant contactless check-in.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+            3
+          </div>
+<div>
+<h4 class="text-body-strong font-body-strong text-on-surface">7-Day Free Follow-up</h4>
+<p class="text-caption font-caption text-on-surface-variant mt-0.5">After your visit, chat with Dr. Priya for 7 days via the Curxx app at zero additional fee for prescriptions and queries.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. CANCELLATION POLICY NOTE -->
+<div class="bg-surface-container-low border border-surface-variant rounded-xl p-4 text-center">
+<div class="flex items-center justify-center gap-1.5 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="update">update</span>
+<span class="text-caption-strong font-caption-strong">Need to reschedule?</span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant">
+        Free cancellation and 1-click slot rescheduling are available until <span class="font-semibold text-on-surface">03:45 PM today</span> (2 hours prior to your visit).
+      </p>
+</div>
+<!-- 5. CROSS-SELL CARD -->
+<div class="bg-surface-container-low border border-surface-variant rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+<div class="flex items-center gap-3.5">
+<div class="w-12 h-12 rounded-xl bg-surface-container-lowest border border-surface-variant flex items-center justify-center text-primary-container flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]" data-icon="science">science</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="text-body-strong font-body-strong text-on-surface">Recommended Dermatology Blood Panel</h4>
+<span class="bg-secondary-fixed text-on-secondary-fixed text-[11px] font-bold px-1.5 py-0.2 rounded">40% OFF</span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant mt-0.5">Check Serum Ferritin, Vitamin D &amp; Hormonal Profile at home before consultation.</p>
+</div>
+</div>
+<button class="w-full sm:w-auto px-4 py-2 bg-surface-container-lowest border border-on-surface rounded-lg text-body-strong font-body-strong text-on-surface hover:bg-surface-container-high transition-colors whitespace-nowrap" type="button">
+        Add for ₹499
+      </button>
+</div>
+<!-- 6. PRIMARY & SECONDARY ACTIONS -->
+<div class="space-y-3 pt-2">
+<a class="w-full h-12 bg-primary-container hover:bg-primary text-on-primary font-body-strong text-body-strong rounded-lg shadow-sm flex items-center justify-center gap-2 transition-colors duration-150" href="#">
+<span>Go to My Appointments</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+<div class="text-center">
+<a class="inline-flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface-variant hover:text-primary transition-colors py-1" href="#">
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_back">arrow_back</span>
+<span>Back to Homepage</span>
+</a>
+</div>
+</div>
+</main>
+<!-- ==================== FOOTER (JSON Brand Anchor) ==================== -->
+<footer class="w-full bg-surface-container-highest border-t border-surface-variant mt-12">
+<div class="w-full max-w-[1200px] mx-auto px-margin-desktop py-space-2xl">
+<div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-surface-variant">
+<div class="flex items-center gap-2">
+<span class="text-headline-h2 font-headline-h2 font-bold text-primary tracking-tight">Curxx</span>
+<span class="text-caption font-caption text-on-surface-variant">| Clinical Healthcare Network</span>
+</div>
+<div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-caption font-caption">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Emergency Care (108)</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Clinical Specialties</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Verified Doctors</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">ABHA Integration</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Teleconsultation Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Hospital Network</a>
+</div>
+</div>
+<div class="pt-6 text-center text-caption font-caption text-on-surface-variant">
+        © 2025 Curxx Healthcare Technologies Pvt. Ltd. NHA &amp; ABHA Certified. 24x7 Medical Dispatch Active.
+      </div>
+</div>
+</footer>
+</body></html>
+
