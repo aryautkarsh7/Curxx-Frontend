@@ -47,15 +47,15 @@ export default function LabTestsHome({ category, query }: { category?: string; q
 <Header />
 {/* SUB-HEADER DELIVERY & SAMPLE COLLECTION BAR */}
 <div className="w-full bg-surface-container-low border-b border-surface-variant py-2.5">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop flex items-center justify-between">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop flex flex-wrap items-center justify-between gap-y-2">
 <div className="flex items-center space-x-2 text-on-surface">
 <span className="material-symbols-outlined text-primary text-[20px]" data-icon="home_pin">home_pin</span>
 <span className="text-caption font-caption text-on-surface-variant">Sample Collection at:</span>
 <span className="text-caption-strong font-caption-strong text-on-surface">560001, Indiranagar, Bengaluru</span>
 <button className="text-caption-strong font-caption-strong text-primary hover:underline ml-2">Change</button>
 </div>
-<div className="flex items-center space-x-4">
-<span className="text-micro font-micro text-[#047857] bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 rounded-full flex items-center space-x-1">
+<div className="flex items-center space-x-2 sm:space-x-4">
+<span className="text-micro font-micro text-[#047857] bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 rounded-full hidden sm:flex items-center space-x-1">
 <span className="material-symbols-outlined text-[14px]" data-icon="timer">timer</span>
 <span>Slots available today in 60 mins</span>
 </span>
@@ -69,7 +69,7 @@ export default function LabTestsHome({ category, query }: { category?: string; q
 </div>
 {/* HERO SECTION (TWO-COLUMN) */}
 <section className="py-space-2xl bg-surface-container-lowest border-b border-surface-variant">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 {/* Left Column: Copy & Search */}
 <div className="lg:col-span-7 flex flex-col space-y-5">
 <div className="inline-flex items-center space-x-2 bg-[#ECFDF5] border border-[#A7F3D0] px-3 py-1 rounded-full w-max">
@@ -113,7 +113,7 @@ export default function LabTestsHome({ category, query }: { category?: string; q
 <span className="text-micro font-micro text-on-surface-variant">Standard Operating Protocol 9.4</span>
 </div>
 <div className="relative h-56 rounded-lg overflow-hidden border border-surface-variant bg-white">
-<img className="w-full h-full object-cover" alt="Barcoded vacutainer test tubes in a sterile rack" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwu5owhCgxV-ZuLFrP6N0j8o7REsL33cYSZ-igKDivGBT_ApQr_YWhm437wc9S9h2PKqIhT4WagifiPv7AW5vOCM4WLosLoobANYEkLX_skYchD9d1IKLGr0F1m0r_Ve5UyVodiaM_Bo5cQCzaglhZcUhn4MLeBpNT6I258Y1KbrMiDSLV60wPpONpkCPuMrahhOwBF_dgEYnjOOazhoOCacLhzxYhmLdIeB3Ld5NgH-ulm_LV_Klq"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" alt="Barcoded vacutainer test tubes in a sterile rack" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwu5owhCgxV-ZuLFrP6N0j8o7REsL33cYSZ-igKDivGBT_ApQr_YWhm437wc9S9h2PKqIhT4WagifiPv7AW5vOCM4WLosLoobANYEkLX_skYchD9d1IKLGr0F1m0r_Ve5UyVodiaM_Bo5cQCzaglhZcUhn4MLeBpNT6I258Y1KbrMiDSLV60wPpONpkCPuMrahhOwBF_dgEYnjOOazhoOCacLhzxYhmLdIeB3Ld5NgH-ulm_LV_Klq=w800"/>
 {/* 60-min badge floating */}
 <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm border border-surface-variant px-3 py-1.5 rounded-lg flex items-center space-x-2 shadow-sm">
 <span className="material-symbols-outlined text-primary text-[18px]" data-icon="electric_bolt">electric_bolt</span>
@@ -140,7 +140,7 @@ export default function LabTestsHome({ category, query }: { category?: string; q
 </section>
 {/* TRUST STRIP (4 ITEMS) */}
 <section className="bg-surface-container-lowest border-b border-surface-variant py-6">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop grid grid-cols-2 md:grid-cols-4 gap-6">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop grid grid-cols-2 md:grid-cols-4 gap-6">
 <div className="flex items-center space-x-3.5">
 <div className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center shrink-0 border border-surface-variant">
 <span className="material-symbols-outlined text-primary text-[22px]" data-icon="verified">verified</span>
@@ -181,7 +181,7 @@ export default function LabTestsHome({ category, query }: { category?: string; q
 </section>
 {/* POPULAR HEALTH PACKAGES SECTION */}
 <section id="packages" className="py-space-2xl bg-surface scroll-mt-16">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 {/* Section Header */}
 <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
 <div>
@@ -262,7 +262,7 @@ Showing {packages.length} {packages.length === 1 ? 'package' : 'packages'} for <
 </section>
 {/* CATEGORY GRID (12 CLINICAL OUTLINE CARDS) */}
 <section className="py-space-2xl bg-surface-container-lowest border-y border-surface-variant">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 <div className="mb-8">
 <span className="text-micro font-micro text-primary uppercase tracking-wider font-semibold">TESTS BY SPECIALTY</span>
 <h2 className="text-headline-1 font-headline-h1 text-on-surface mt-1">Explore by Clinical Category</h2>
@@ -285,7 +285,7 @@ Showing {packages.length} {packages.length === 1 ? 'package' : 'packages'} for <
 </section>
 {/* BOOK BY SYMPTOM OR CONDITION CHIPS */}
 <section className="py-space-xl bg-surface">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-surface-variant">
 <div>
 <span className="text-micro font-micro text-on-surface-variant uppercase tracking-wider font-semibold">QUICK TRIAGE</span>
@@ -313,7 +313,7 @@ Showing {packages.length} {packages.length === 1 ? 'package' : 'packages'} for <
 </section>
 {/* ACCREDITATION & CERTIFICATION STRIP */}
 <section className="bg-surface-container-low border-t border-surface-variant py-8">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop flex flex-col md:flex-row items-center justify-between gap-6">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop flex flex-col md:flex-row items-center justify-between gap-6">
 <div className="flex items-center space-x-4">
 <span className="material-symbols-outlined text-[32px] text-[#047857]" data-icon="verified_user">verified_user</span>
 <div>

@@ -13,7 +13,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
       
 <Header />
 {/* BREADCRUMB */}
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop pt-4 pb-2">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop pt-4 pb-2">
 <nav className="flex items-center gap-1.5 font-caption text-caption text-[#78716C]">
 <Link href="/" className="hover:text-[#1C1917]">Home</Link>
 <span className="material-symbols-outlined text-[14px]">chevron_right</span>
@@ -25,7 +25,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 </nav>
 </div>
 {/* MAIN CANVAS CONTAINER (Two Column Grid: 780px Main + 360px Sticky Sidebar, 32px gap) */}
-<main className="w-full max-w-[1200px] mx-auto px-margin-desktop py-4 pb-16">
+<main className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-4 pb-16">
 <div className="flex flex-col lg:flex-row gap-8 items-start">
 {/* MAIN COLUMN (~780px) */}
 <section className="flex-1 w-full space-y-6">
@@ -43,7 +43,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 <div className="flex flex-col sm:flex-row gap-6 items-start">
 {/* Doctor Portrait */}
 <div className="relative shrink-0">
-<img alt={`${doctor.name}`} className="w-[120px] h-[120px] rounded-full object-cover border-2 border-white shadow-sm ring-1 ring-[#E7E5E4]" data-alt="High-resolution clinical portrait of Dr Priya Sharma, an authoritative Indian female dermatologist in crisp white medical coat with stethoscope wearing subtle gold earrings and gentle approachable smile against soft architectural clinic interior" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNzU1hZdZyNI_DPkWSf7MoRRp-QH1gKiXDo2-7-FRUM7Lwn_DIucI7NhACYjTQEy4BaA3S9ZmyDaVP8UgAIWxdaNzs3-h63d3a-ImMpVUk7ebYjbuEq_dBuTOaLuVguQYCe0DrRpxJd1cjuGrrZ1R-FvB7TOHmysoo5YF2bqRmtFgJOaB1fzCCp3vQs2GrqH-ULObcTs9uPvO0w7zImVtiCUN1RNCDkHAzWhTRbG-cDlnVYElar9MF"/>
+<img loading="lazy" decoding="async" alt={`${doctor.name}`} className="w-[120px] h-[120px] rounded-full object-cover border-2 border-white shadow-sm ring-1 ring-[#E7E5E4]" data-alt="High-resolution clinical portrait of Dr Priya Sharma, an authoritative Indian female dermatologist in crisp white medical coat with stethoscope wearing subtle gold earrings and gentle approachable smile against soft architectural clinic interior" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNzU1hZdZyNI_DPkWSf7MoRRp-QH1gKiXDo2-7-FRUM7Lwn_DIucI7NhACYjTQEy4BaA3S9ZmyDaVP8UgAIWxdaNzs3-h63d3a-ImMpVUk7ebYjbuEq_dBuTOaLuVguQYCe0DrRpxJd1cjuGrrZ1R-FvB7TOHmysoo5YF2bqRmtFgJOaB1fzCCp3vQs2GrqH-ULObcTs9uPvO0w7zImVtiCUN1RNCDkHAzWhTRbG-cDlnVYElar9MF=w240"/>
 <span className="absolute bottom-1 right-1 bg-[#047857] text-white p-1 rounded-full flex items-center justify-center border-2 border-white shadow-xs" title="Board Certified &amp; Verified">
 <span className="material-symbols-outlined text-[16px] font-bold">check</span>
 </span>
@@ -93,7 +93,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 </div>
 </article>
 {/* 2. STICKY IN-PAGE TAB BAR */}
-<nav className="sticky top-16 z-40 bg-white border-b border-[#E7E5E4] -mx-1 px-4 flex items-center gap-8 shadow-xs">
+<nav className="overflow-x-auto no-scrollbar sticky top-16 z-40 bg-white border-b border-[#E7E5E4] -mx-1 px-4 flex items-center gap-8 shadow-xs">
 <Link className="py-3 font-body-strong text-body-strong text-[#C1121F] border-b-2 border-[#C1121F]" href="#overview">Overview</Link>
 <Link className="py-3 font-body-default text-body-default text-[#78716C] hover:text-[#1C1917] border-b-2 border-transparent transition duration-150" href="#services">Services</Link>
 <Link className="py-3 font-body-default text-body-default text-[#78716C] hover:text-[#1C1917] border-b-2 border-transparent transition duration-150" href="#reviews">Reviews (1,240)</Link>
@@ -370,7 +370,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 <div className="space-y-4">
 {/* Card 1 */}
 <div className="p-5 rounded-xl border border-[#E7E5E4] bg-white space-y-3">
-<div className="flex items-center justify-between">
+<div className="flex flex-wrap items-center justify-between gap-2">
 <div className="flex items-center gap-3">
 <div className="w-10 h-10 rounded-full bg-[#FAFAF9] border border-[#E7E5E4] flex items-center justify-center font-body-strong text-body-strong text-[#1C1917]">
                     AK
@@ -385,7 +385,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 <div className="font-caption text-caption text-[#78716C]">2 days ago · Clinic Visit (Indiranagar)</div>
 </div>
 </div>
-<div className="flex text-[#D97706]">
+<div className="flex shrink-0 text-[#D97706]">
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
@@ -405,7 +405,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 </div>
 {/* Card 2 */}
 <div className="p-5 rounded-xl border border-[#E7E5E4] bg-white space-y-3">
-<div className="flex items-center justify-between">
+<div className="flex flex-wrap items-center justify-between gap-2">
 <div className="flex items-center gap-3">
 <div className="w-10 h-10 rounded-full bg-[#FAFAF9] border border-[#E7E5E4] flex items-center justify-center font-body-strong text-body-strong text-[#1C1917]">
                     RV
@@ -420,7 +420,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 <div className="font-caption text-caption text-[#78716C]">1 week ago · Video Consult</div>
 </div>
 </div>
-<div className="flex text-[#D97706]">
+<div className="flex shrink-0 text-[#D97706]">
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
@@ -440,7 +440,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 </div>
 {/* Card 3 */}
 <div className="p-5 rounded-xl border border-[#E7E5E4] bg-white space-y-3">
-<div className="flex items-center justify-between">
+<div className="flex flex-wrap items-center justify-between gap-2">
 <div className="flex items-center gap-3">
 <div className="w-10 h-10 rounded-full bg-[#FAFAF9] border border-[#E7E5E4] flex items-center justify-center font-body-strong text-body-strong text-[#1C1917]">
                     SM
@@ -455,7 +455,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 <div className="font-caption text-caption text-[#78716C]">3 weeks ago · Clinic Visit (HSR Layout)</div>
 </div>
 </div>
-<div className="flex text-[#D97706]">
+<div className="flex shrink-0 text-[#D97706]">
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
@@ -475,7 +475,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 </div>
 {/* Card 4 */}
 <div className="p-5 rounded-xl border border-[#E7E5E4] bg-white space-y-3">
-<div className="flex items-center justify-between">
+<div className="flex flex-wrap items-center justify-between gap-2">
 <div className="flex items-center gap-3">
 <div className="w-10 h-10 rounded-full bg-[#FAFAF9] border border-[#E7E5E4] flex items-center justify-center font-body-strong text-body-strong text-[#1C1917]">
                     DP
@@ -490,7 +490,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 <div className="font-caption text-caption text-[#78716C]">1 month ago · Video Consult</div>
 </div>
 </div>
-<div className="flex text-[#D97706]">
+<div className="flex shrink-0 text-[#D97706]">
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
 <span className="material-symbols-outlined text-[18px] fill-icon">star</span>
@@ -574,7 +574,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 </section>
 </section>
 {/* RIGHT COLUMN: STICKY BOOKING CARD (360px fixed desktop width) */}
-<aside className="w-full lg:w-[360px] shrink-0 sticky top-24 space-y-3">
+<aside className="w-full lg:w-full lg:w-[360px] lg:shrink-0 lg:sticky lg:top-24 space-y-3">
 <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-sm space-y-5">
 {/* Mode Segmented Switcher */}
 <div className="bg-[#FAFAF9] p-1 border border-[#E7E5E4] rounded-xl grid grid-cols-2 gap-1 text-center font-caption-strong text-caption-strong">
@@ -741,7 +741,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 {/* Doctor 1 */}
 <div className="bg-white border border-[#E7E5E4] rounded-xl p-5 flex flex-col justify-between hover:border-[#78716C] transition duration-150 space-y-4">
 <div className="flex items-start gap-3">
-<img alt="Dr. Rajeshwari Iyer" className="w-12 h-12 rounded-lg object-cover border border-[#E7E5E4]" data-alt="Portrait of Dr Rajeshwari Iyer, senior South Indian female doctor in clinical attire smiling with warm approachable reassurance against neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7FM8qw0ZhbfA-GD5MVrmxIjZxDIdkG3QQTXU-11V4Ja2GLQ4dArY067QrYLhN1EeWOU08mxovBl2r9ScvNoVqD2BZ9nCFS8jCu1njGSDJxJ7UOPq_9AmC-zD9Y2HWC-PxMB1e45PtzFbY5SIaEjf9IJi84YssDvDTpX1vt0nPw2M2EBjX1J0X6U4xl2xluGYOUckvBoQbHJuUu_WX-1e8kqHMZqXNYzqsrw04-M_zLaK3Qr5kWfwC"/>
+<img loading="lazy" decoding="async" alt="Dr. Rajeshwari Iyer" className="w-12 h-12 rounded-lg object-cover border border-[#E7E5E4]" data-alt="Portrait of Dr Rajeshwari Iyer, senior South Indian female doctor in clinical attire smiling with warm approachable reassurance against neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7FM8qw0ZhbfA-GD5MVrmxIjZxDIdkG3QQTXU-11V4Ja2GLQ4dArY067QrYLhN1EeWOU08mxovBl2r9ScvNoVqD2BZ9nCFS8jCu1njGSDJxJ7UOPq_9AmC-zD9Y2HWC-PxMB1e45PtzFbY5SIaEjf9IJi84YssDvDTpX1vt0nPw2M2EBjX1J0X6U4xl2xluGYOUckvBoQbHJuUu_WX-1e8kqHMZqXNYzqsrw04-M_zLaK3Qr5kWfwC=w96"/>
 <div className="flex-1 min-w-0">
 <h3 className="font-body-strong text-body-strong text-[#1C1917] truncate">Dr. Rajeshwari Iyer</h3>
 <p className="font-caption text-caption text-[#78716C] truncate">Dermatology · 16 Yrs Exp</p>
@@ -764,7 +764,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 {/* Doctor 2 */}
 <div className="bg-white border border-[#E7E5E4] rounded-xl p-5 flex flex-col justify-between hover:border-[#78716C] transition duration-150 space-y-4">
 <div className="flex items-start gap-3">
-<img alt="Dr. Ananya Sen" className="w-12 h-12 rounded-lg object-cover border border-[#E7E5E4]" data-alt="Portrait of Dr Ananya Sen, dermatologist in clinic setting with modern diagnostic lab in background dressed in professional medical doctor attire" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUXrWuweSKXw-JeJJ5Jwy27yqb-TAIJlFh3GCXrZGSb-1BghaACOQX4vOegIf6dx5eh9VbQL5u0dnAB0a4uDjYzTc-JhNBo5L2vDtP7RbuBBMGKdTtS9DPRDSGTSXefuxy1fVwNDDCdaszahi4DOessTCzuYrSaWaV-Xnl5iBhiGrcTQgmaTMJ67FAbCqZB2Y-pO4nF5VJmjl1dNiNr1Dtgrp2WjRVXYqeZQvsk8706VwKjBn6FweG"/>
+<img loading="lazy" decoding="async" alt="Dr. Ananya Sen" className="w-12 h-12 rounded-lg object-cover border border-[#E7E5E4]" data-alt="Portrait of Dr Ananya Sen, dermatologist in clinic setting with modern diagnostic lab in background dressed in professional medical doctor attire" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUXrWuweSKXw-JeJJ5Jwy27yqb-TAIJlFh3GCXrZGSb-1BghaACOQX4vOegIf6dx5eh9VbQL5u0dnAB0a4uDjYzTc-JhNBo5L2vDtP7RbuBBMGKdTtS9DPRDSGTSXefuxy1fVwNDDCdaszahi4DOessTCzuYrSaWaV-Xnl5iBhiGrcTQgmaTMJ67FAbCqZB2Y-pO4nF5VJmjl1dNiNr1Dtgrp2WjRVXYqeZQvsk8706VwKjBn6FweG=w96"/>
 <div className="flex-1 min-w-0">
 <h3 className="font-body-strong text-body-strong text-[#1C1917] truncate">Dr. Ananya Sen</h3>
 <p className="font-caption text-caption text-[#78716C] truncate">Cosmetic Derm · 12 Yrs Exp</p>
@@ -787,7 +787,7 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 {/* Doctor 3 */}
 <div className="bg-white border border-[#E7E5E4] rounded-xl p-5 flex flex-col justify-between hover:border-[#78716C] transition duration-150 space-y-4">
 <div className="flex items-start gap-3">
-<img alt="Dr. Arvind Swaminathan" className="w-12 h-12 rounded-lg object-cover border border-[#E7E5E4]" data-alt="Portrait of Dr Arvind Swaminathan, experienced male dermatologist in navy medical scrubs with spectacles and serene confident clinical demeanor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJxzDL6aE47GAxqk0Xus65GNwnqn787Ylhf_eSllWbVzdZqtd2NbnU_wpvXweePjrE5OH2tRdj724TxqlMC7phO11SqbhzC1YQ3sASKXucRCo1k4VNFbNN4GorJGQmo8h9PQtBLDPBuvZRxpmHQF8LO4ss672-YG1QuqGc90GVgw4qSbnQzwG5A-E0N-ZpOTUGvEINWryRFCSU5v7YNBQ5hkJAFT8dfxM1xhExZ1-9kibz0Ph5NUUw"/>
+<img loading="lazy" decoding="async" alt="Dr. Arvind Swaminathan" className="w-12 h-12 rounded-lg object-cover border border-[#E7E5E4]" data-alt="Portrait of Dr Arvind Swaminathan, experienced male dermatologist in navy medical scrubs with spectacles and serene confident clinical demeanor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJxzDL6aE47GAxqk0Xus65GNwnqn787Ylhf_eSllWbVzdZqtd2NbnU_wpvXweePjrE5OH2tRdj724TxqlMC7phO11SqbhzC1YQ3sASKXucRCo1k4VNFbNN4GorJGQmo8h9PQtBLDPBuvZRxpmHQF8LO4ss672-YG1QuqGc90GVgw4qSbnQzwG5A-E0N-ZpOTUGvEINWryRFCSU5v7YNBQ5hkJAFT8dfxM1xhExZ1-9kibz0Ph5NUUw=w96"/>
 <div className="flex-1 min-w-0">
 <h3 className="font-body-strong text-body-strong text-[#1C1917] truncate">Dr. Arvind Swaminathan</h3>
 <p className="font-caption text-caption text-[#78716C] truncate">Dermatosurgeon · 21 Yrs Exp</p>
@@ -859,6 +859,18 @@ export default function DoctorDrpriyasharmaPagePage({ doctor }: { doctor: Doctor
 </div>
 </section>
 </main>
+{/* Mobile sticky action bar */}
+<div className="lg:hidden fixed bottom-16 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#E7E5E4] px-margin py-3 flex items-center gap-3">
+<div className="min-w-0">
+<p className="font-micro text-micro text-[#78716C]">Consultation fee</p>
+<p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">₹{doctor.fee}</p>
+</div>
+<Link href="/book" className="flex-1 h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-1.5">
+<span className="material-symbols-outlined text-[18px]">event_available</span>
+<span>Book Appointment</span>
+</Link>
+</div>
+<div className="h-20 lg:hidden" aria-hidden="true"></div>
 <Footer />
 
     </>

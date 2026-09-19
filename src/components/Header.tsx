@@ -50,7 +50,7 @@ export default function Header() {
   return (
     <>
       <header className="docked full-width top-0 sticky z-50 bg-surface-container-lowest border-b border-surface-variant shadow-sm">
-        <div className="w-full max-w-[1200px] mx-auto px-margin md:px-margin-desktop flex items-center justify-between gap-3 h-16">
+        <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop flex items-center justify-between gap-3 h-16">
           {/* Left: Logo & Location */}
           <div className="flex items-center space-x-6">
             <Link className="flex flex-col group whitespace-nowrap" href="/">

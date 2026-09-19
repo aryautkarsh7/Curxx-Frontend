@@ -18,7 +18,7 @@ export default async function SpecialtiesPage({ params }: { params: Promise<{ ci
     <>
       <Header />
       <main className="flex-1 bg-surface-container-lowest">
-        <div className="w-full max-w-[1200px] mx-auto px-margin-desktop py-space-2xl space-y-8">
+        <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-2xl space-y-8">
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-caption font-caption text-on-surface-variant">
             <Link className="hover:text-primary-container" href="/">Home</Link>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>

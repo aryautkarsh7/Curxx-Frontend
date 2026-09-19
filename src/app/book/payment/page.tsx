@@ -14,7 +14,7 @@ export default function BookingStep3PagePage() {
 <Header />
 <BookingProgress currentStep={3} />
 {/* MAIN TWO-COLUMN CHECKOUT CONTENT */}
-<main className="flex-1 max-w-[1200px] w-full mx-auto px-margin-desktop py-space-xl flex flex-col lg:flex-row gap-gutter-desktop items-start">
+<main className="flex-1 max-w-[1200px] w-full mx-auto px-margin sm:px-margin-desktop py-space-xl flex flex-col lg:flex-row gap-gutter-desktop items-start">
 {/* LEFT COLUMN: Payment Methods Selector (~760px flex-1) */}
 <div className="flex-1 w-full space-y-6">
 <div className="space-y-1">

@@ -10,7 +10,7 @@ export default function CurxxAiSymptomTriageStep3Of6Page() {
       
 <Header />
 {/* MAIN CANVAS */}
-<main className="flex-1 w-full max-w-[1200px] mx-auto px-margin-desktop py-space-xl flex flex-col items-center justify-start">
+<main className="flex-1 w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-xl flex flex-col items-center justify-start">
 {/* 800px CENTERED TRIAGE CONTAINER */}
 <div className="w-full max-w-[800px] bg-surface-container-lowest border border-surface-variant rounded-2xl shadow-sm flex flex-col overflow-hidden">
 {/* TOP OF CARD: Progress & Skip Bar */}

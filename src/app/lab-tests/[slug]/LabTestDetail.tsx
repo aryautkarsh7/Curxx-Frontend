@@ -53,7 +53,7 @@ export default function LabTestDetail({ pkg }: { pkg: LabPackage }) {
     <>
 <Header />
 {/* MAIN CANVAS CONTAINER */}
-<main className="w-full max-w-[1200px] mx-auto px-margin-desktop py-space-lg flex-1">
+<main className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-lg flex-1">
 {/* Breadcrumb Trail */}
 <nav aria-label="Breadcrumb" className="flex items-center space-x-2 text-caption font-caption text-outline mb-space-lg">
 <Link className="hover:text-primary transition-colors" href="/">Home</Link>
@@ -421,6 +421,17 @@ s === slot ? (
 </aside>
 </div>
 </main>
+{/* Mobile sticky action bar */}
+<div className="lg:hidden fixed bottom-16 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#E7E5E4] px-margin py-3 flex items-center gap-3">
+<div className="min-w-0">
+<p className="font-micro text-micro text-[#78716C]">{pkg.testsIncluded} tests</p>
+<p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">{formatINR(pkg.price)}</p>
+</div>
+<Link href={bookingHref} onClick={startSlotHold} className="flex-1 h-12 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-body-strong text-body-strong flex items-center justify-center gap-1.5">
+<span>Book {mode === 'home' ? 'Home Collection' : 'Lab Visit'}</span>
+</Link>
+</div>
+<div className="h-20 lg:hidden" aria-hidden="true"></div>
 <Footer />
     </>
   );

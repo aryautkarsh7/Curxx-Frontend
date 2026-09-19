@@ -12,7 +12,7 @@ export default function CurxxClinicProfileManipalHospitalPage({ facility }: { fa
       
 <Header />
 {/* ==================== MAIN WRAPPER ==================== */}
-<main className="w-full max-w-[1200px] mx-auto px-margin-desktop py-space-md">
+<main className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-md">
 {/* BREADCRUMB */}
 <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-caption font-caption text-outline mb-space-base">
 <Link href="/" className="hover:text-primary transition-colors">Home</Link>
@@ -27,7 +27,7 @@ export default function CurxxClinicProfileManipalHospitalPage({ facility }: { fa
 <section className="grid grid-cols-12 gap-3 h-[380px] rounded-2xl overflow-hidden bg-surface-container-lowest border border-[#E7E5E4] shadow-sm mb-space-base">
 {/* Left 65%: Large Hero Exterior / Lobby Photo */}
 <div className="col-span-8 relative group overflow-hidden cursor-pointer h-full">
-<img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="An expansive, architecturally sophisticated modern hospital facade and welcoming glass-enclosed reception lobby in Bangalore, bathed in bright natural daytime illumination with spotless clinical precision, subtle warm beige stone finishes, and organized medical staff movement." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_vDuj7RhVbCr8582fDhCcDxWRErgSbLlkF_PVgTF5UKL74H0xSgdseOh_hD2v6ch5HKPthWRiEV39XgSrjCQWsPOLp0SK9fsiWNRQqRVwpF4tMGddYOV8kqyBGD3YqbcGxsB6ceh76tnFFjhgJsoSiWYkU7LWC2IxFBF55DQfVLH4ypMpFWe4XxzTVXp0Oya2ep50iNoQNs2mmTpP_p87joUTfgMifhdhdy2eaVWLHuYkknbMud1_"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="An expansive, architecturally sophisticated modern hospital facade and welcoming glass-enclosed reception lobby in Bangalore, bathed in bright natural daytime illumination with spotless clinical precision, subtle warm beige stone finishes, and organized medical staff movement." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_vDuj7RhVbCr8582fDhCcDxWRErgSbLlkF_PVgTF5UKL74H0xSgdseOh_hD2v6ch5HKPthWRiEV39XgSrjCQWsPOLp0SK9fsiWNRQqRVwpF4tMGddYOV8kqyBGD3YqbcGxsB6ceh76tnFFjhgJsoSiWYkU7LWC2IxFBF55DQfVLH4ypMpFWe4XxzTVXp0Oya2ep50iNoQNs2mmTpP_p87joUTfgMifhdhdy2eaVWLHuYkknbMud1_=w800"/>
 <div className="absolute bottom-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[#E7E5E4] flex items-center gap-2">
 <span className="material-symbols-outlined text-primary text-[18px]" data-icon="verified">verified</span>
 <span className="font-caption-strong text-caption-strong text-on-surface">Main Campus &amp; Quaternary Facility</span>
@@ -37,16 +37,16 @@ export default function CurxxClinicProfileManipalHospitalPage({ facility }: { fa
 <div className="col-span-4 grid grid-rows-2 gap-3 h-full">
 {/* Top Interior Photo */}
 <div className="relative overflow-hidden cursor-pointer rounded-lg h-full">
-<img className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" data-alt="A pristine high-tech modern hospital surgical operating room interior with robotic surgical arms, sterile surgical lighting, clean stainless steel carts, and precision clinical monitors, styled in modern medical minimalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-yeCH51N12rpPo_7G6QMICKO9iJHLhO5ZRVk0lmOrt1YeQupaCNjnwLZcuapTVpibWhJUa2w4qzgz6nsS7bzPCsi-cJCsHMuJgn9za5FoR6BkS-4VlmUuxK-VN5DV6S06-RIgtkMLdirPtkfQ0XvkDLMgcO9dTyD2be344CRi2mUpU4g4k90PyNQfxT88gJEi81dBS6rG2cEYX0ev9u64qiJf1_g_v1DONcbk2fXWlpPRfU0Co2WA"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" data-alt="A pristine high-tech modern hospital surgical operating room interior with robotic surgical arms, sterile surgical lighting, clean stainless steel carts, and precision clinical monitors, styled in modern medical minimalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-yeCH51N12rpPo_7G6QMICKO9iJHLhO5ZRVk0lmOrt1YeQupaCNjnwLZcuapTVpibWhJUa2w4qzgz6nsS7bzPCsi-cJCsHMuJgn9za5FoR6BkS-4VlmUuxK-VN5DV6S06-RIgtkMLdirPtkfQ0XvkDLMgcO9dTyD2be344CRi2mUpU4g4k90PyNQfxT88gJEi81dBS6rG2cEYX0ev9u64qiJf1_g_v1DONcbk2fXWlpPRfU0Co2WA=w800"/>
 </div>
 {/* Bottom Row split into two thumbs */}
 <div className="grid grid-cols-2 gap-3 h-full">
 <div className="relative overflow-hidden cursor-pointer rounded-lg h-full">
-<img className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" data-alt="A serene private inpatient hospital suite with ergonomic adjustable medical bed, comfortable visitor couch, warm clinical lighting, and large clean windows looking out onto city greenery." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfzKL6Q8O6ls-Ky7XuL_bnIIA5GQeTgMBZ6efqhoQCZCSDTa8B9SP7DEsEoiCiBEFszl8dzPNQFyaiZupPYWeHa_NDF3qmu_-IV3N_-Q0U87clhzPXzPwWZRBiiM73iYn-_a84qKC9dsIttg9Ue5G276FHiHEslz-BedoDX0WQ00zXMz6di3XgMyG7vg1GkV97vkkJxTGhLsI5D72Wha3x0ftmdGEu_cx-5ZVkM03ZrbMtJ188F5dS"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" data-alt="A serene private inpatient hospital suite with ergonomic adjustable medical bed, comfortable visitor couch, warm clinical lighting, and large clean windows looking out onto city greenery." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfzKL6Q8O6ls-Ky7XuL_bnIIA5GQeTgMBZ6efqhoQCZCSDTa8B9SP7DEsEoiCiBEFszl8dzPNQFyaiZupPYWeHa_NDF3qmu_-IV3N_-Q0U87clhzPXzPwWZRBiiM73iYn-_a84qKC9dsIttg9Ue5G276FHiHEslz-BedoDX0WQ00zXMz6di3XgMyG7vg1GkV97vkkJxTGhLsI5D72Wha3x0ftmdGEu_cx-5ZVkM03ZrbMtJ188F5dS=w800"/>
 </div>
 {/* Last thumb with overlay badge */}
 <div className="relative overflow-hidden cursor-pointer rounded-lg h-full group">
-<img className="w-full h-full object-cover" data-alt="An advanced 24x7 hospital digital diagnostic laboratory and radiology suite equipped with state of the art imaging systems, high-key clean medical lighting, and disciplined clinical aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5maQC4_2pVFYelgad4s_4Yd5Yh052lwER8v8BhElSpiINqnYdFEu9HY71M4Y-QWOnU8Ivvn04taVPhGkc1wzu80_XNMPFcvs0mvI_u--GQI6led4Io_-0nHRQgi4h1XCrwl0kIwrSLibs4p7Pg7W-ZZ5HIXDXAtMAY_a2tZhV9G9VYXzvixGRTXqEIYJWwTq085xj25Z4RY98ipBlypQOsv42-UMWPaR-dMsvB7Hmc9m6WwONy5C5"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" data-alt="An advanced 24x7 hospital digital diagnostic laboratory and radiology suite equipped with state of the art imaging systems, high-key clean medical lighting, and disciplined clinical aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5maQC4_2pVFYelgad4s_4Yd5Yh052lwER8v8BhElSpiINqnYdFEu9HY71M4Y-QWOnU8Ivvn04taVPhGkc1wzu80_XNMPFcvs0mvI_u--GQI6led4Io_-0nHRQgi4h1XCrwl0kIwrSLibs4p7Pg7W-ZZ5HIXDXAtMAY_a2tZhV9G9VYXzvixGRTXqEIYJWwTq085xj25Z4RY98ipBlypQOsv42-UMWPaR-dMsvB7Hmc9m6WwONy5C5=w800"/>
 <div className="absolute inset-0 bg-on-surface/60 group-hover:bg-on-surface/70 transition-colors flex flex-col items-center justify-center text-center p-2 text-white">
 <span className="material-symbols-outlined text-[24px] mb-0.5" data-icon="photo_library">photo_library</span>
 <span className="font-caption-strong text-caption-strong tracking-wide">+8 photos</span>
@@ -124,7 +124,7 @@ export default function CurxxClinicProfileManipalHospitalPage({ facility }: { fa
 {/* ==================== LEFT COLUMN: MAIN CONTENT (~65%) ==================== */}
 <div className="col-span-12 lg:col-span-8 space-y-space-xl">
 {/* Sticky Sub-Navigation Tab Bar */}
-<div className="sticky top-16 z-30 bg-surface/95 backdrop-blur-md border-b border-[#E7E5E4] py-2 flex items-center gap-6">
+<div className="overflow-x-auto no-scrollbar whitespace-nowrap sticky top-16 z-30 bg-surface/95 backdrop-blur-md border-b border-[#E7E5E4] py-2 flex items-center gap-6">
 <button className="text-primary font-body-strong text-body-strong border-b-2 border-primary pb-2 flex items-center gap-1.5">
 <span>Overview</span>
 </button>
@@ -284,7 +284,7 @@ export default function CurxxClinicProfileManipalHospitalPage({ facility }: { fa
 <div className="space-y-3">
 <div className="flex items-start gap-3">
 <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-surface-container border border-surface-variant">
-<img className="w-full h-full object-cover" data-alt="A portrait of an experienced Indian male orthopedic surgeon with salt-and-pepper hair in clinical doctor coat against a clean light clinical background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEIEsK1Vv60oiBgjAKrK5fZ_w1gqWI4MlDx3UnXqpsoQx052dJvQQFQ6jVRM6gOFxQuMb6GYMv8Z20UFQxKfHT3hlf0kJSjiRQm9EANcRK_Ih4aHcSUouo-OXf_Szdoq-U75L5gipsEvQeMgV214RHZhMYM3H2w9TSZ70nUP1OvmW_5CAoGPpXeHhkQqUTSIcfxfV85b5QncU99hHbCJIJTv2AWfOhcBNve2KR6ZxrUJqeJU-TzwzR"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" data-alt="A portrait of an experienced Indian male orthopedic surgeon with salt-and-pepper hair in clinical doctor coat against a clean light clinical background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEIEsK1Vv60oiBgjAKrK5fZ_w1gqWI4MlDx3UnXqpsoQx052dJvQQFQ6jVRM6gOFxQuMb6GYMv8Z20UFQxKfHT3hlf0kJSjiRQm9EANcRK_Ih4aHcSUouo-OXf_Szdoq-U75L5gipsEvQeMgV214RHZhMYM3H2w9TSZ70nUP1OvmW_5CAoGPpXeHhkQqUTSIcfxfV85b5QncU99hHbCJIJTv2AWfOhcBNve2KR6ZxrUJqeJU-TzwzR=w800"/>
 </div>
 <div>
 <div className="flex items-center gap-1">
@@ -321,7 +321,7 @@ export default function CurxxClinicProfileManipalHospitalPage({ facility }: { fa
 <div className="space-y-3">
 <div className="flex items-start gap-3">
 <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-surface-container border border-surface-variant">
-<img className="w-full h-full object-cover" data-alt="A portrait of a confident female Indian consultant dermatologist with glasses wearing a white medical lab coat in bright clean clinical room lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWU_CrE6HVOe1svsz9NnSlkncM_3ZfQTfrzuSSWzOqcbmN1ditjtfUBECAup4phbD7m-kUJe1Mc-f7NISqZlwhhG9EGWurMrG5Ul8OgS-3eZTUpDommgwyx4dnHI78F5R14dybk7esH0oX7AJzf9eZ54w6eb_DxtCM24RPewa7PnxDcl0BFyaY3O2ljmUfgzfhiLM_ZNGxaXKEJCFhPEwbboubM143enbWf33cSyWki47QZw6mCoXI"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" data-alt="A portrait of a confident female Indian consultant dermatologist with glasses wearing a white medical lab coat in bright clean clinical room lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWU_CrE6HVOe1svsz9NnSlkncM_3ZfQTfrzuSSWzOqcbmN1ditjtfUBECAup4phbD7m-kUJe1Mc-f7NISqZlwhhG9EGWurMrG5Ul8OgS-3eZTUpDommgwyx4dnHI78F5R14dybk7esH0oX7AJzf9eZ54w6eb_DxtCM24RPewa7PnxDcl0BFyaY3O2ljmUfgzfhiLM_ZNGxaXKEJCFhPEwbboubM143enbWf33cSyWki47QZw6mCoXI=w800"/>
 </div>
 <div>
 <h4 className="font-headline-h3 text-headline-h3 text-on-surface leading-tight">Dr. Rajeshwari Iyer</h4>
@@ -356,7 +356,7 @@ export default function CurxxClinicProfileManipalHospitalPage({ facility }: { fa
 <div className="space-y-3">
 <div className="flex items-start gap-3">
 <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-surface-container border border-surface-variant">
-<img className="w-full h-full object-cover" data-alt="A portrait of a senior Indian male cardiologist with stethoscope and formal clinical attire in modern high-end hospital clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6gb1vMdruqnzBn49-DMEGoNdG18aZpek5RgMInE-QwxnfqqjOEkSaOIa8jeL8oIqNcq-d22SiRsB-WNE4c8NCSSjmfnBmWWmWAUfqRdiV_V7H2rCxkRrY7TNBrpk2H-Cb0b_9KhhFqwRi101Q2YRra65TnYJG58d9pQQ9mzryviIsM4u4WmaeF2hIZ8dIpjaiw6npUw96g0cqAj34Ay2Xt3xEnKarkisuOXroc6XPHfKBZQMVTGjC"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" data-alt="A portrait of a senior Indian male cardiologist with stethoscope and formal clinical attire in modern high-end hospital clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6gb1vMdruqnzBn49-DMEGoNdG18aZpek5RgMInE-QwxnfqqjOEkSaOIa8jeL8oIqNcq-d22SiRsB-WNE4c8NCSSjmfnBmWWmWAUfqRdiV_V7H2rCxkRrY7TNBrpk2H-Cb0b_9KhhFqwRi101Q2YRra65TnYJG58d9pQQ9mzryviIsM4u4WmaeF2hIZ8dIpjaiw6npUw96g0cqAj34Ay2Xt3xEnKarkisuOXroc6XPHfKBZQMVTGjC=w800"/>
 </div>
 <div>
 <h4 className="font-headline-h3 text-headline-h3 text-on-surface leading-tight">Dr. Sudhir Shenoy</h4>

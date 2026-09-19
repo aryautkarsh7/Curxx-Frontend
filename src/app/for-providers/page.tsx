@@ -12,7 +12,7 @@ export default function CurxxProviderMarketingLandingForDoctorsClinicsPage() {
 <main>
 {/* 2. HERO SECTION */}
 <section className="w-full bg-[#FFFFFF] border-b border-[#E7E5E4] pt-12 pb-16">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 {/* Left Column (55% -> 7 cols) */}
 <div className="lg:col-span-7 pr-0 lg:pr-4">
@@ -197,7 +197,7 @@ export default function CurxxProviderMarketingLandingForDoctorsClinicsPage() {
 </section>
 {/* 3. STATS BAND */}
 <section className="w-full bg-[#FAFAF9] border-b border-[#E7E5E4] py-8">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 <div className="text-center md:text-left border-r last:border-r-0 border-[#E7E5E4] pr-4">
 <p className="text-display font-display text-[32px] font-bold text-primary tracking-tight">2.4M</p>
@@ -224,7 +224,7 @@ export default function CurxxProviderMarketingLandingForDoctorsClinicsPage() {
 </section>
 {/* 4. FEATURES (3 Alternating 2-Column Sections) */}
 <section className="w-full py-16 bg-[#FFFFFF]" id="features">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-20">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-20">
 {/* Section 1: Practice Management */}
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center" id="why-curxx">
 {/* Left: Prescription & Calendar Mockup */}
@@ -461,7 +461,7 @@ export default function CurxxProviderMarketingLandingForDoctorsClinicsPage() {
 </section>
 {/* 5. COMPARISON TABLE (Curxx vs Traditional Practice) */}
 <section className="w-full py-16 bg-[#FAFAF9] border-t border-b border-[#E7E5E4]" id="comparison">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 {/* Header */}
 <div className="text-center max-w-2xl mx-auto mb-12">
 <span className="text-micro font-micro font-semibold text-primary uppercase tracking-wider">WHY CURXX</span>
@@ -605,7 +605,7 @@ export default function CurxxProviderMarketingLandingForDoctorsClinicsPage() {
 </section>
 {/* 6. PRICING SECTION */}
 <section className="w-full py-16 bg-[#FFFFFF]" id="pricing">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 {/* Header */}
 <div className="text-center max-w-2xl mx-auto mb-10">
 <span className="text-micro font-micro font-semibold text-primary uppercase tracking-wider">TRANSPARENT PLANS</span>
@@ -756,7 +756,7 @@ export default function CurxxProviderMarketingLandingForDoctorsClinicsPage() {
 </section>
 {/* 7. TESTIMONIALS */}
 <section className="w-full py-16 bg-[#FAFAF9] border-t border-b border-[#E7E5E4]" id="testimonials">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 {/* Header */}
 <div className="text-center max-w-2xl mx-auto mb-12">
 <span className="text-micro font-micro font-semibold text-primary uppercase tracking-wider">PRACTICE STORIES</span>
@@ -837,7 +837,7 @@ export default function CurxxProviderMarketingLandingForDoctorsClinicsPage() {
 </section>
 {/* 8. FAQ ACCORDION */}
 <section className="w-full py-16 bg-[#FFFFFF]" id="faq">
-<div className="w-full max-w-[800px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[800px] mx-auto px-margin sm:px-margin-desktop">
 {/* Header */}
 <div className="text-center mb-10">
 <span className="text-micro font-micro font-semibold text-primary uppercase tracking-wider">CLEAR ANSWERS</span>
@@ -905,7 +905,7 @@ export default function CurxxProviderMarketingLandingForDoctorsClinicsPage() {
 </section>
 {/* 9. FINAL CALL-TO-ACTION BAND */}
 <section className="w-full bg-[#8E0E17] text-white py-16">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop text-center">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop text-center">
 <span className="inline-block text-micro font-micro font-semibold uppercase tracking-widest text-[#FFDAD6] bg-black/20 px-3 py-1 rounded-full mb-4">
           START YOUR MODERN PRACTICE TODAY
         </span>

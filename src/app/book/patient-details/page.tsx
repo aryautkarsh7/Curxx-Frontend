@@ -210,7 +210,7 @@ export default function BookingStep2PagePage() {
 </div>
 {/* Doctor Profile Snippet */}
 <div className="flex items-start gap-3.5">
-<img className="w-12 h-12 rounded-lg object-cover border border-[#E7E5E4]" data-alt="A portrait of Dr Priya Sharma in a crisp white medical coat with stethoscope in a clean contemporary hospital lighting with sterile minimalist aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAigIdLYBujxHTbbJIl5w0GH5Ni3HcmcTqa1peb8_d9o96htc_jFoWJ7PnsRN0lEOEtOvfxKHeM9HO3kVii6TkKbgW2MOJJQPRii49x37h3AcIc5lZyUP1eqzNRW8whwILZAFZ2XUVeI5YIQpONq8gg7kJZzyGQAtytRM2T55xMGMKtS0zJbaFQhynSUYO9Q9IRdsBi-u2UcNUoPY3V-Ws0toMUVfoFY59I2S1orpbEreErbfYyBQ0b"/>
+<img loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-[#E7E5E4]" data-alt="A portrait of Dr Priya Sharma in a crisp white medical coat with stethoscope in a clean contemporary hospital lighting with sterile minimalist aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAigIdLYBujxHTbbJIl5w0GH5Ni3HcmcTqa1peb8_d9o96htc_jFoWJ7PnsRN0lEOEtOvfxKHeM9HO3kVii6TkKbgW2MOJJQPRii49x37h3AcIc5lZyUP1eqzNRW8whwILZAFZ2XUVeI5YIQpONq8gg7kJZzyGQAtytRM2T55xMGMKtS0zJbaFQhynSUYO9Q9IRdsBi-u2UcNUoPY3V-Ws0toMUVfoFY59I2S1orpbEreErbfYyBQ0b=w96"/>
 <div>
 <div className="flex items-center gap-1.5">
 <span className="font-body-strong text-body-strong text-[#1C1917]">Dr. Priya Sharma</span>

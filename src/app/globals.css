@@ -149,3 +149,17 @@
     animation: pulse-ring 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
+
+/* Reserve each icon's box before the Material Symbols font arrives, so nothing shifts on swap. */
+.material-symbols-outlined {
+  display: inline-block;
+  width: 1em;
+  min-width: 1em;
+  line-height: 1;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Horizontal chip/tab rails: scrollable on phones without a visible scrollbar. */
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

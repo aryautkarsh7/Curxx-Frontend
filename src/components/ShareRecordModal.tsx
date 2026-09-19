@@ -1,4 +1,5 @@
 'use client';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 const DURATION_ON = 'h-9 rounded-lg border-2 border-primary bg-[#FFF1F2] text-caption-strong font-caption-strong text-primary shadow-xs';
@@ -23,13 +24,13 @@ export default function ShareRecordModal({ open, recordName, onClose, onShared }
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
-  if (!open) return null;
-
   return (
-    <>
-<div className="fixed inset-0 bg-[#1C1917]/40 z-[74] backdrop-blur-[2px] transition-opacity"></div>
+    <AnimatePresence>
+      {open && (
+        <>
+<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="fixed inset-0 bg-[#1C1917]/40 z-[74] backdrop-blur-[2px] transition-opacity"></motion.div>
 <div onClick={(e) => { if (!(e.target as HTMLElement).closest('[data-panel]')) onClose(); }} className="fixed inset-0 z-[75] flex items-center justify-center p-4 overflow-y-auto">
-<div data-panel role="dialog" aria-modal="true" aria-labelledby="share-record-title" className="relative w-full max-w-[560px] bg-surface-container-lowest rounded-2xl border border-surface-variant shadow-[0_8px_30px_rgb(0,0,0,0.12)] my-auto transition-all transform animate-in fade-in zoom-in duration-200">
+<motion.div initial={{ opacity: 0, y: 32, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20 }} transition={{ type: 'spring', stiffness: 380, damping: 32 }} data-panel role="dialog" aria-modal="true" aria-labelledby="share-record-title" className="relative w-full max-w-[560px] bg-surface-container-lowest rounded-2xl border border-surface-variant shadow-[0_8px_30px_rgb(0,0,0,0.12)] my-auto transition-all transform animate-in fade-in zoom-in duration-200">
 {/* Modal Header */}
 <div className="px-6 pt-6 pb-4 border-b border-surface-variant flex items-start justify-between">
 <div>
@@ -201,8 +202,10 @@ export default function ShareRecordModal({ open, recordName, onClose, onShared }
 <span>Share Securely →</span>
 </button>
 </div>
+</motion.div>
 </div>
-</div>
-    </>
+        </>
+      )}
+    </AnimatePresence>
   );
 }

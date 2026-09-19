@@ -15,7 +15,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 <Header />
 {/* Breadcrumb Container */}
 <div className="w-full border-b border-surface-variant bg-surface-container-lowest">
-<div className="max-w-[1200px] mx-auto px-margin-desktop py-3">
+<div className="max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-3">
 <nav aria-label="Breadcrumb" className="flex items-center gap-2 font-caption text-caption text-outline flex-wrap">
 <Link href="/" className="hover:text-primary transition-colors">Home</Link>
 <span className="material-symbols-outlined" style={{"fontSize":"14px"}}>chevron_right</span>
@@ -28,7 +28,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 </div>
 </div>
 {/* Primary Article Layout (Centered 1200px container) */}
-<main className="max-w-[1200px] mx-auto px-margin-desktop py-space-xl">
+<main className="max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-xl">
 <div className="flex flex-col lg:flex-row gap-12 items-start justify-between">
 {/* Main Reading Column (720px width) */}
 <article className="w-full lg:w-[720px] max-w-[720px] flex-shrink-0">
@@ -49,7 +49,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 <div className="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest mb-8">
 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 <div className="flex items-center gap-3.5">
-<img alt="Dr. Ananya Sen, MD Cardiology" className="w-12 h-12 rounded-full object-cover border border-surface-variant shadow-sm" data-alt="A distinguished female Indian cardiologist in her late thirties wearing a crisp white medical coat and clinical stethoscope, looking warm and authoritative, photographed under clean balanced hospital studio lighting against a minimal warm beige backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD685dpETTDmDyVejhTZreabsYGiLlqhJEkwg0esbuFldbU4K3p354SZvk3jlLC39pLTLaFZlH_vU01TR5IoX_9v0lGFDyxYCzwAOMAvU_q_q1Y1vUkFrazgLfQsH3RjGBAAzKK5lF1ZSSM04y1r8IRbp6Z-7282kT2jefg3bk2z3AW5StqwdmWgHeo7QMRCuY-61hZ7f2c1UozbKB_4P_0MlCocRXocLVVWVL8PuNWe61PLk2YYFiL"/>
+<img loading="lazy" decoding="async" alt="Dr. Ananya Sen, MD Cardiology" className="w-12 h-12 rounded-full object-cover border border-surface-variant shadow-sm" data-alt="A distinguished female Indian cardiologist in her late thirties wearing a crisp white medical coat and clinical stethoscope, looking warm and authoritative, photographed under clean balanced hospital studio lighting against a minimal warm beige backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD685dpETTDmDyVejhTZreabsYGiLlqhJEkwg0esbuFldbU4K3p354SZvk3jlLC39pLTLaFZlH_vU01TR5IoX_9v0lGFDyxYCzwAOMAvU_q_q1Y1vUkFrazgLfQsH3RjGBAAzKK5lF1ZSSM04y1r8IRbp6Z-7282kT2jefg3bk2z3AW5StqwdmWgHeo7QMRCuY-61hZ7f2c1UozbKB_4P_0MlCocRXocLVVWVL8PuNWe61PLk2YYFiL=w96"/>
 <div>
 <div className="flex items-center gap-2">
 <a className="font-body-strong text-body-strong text-on-surface hover:text-primary transition-colors" href="#author-bio">Dr. Ananya Sen, MD</a>
@@ -88,7 +88,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 {/* Hero Media Element */}
 <figure className="mb-8">
 <div className="aspect-video w-full rounded-xl overflow-hidden border border-surface-variant bg-surface-container-high relative">
-<img alt="Cardiology diagnostic equipment and arterial monitoring station" className="w-full h-full object-cover" data-alt="A modern cardiovascular diagnostic workstation in a premier cardiology lab in Bangalore, showing a high-precision stethoscope resting adjacent to an advanced digital electrocardiogram monitor displaying real-time rhythm strips, illuminated by soft clinical overhead lights with clean minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-jM-L7ZPNZAgiiAG5hJXo1L6LQxirV6J6SGxGx0AFOUHDj8Qp9L1qO9Mf7HL-gIfJ4pRz6lkcx0HQY1h0HDLtszxqVKwrbBNCcyl2OOhSx7XsRoxxbJDgOX5hEA-rM5sTcfhcYQdBKFUuZnMApJ7cHGu6Kuf0DI8yoiHk-XW6lF8KyvE0yAx2YHISM7K0ntmVGMI3tQ51yF9SLF8bRIsmnNKcZlgMh0knpLAUG-uD9NXKQn1Hhz8r"/>
+<img loading="lazy" decoding="async" alt="Cardiology diagnostic equipment and arterial monitoring station" className="w-full h-full object-cover" data-alt="A modern cardiovascular diagnostic workstation in a premier cardiology lab in Bangalore, showing a high-precision stethoscope resting adjacent to an advanced digital electrocardiogram monitor displaying real-time rhythm strips, illuminated by soft clinical overhead lights with clean minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-jM-L7ZPNZAgiiAG5hJXo1L6LQxirV6J6SGxGx0AFOUHDj8Qp9L1qO9Mf7HL-gIfJ4pRz6lkcx0HQY1h0HDLtszxqVKwrbBNCcyl2OOhSx7XsRoxxbJDgOX5hEA-rM5sTcfhcYQdBKFUuZnMApJ7cHGu6Kuf0DI8yoiHk-XW6lF8KyvE0yAx2YHISM7K0ntmVGMI3tQ51yF9SLF8bRIsmnNKcZlgMh0knpLAUG-uD9NXKQn1Hhz8r=w800"/>
 </div>
 <figcaption className="mt-2 font-caption text-caption text-outline flex items-center justify-between">
 <span>Early subclinical atherosclerosis can begin up to a decade before symptoms manifest.</span>
@@ -183,7 +183,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 {/* Author Bio Card */}
 <div className="mt-10 p-6 rounded-xl border border-surface-variant bg-surface-container-lowest" id="author-bio">
 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-<img alt="Dr. Ananya Sen" className="w-16 h-16 rounded-full object-cover border border-surface-variant" data-alt="Close-up professional portrait of Dr. Ananya Sen, MD, DM Cardiology, Fortis Hospital Bangalore, dressed in clinical medical attire, standing against a neutral warm grey backdrop in a hospital setting with natural soft key lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAswnRrVaonf4H40reXJmYX0Z-hFGlQ93DbAbEQhQXaxLN9cg2b-MGYU6099JYM9aimLImu6uSpipoCBjJg5rrQ7THHTVxy3r0Vb60vBPDIyZ95EV8dm_2kQyaCNONsUDZDXpfc8D7r0cbE0RIXwK8MtkzxZdQhFMjgMyHmHNbYoFxMFwlyOni2hnjmefYGnd6y2q9v8Mvj8o1ZJGxMMLCiIiDk_yXayyjwtg8V4B1bxF2BA3_T95hg"/>
+<img loading="lazy" decoding="async" alt="Dr. Ananya Sen" className="w-16 h-16 rounded-full object-cover border border-surface-variant" data-alt="Close-up professional portrait of Dr. Ananya Sen, MD, DM Cardiology, Fortis Hospital Bangalore, dressed in clinical medical attire, standing against a neutral warm grey backdrop in a hospital setting with natural soft key lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAswnRrVaonf4H40reXJmYX0Z-hFGlQ93DbAbEQhQXaxLN9cg2b-MGYU6099JYM9aimLImu6uSpipoCBjJg5rrQ7THHTVxy3r0Vb60vBPDIyZ95EV8dm_2kQyaCNONsUDZDXpfc8D7r0cbE0RIXwK8MtkzxZdQhFMjgMyHmHNbYoFxMFwlyOni2hnjmefYGnd6y2q9v8Mvj8o1ZJGxMMLCiIiDk_yXayyjwtg8V4B1bxF2BA3_T95hg=w128"/>
 <div className="flex-1">
 <div className="flex items-center gap-2 flex-wrap">
 <h3 className="font-headline-h3 text-headline-h3 text-on-surface">Dr. Ananya Sen</h3>
@@ -234,7 +234,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 {/* Compact Teleconsult CTA Card */}
 <div className="p-4 rounded-xl border border-[#F9C6C9] bg-[#FFF1F2]">
 <div className="flex items-center gap-3 mb-3">
-<img alt="Dr. Sen" className="w-10 h-10 rounded-full object-cover border border-surface-variant" data-alt="Small thumbnail avatar of Dr. Ananya Sen in a white clinical doctor coat against clean white medical backdrop, crisp clarity and warm demeanor." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyJZa3Zj3PaDCgISpD9rcJJj2tUtd7HzmJriMQRQNASJh_IrlYfrEuyJ2_0X9Os8n8888HuDE-J9VAiRuH4HqDIozXHGZHMubnH05k_F7PLawv1cwLUxZjMi1BfpRD4W805b1AqbCsbgNNf7UxrBC0KfpVMaMlRVEaqj5ghPqm22pd34fVAymxKZDn6XXXzG7QRm3Wzy_YarYzy_n_dry2K_0sYTPqXcngXPbz0MtgktxuZlzHNS7K"/>
+<img loading="lazy" decoding="async" alt="Dr. Sen" className="w-10 h-10 rounded-full object-cover border border-surface-variant" data-alt="Small thumbnail avatar of Dr. Ananya Sen in a white clinical doctor coat against clean white medical backdrop, crisp clarity and warm demeanor." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyJZa3Zj3PaDCgISpD9rcJJj2tUtd7HzmJriMQRQNASJh_IrlYfrEuyJ2_0X9Os8n8888HuDE-J9VAiRuH4HqDIozXHGZHMubnH05k_F7PLawv1cwLUxZjMi1BfpRD4W805b1AqbCsbgNNf7UxrBC0KfpVMaMlRVEaqj5ghPqm22pd34fVAymxKZDn6XXXzG7QRm3Wzy_YarYzy_n_dry2K_0sYTPqXcngXPbz0MtgktxuZlzHNS7K=w80"/>
 <div>
 <p className="font-caption-strong text-caption-strong text-on-surface">Have heart concerns?</p>
 <p className="font-micro text-micro text-outline">Verified Fortis Cardiologist</p>
@@ -294,7 +294,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 </main>
 {/* Below The Article Section (Full Width 1200px) */}
 <section className="border-t border-surface-variant bg-surface-container-low py-space-2xl">
-<div className="max-w-[1200px] mx-auto px-margin-desktop space-y-12">
+<div className="max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-12">
 {/* Related Clinical Articles */}
 <div>
 <div className="flex items-center justify-between mb-6">
@@ -311,7 +311,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 {/* Article Card 1 */}
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col hover:border-outline-variant transition duration-150">
 <div className="h-40 bg-surface-container overflow-hidden">
-<img alt="Diabetes and Heart Health" className="w-full h-full object-cover" data-alt="A clinical photograph showing a digital blood glucose monitor alongside a heart rate smartwatch and clinical notes on a spotless white wooden table, illuminated in bright crisp morning light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIqYnZen3G-UNzadGLERsba8BhWDaX2kJHPvIKdX0vpzZ4LvZpSATcFWCagz4UkOZgxGw_8tIpmLInd4WHooVcMFkvNwwA4cCvOlHwS4ogKmWKGUXDpR1Tl9W5OijbHlKplhoAQRnyIdCQL1v8tw5uuiNeznl4blhylaa8LOP62X6bZRGDMjqMsCjLmP8TCnXqXyT8Tou2YWehTQHe2uo7U8-chrtxDCddFrUdOilD-bTbutyOHdtw"/>
+<img loading="lazy" decoding="async" alt="Diabetes and Heart Health" className="w-full h-full object-cover" data-alt="A clinical photograph showing a digital blood glucose monitor alongside a heart rate smartwatch and clinical notes on a spotless white wooden table, illuminated in bright crisp morning light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIqYnZen3G-UNzadGLERsba8BhWDaX2kJHPvIKdX0vpzZ4LvZpSATcFWCagz4UkOZgxGw_8tIpmLInd4WHooVcMFkvNwwA4cCvOlHwS4ogKmWKGUXDpR1Tl9W5OijbHlKplhoAQRnyIdCQL1v8tw5uuiNeznl4blhylaa8LOP62X6bZRGDMjqMsCjLmP8TCnXqXyT8Tou2YWehTQHe2uo7U8-chrtxDCddFrUdOilD-bTbutyOHdtw=w800"/>
 </div>
 <div className="p-4 flex-1 flex flex-col justify-between">
 <div>
@@ -332,7 +332,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 {/* Article Card 2 */}
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col hover:border-outline-variant transition duration-150">
 <div className="h-40 bg-surface-container overflow-hidden">
-<img alt="Hypertension Management" className="w-full h-full object-cover" data-alt="A modern medical blood pressure monitor cuff resting on a wooden clinic table next to a water bottle and lifestyle journal, bathed in soft, natural daylight with warm neutral tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArrdKZdj3Q3Xg-L6uHgmVnn3rmf8-CS_6_ast0X9e0q863YUmcGNvTTzYXa2jx4KtULalwp74q6afHWRji4mDRyG1akYaTizYqHXLX1Y6KFOOa9A0LQIVf-8Kcan74nFQGpBFz43-Z3keWR6dYz-iliPt8NBqih3wxHyReRf8o2XYez-0V2rw73fhxCwylpkZUGcifYp4lRj9wfvgjEtkwzhLV31qoEcWbZHNU_Y6NLFeRaG2CE_54"/>
+<img loading="lazy" decoding="async" alt="Hypertension Management" className="w-full h-full object-cover" data-alt="A modern medical blood pressure monitor cuff resting on a wooden clinic table next to a water bottle and lifestyle journal, bathed in soft, natural daylight with warm neutral tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArrdKZdj3Q3Xg-L6uHgmVnn3rmf8-CS_6_ast0X9e0q863YUmcGNvTTzYXa2jx4KtULalwp74q6afHWRji4mDRyG1akYaTizYqHXLX1Y6KFOOa9A0LQIVf-8Kcan74nFQGpBFz43-Z3keWR6dYz-iliPt8NBqih3wxHyReRf8o2XYez-0V2rw73fhxCwylpkZUGcifYp4lRj9wfvgjEtkwzhLV31qoEcWbZHNU_Y6NLFeRaG2CE_54=w800"/>
 </div>
 <div className="p-4 flex-1 flex flex-col justify-between">
 <div>
@@ -353,7 +353,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 {/* Article Card 3 */}
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col hover:border-outline-variant transition duration-150">
 <div className="h-40 bg-surface-container overflow-hidden">
-<img alt="Decoding Cholesterol" className="w-full h-full object-cover" data-alt="Laboratory technician in blue nitrile gloves holding a medical vacuum vial containing blood plasma for advanced lipid particle analysis in a state-of-the-art diagnostics facility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB27J5DMDFEEZkXadTrO2XgjjnZo0_fT_ezSsl-7RqcrC0kEmrbLZlcWq75q5pJO_BMTXsqbrQukMNB9W7xFQS-3sKXVD06nJuE4MJTTENDM2KZTghNrkgUsRrhPacPXMOG0UKnc9lclUG_yyE-jIoJYtVevvQPsOr3USdiYkjWF34L3744fV8bNq_Anzs6ALcBVTYNYtsLP9f7saDQe2FZA3HuZ7x5aqI7dhMUB7g0uxjhUWA9euSC"/>
+<img loading="lazy" decoding="async" alt="Decoding Cholesterol" className="w-full h-full object-cover" data-alt="Laboratory technician in blue nitrile gloves holding a medical vacuum vial containing blood plasma for advanced lipid particle analysis in a state-of-the-art diagnostics facility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB27J5DMDFEEZkXadTrO2XgjjnZo0_fT_ezSsl-7RqcrC0kEmrbLZlcWq75q5pJO_BMTXsqbrQukMNB9W7xFQS-3sKXVD06nJuE4MJTTENDM2KZTghNrkgUsRrhPacPXMOG0UKnc9lclUG_yyE-jIoJYtVevvQPsOr3USdiYkjWF34L3744fV8bNq_Anzs6ALcBVTYNYtsLP9f7saDQe2FZA3HuZ7x5aqI7dhMUB7g0uxjhUWA9euSC=w800"/>
 </div>
 <div className="p-4 flex-1 flex flex-col justify-between">
 <div>

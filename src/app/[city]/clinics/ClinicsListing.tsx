@@ -12,7 +12,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 <Header />
 {/* SUB-BAR: BREADCRUMBS & CONTEXT */}
 <div className="bg-surface border-b border-[#E7E5E4] py-2.5">
-<div className="w-full max-w-[1440px] mx-auto px-margin-desktop flex items-center justify-between">
+<div className="w-full max-w-[1440px] mx-auto px-margin sm:px-margin-desktop flex items-center justify-between">
 <nav className="flex items-center gap-2 text-caption font-caption text-outline">
 <Link href="/" className="hover:text-primary transition-colors">Home</Link>
 <span className="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
@@ -27,7 +27,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 </div>
 </div>
 {/* MAIN CANVAS */}
-<main className="flex-1 w-full max-w-[1440px] mx-auto px-margin-desktop py-space-base">
+<main className="flex-1 w-full max-w-[1440px] mx-auto px-margin sm:px-margin-desktop py-space-base">
 {/* PAGE HEAD */}
 <div className="flex flex-col md:flex-row md:items-end justify-between pb-6 gap-4 border-b border-[#E7E5E4]">
 <div>
@@ -51,9 +51,9 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 </div>
 </div>
 {/* THREE-COLUMN LAYOUT */}
-<div className="flex gap-gutter-desktop mt-6 items-start">
+<div className="flex flex-col lg:flex-row gap-gutter-desktop mt-6 items-start">
 {/* 1. LEFT SIDEBAR: FILTERS (280px sticky) */}
-<aside className="w-[280px] shrink-0 sticky top-20 bg-surface-container-lowest border border-[#E7E5E4] rounded-xl p-5 shadow-sm max-h-[calc(100vh-6rem)] overflow-y-auto">
+<aside className="w-full lg:w-[280px] lg:shrink-0 lg:sticky lg:top-20 bg-surface-container-lowest border border-[#E7E5E4] rounded-xl p-5 shadow-sm max-h-[calc(100vh-6rem)] overflow-y-auto">
 {/* Sidebar Header */}
 <div className="flex items-center justify-between pb-3 border-b border-[#E7E5E4]">
 <div className="flex items-center gap-1.5 font-headline-h3 text-headline-h3 text-on-surface">
@@ -278,7 +278,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 <div className="flex flex-col md:flex-row gap-5">
 {/* Left Thumbnail (160px) with badges */}
 <div className="relative w-full md:w-40 h-40 shrink-0 rounded-xl overflow-hidden bg-[#FAFAF9] border border-[#E7E5E4]">
-<img alt="Manipal Super Specialty Hospital exterior" className="w-full h-full object-cover" data-alt="Modern multi-story facade of a premier hospital in Bangalore with glass exterior, pristine clinical entryway, clear daylight, high-key architecture photography with clean white and warm neutral surfaces." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2osAc3WmXQDs5jM1ksqA6GZzt7YCH6YXGckHkSnceH-cTrSq0Rrow3G9P7se_CddB2c52mjhlkqnKRB5VPHypwWoiDucDVE8ufoZ4uN2EyYFGkm6lzc1qPR_JEBhBN3MhTx1iq9tkJUFdaS_QfTdZXCNzhrWSN40vzveOXqDY8ZZ8uNGTIhZVLSGblO8cJ2C2rnzqvOwsXy59FPde6ZWZTsWcFl3miQtpUi6GI-FxiH--3InFtot0"/>
+<img loading="lazy" decoding="async" alt="Manipal Super Specialty Hospital exterior" className="w-full h-full object-cover" data-alt="Modern multi-story facade of a premier hospital in Bangalore with glass exterior, pristine clinical entryway, clear daylight, high-key architecture photography with clean white and warm neutral surfaces." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2osAc3WmXQDs5jM1ksqA6GZzt7YCH6YXGckHkSnceH-cTrSq0Rrow3G9P7se_CddB2c52mjhlkqnKRB5VPHypwWoiDucDVE8ufoZ4uN2EyYFGkm6lzc1qPR_JEBhBN3MhTx1iq9tkJUFdaS_QfTdZXCNzhrWSN40vzveOXqDY8ZZ8uNGTIhZVLSGblO8cJ2C2rnzqvOwsXy59FPde6ZWZTsWcFl3miQtpUi6GI-FxiH--3InFtot0=w800"/>
 <div className="absolute top-2 left-2 flex flex-col gap-1">
 <span className="inline-flex items-center gap-0.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-1.5 py-0.5 rounded shadow-xs">
 <span className="material-symbols-outlined text-[12px]" data-icon="shield">shield</span>
@@ -308,7 +308,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
                       Super Specialty Hospital · HAL Airport Road (1.8 km)
                     </p>
 </div>
-<div className="text-right shrink-0">
+<div className="text-left sm:text-right sm:shrink-0">
 <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface">
 <span className="material-symbols-outlined text-amber-500 text-[18px]" data-icon="star" data-weight="fill">star</span>
 <span>4.8</span>
@@ -354,10 +354,10 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 {/* Doctor Avatars */}
 <div className="flex items-center gap-2">
 <div className="flex -space-x-2 overflow-hidden">
-<img alt="Doctor profile avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of senior female Indian surgeon in clean clinical scrubs, gentle composed expression, high clarity modern portrait lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOyLpVIyfIHkZRQPwYML-qaEsBMBRJ5RYBeDV-3_et36VU_QZbrPJALEqEyZfZRkdg2IoKlOSqI5OsfXjxjOIXOavVYce01xbx5zlbQHKBo14Ib97ByVUqekYjVGhalQu5RiYH4SNrJVNzdzIyHkym_5rwiNxnbN8dljyhaSww7CChSUDpftfuPttuTMABZICSqAwQ-YEcUv7TfH37kxuKSdah92s6vP_KbUE-XugRHZmClTLRJwHj"/>
-<img alt="Doctor profile avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of male cardiologist with stethoscope in contemporary clinic, professional and approachable demeanour, sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVHF6DrB5S25DOxVBjSfsDPDZHQnyJdZm-RtVg0SfQbA5VHnemurwTyqWTR7P7lpBQCXys4-BYCoMp07mic6Cp_y62QbTs_LiALT64kayoUx6ywtRiN3fAg75tBY8VlEi8w03dI00o72YLHH5rmUnj4QyTXjbzdOnAF0WoPHMGBbasvH9gkPhpzhWf7eHRQVvQBGr0-cfNdVJ9oJdTHH6-knQm8uot3oHXJwde72GWMVoJq0rG_HfR"/>
-<img alt="Doctor profile avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of young female pediatrician in crisp clinical white coat, smiling warmly, bright hospital lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApFDj0uWeGpzg56gdjhJCsXvAZv0glsbhy2xyZ2rKEoLLuQ2KygR0wvYF4aXuAWqybiZD4xZoaLaLKoiuDU4u7KpJYJNFU4nLDK0VQMyi955SgNXFzPgiho2--xXKe2b5YeTBnT6Rtu35-uJCf6RLT-nBr4HDsqJefMeqfOSDIb7hvTDyIeFpqdFVT0ojQuEXVosiBJi79SShhyqhTk--cPmnCdoTT4BaHSmrFkYpBjqtretHg83cT"/>
-<img alt="Doctor profile avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of experienced male neurologist with glasses, clean institutional medical setting, soft neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIpF937OscJTUnMauAQAps4_vmD_to8wZJcId11xj0YwemuAiu8uBSm4nqBchR1-0AgR01eSPTtPDQBxIidJ3QiZXL5eaaSeVxq1lqKb-9rIYsvzcZ4bIQn0WNp7yexIs266axbBiUpveiEs9Eq8IhwdhYltGjv5UVeoDxfDjCIamMvJ5XXABN_rAyjN7h1vQC4bDiasv4hGpgh-0I69WqMM6P1eMDIUJ2DqLtN0-2DO48QFh94HkJ"/>
+<img loading="lazy" decoding="async" alt="Doctor profile avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of senior female Indian surgeon in clean clinical scrubs, gentle composed expression, high clarity modern portrait lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOyLpVIyfIHkZRQPwYML-qaEsBMBRJ5RYBeDV-3_et36VU_QZbrPJALEqEyZfZRkdg2IoKlOSqI5OsfXjxjOIXOavVYce01xbx5zlbQHKBo14Ib97ByVUqekYjVGhalQu5RiYH4SNrJVNzdzIyHkym_5rwiNxnbN8dljyhaSww7CChSUDpftfuPttuTMABZICSqAwQ-YEcUv7TfH37kxuKSdah92s6vP_KbUE-XugRHZmClTLRJwHj=w64"/>
+<img loading="lazy" decoding="async" alt="Doctor profile avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of male cardiologist with stethoscope in contemporary clinic, professional and approachable demeanour, sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVHF6DrB5S25DOxVBjSfsDPDZHQnyJdZm-RtVg0SfQbA5VHnemurwTyqWTR7P7lpBQCXys4-BYCoMp07mic6Cp_y62QbTs_LiALT64kayoUx6ywtRiN3fAg75tBY8VlEi8w03dI00o72YLHH5rmUnj4QyTXjbzdOnAF0WoPHMGBbasvH9gkPhpzhWf7eHRQVvQBGr0-cfNdVJ9oJdTHH6-knQm8uot3oHXJwde72GWMVoJq0rG_HfR=w64"/>
+<img loading="lazy" decoding="async" alt="Doctor profile avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of young female pediatrician in crisp clinical white coat, smiling warmly, bright hospital lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApFDj0uWeGpzg56gdjhJCsXvAZv0glsbhy2xyZ2rKEoLLuQ2KygR0wvYF4aXuAWqybiZD4xZoaLaLKoiuDU4u7KpJYJNFU4nLDK0VQMyi955SgNXFzPgiho2--xXKe2b5YeTBnT6Rtu35-uJCf6RLT-nBr4HDsqJefMeqfOSDIb7hvTDyIeFpqdFVT0ojQuEXVosiBJi79SShhyqhTk--cPmnCdoTT4BaHSmrFkYpBjqtretHg83cT=w64"/>
+<img loading="lazy" decoding="async" alt="Doctor profile avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of experienced male neurologist with glasses, clean institutional medical setting, soft neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIpF937OscJTUnMauAQAps4_vmD_to8wZJcId11xj0YwemuAiu8uBSm4nqBchR1-0AgR01eSPTtPDQBxIidJ3QiZXL5eaaSeVxq1lqKb-9rIYsvzcZ4bIQn0WNp7yexIs266axbBiUpveiEs9Eq8IhwdhYltGjv5UVeoDxfDjCIamMvJ5XXABN_rAyjN7h1vQC4bDiasv4hGpgh-0I69WqMM6P1eMDIUJ2DqLtN0-2DO48QFh94HkJ=w64"/>
 </div>
 <span className="text-caption-strong font-caption-strong text-primary">+38 verified specialists</span>
 </div>
@@ -381,7 +381,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 <article className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 hover:shadow-md transition duration-150 relative">
 <div className="flex flex-col md:flex-row gap-5">
 <div className="relative w-full md:w-40 h-40 shrink-0 rounded-xl overflow-hidden bg-[#FAFAF9] border border-[#E7E5E4]">
-<img alt="Aster CMI Hospital Hebbal exterior" className="w-full h-full object-cover" data-alt="Exterior architecture of Aster CMI quaternary care hospital in Hebbal Bangalore, ultra-modern glass elevation, clear skies, clean clinical entrance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC75MZgzVc254cYxFWPYnt02_3MdQZv6o5gDRnQjroJzuOjqkuQ_XlcqSZ_itB-lUPKqIoh-pQcTsxFK77NiY7FdbiLb762aQWRVckyRdm6yNzGufQrkyUrYxdPekuo04Sf6_f1namCq_MMyB09OPPhhgF-HSzHAR37vmHCEFTJ2rTzU_3oUVYvZf_AMNa4QBRTcEiRcTe1uXY5xF1YTrpEDVA6sW7d_NmbZ9U09baQzo1kObqa1r8W"/>
+<img loading="lazy" decoding="async" alt="Aster CMI Hospital Hebbal exterior" className="w-full h-full object-cover" data-alt="Exterior architecture of Aster CMI quaternary care hospital in Hebbal Bangalore, ultra-modern glass elevation, clear skies, clean clinical entrance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC75MZgzVc254cYxFWPYnt02_3MdQZv6o5gDRnQjroJzuOjqkuQ_XlcqSZ_itB-lUPKqIoh-pQcTsxFK77NiY7FdbiLb762aQWRVckyRdm6yNzGufQrkyUrYxdPekuo04Sf6_f1namCq_MMyB09OPPhhgF-HSzHAR37vmHCEFTJ2rTzU_3oUVYvZf_AMNa4QBRTcEiRcTe1uXY5xF1YTrpEDVA6sW7d_NmbZ9U09baQzo1kObqa1r8W=w800"/>
 <div className="absolute top-2 left-2 flex flex-col gap-1">
 <span className="inline-flex items-center gap-0.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-1.5 py-0.5 rounded shadow-xs">
 <span className="material-symbols-outlined text-[12px]" data-icon="shield">shield</span>
@@ -406,7 +406,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
                       Multi-Specialty Quaternary Hospital · Hebbal (8.4 km)
                     </p>
 </div>
-<div className="text-right shrink-0">
+<div className="text-left sm:text-right sm:shrink-0">
 <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface">
 <span className="material-symbols-outlined text-amber-500 text-[18px]" data-icon="star" data-weight="fill">star</span>
 <span>4.7</span>
@@ -440,9 +440,9 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4 pt-4 border-t border-[#E7E5E4]">
 <div className="flex items-center gap-2">
 <div className="flex -space-x-2 overflow-hidden">
-<img alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of senior female physician with clinical coat and badge, gentle and confident expression, high key lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg8h-V3DCZcAGSO7dSU3n3Dq58Cgyriov0UjaHzHb-FIOE7X8HhjbLbFa56a8fFXIJJnBAAhgWzRbt9H72gJMmYPXn1ZPEQ-ojUJdCcr1-XJHJUPQDc9c05KCDOswsWY1h4iqgFt6omLCB2MUFMrEa0rM8NyEsgGosRzK8DuaHhB_B-eeKvEep5E5x4Uqtab8BS_WCqFF3WLLgAP56j16ZtdKXku2gio3U7MFTMk1pDaotFy792PRB"/>
-<img alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of male orthopedic surgeon in clean hospital scrubs, sharp modern medical studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEpIneet8J_Prt4UJWWU_rA9TGDpZZ9ENoaQ3HmU8sCCUuaA6rJRJcjJmEj3Z48Z4F3CEvY7axJMUORZ5Rk5HqZWfh-ZQnkv1i6-P-2VRMpEX9NoNCvySUBDK4eL20DWf00rqoWnqZqUGu6REFbJyGYJvoBUbBQrS7t9Kfb3IK2UbuJqr-UIaIl5tgn1YvFh_WOjJPeiWC8_0Idd94lMf4JYEdpaaP32DmYDUQVgp2M9swuYwQZQca"/>
-<img alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of female clinical oncologist in hospital lab coat, warm composed smile, pristine background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtU3JmNRfjgvtZAgICptnPhsRJcuMguuVSSvEEzGbKkzCd4_ozXVkHSnpWIYtWanWYOuDHINN1HfC4BltC-sRxR4kRQmrKuemHF3YJ09ZhAVVQle-Zp74h1Tc5ilnplx-O5RJBgVPCmcMLLRvSzsMBn8_ApKqy2JAN2GZH6c2u2Zbm4Q5GVvIaHdZBIpDtB68vaTAcYHX6xxgUoQ0Wnl9SvSn4qDTTdKHGwiLE9CdFf7F7jM2O4DWo"/>
+<img loading="lazy" decoding="async" alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of senior female physician with clinical coat and badge, gentle and confident expression, high key lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg8h-V3DCZcAGSO7dSU3n3Dq58Cgyriov0UjaHzHb-FIOE7X8HhjbLbFa56a8fFXIJJnBAAhgWzRbt9H72gJMmYPXn1ZPEQ-ojUJdCcr1-XJHJUPQDc9c05KCDOswsWY1h4iqgFt6omLCB2MUFMrEa0rM8NyEsgGosRzK8DuaHhB_B-eeKvEep5E5x4Uqtab8BS_WCqFF3WLLgAP56j16ZtdKXku2gio3U7MFTMk1pDaotFy792PRB=w64"/>
+<img loading="lazy" decoding="async" alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of male orthopedic surgeon in clean hospital scrubs, sharp modern medical studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEpIneet8J_Prt4UJWWU_rA9TGDpZZ9ENoaQ3HmU8sCCUuaA6rJRJcjJmEj3Z48Z4F3CEvY7axJMUORZ5Rk5HqZWfh-ZQnkv1i6-P-2VRMpEX9NoNCvySUBDK4eL20DWf00rqoWnqZqUGu6REFbJyGYJvoBUbBQrS7t9Kfb3IK2UbuJqr-UIaIl5tgn1YvFh_WOjJPeiWC8_0Idd94lMf4JYEdpaaP32DmYDUQVgp2M9swuYwQZQca=w64"/>
+<img loading="lazy" decoding="async" alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of female clinical oncologist in hospital lab coat, warm composed smile, pristine background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtU3JmNRfjgvtZAgICptnPhsRJcuMguuVSSvEEzGbKkzCd4_ozXVkHSnpWIYtWanWYOuDHINN1HfC4BltC-sRxR4kRQmrKuemHF3YJ09ZhAVVQle-Zp74h1Tc5ilnplx-O5RJBgVPCmcMLLRvSzsMBn8_ApKqy2JAN2GZH6c2u2Zbm4Q5GVvIaHdZBIpDtB68vaTAcYHX6xxgUoQ0Wnl9SvSn4qDTTdKHGwiLE9CdFf7F7jM2O4DWo=w64"/>
 </div>
 <span className="text-caption-strong font-caption-strong text-primary">+54 verified specialists</span>
 </div>
@@ -465,7 +465,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 <article className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 hover:shadow-md transition duration-150 relative">
 <div className="flex flex-col md:flex-row gap-5">
 <div className="relative w-full md:w-40 h-40 shrink-0 rounded-xl overflow-hidden bg-[#FAFAF9] border border-[#E7E5E4]">
-<img alt="Cloudnine Hospital Indiranagar exterior" className="w-full h-full object-cover" data-alt="Bright, welcoming facade of modern maternity hospital in Indiranagar Bangalore, clean architectural lines with glass doors, daytime lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6o1zir7xBQZbZ8i1yh3DbDHKhmPJy5SA6u3wQUrrdt2H7oESizf90P-yHStJQU1ERUUpzG_yObT-T9aTixWS78PvwjjLSxLOQPbk0X6fkZNhCjqxC2mYbIRp1x6jROmimS32ZJU9QQmmQllvz7OOrIugSd2amvXZg6sb7WKHB9_pFNlvFJJhKFJdzxiWG1XGAtDmgq3bawxFfZBjn1xn4bDrus2Q6kgc3COAi1_d9dR3_vwdQ2Eyw"/>
+<img loading="lazy" decoding="async" alt="Cloudnine Hospital Indiranagar exterior" className="w-full h-full object-cover" data-alt="Bright, welcoming facade of modern maternity hospital in Indiranagar Bangalore, clean architectural lines with glass doors, daytime lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6o1zir7xBQZbZ8i1yh3DbDHKhmPJy5SA6u3wQUrrdt2H7oESizf90P-yHStJQU1ERUUpzG_yObT-T9aTixWS78PvwjjLSxLOQPbk0X6fkZNhCjqxC2mYbIRp1x6jROmimS32ZJU9QQmmQllvz7OOrIugSd2amvXZg6sb7WKHB9_pFNlvFJJhKFJdzxiWG1XGAtDmgq3bawxFfZBjn1xn4bDrus2Q6kgc3COAi1_d9dR3_vwdQ2Eyw=w800"/>
 <div className="absolute top-2 left-2 flex flex-col gap-1">
 <span className="inline-flex items-center gap-0.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-1.5 py-0.5 rounded shadow-xs">
 <span className="material-symbols-outlined text-[12px]" data-icon="shield">shield</span>
@@ -490,7 +490,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
                       Maternity &amp; Child Care Clinic · Indiranagar (0.9 km)
                     </p>
 </div>
-<div className="text-right shrink-0">
+<div className="text-left sm:text-right sm:shrink-0">
 <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface">
 <span className="material-symbols-outlined text-amber-500 text-[18px]" data-icon="star" data-weight="fill">star</span>
 <span>4.9</span>
@@ -524,8 +524,8 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4 pt-4 border-t border-[#E7E5E4]">
 <div className="flex items-center gap-2">
 <div className="flex -space-x-2 overflow-hidden">
-<img alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of senior female gynecologist with stethoscope, reassuring clinical appearance, bright natural clinic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_s0fmMvEPik2B81VpqlTGMJ7wfhucXBzzSddwAhs5PjSld83ZGyQ3CjbQ0Jhk9oUdfygFnBtS2QI7aW0fxWx4R0PhheVNtg7lM761oaXegzeRWu_U2SbdhnwPJ70JLjD4tjc6ei8yWRChlRX9pflmTPWCAHGAAts0bxpNAbKnbRg0NxitT0LgwtFfDdGyXLHE9DZ-Ua1dT2q0IwP88g6906lyto4guIUf5ZhaKzSHEHYwTsLskjgh"/>
-<img alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of male pediatrician smiling gently, hospital setting with soft focus background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxHwl7p_My0gOHsv6uoi_l9jJWeAzq5Tt-K4KIU7VLlwUJ-nKU64iWxWkoO9k6ngCrmQVMFzfBF7on5XnF36cBdXhUcvSRUNuv8iZjbV55hvhJAfysB5SjWXcST6CdEew6dZ2B4-3U3wPVC7nsAr2ZiEFwPjEDAWc35Nd3hDHATj4nh3a2a9nxFpZiXvnNUgbpJlxpEqj_-tjDbHzu7Hx2jzByo7F4mFmwB3JQ24Udhty_tSJ-BEpb"/>
+<img loading="lazy" decoding="async" alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of senior female gynecologist with stethoscope, reassuring clinical appearance, bright natural clinic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_s0fmMvEPik2B81VpqlTGMJ7wfhucXBzzSddwAhs5PjSld83ZGyQ3CjbQ0Jhk9oUdfygFnBtS2QI7aW0fxWx4R0PhheVNtg7lM761oaXegzeRWu_U2SbdhnwPJ70JLjD4tjc6ei8yWRChlRX9pflmTPWCAHGAAts0bxpNAbKnbRg0NxitT0LgwtFfDdGyXLHE9DZ-Ua1dT2q0IwP88g6906lyto4guIUf5ZhaKzSHEHYwTsLskjgh=w64"/>
+<img loading="lazy" decoding="async" alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of male pediatrician smiling gently, hospital setting with soft focus background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxHwl7p_My0gOHsv6uoi_l9jJWeAzq5Tt-K4KIU7VLlwUJ-nKU64iWxWkoO9k6ngCrmQVMFzfBF7on5XnF36cBdXhUcvSRUNuv8iZjbV55hvhJAfysB5SjWXcST6CdEew6dZ2B4-3U3wPVC7nsAr2ZiEFwPjEDAWc35Nd3hDHATj4nh3a2a9nxFpZiXvnNUgbpJlxpEqj_-tjDbHzu7Hx2jzByo7F4mFmwB3JQ24Udhty_tSJ-BEpb=w64"/>
 </div>
 <span className="text-caption-strong font-caption-strong text-primary">+16 doctors</span>
 </div>
@@ -548,7 +548,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 <article className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 hover:shadow-md transition duration-150 relative">
 <div className="flex flex-col md:flex-row gap-5">
 <div className="relative w-full md:w-40 h-40 shrink-0 rounded-xl overflow-hidden bg-[#FAFAF9] border border-[#E7E5E4]">
-<img alt="Apollo Clinic Koramangala exterior" className="w-full h-full object-cover" data-alt="Clean corporate facade of an Apollo clinic and medical diagnostics centre in Koramangala, modern sign, crisp architectural photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7xZuw_32k-qt0fbfb9DDpawpIbGNkb8AFFb52ewnN8m0j9p0ZH92MVjIserEjZrmSwfKWyD2-PiFbUpTVYDx3InHavnc1JLJh0qzn2CqhJIfIEUyA6SQm000dTHfEPgPT8jgsor8YPShPYJZIjDQdDqlF4i8yjHDCdhdr7Ni5cYyFIKbd7_sDhZse2lH1FdWhmmR6tT76yQKz22lj7lvbwjKe2xakQ4Vggl2HlkHb2tF_TWPr7FLj"/>
+<img loading="lazy" decoding="async" alt="Apollo Clinic Koramangala exterior" className="w-full h-full object-cover" data-alt="Clean corporate facade of an Apollo clinic and medical diagnostics centre in Koramangala, modern sign, crisp architectural photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7xZuw_32k-qt0fbfb9DDpawpIbGNkb8AFFb52ewnN8m0j9p0ZH92MVjIserEjZrmSwfKWyD2-PiFbUpTVYDx3InHavnc1JLJh0qzn2CqhJIfIEUyA6SQm000dTHfEPgPT8jgsor8YPShPYJZIjDQdDqlF4i8yjHDCdhdr7Ni5cYyFIKbd7_sDhZse2lH1FdWhmmR6tT76yQKz22lj7lvbwjKe2xakQ4Vggl2HlkHb2tF_TWPr7FLj=w800"/>
 <div className="absolute top-2 left-2 flex flex-col gap-1">
 <span className="inline-flex items-center gap-0.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-1.5 py-0.5 rounded shadow-xs">
 <span className="material-symbols-outlined text-[12px]" data-icon="shield">shield</span>
@@ -573,7 +573,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
                       Daycare Polyclinic &amp; Diagnostic Centre · Koramangala 5th Block (3.2 km)
                     </p>
 </div>
-<div className="text-right shrink-0">
+<div className="text-left sm:text-right sm:shrink-0">
 <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface">
 <span className="material-symbols-outlined text-amber-500 text-[18px]" data-icon="star" data-weight="fill">star</span>
 <span>4.6</span>
@@ -607,8 +607,8 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4 pt-4 border-t border-[#E7E5E4]">
 <div className="flex items-center gap-2">
 <div className="flex -space-x-2 overflow-hidden">
-<img alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of male general physician in Bangalore clinic, warm and approachable demeanor, modern lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZKVMqxlPirnsdzei8GmeppSMYu7c0Ie9avk8lEj0UZMH1zOmpLitznk3_il6PYrmvM9IDfli8ccVtmaWoCLsvPDvBrJmZhI0kaz900QE62g7Q-82ufB_fx7mFSIAdAtvlCUjiRwi0SI1NIDD8E_IHFuYpV7vsNQfJX42ybilOzwqkLCFirH1Gc8maJWg-y9vJqLsikGCJ0IXrlLyMG7dAIKpJe2gb-tG_5ZL2NEh1gvJL1Z8E0Z1d"/>
-<img alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of female dermatologist in white lab coat with clinical backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIMmtIye6IvscPh3dHaEQ2XW3loLurE_-JnYdMpKmidD0XR1lYJoSJdsRpLU208-SBsg4-JZr4UnRxpgjJnrn91SEFNKHNLWqljJ3yueK8gTgVK3rwmE7B2T8G-RbpxMUZkI-1hcCq4RoAtt51K3meLiG7P2-cnpfzCunztY3LtyUK0-nxrweqna9DiVxCOK7nz7m4pO1FBk4HvUw0-91Or6EbqTRuBmKEq8VtAR3XDfZAS3kTjLwS"/>
+<img loading="lazy" decoding="async" alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of male general physician in Bangalore clinic, warm and approachable demeanor, modern lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZKVMqxlPirnsdzei8GmeppSMYu7c0Ie9avk8lEj0UZMH1zOmpLitznk3_il6PYrmvM9IDfli8ccVtmaWoCLsvPDvBrJmZhI0kaz900QE62g7Q-82ufB_fx7mFSIAdAtvlCUjiRwi0SI1NIDD8E_IHFuYpV7vsNQfJX42ybilOzwqkLCFirH1Gc8maJWg-y9vJqLsikGCJ0IXrlLyMG7dAIKpJe2gb-tG_5ZL2NEh1gvJL1Z8E0Z1d=w64"/>
+<img loading="lazy" decoding="async" alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of female dermatologist in white lab coat with clinical backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIMmtIye6IvscPh3dHaEQ2XW3loLurE_-JnYdMpKmidD0XR1lYJoSJdsRpLU208-SBsg4-JZr4UnRxpgjJnrn91SEFNKHNLWqljJ3yueK8gTgVK3rwmE7B2T8G-RbpxMUZkI-1hcCq4RoAtt51K3meLiG7P2-cnpfzCunztY3LtyUK0-nxrweqna9DiVxCOK7nz7m4pO1FBk4HvUw0-91Or6EbqTRuBmKEq8VtAR3XDfZAS3kTjLwS=w64"/>
 </div>
 <span className="text-caption-strong font-caption-strong text-primary">+12 doctors</span>
 </div>
@@ -631,7 +631,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 <article className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 hover:shadow-md transition duration-150 relative">
 <div className="flex flex-col md:flex-row gap-5">
 <div className="relative w-full md:w-40 h-40 shrink-0 rounded-xl overflow-hidden bg-[#FAFAF9] border border-[#E7E5E4]">
-<img alt="Fortis Medical Centre Cunningham Road exterior" className="w-full h-full object-cover" data-alt="Modern street-facing facade of Fortis Medical Centre on Cunningham Road Bangalore, glass windows with clinical insignia, daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOrqHKHzAl5VZrB9vPcrQpSm-jZAf3a-de4YGbYvzGds56iP54w0LjLVoVrIhmzMdq3Afffc40x76u64NLwmf4CyhgMm3vrgx8oATRKb8r89ORFk7k7L-eZ9eQGWy-EqTty5N5Je79xy6g7DdjR34h70RY8jNDr-x0krAS7jS6F5Z-OtHboj59Pu3G-KAxx5-DepCmOaFNsODro2vmLnQ6cgAr31Xx9WZNxGmdlEzDnYATo1Cjomte"/>
+<img loading="lazy" decoding="async" alt="Fortis Medical Centre Cunningham Road exterior" className="w-full h-full object-cover" data-alt="Modern street-facing facade of Fortis Medical Centre on Cunningham Road Bangalore, glass windows with clinical insignia, daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOrqHKHzAl5VZrB9vPcrQpSm-jZAf3a-de4YGbYvzGds56iP54w0LjLVoVrIhmzMdq3Afffc40x76u64NLwmf4CyhgMm3vrgx8oATRKb8r89ORFk7k7L-eZ9eQGWy-EqTty5N5Je79xy6g7DdjR34h70RY8jNDr-x0krAS7jS6F5Z-OtHboj59Pu3G-KAxx5-DepCmOaFNsODro2vmLnQ6cgAr31Xx9WZNxGmdlEzDnYATo1Cjomte=w800"/>
 <div className="absolute top-2 left-2 flex flex-col gap-1">
 <span className="inline-flex items-center gap-0.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-1.5 py-0.5 rounded shadow-xs">
 <span className="material-symbols-outlined text-[12px]" data-icon="shield">shield</span>
@@ -656,7 +656,7 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
                       Specialty Outpatient Centre · Vasanth Nagar (4.1 km)
                     </p>
 </div>
-<div className="text-right shrink-0">
+<div className="text-left sm:text-right sm:shrink-0">
 <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface">
 <span className="material-symbols-outlined text-amber-500 text-[18px]" data-icon="star" data-weight="fill">star</span>
 <span>4.7</span>
@@ -690,9 +690,9 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4 pt-4 border-t border-[#E7E5E4]">
 <div className="flex items-center gap-2">
 <div className="flex -space-x-2 overflow-hidden">
-<img alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of senior clinical neurologist in modern Bangalore healthcare hospital, dignified and experienced look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwoRnljvf_M-5cGTJm1o8A76x_6e0BID7I8WngK-bRIQD2A9ZEsKGO7kcu7bogwJKDI-83QhQ5oXrCjxQ5ZK1v0ns0cPGvMoDviO9Ulc-01X0R30TORrhzUbmjgBAXtvEGB4Ii_Ijpv9YOevCZjVFM1sMTtRSg0KWTzTGOGeweRkNCjkok3oKMY6u7P5EyP1jCm36wiB3ojSNV34zG3qLRT63XGOzgLMnbD2ci4S78N7JDLo7Z06KB"/>
-<img alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of smiling female ENT specialist in medical clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi3KADjez1HNQ8LPh1aOVtrA_7xT--fcaY0UEe0IgO8tfAvogxiEn7Mr_F2qTkdGaBbCezI1Gep_XKUWJrf8pUa0QJovBr1BqmoV17V_MQ4k1FlQgxDy0TbiWa83UeRmi6vM3Iwjq4suSnBi1B87MkjITLXWxPTH11USmgcl2aNWd4D3ZcDku2r-sqhmVaJg2aK82XiwKFhuzqRhQnDLX3fyZx1t547ammvwsfdDNY5Iry6fmVSa-_"/>
-<img alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of male pulmonologist in clinical consultation chamber." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF3N_XbZgbwfnakjgA_S-lz6Gm2t_s53ZjirThdqDD-g9uJ_tsOGgo8ueJszf2k_srDgCfAHCwY0IW-u5LnUo5vL81LfKbbx4k_6u2Z0-a594Qpb-pXwwYeis_lUijtx9h97TiArcI5RAV1hQ_UGiKqdOhj3wpfXS0ONiy8d0t1g9E827qV6eqxyXXBbFpguj3PC6OUmOMIRAw3BqwA4YRsbGeDYLiF-Op6CBEZzHm6WGBXv608iRE"/>
+<img loading="lazy" decoding="async" alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of senior clinical neurologist in modern Bangalore healthcare hospital, dignified and experienced look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwoRnljvf_M-5cGTJm1o8A76x_6e0BID7I8WngK-bRIQD2A9ZEsKGO7kcu7bogwJKDI-83QhQ5oXrCjxQ5ZK1v0ns0cPGvMoDviO9Ulc-01X0R30TORrhzUbmjgBAXtvEGB4Ii_Ijpv9YOevCZjVFM1sMTtRSg0KWTzTGOGeweRkNCjkok3oKMY6u7P5EyP1jCm36wiB3ojSNV34zG3qLRT63XGOzgLMnbD2ci4S78N7JDLo7Z06KB=w64"/>
+<img loading="lazy" decoding="async" alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of smiling female ENT specialist in medical clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi3KADjez1HNQ8LPh1aOVtrA_7xT--fcaY0UEe0IgO8tfAvogxiEn7Mr_F2qTkdGaBbCezI1Gep_XKUWJrf8pUa0QJovBr1BqmoV17V_MQ4k1FlQgxDy0TbiWa83UeRmi6vM3Iwjq4suSnBi1B87MkjITLXWxPTH11USmgcl2aNWd4D3ZcDku2r-sqhmVaJg2aK82XiwKFhuzqRhQnDLX3fyZx1t547ammvwsfdDNY5Iry6fmVSa-_=w64"/>
+<img loading="lazy" decoding="async" alt="Doctor avatar" className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover" data-alt="Portrait of male pulmonologist in clinical consultation chamber." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF3N_XbZgbwfnakjgA_S-lz6Gm2t_s53ZjirThdqDD-g9uJ_tsOGgo8ueJszf2k_srDgCfAHCwY0IW-u5LnUo5vL81LfKbbx4k_6u2Z0-a594Qpb-pXwwYeis_lUijtx9h97TiArcI5RAV1hQ_UGiKqdOhj3wpfXS0ONiy8d0t1g9E827qV6eqxyXXBbFpguj3PC6OUmOMIRAw3BqwA4YRsbGeDYLiF-Op6CBEZzHm6WGBXv608iRE=w64"/>
 </div>
 <span className="text-caption-strong font-caption-strong text-primary">+22 doctors</span>
 </div>
@@ -731,11 +731,11 @@ export default function CurxxClinicsHospitalsInBangalorePage({ type }: { type: F
 </div>
 </section>
 {/* 3. RIGHT COLUMN (320px sticky) */}
-<aside className="w-[320px] shrink-0 sticky top-20 space-y-4">
+<aside className="w-full lg:w-[320px] lg:shrink-0 lg:sticky lg:top-20 space-y-4">
 {/* MAP PREVIEW CARD */}
 <div className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl overflow-hidden shadow-sm">
 <div className="relative h-48 w-full bg-[#FAFAF9]">
-<img alt="Map preview of Bangalore medical centers" className="w-full h-full object-cover" data-alt="A clean styled cartographic map view of central Bangalore city streets and arterial corridors with subtle geometric landmarks, plotted in soft warm neutrals with crisp red medical pin indicators." data-location="Bangalore" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDVztVIdEkoX2TPG8JYBXa76S8zkfWbcPmy8z1l0XN9ZXy4qc_i7gKwPOgDRecvczauqzLTNZ-xx0kErud-fY78gUmJVOZD1h_5igPSbg_qTmh9-SpoTpAdzuRS8Dy3Sk4Ixa4WPNl3T4LTNf3ZthRo4jHuHzyWHEUpeUlmUR2C0u6wAN163cnUUOXm4-MN3z8WecNQGMICB5HL3AJY7o3y07xLB_Vvc_VSwAJCjjE0A4sVFA3qJSW"/>
+<img loading="lazy" decoding="async" alt="Map preview of Bangalore medical centers" className="w-full h-full object-cover" data-alt="A clean styled cartographic map view of central Bangalore city streets and arterial corridors with subtle geometric landmarks, plotted in soft warm neutrals with crisp red medical pin indicators." data-location="Bangalore" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDVztVIdEkoX2TPG8JYBXa76S8zkfWbcPmy8z1l0XN9ZXy4qc_i7gKwPOgDRecvczauqzLTNZ-xx0kErud-fY78gUmJVOZD1h_5igPSbg_qTmh9-SpoTpAdzuRS8Dy3Sk4Ixa4WPNl3T4LTNf3ZthRo4jHuHzyWHEUpeUlmUR2C0u6wAN163cnUUOXm4-MN3z8WecNQGMICB5HL3AJY7o3y07xLB_Vvc_VSwAJCjjE0A4sVFA3qJSW=w800"/>
 {/* Custom UI Pin Overlays */}
 <div className="absolute inset-0 p-3 pointer-events-none flex flex-col justify-between">
 <div className="flex items-center justify-between pointer-events-auto">

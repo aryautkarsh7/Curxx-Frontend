@@ -10,7 +10,7 @@ export default function CurxxDigitalDiagnosticReportsParameterFindingsPage() {
       
 <Header />
 {/* MAIN CANVAS */}
-<main className="flex-1 w-full max-w-[1200px] mx-auto px-margin-desktop py-space-xl">
+<main className="flex-1 w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-xl">
 {/* PAGE HEAD */}
 <div className="flex flex-col md:flex-row md:items-end justify-between pb-space-lg mb-space-base border-b border-surface-variant gap-4">
 <div>
@@ -576,7 +576,7 @@ export default function CurxxDigitalDiagnosticReportsParameterFindingsPage() {
 {/* DOCTOR CONSULTATION CTA BAND */}
 <div className="bg-surface-container-low border border-surface-variant rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
 <div className="flex items-center space-x-3.5 w-full md:w-auto">
-<img className="w-12 h-12 rounded-lg border border-surface-variant object-cover shrink-0" data-alt="A warm and professional medical portrait of Dr. Priya Sharma, an Indian female general physician wearing a white lab coat with a stethoscope around her neck, smiling confidently in a modern bright consultation clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGen1BTpUlOkTBO8c3YfM9jkLFx4tw_GfkFZCXKzO15djsTdGLtKWfFKc2o5FdeGd_zr3Ng10zetm87tjTKA3obE9PI209OM5bNwNdj94vFTGL3KbmQfZESC37gwfOitXOXQ_wET3bco2pGNdnodxxsBWsV1EvxW7nka0qubNxPvihXQajQfueVIQDXvb8PEtC125nd94oxxOaW-23FjiTk-xkC6GljlPs4RBc_94EQ6mP1CMcJO6B"/>
+<img loading="lazy" decoding="async" className="w-12 h-12 rounded-lg border border-surface-variant object-cover shrink-0" data-alt="A warm and professional medical portrait of Dr. Priya Sharma, an Indian female general physician wearing a white lab coat with a stethoscope around her neck, smiling confidently in a modern bright consultation clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGen1BTpUlOkTBO8c3YfM9jkLFx4tw_GfkFZCXKzO15djsTdGLtKWfFKc2o5FdeGd_zr3Ng10zetm87tjTKA3obE9PI209OM5bNwNdj94vFTGL3KbmQfZESC37gwfOitXOXQ_wET3bco2pGNdnodxxsBWsV1EvxW7nka0qubNxPvihXQajQfueVIQDXvb8PEtC125nd94oxxOaW-23FjiTk-xkC6GljlPs4RBc_94EQ6mP1CMcJO6B=w96"/>
 <div>
 <div className="flex items-center gap-1.5">
 <h4 className="text-body-strong font-body-strong text-on-surface">Dr. Priya Sharma, MD</h4>

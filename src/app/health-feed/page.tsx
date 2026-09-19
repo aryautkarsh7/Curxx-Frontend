@@ -11,7 +11,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 <Header />
 {/* Topic Chip Bar (Horizontally scrollable/wrapping) */}
 <section className="bg-surface-container-lowest border-b border-surface-variant py-2.5">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
 <div className="flex items-center gap-2 flex-nowrap shrink-0">
 {/* Active Chip */}
 <button className="h-8 px-4 rounded-full bg-[#FFF1F2] border border-[#F9C6C9] text-primary-container text-caption-strong font-caption-strong flex items-center justify-center transition duration-150">
@@ -51,10 +51,10 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 </div>
 </section>
 {/* Main Content Canvas */}
-<main className="w-full max-w-[1200px] mx-auto px-margin-desktop py-space-xl flex-grow flex flex-col gap-space-xl">
+<main className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-xl flex-grow flex flex-col gap-space-xl">
 {/* Featured Hero Article (Wide 16:9 Banner) */}
 <article className="relative w-full aspect-[21/9] min-h-[360px] rounded-xl overflow-hidden border border-surface-variant group cursor-pointer shadow-sm">
-<img className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" data-alt="A focused young Indian corporate professional undergoing an advanced digital cardiovascular screening with a stethoscope and electrocardiogram monitor visible in a high-tech modern clinic in Bengaluru. Natural diffused window lighting illuminating clean white and clinical sterile surfaces, conveying dignity, clinical accuracy, and contemporary healthcare." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBumkoJsuUedOqRokLITRgoKl26h1ZeKRqWERGAKXvH9dIxQbPwcmJ4FfcehDfz-MGkTp_w1vUb0JxOL9cMW2s94x6fqsdu_Mw7hvS37VyplfBAoPwat75j1Wh01XL60FYNoKppKIbl1f-KoBmvPfJ8zLHWCphG91K5vroBEgBNIM7XfbK4lhin-yFRU7cNc8d_STPDQUIqGYOnHDHtJ0v97LmbwA1xCpwjiIpJdTMf-ZDuB0ifim21"/>
+<img loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" data-alt="A focused young Indian corporate professional undergoing an advanced digital cardiovascular screening with a stethoscope and electrocardiogram monitor visible in a high-tech modern clinic in Bengaluru. Natural diffused window lighting illuminating clean white and clinical sterile surfaces, conveying dignity, clinical accuracy, and contemporary healthcare." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBumkoJsuUedOqRokLITRgoKl26h1ZeKRqWERGAKXvH9dIxQbPwcmJ4FfcehDfz-MGkTp_w1vUb0JxOL9cMW2s94x6fqsdu_Mw7hvS37VyplfBAoPwat75j1Wh01XL60FYNoKppKIbl1f-KoBmvPfJ8zLHWCphG91K5vroBEgBNIM7XfbK4lhin-yFRU7cNc8d_STPDQUIqGYOnHDHtJ0v97LmbwA1xCpwjiIpJdTMf-ZDuB0ifim21=w800"/>
 {/* Dark gradient scrim over bottom 65% */}
 <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/95 via-[#1C1917]/70 to-transparent"></div>
 {/* Overlaid Details on Image */}
@@ -76,7 +76,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 {/* Author Byline & Verification Credentials */}
 <div className="flex flex-wrap items-center gap-3 pt-2 text-surface-variant">
 <div className="flex items-center gap-2.5">
-<img className="w-9 h-9 rounded-full object-cover border border-white/40" data-alt="Close up clinical portrait of Dr. Ananya Sen, an Indian female cardiologist wearing professional physician attire and stethoscope around her neck. Pristine hospital setting, warm empathetic clinical gaze, crisp studio lighting on neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB28kewszuaiE9KAc3b6YwM_egExIodIukMWw5TMAGjqskY-n1xZGX-7EF6ZiTJu5S9kjW24m8VyV6KBVg4gDK5VYkBSFGdHDBOP0B0GopsoZXCdI2OFC-sXP49eSzy4Yew6QnQBN4RrUE-o6B_0a8lJnA5dTVeyaQirRYJAnt4dCzIt1ifAXPIiBiyr90hpdPTO_Qizhl4UA96rYWb3DC5NNgzykbezAtDitWOOmPXNXUgWsAgae0n"/>
+<img loading="lazy" decoding="async" className="w-9 h-9 rounded-full object-cover border border-white/40" data-alt="Close up clinical portrait of Dr. Ananya Sen, an Indian female cardiologist wearing professional physician attire and stethoscope around her neck. Pristine hospital setting, warm empathetic clinical gaze, crisp studio lighting on neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB28kewszuaiE9KAc3b6YwM_egExIodIukMWw5TMAGjqskY-n1xZGX-7EF6ZiTJu5S9kjW24m8VyV6KBVg4gDK5VYkBSFGdHDBOP0B0GopsoZXCdI2OFC-sXP49eSzy4Yew6QnQBN4RrUE-o6B_0a8lJnA5dTVeyaQirRYJAnt4dCzIt1ifAXPIiBiyr90hpdPTO_Qizhl4UA96rYWb3DC5NNgzykbezAtDitWOOmPXNXUgWsAgae0n=w800"/>
 <div className="flex flex-col">
 <span className="text-caption-strong font-caption-strong text-white leading-tight">Dr. Ananya Sen, MD</span>
 <span className="text-micro font-micro text-surface-container-high leading-tight">Consultant Cardiologist</span>
@@ -117,7 +117,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 {/* Card 1: Adult Acne */}
 <article className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col hover:border-outline-variant transition duration-200 shadow-sm group">
 <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-container">
-<img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A clinical dermatological setup showing gentle pH-balanced formulations, hyaluronic acid, and SPF sunscreen bottles arranged on a clean white granite medical counter in Mumbai under soft natural day light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCghcyHiV8fBEcC22AQOIrbnlt0bEw_g45yXbWsMJoJSeKkZ56_hgKwnGXiWLmI6AMa_Twz7qQzFMw3B7hMucUkFteSKlUM2mgPOUShgJOzXYN2N-SRqqUBp4tmFaTCd0Cgm4KIqfcRwC97GQeMu8EP9P5OLgBPtEbxRaPJwcPcY39eCbbKWw7jr0gPph3sRAbXhGBAlsBNJQLIdkIeW5Ek4uzPdElxNEP1HGYtIbVzszyrwMlF_YXT"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A clinical dermatological setup showing gentle pH-balanced formulations, hyaluronic acid, and SPF sunscreen bottles arranged on a clean white granite medical counter in Mumbai under soft natural day light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCghcyHiV8fBEcC22AQOIrbnlt0bEw_g45yXbWsMJoJSeKkZ56_hgKwnGXiWLmI6AMa_Twz7qQzFMw3B7hMucUkFteSKlUM2mgPOUShgJOzXYN2N-SRqqUBp4tmFaTCd0Cgm4KIqfcRwC97GQeMu8EP9P5OLgBPtEbxRaPJwcPcY39eCbbKWw7jr0gPph3sRAbXhGBAlsBNJQLIdkIeW5Ek4uzPdElxNEP1HGYtIbVzszyrwMlF_YXT=w800"/>
 <span className="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm border border-surface-variant text-on-surface px-2.5 py-0.5 rounded-full text-micro font-caption-strong">
                 Skin &amp; Hair
               </span>
@@ -133,7 +133,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 </div>
 <div className="flex items-center justify-between pt-2 border-t border-surface-variant">
 <div className="flex items-center gap-2">
-<img className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Clinical avatar of female Indian dermatologist Dr. Priya Sharma in professional medical white coat in clinic room." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6ZcNy5oW3JdsnyVwx-BysXKc6XCHNnxigtCCMOZASusZFRlI12NFh6v0VbGyje9_lS0OaZowhY6MSPYOsYaNJReMMjO7EGye-NExL5aPGE9jNCZ70gQ-aG3Oml0U_bFMNs-sdNkHhiSUlqsQ8YI-cPpeGrFsyEgwqn64HEFGD6_Oq0UXf1TFijJQz25dLOAeBDdfp1tXZAxD5FZGVaofFLXWE35nWcFC7ijpGLhOxp0J3zQajz0MM"/>
+<img loading="lazy" decoding="async" className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Clinical avatar of female Indian dermatologist Dr. Priya Sharma in professional medical white coat in clinic room." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6ZcNy5oW3JdsnyVwx-BysXKc6XCHNnxigtCCMOZASusZFRlI12NFh6v0VbGyje9_lS0OaZowhY6MSPYOsYaNJReMMjO7EGye-NExL5aPGE9jNCZ70gQ-aG3Oml0U_bFMNs-sdNkHhiSUlqsQ8YI-cPpeGrFsyEgwqn64HEFGD6_Oq0UXf1TFijJQz25dLOAeBDdfp1tXZAxD5FZGVaofFLXWE35nWcFC7ijpGLhOxp0J3zQajz0MM=w800"/>
 <div className="flex flex-col">
 <span className="text-micro font-caption-strong text-on-surface leading-tight">Dr. Priya Sharma, MD</span>
 <span className="text-micro font-micro text-outline leading-tight">4 min read</span>
@@ -148,7 +148,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 {/* Card 2: Prediabetes */}
 <article className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col hover:border-outline-variant transition duration-200 shadow-sm group">
 <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-container">
-<img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A balanced Indian diabetic plate with whole grains, sprouted lentils, colorful low-glycemic vegetables and a continuous glucose monitor display screen in a modern bright kitchen." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnremQJBDSKtIK2CFkzhwxlpMNNhlvEICwAwjK59qA3sKRELJ9JuKWUTh0Sm5F7YSV5Uhjk-JKVpGaOggvKNgYg_VWFBFZn1TFXLNBSIS-JiF9iXPFbpyUDA9xmBKe-zx8JuhiawNxyx4l0bP6RYk9An2uJKNZp40QLobAGq6nDxrnCKWHYYM_wU72fTT9LhZlbouXsIglLhxKH0uwAHr58kiR9Y2PUzXNq9swEQBFNSM71Gpqix7E"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A balanced Indian diabetic plate with whole grains, sprouted lentils, colorful low-glycemic vegetables and a continuous glucose monitor display screen in a modern bright kitchen." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnremQJBDSKtIK2CFkzhwxlpMNNhlvEICwAwjK59qA3sKRELJ9JuKWUTh0Sm5F7YSV5Uhjk-JKVpGaOggvKNgYg_VWFBFZn1TFXLNBSIS-JiF9iXPFbpyUDA9xmBKe-zx8JuhiawNxyx4l0bP6RYk9An2uJKNZp40QLobAGq6nDxrnCKWHYYM_wU72fTT9LhZlbouXsIglLhxKH0uwAHr58kiR9Y2PUzXNq9swEQBFNSM71Gpqix7E=w800"/>
 <span className="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm border border-surface-variant text-on-surface px-2.5 py-0.5 rounded-full text-micro font-caption-strong">
                 Diabetes
               </span>
@@ -164,7 +164,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 </div>
 <div className="flex items-center justify-between pt-2 border-t border-surface-variant">
 <div className="flex items-center gap-2">
-<img className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Doctor portrait of Dr. Arvind Kumar, an experienced Indian endocrinologist with stethoscope against a minimalist clinical hospital backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1xgZRG4T8sLO2k8pDZ1I3O-MuozechO148UsiYq1-c2V44k3jDdF19GnXnW56IxIWypEd-pRWrxb9e63WlKvPbwONmwXnNxFfOM1JR-B6SJ8M338g_cQonQt4BlQ57dC1c29kJPvnUc4lA36CYXLOsfVszGH5PcG31_NrdQu0fNDospFaH1tyy81u_yq9sagNPDsQmH5YdmQOLSjngVg1YkGRmwZGzCThbA9osqgo06Ciad7zAA55"/>
+<img loading="lazy" decoding="async" className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Doctor portrait of Dr. Arvind Kumar, an experienced Indian endocrinologist with stethoscope against a minimalist clinical hospital backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1xgZRG4T8sLO2k8pDZ1I3O-MuozechO148UsiYq1-c2V44k3jDdF19GnXnW56IxIWypEd-pRWrxb9e63WlKvPbwONmwXnNxFfOM1JR-B6SJ8M338g_cQonQt4BlQ57dC1c29kJPvnUc4lA36CYXLOsfVszGH5PcG31_NrdQu0fNDospFaH1tyy81u_yq9sagNPDsQmH5YdmQOLSjngVg1YkGRmwZGzCThbA9osqgo06Ciad7zAA55=w800"/>
 <div className="flex flex-col">
 <span className="text-micro font-caption-strong text-on-surface leading-tight">Dr. Arvind Kumar, MBBS, MD</span>
 <span className="text-micro font-micro text-outline leading-tight">6 min read</span>
@@ -179,7 +179,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 {/* Card 3: Anxiety vs Panic */}
 <article className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col hover:border-outline-variant transition duration-200 shadow-sm group">
 <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-container">
-<img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A peaceful therapeutic mental health counseling room with soft natural daylight, minimalist modern wooden interior, a comfortable armchair, and tranquil potted plants." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIH3YM7oUDOZGWAzJiZQGP8ElXWm9OzkHEcQcvLY4onMnKQZt_adJDs0q9HFWFBGLEAUiu4QWmEaSBsC7vR3oUrbAhwqWrt8Lv-CKtamyXuJgtQSuP2_1XtwyWhygWBaCpKQPgyZqt0IgWHzBo9A0wOQG7TAQs8FueNOwg2W5Telgpz_lVeet6nChiS5cwNREDdov4DDDqKXiSk2LDQWNI6GWvfsoVLKZPhi_ocTlK3hnrMEymnoNd"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A peaceful therapeutic mental health counseling room with soft natural daylight, minimalist modern wooden interior, a comfortable armchair, and tranquil potted plants." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIH3YM7oUDOZGWAzJiZQGP8ElXWm9OzkHEcQcvLY4onMnKQZt_adJDs0q9HFWFBGLEAUiu4QWmEaSBsC7vR3oUrbAhwqWrt8Lv-CKtamyXuJgtQSuP2_1XtwyWhygWBaCpKQPgyZqt0IgWHzBo9A0wOQG7TAQs8FueNOwg2W5Telgpz_lVeet6nChiS5cwNREDdov4DDDqKXiSk2LDQWNI6GWvfsoVLKZPhi_ocTlK3hnrMEymnoNd=w800"/>
 <span className="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm border border-surface-variant text-on-surface px-2.5 py-0.5 rounded-full text-micro font-caption-strong">
                 Mental Health
               </span>
@@ -195,7 +195,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 </div>
 <div className="flex items-center justify-between pt-2 border-t border-surface-variant">
 <div className="flex items-center gap-2">
-<img className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Professional doctor avatar of Dr. Neha Rao, an Indian psychiatrist with gentle confident demeanor in a bright office environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsNKtHV9PkiZHzgkGPhobc-iOS-bui8OURa8aqn15p2cC-TzbwBiGvbxPPkB30pEMIFWOeUvIu9gGwsuvDIG3RZg2_oZJT1go7LMMRLrM2M0NlMyyoVjk1J3OCh2wIMuCuYeV_o947wvdzdqqmDHdV434Lb1WL751TwA_czVTt8Ntk2vyRYu2_lrVcpDUJcebQjBvhWOJlfaZ5L-hdmHPG8Hj7xgj_Caj1FMTk7LgRhYOZc2rt3nFi"/>
+<img loading="lazy" decoding="async" className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Professional doctor avatar of Dr. Neha Rao, an Indian psychiatrist with gentle confident demeanor in a bright office environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsNKtHV9PkiZHzgkGPhobc-iOS-bui8OURa8aqn15p2cC-TzbwBiGvbxPPkB30pEMIFWOeUvIu9gGwsuvDIG3RZg2_oZJT1go7LMMRLrM2M0NlMyyoVjk1J3OCh2wIMuCuYeV_o947wvdzdqqmDHdV434Lb1WL751TwA_czVTt8Ntk2vyRYu2_lrVcpDUJcebQjBvhWOJlfaZ5L-hdmHPG8Hj7xgj_Caj1FMTk7LgRhYOZc2rt3nFi=w800"/>
 <div className="flex flex-col">
 <span className="text-micro font-caption-strong text-on-surface leading-tight">Dr. Neha Rao, MD</span>
 <span className="text-micro font-micro text-outline leading-tight">5 min read</span>
@@ -210,7 +210,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 {/* Card 4: Anemia in Indian Women */}
 <article className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col hover:border-outline-variant transition duration-200 shadow-sm group">
 <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-container">
-<img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A clinical lab hematology testing device with blood sample vials and digital hemoglobin results on an immaculate glass desk in an accredited pathology lab." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCJwkVD2IRVK_sLY0Blv0KvKFwsL97BHIZKyIUBAdf2LWCqZuKLUtL1AhzUId7_C3zC56l53kOmWGBfVHma_TJDBXN_KSb2sdkEZvPxxDlJ4GDH14jSVrGvQMqSdzTII_FEyy2pVpPsqiztOgiTEci1VFlF0fTx7W_2T-Tp930mjhwiYY7TtODpCO287HrDCjiFDU8XzHHFKGNX0Guiisd9yXXZnT5BNYHSCgoDUFjq_Q2FBzMk6dY"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A clinical lab hematology testing device with blood sample vials and digital hemoglobin results on an immaculate glass desk in an accredited pathology lab." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCJwkVD2IRVK_sLY0Blv0KvKFwsL97BHIZKyIUBAdf2LWCqZuKLUtL1AhzUId7_C3zC56l53kOmWGBfVHma_TJDBXN_KSb2sdkEZvPxxDlJ4GDH14jSVrGvQMqSdzTII_FEyy2pVpPsqiztOgiTEci1VFlF0fTx7W_2T-Tp930mjhwiYY7TtODpCO287HrDCjiFDU8XzHHFKGNX0Guiisd9yXXZnT5BNYHSCgoDUFjq_Q2FBzMk6dY=w800"/>
 <span className="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm border border-surface-variant text-on-surface px-2.5 py-0.5 rounded-full text-micro font-caption-strong">
                 Women&apos;s Health
               </span>
@@ -226,7 +226,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 </div>
 <div className="flex items-center justify-between pt-2 border-t border-surface-variant">
 <div className="flex items-center gap-2">
-<img className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Portrait of Dr. Sunita Patel, an Indian gynecologist and obstetrician in white consultation coat inside an advanced clinical facility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhijmVXy-HfdaxhSXk9hJ6S7PT1aftWLg9A0rOaGnyV529gmlFuU89mn-7BpTpug27VEkgFIUMShvMl73KKqXQxSY5Oz0en1YjMiwcSANvOsbYjP7aNzlM32k4u6fFnrf10NsuH1LuX-dBT2oN1MhOMtYt7O2YF8nWKsqmX6CwmiC5lQZiTHRhK6UTTVkNhNI3skSjGzPdMg2FwxWwQZzEmIqJzF3xEYm44Jo1Qlmy0CFvJjW56rai"/>
+<img loading="lazy" decoding="async" className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Portrait of Dr. Sunita Patel, an Indian gynecologist and obstetrician in white consultation coat inside an advanced clinical facility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhijmVXy-HfdaxhSXk9hJ6S7PT1aftWLg9A0rOaGnyV529gmlFuU89mn-7BpTpug27VEkgFIUMShvMl73KKqXQxSY5Oz0en1YjMiwcSANvOsbYjP7aNzlM32k4u6fFnrf10NsuH1LuX-dBT2oN1MhOMtYt7O2YF8nWKsqmX6CwmiC5lQZiTHRhK6UTTVkNhNI3skSjGzPdMg2FwxWwQZzEmIqJzF3xEYm44Jo1Qlmy0CFvJjW56rai=w800"/>
 <div className="flex flex-col">
 <span className="text-micro font-caption-strong text-on-surface leading-tight">Dr. Sunita Patel, MD</span>
 <span className="text-micro font-micro text-outline leading-tight">7 min read</span>
@@ -241,7 +241,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 {/* Card 5: Intermittent Fasting */}
 <article className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col hover:border-outline-variant transition duration-200 shadow-sm group">
 <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-container">
-<img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A clean clinical laboratory timer beside an anatomical cellular metabolism infographic with warm morning light streaming onto a physician research table." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGAttkIjwiLHTz7bKjTAvRV_pGKsUlcb1UTJRJYDxXhbXZQuNPVFdGt_nKc-8G4-O0ydFcsEaNKb0zmuhTjM2_KHkt-XtbL6MoljFoUuoT_E3duo631fJbv8iU73iOm6i9Rbdjsfms2s5N_MZNBpNxd3oB6dZpGxhGBDOYGnAH4jRYTDfrkiNiFq1-e8iu3qNhjaBHEvHjv6-4Z9M-h_KQ2tmRO30z4iBzuVt9rMSLAX0lp6uTI47y"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A clean clinical laboratory timer beside an anatomical cellular metabolism infographic with warm morning light streaming onto a physician research table." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGAttkIjwiLHTz7bKjTAvRV_pGKsUlcb1UTJRJYDxXhbXZQuNPVFdGt_nKc-8G4-O0ydFcsEaNKb0zmuhTjM2_KHkt-XtbL6MoljFoUuoT_E3duo631fJbv8iU73iOm6i9Rbdjsfms2s5N_MZNBpNxd3oB6dZpGxhGBDOYGnAH4jRYTDfrkiNiFq1-e8iu3qNhjaBHEvHjv6-4Z9M-h_KQ2tmRO30z4iBzuVt9rMSLAX0lp6uTI47y=w800"/>
 <span className="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm border border-surface-variant text-on-surface px-2.5 py-0.5 rounded-full text-micro font-caption-strong">
                 Nutrition
               </span>
@@ -257,7 +257,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 </div>
 <div className="flex items-center justify-between pt-2 border-t border-surface-variant">
 <div className="flex items-center gap-2">
-<img className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Headshot of Dr. K. S. Murthy, senior physician researcher in internal medicine, clean lit background in an Indian university medical institute." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1Wola4YBOUoBUFyXW6KGEvGvCAuczhgfnDknC25gKlfO7aKjUuDszEJ34q2mdBnn3-oN6vE0-cszNVRSVGvVUlQWhxfHcg1aOioiHV08_-NmEH79qpIhguBjUIFSntH3RJ9RberTriCST21kKJbBZo2UeSfQdrOk-uUTesNa3rpf0-8aU5cmmIyA5-Jv8vK5ul5FQCPeoujjKn1J5-o2dacQbKltEv9eQ9VVULxsmUonGeilzZec5"/>
+<img loading="lazy" decoding="async" className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Headshot of Dr. K. S. Murthy, senior physician researcher in internal medicine, clean lit background in an Indian university medical institute." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1Wola4YBOUoBUFyXW6KGEvGvCAuczhgfnDknC25gKlfO7aKjUuDszEJ34q2mdBnn3-oN6vE0-cszNVRSVGvVUlQWhxfHcg1aOioiHV08_-NmEH79qpIhguBjUIFSntH3RJ9RberTriCST21kKJbBZo2UeSfQdrOk-uUTesNa3rpf0-8aU5cmmIyA5-Jv8vK5ul5FQCPeoujjKn1J5-o2dacQbKltEv9eQ9VVULxsmUonGeilzZec5=w800"/>
 <div className="flex flex-col">
 <span className="text-micro font-caption-strong text-on-surface leading-tight">Dr. K. S. Murthy, MD</span>
 <span className="text-micro font-micro text-outline leading-tight">5 min read</span>
@@ -272,7 +272,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 {/* Card 6: Post-Viral Fatigue */}
 <article className="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden flex flex-col hover:border-outline-variant transition duration-200 shadow-sm group">
 <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-container">
-<img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A modern sleep study and circadian vitals monitoring setup with pulse oximeter and resting heart rate telemetry in a quiet contemporary bedroom." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzPFep5MJ-SSNTSOguY7om4obiZSqwp8YE8pGJEorq77DfqAooiTQ_AcjgVCxq4PJMxVCfI698RxXjJinmRwgbQOTHGw4c9HBayXkdaY2rZXtYma-_3_Txwzg8F4PpNaPf4h2NOCs-LU9EGkUO7_Y6yP3j81J2NjcBn-LCns2aamYDINDe6g8GSUDUGtpPcw2_kDP63G0jG3UM-VYOLXkQx6iZnJbejdbF70TzSAiatTkSm9iFrfoC"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A modern sleep study and circadian vitals monitoring setup with pulse oximeter and resting heart rate telemetry in a quiet contemporary bedroom." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzPFep5MJ-SSNTSOguY7om4obiZSqwp8YE8pGJEorq77DfqAooiTQ_AcjgVCxq4PJMxVCfI698RxXjJinmRwgbQOTHGw4c9HBayXkdaY2rZXtYma-_3_Txwzg8F4PpNaPf4h2NOCs-LU9EGkUO7_Y6yP3j81J2NjcBn-LCns2aamYDINDe6g8GSUDUGtpPcw2_kDP63G0jG3UM-VYOLXkQx6iZnJbejdbF70TzSAiatTkSm9iFrfoC=w800"/>
 <span className="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm border border-surface-variant text-on-surface px-2.5 py-0.5 rounded-full text-micro font-caption-strong">
                 General Medicine
               </span>
@@ -288,7 +288,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
 </div>
 <div className="flex items-center justify-between pt-2 border-t border-surface-variant">
 <div className="flex items-center gap-2">
-<img className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Avatar portrait of Dr. Rajesh Gupta, physician in infectious diseases wearing navy scrub jacket in sterile hospital hallway." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaNREo0Fk2b3Z9eASVPkYaLZamoPl6Jmov2LmXRXs_jvznbL1HYYgfW56PzjcyrtNpJjDrmBo4gK2lpSG6-4kummsnbwJgv6vYeOlTlTfgs5Kst4hjO7m-v-q07_MfRzWrVmDGQSxaKHpVeQxWfBP9zri4XyHEHALwMzku3WkO4TTePkks-5yVjiswj0kT-I778B0YP_0hK_LN2irEgxPCdkL2T-ClcTHazys7wbMNh6NsdsFfqR5_"/>
+<img loading="lazy" decoding="async" className="w-7 h-7 rounded-full object-cover border border-surface-variant" data-alt="Avatar portrait of Dr. Rajesh Gupta, physician in infectious diseases wearing navy scrub jacket in sterile hospital hallway." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaNREo0Fk2b3Z9eASVPkYaLZamoPl6Jmov2LmXRXs_jvznbL1HYYgfW56PzjcyrtNpJjDrmBo4gK2lpSG6-4kummsnbwJgv6vYeOlTlTfgs5Kst4hjO7m-v-q07_MfRzWrVmDGQSxaKHpVeQxWfBP9zri4XyHEHALwMzku3WkO4TTePkks-5yVjiswj0kT-I778B0YP_0hK_LN2irEgxPCdkL2T-ClcTHazys7wbMNh6NsdsFfqR5_=w800"/>
 <div className="flex flex-col">
 <span className="text-micro font-caption-strong text-on-surface leading-tight">Dr. Rajesh Gupta, MD</span>
 <span className="text-micro font-micro text-outline leading-tight">4 min read</span>

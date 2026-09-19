@@ -14,8 +14,8 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 <Header />
 {/* ==================== SUB-NAV / MAIN LINKS ==================== */}
 <nav className="bg-[#FFFFFF] border-b border-[#E7E5E4]">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop flex items-center justify-between h-11">
-<div className="flex items-center gap-8 text-caption font-caption">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop flex items-center justify-between h-11">
+<div className="overflow-x-auto no-scrollbar flex items-center gap-8 text-caption font-caption">
 <Link href="/bangalore/specialties" className="text-primary border-b-2 border-primary font-body-strong text-body-strong pb-1">Specialties</Link>
 <Link href="/bangalore/doctors" className="text-on-surface-variant font-body-default text-body-default pb-1 hover:text-primary transition-colors duration-150">Doctors</Link>
 <Link className="text-on-surface-variant font-body-default text-body-default pb-1 hover:text-primary transition-colors duration-150" href="/records">ABHA ID</Link>
@@ -31,7 +31,7 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 </nav>
 {/* ==================== BREADCRUMBS & PAGE HEADER ==================== */}
 <section className="bg-[#FAFAF9] border-b border-[#E7E5E4] py-5">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 {/* Breadcrumb */}
 <nav className="flex items-center gap-1.5 text-caption font-caption text-[#78716C] mb-2.5">
 <Link href="/" className="hover:text-primary transition-colors">Home</Link>
@@ -41,7 +41,7 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 <span className="text-[#1C1917] font-caption-strong">{plural}</span>
 </nav>
 {/* Page Header Row */}
-<div className="flex items-center justify-between">
+<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 <div>
 <h1 className="font-headline-h1 text-headline-h1 text-[#1C1917] tracking-tight">{plural} in Bangalore</h1>
 <div className="flex items-center gap-2 mt-1">
@@ -50,10 +50,10 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 </div>
 </div>
 {/* Sort Control */}
-<div className="flex items-center gap-2">
+<div className="flex items-center gap-2 w-full sm:w-auto">
 <span className="font-caption text-caption text-[#78716C]">Sort by:</span>
 <div className="relative">
-<select className="appearance-none bg-[#FFFFFF] border border-[#E7E5E4] rounded-lg pl-3 pr-8 py-1.5 font-caption-strong text-caption-strong text-[#1C1917] focus:outline-none focus:border-[#C1121F] cursor-pointer shadow-sm">
+<select className="w-full sm:w-auto appearance-none bg-[#FFFFFF] border border-[#E7E5E4] rounded-lg pl-3 pr-8 py-1.5 font-caption-strong text-caption-strong text-[#1C1917] focus:outline-none focus:border-[#C1121F] cursor-pointer shadow-sm">
 <option>Relevance</option>
 <option>Fee: Low to High</option>
 <option>Fee: High to Low</option>
@@ -68,8 +68,8 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 </div>
 </section>
 {/* ==================== THREE-COLUMN RESULTS LAYOUT ==================== */}
-<main className="w-full max-w-[1200px] mx-auto px-margin-desktop py-8">
-<div className="grid grid-cols-[280px_580px_300px] gap-gutter-desktop items-start">
+<main className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-8">
+<div className="grid grid-cols-1 lg:grid-cols-[280px_580px_300px] gap-gutter-desktop items-start">
 {/* ==================== 1. LEFT SIDEBAR (FILTERS) ==================== */}
 <aside onChange={onFilterChange} className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-xl p-4 sticky top-24 space-y-5">
 {/* Sidebar Header */}
@@ -262,7 +262,7 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 <div className="flex gap-4">
 {/* Left Portrait & Verified Badge */}
 <div className="relative flex-shrink-0">
-<img alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Warm studio headshot portrait of Dr. Rajeshwari Iyer, a senior Indian female dermatologist in white clinical coat with stethoscope in a clean hospital lighting setup." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCANgKgGJ5AwPuVgz9FgpkKzgcz4i-ZhYGzfwrTP-MtUsBn7JtI5eRoAseRuAzJoaNZ-u5LfH_WkPr9CbeYnUC7OSbmPIpnLC3tIqwuPesy3nlomd2U-v0hMMqLFGbVxywPzcvVAZq8ymIdiZyKq5H3GkQknTk_rNQ5IL31bC7wQhzJwp3htgW3FWdZFMa3Ljl9F53HbnlEPi2nh1Ud-ielTdRzX6Kzfuatp9QloJ0rM41x_XSvIjkk"/>
+<img loading="lazy" decoding="async" alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Warm studio headshot portrait of Dr. Rajeshwari Iyer, a senior Indian female dermatologist in white clinical coat with stethoscope in a clean hospital lighting setup." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCANgKgGJ5AwPuVgz9FgpkKzgcz4i-ZhYGzfwrTP-MtUsBn7JtI5eRoAseRuAzJoaNZ-u5LfH_WkPr9CbeYnUC7OSbmPIpnLC3tIqwuPesy3nlomd2U-v0hMMqLFGbVxywPzcvVAZq8ymIdiZyKq5H3GkQknTk_rNQ5IL31bC7wQhzJwp3htgW3FWdZFMa3Ljl9F53HbnlEPi2nh1Ud-ielTdRzX6Kzfuatp9QloJ0rM41x_XSvIjkk=w176"/>
 <span className="absolute bottom-0 right-0 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] rounded-full p-0.5 flex items-center justify-center shadow-sm">
 <span className="material-symbols-outlined text-[16px]" style={{"fontVariationSettings":"'FILL' 1"}}>verified</span>
 </span>
@@ -323,7 +323,7 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 <div className="flex gap-4">
 {/* Left Portrait & Verified Badge */}
 <div className="relative flex-shrink-0">
-<img alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Professional clinical headshot of Dr. Ananya Sen, a smiling female cosmetic dermatologist wearing a stethoscope against a soft focus contemporary medical clinic interior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWfmdOz6hk4ZlCeU9c385X9ZQu9I0tGyCrWtkIUJlleL9Xdy5ci6q-FaiEH4q_Nr2htSHhdYRk5PYdjbGyF4sdrjzGLdEpCGWKKIISeUIOxHQTZwekE57kqE_m3hFyQnIkxWRCqh3Z7Ed_lPcRZWkUCO5mRXfpshxiNJPXtw2aInNwSZs2DMXsk7VQjXbPeuAlabuwDgQBDIWlXtM4B5vzoHTMH_YwG0Llp9Ck7Bw8IyBK_j_w8U9G"/>
+<img loading="lazy" decoding="async" alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Professional clinical headshot of Dr. Ananya Sen, a smiling female cosmetic dermatologist wearing a stethoscope against a soft focus contemporary medical clinic interior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWfmdOz6hk4ZlCeU9c385X9ZQu9I0tGyCrWtkIUJlleL9Xdy5ci6q-FaiEH4q_Nr2htSHhdYRk5PYdjbGyF4sdrjzGLdEpCGWKKIISeUIOxHQTZwekE57kqE_m3hFyQnIkxWRCqh3Z7Ed_lPcRZWkUCO5mRXfpshxiNJPXtw2aInNwSZs2DMXsk7VQjXbPeuAlabuwDgQBDIWlXtM4B5vzoHTMH_YwG0Llp9Ck7Bw8IyBK_j_w8U9G=w176"/>
 <span className="absolute bottom-0 right-0 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] rounded-full p-0.5 flex items-center justify-center shadow-sm">
 <span className="material-symbols-outlined text-[16px]" style={{"fontVariationSettings":"'FILL' 1"}}>verified</span>
 </span>
@@ -378,7 +378,7 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 <div onClick={openDoctor('/doctor/dr-priya-sharma')} className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-xl p-5 hover:border-neutral-300 transition duration-150 relative cursor-pointer">
 <div className="flex gap-4">
 <div className="relative flex-shrink-0">
-<img alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Crisp portrait of Dr. Arvind Swaminathan, an experienced South Indian male dermatologist with glasses and white lab coat in an ultra-clean diagnostic clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFzBz663taQ-wSJo4_ehyR7mGG-g7EcaNFNrQ1HyNsKYcryJ-YoVbG28HhplkI5VbGX1yOV6DhMStNeW_6kusgYH-7usUwHgz4XUK-C847eyy9Ksu6sr0PD1KTI4VNAY4I6vXpGHNqeDa40By6t1pVA24QH2Zx8bq0d1PZRjQymYu_mwhaBx5u1MBaNEojTKqeWBnYV4-fZjhHLaUORQmYYcc-puqg5WYFH4RlcEArXM7xmcJ_C8xs"/>
+<img loading="lazy" decoding="async" alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Crisp portrait of Dr. Arvind Swaminathan, an experienced South Indian male dermatologist with glasses and white lab coat in an ultra-clean diagnostic clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFzBz663taQ-wSJo4_ehyR7mGG-g7EcaNFNrQ1HyNsKYcryJ-YoVbG28HhplkI5VbGX1yOV6DhMStNeW_6kusgYH-7usUwHgz4XUK-C847eyy9Ksu6sr0PD1KTI4VNAY4I6vXpGHNqeDa40By6t1pVA24QH2Zx8bq0d1PZRjQymYu_mwhaBx5u1MBaNEojTKqeWBnYV4-fZjhHLaUORQmYYcc-puqg5WYFH4RlcEArXM7xmcJ_C8xs=w176"/>
 <span className="absolute bottom-0 right-0 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] rounded-full p-0.5 flex items-center justify-center shadow-sm">
 <span className="material-symbols-outlined text-[16px]" style={{"fontVariationSettings":"'FILL' 1"}}>verified</span>
 </span>
@@ -429,7 +429,7 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 <div onClick={openDoctor('/doctor/dr-priya-sharma')} className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-xl p-5 hover:border-neutral-300 transition duration-150 relative cursor-pointer">
 <div className="flex gap-4">
 <div className="relative flex-shrink-0">
-<img alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Portrait of Dr. Priya Venkatesh, an Indian pediatric dermatologist in crisp clinical attire with stethoscope, softly backlit in an airy high-tech clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKcIP1kgDyQF50k1L1U9qC6PJQcF3ZroRmTUVogFnplaoxaODqJGBPHD_mjpCuUWRi9k3CExtx7l6JacW7Pqtw5rpeZmpk1IpbxPUSA9FOpTEzzYqsBGbzdMHhJmYJjl635dpyfA1slXPkbCZm4xknTC6KMDD5P2DRpUXwcuUxfwNK8wTqLjdE_jCTXhW9Q2bAdAORRHQaysP_BUPRz4hssEjAsuvAeYwr4swo0Y3vxtgU8wgU4Gdt"/>
+<img loading="lazy" decoding="async" alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Portrait of Dr. Priya Venkatesh, an Indian pediatric dermatologist in crisp clinical attire with stethoscope, softly backlit in an airy high-tech clinic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKcIP1kgDyQF50k1L1U9qC6PJQcF3ZroRmTUVogFnplaoxaODqJGBPHD_mjpCuUWRi9k3CExtx7l6JacW7Pqtw5rpeZmpk1IpbxPUSA9FOpTEzzYqsBGbzdMHhJmYJjl635dpyfA1slXPkbCZm4xknTC6KMDD5P2DRpUXwcuUxfwNK8wTqLjdE_jCTXhW9Q2bAdAORRHQaysP_BUPRz4hssEjAsuvAeYwr4swo0Y3vxtgU8wgU4Gdt=w176"/>
 <span className="absolute bottom-0 right-0 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] rounded-full p-0.5 flex items-center justify-center shadow-sm">
 <span className="material-symbols-outlined text-[16px]" style={{"fontVariationSettings":"'FILL' 1"}}>verified</span>
 </span>
@@ -480,7 +480,7 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 <div onClick={openDoctor('/doctor/dr-priya-sharma')} className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-xl p-5 hover:border-neutral-300 transition duration-150 relative cursor-pointer">
 <div className="flex gap-4">
 <div className="relative flex-shrink-0">
-<img alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Headshot of Dr. Rohan Kulkarni, male trichologist and dermatologist in a clean modern diagnostic office setting with calm clinical lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM3Jzitbzol3tRqBDUF9MPI6puAgZmAaNg1RSzS0Yfexta-bhEJGRgMg6xpBy5LZMt2rR98KWx3N7ZhZIk5SRKBr14DZmNCSSDXMDofZfXlE9AQyg0a-DxBPtDSlRandBURyzNKHo6EKbWv79yHu56r__nLgBEqIHpwJmgHvQ7eDLOGnmUdhN2z_tOaDyHf-CCO6bB4YJM3efjuuCp_KWTZ8m2MKIZYDKnUDjSruH9fL8xmDBzxSXh"/>
+<img loading="lazy" decoding="async" alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Headshot of Dr. Rohan Kulkarni, male trichologist and dermatologist in a clean modern diagnostic office setting with calm clinical lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM3Jzitbzol3tRqBDUF9MPI6puAgZmAaNg1RSzS0Yfexta-bhEJGRgMg6xpBy5LZMt2rR98KWx3N7ZhZIk5SRKBr14DZmNCSSDXMDofZfXlE9AQyg0a-DxBPtDSlRandBURyzNKHo6EKbWv79yHu56r__nLgBEqIHpwJmgHvQ7eDLOGnmUdhN2z_tOaDyHf-CCO6bB4YJM3efjuuCp_KWTZ8m2MKIZYDKnUDjSruH9fL8xmDBzxSXh=w176"/>
 <span className="absolute bottom-0 right-0 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] rounded-full p-0.5 flex items-center justify-center shadow-sm">
 <span className="material-symbols-outlined text-[16px]" style={{"fontVariationSettings":"'FILL' 1"}}>verified</span>
 </span>
@@ -531,7 +531,7 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 <div onClick={openDoctor('/doctor/dr-priya-sharma')} className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-xl p-5 hover:border-neutral-300 transition duration-150 relative cursor-pointer">
 <div className="flex gap-4">
 <div className="relative flex-shrink-0">
-<img alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Portrait photo of Dr. Kavita Nair, an Indian female dermatologist and laser therapist with a gentle professional expression in a medical consulting room." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdvivpTMZ3WcSbeRdbnIVrmwQ49WPN7pMFZyGTqgRMi7fWRiGYXCTf8YYzfNL2OfBSbbBvfqPC1tUtVGpTF08GcJ9413Gnn03LmUfvimOBgWJD6H0mrruylg1AHdDXxFbVnHt8YdM2B4wB_35QSTKsMBKsWzFiXPHGp_gsZEGfK14vqFQ9Wu9wi17F37X8dyYPkueS0tiYYz222RgWUUX5xKq3I76NkLrMn2EhHzFoCcSgt4vIlSlF"/>
+<img loading="lazy" decoding="async" alt="Doctor portrait" className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]" data-alt="Portrait photo of Dr. Kavita Nair, an Indian female dermatologist and laser therapist with a gentle professional expression in a medical consulting room." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdvivpTMZ3WcSbeRdbnIVrmwQ49WPN7pMFZyGTqgRMi7fWRiGYXCTf8YYzfNL2OfBSbbBvfqPC1tUtVGpTF08GcJ9413Gnn03LmUfvimOBgWJD6H0mrruylg1AHdDXxFbVnHt8YdM2B4wB_35QSTKsMBKsWzFiXPHGp_gsZEGfK14vqFQ9Wu9wi17F37X8dyYPkueS0tiYYz222RgWUUX5xKq3I76NkLrMn2EhHzFoCcSgt4vIlSlF=w176"/>
 <span className="absolute bottom-0 right-0 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] rounded-full p-0.5 flex items-center justify-center shadow-sm">
 <span className="material-symbols-outlined text-[16px]" style={{"fontVariationSettings":"'FILL' 1"}}>verified</span>
 </span>
@@ -767,7 +767,7 @@ export default function DoctorsPagePage({ plural }: { plural: string }) {
 </section>
 {/* ==================== INTERNAL LINK CLUSTERS ==================== */}
 <section className="bg-[#FFFFFF] py-10">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-8">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-8">
 {/* Locality Links */}
 <div>
 <h3 className="font-headline-h3 text-headline-h3 text-[#1C1917] mb-3">Dermatologists by locality in Bangalore</h3>

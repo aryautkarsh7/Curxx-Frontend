@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect } from 'react';
 
 const NOTIFICATIONS = [
@@ -34,12 +35,12 @@ export default function NotificationDrawer({ open, onClose }: { open: boolean; o
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
-  if (!open) return null;
-
   return (
+    <AnimatePresence>
+      {open && (
     <div className="fixed inset-0 z-[60]">
-      <div className="absolute inset-0 bg-[rgba(28,25,23,0.45)]" onClick={onClose} aria-hidden="true" />
-      <aside role="dialog" aria-modal="true" aria-label="Notifications" className="absolute right-0 top-0 h-full w-full max-w-sm bg-surface-container-lowest border-l border-[#E7E5E4] shadow-[0_8px_24px_rgba(0,0,0,0.12)] flex flex-col">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="absolute inset-0 bg-[rgba(28,25,23,0.45)]" onClick={onClose} aria-hidden="true" />
+      <motion.aside initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 380, damping: 32 }} role="dialog" aria-modal="true" aria-label="Notifications" className="absolute right-0 top-0 h-full w-full max-w-sm bg-surface-container-lowest border-l border-[#E7E5E4] shadow-[0_8px_24px_rgba(0,0,0,0.12)] flex flex-col">
         <div className="flex items-center justify-between px-5 h-16 border-b border-[#E7E5E4]">
           <h2 className="font-headline-h3 text-headline-h3 text-[#1C1917]">Notifications</h2>
           <button type="button" onClick={onClose} aria-label="Close notifications" className="p-1 rounded-lg text-[#78716C] hover:bg-[#FAFAF9]">
@@ -62,7 +63,9 @@ export default function NotificationDrawer({ open, onClose }: { open: boolean; o
             </li>
           ))}
         </ul>
-      </aside>
-    </div>
+      </motion.aside>
+        </div>
+      )}
+    </AnimatePresence>
   );
 }

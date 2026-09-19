@@ -70,7 +70,7 @@ export default function BookingStep4PagePage() {
 {/* Top Row: Doctor Profile */}
 <div className="flex items-center gap-4 pb-4 border-b border-surface-variant">
 <div className="relative w-[60px] h-[60px] rounded-xl overflow-hidden border border-surface-variant flex-shrink-0 bg-surface-container">
-<img className="w-full h-full object-cover" data-alt="A dignified professional studio portrait of Dr. Priya Sharma, an Indian female dermatologist wearing a tailored clinical white coat with a stethoscope around her neck. The setting is clean, modern, and warmly lit with subtle clinical neutral tones, conveying authority, empathy, and absolute precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQzTqKgcELt2NMTX9KL03joxMVgTSlFBD3sk-Nh7Q3oeFayCL_c28uoDmtn5p9Yuczor0LnmQjYfxVbJBw6HsbhAWbkurzQg1TZwKXMzv2XzvfQkA5qwMTmrRECBuTt14n8xDaAG4vm5bItKiNOsll0UHk2arOE9mAlGTwT4qyMb7X6c3MnOzC36wOIq_3fu2MsEGHRNx-Tr5Je7Cpm2hcBMDf0FzAyxJCPg8vrfOy89beIAs1nx-7"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" data-alt="A dignified professional studio portrait of Dr. Priya Sharma, an Indian female dermatologist wearing a tailored clinical white coat with a stethoscope around her neck. The setting is clean, modern, and warmly lit with subtle clinical neutral tones, conveying authority, empathy, and absolute precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQzTqKgcELt2NMTX9KL03joxMVgTSlFBD3sk-Nh7Q3oeFayCL_c28uoDmtn5p9Yuczor0LnmQjYfxVbJBw6HsbhAWbkurzQg1TZwKXMzv2XzvfQkA5qwMTmrRECBuTt14n8xDaAG4vm5bItKiNOsll0UHk2arOE9mAlGTwT4qyMb7X6c3MnOzC36wOIq_3fu2MsEGHRNx-Tr5Je7Cpm2hcBMDf0FzAyxJCPg8vrfOy89beIAs1nx-7=w800"/>
 </div>
 <div className="flex-grow">
 <div className="flex items-center gap-2">

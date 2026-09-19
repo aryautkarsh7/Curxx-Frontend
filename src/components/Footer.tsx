@@ -38,7 +38,7 @@ function FooterLink({ label, href }: { label: string; href: string }) {
 export default function Footer() {
   return (
     <footer className="w-full bg-surface-container-highest border-t border-surface-variant">
-      <div className="w-full max-w-[1200px] mx-auto px-margin-desktop py-space-2xl space-y-12">
+      <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-2xl space-y-12">
         {/* Top Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           {/* Left Brand Column */}

@@ -42,7 +42,7 @@ export default function MedicineStore({ category, query }: { category?: string; 
 <Header />
 {/* UTILITY DELIVERY BAR */}
 <section className="bg-surface-container-low border-b border-surface-variant">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop h-11 flex items-center justify-between text-caption font-caption">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop min-h-11 py-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-caption font-caption">
 {/* Delivery Address Cluster */}
 <div className="flex items-center gap-2">
 <span className="material-symbols-outlined text-outline text-base" data-icon="location_on">location_on</span>
@@ -51,8 +51,8 @@ export default function MedicineStore({ category, query }: { category?: string; 
 <button className="text-primary-container font-caption-strong hover:underline ml-1">Change</button>
 </div>
 {/* Right Dispatch status & Cart Button */}
-<div className="flex items-center gap-space-lg">
-<div className="flex items-center gap-2 text-tertiary font-caption-strong">
+<div className="flex items-center gap-3 sm:gap-space-lg">
+<div className="hidden sm:flex items-center gap-2 text-tertiary font-caption-strong">
 <span className="w-2 h-2 rounded-full bg-tertiary-container pulse-dot"></span>
 <span>Express 2-Hour Delivery Active</span>
 </div>
@@ -64,7 +64,7 @@ export default function MedicineStore({ category, query }: { category?: string; 
 </div>
 </section>
 {/* MAIN CANVAS CONTAINER */}
-<main className="w-full max-w-[1200px] mx-auto px-margin-desktop py-space-xl space-y-space-2xl">
+<main className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-xl space-y-space-2xl">
 {filterLabel && (
 <section id="results" className="space-y-space-base scroll-mt-16">
 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">

@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { AnimatePresence, motion } from 'framer-motion';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
 // Emergency UI uses Emergency Red (#EE1C25) only — never the brand red (#C1121F).
@@ -50,12 +51,12 @@ export default function EmergencyModal({ open, onClose, continueTo }: Props) {
     };
   }, [open, onClose]);
 
-  if (!open) return null;
-
   return (
+    <AnimatePresence>
+      {open && (
     <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center sm:p-4">
-      <div className="absolute inset-0 bg-[rgba(28,25,23,0.45)]" onClick={onClose} aria-hidden="true"></div>
-      <div role="alertdialog" aria-modal="true" aria-labelledby="emergency-title" className="relative w-full sm:max-w-md bg-white border-t border-[#E7E5E4] rounded-t-2xl sm:rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.12)] overflow-hidden">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="absolute inset-0 bg-[rgba(28,25,23,0.45)]" onClick={onClose} aria-hidden="true"></motion.div>
+      <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }} transition={{ type: 'spring', stiffness: 380, damping: 32 }} role="alertdialog" aria-modal="true" aria-labelledby="emergency-title" className="relative w-full sm:max-w-md bg-white border-t border-[#E7E5E4] rounded-t-2xl sm:rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.12)] overflow-hidden">
         <button type="button" onClick={onClose} aria-label="Close" className="absolute top-3 right-3 p-1.5 rounded-lg text-[#78716C] hover:bg-[#FAFAF9]">
           <span className="material-symbols-outlined text-[20px]">close</span>
         </button>
@@ -106,7 +107,9 @@ export default function EmergencyModal({ open, onClose, continueTo }: Props) {
             </Link>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 }

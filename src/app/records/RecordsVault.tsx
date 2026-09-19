@@ -73,7 +73,7 @@ export default function RecordsVault({ initialShare }: { initialShare: boolean }
 <Header />
 {/* Security Banner */}
 <div className="w-full bg-[#FFF1F2] border-b border-[#F9C6C9]">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop py-2.5 flex items-center justify-between flex-wrap gap-2">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-2.5 flex items-center justify-between flex-wrap gap-2">
 <div className="flex items-center gap-2.5">
 <span className="material-symbols-outlined text-[#C1121F] text-[18px]" data-icon="lock" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>lock</span>
 <p className="text-caption font-caption text-[#1C1917]">
@@ -86,7 +86,7 @@ export default function RecordsVault({ initialShare }: { initialShare: boolean }
 </div>
 </div>
 {/* Breadcrumb & Workspace Header */}
-<main className="w-full max-w-[1200px] mx-auto px-margin-desktop py-space-base pb-space-2xl space-y-space-lg">
+<main className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-base pb-space-2xl space-y-space-lg">
 {/* Top Breadcrumb */}
 <nav className="flex items-center gap-2 text-caption text-[#78716C]">
 <Link href="/" className="hover:text-primary transition-colors">Home</Link>
@@ -100,7 +100,7 @@ export default function RecordsVault({ initialShare }: { initialShare: boolean }
 <h1 className="text-headline-h1 font-headline-h1 text-[#1C1917] tracking-tight">Clinical Health Vault</h1>
 <p className="text-body-default font-body-default text-[#78716C] mt-0.5">Centralized, ABDM-federated repository of diagnostic tests, prescriptions, and discharge summaries.</p>
 </div>
-<div className="flex items-center gap-3">
+<div className="flex flex-wrap items-center gap-3">
 <button type="button" onClick={() => setShareTarget(BUNDLE)} className="inline-flex items-center gap-2 bg-surface-container-lowest border border-[#E7E5E4] px-3.5 py-2 rounded-lg text-body-strong font-body-strong text-[#1C1917] hover:bg-[#FAFAF9] transition shadow-sm active:scale-95">
 <span className="material-symbols-outlined text-[18px] text-[#78716C]" data-icon="share">share</span>
 <span>Share Record Bundle</span>

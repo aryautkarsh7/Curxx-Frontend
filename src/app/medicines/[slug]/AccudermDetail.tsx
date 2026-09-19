@@ -31,7 +31,7 @@ export default function CurxxMedicineProductDetailAccuderm20mgPage() {
       
 <Header />
 {/* 2. BREADCRUMB */}
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop pt-4 pb-2">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop pt-4 pb-2">
 <nav aria-label="Breadcrumb" className="flex items-center text-caption text-on-surface-variant gap-2">
 <Link href="/" className="hover:text-primary transition-colors">Home</Link>
 <span className="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
@@ -42,7 +42,7 @@ export default function CurxxMedicineProductDetailAccuderm20mgPage() {
 <span className="text-[#C1121F] font-caption-strong">AccuDerm Gel (Isotretinoin 20mg)</span>
 </nav>
 </div>
-<main className="w-full max-w-[1200px] mx-auto px-margin-desktop pb-16 flex-1">
+<main className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop pb-16 flex-1">
 {/* 3. PRODUCT HERO */}
 <section className="mt-4 bg-surface-container-lowest border border-surface-variant rounded-xl p-6 shadow-sm">
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -60,21 +60,21 @@ export default function CurxxMedicineProductDetailAccuderm20mgPage() {
 <span className="material-symbols-outlined text-[15px]" data-icon="verified" data-weight="fill">verified</span>
 <span>100% Genuine</span>
 </div>
-<img className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105" data-alt="Clean clinical studio photography of AccuDerm 20mg blister pack and soft gelatin capsules on a neutral warm beige medical lab surface. Bright high-key lighting illuminates the crisp pharmaceutical box details, WHO-GMP certification holographic seal, and pristine red and white typography. The image evokes rigorous sterility, calm medical precision, and unwavering reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASq4I01DZXrh13SILgoWcSSVCXtUAV8_2gxN7IYn0eAYFWrHFQ4PrApDdvADTbg9xqU5h64VQmZ2JQjMcLFgckKaREwYEkaMoK-zPRGrwQ3bZhj_J_AZUWGZmbvDpob-uau0UuotcNSNk_1maEufHKEdDaTNF6uHoutANFHrapotHwRxlZGpHMc4NnwZe2mdPgki2RS7a19DRCH7o8H0JRAsxZ5v5XR8z-No6TS79fK-_gV0gmbrXs"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105" data-alt="Clean clinical studio photography of AccuDerm 20mg blister pack and soft gelatin capsules on a neutral warm beige medical lab surface. Bright high-key lighting illuminates the crisp pharmaceutical box details, WHO-GMP certification holographic seal, and pristine red and white typography. The image evokes rigorous sterility, calm medical precision, and unwavering reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASq4I01DZXrh13SILgoWcSSVCXtUAV8_2gxN7IYn0eAYFWrHFQ4PrApDdvADTbg9xqU5h64VQmZ2JQjMcLFgckKaREwYEkaMoK-zPRGrwQ3bZhj_J_AZUWGZmbvDpob-uau0UuotcNSNk_1maEufHKEdDaTNF6uHoutANFHrapotHwRxlZGpHMc4NnwZe2mdPgki2RS7a19DRCH7o8H0JRAsxZ5v5XR8z-No6TS79fK-_gV0gmbrXs=w800"/>
 </div>
 {/* Thumbnails Row (4 items) */}
 <div className="grid grid-cols-4 gap-3">
 <Link href="/medicines/accuderm-20mg" className="aspect-square rounded-xl border-2 border-[#C1121F] bg-surface-container-lowest p-2 overflow-hidden flex items-center justify-center shadow-sm">
-<img className="w-full h-full object-contain" data-alt="Crisp front perspective of AccuDerm 20mg medicine carton showing clear typography and branding in high medical lighting on warm cream ground." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCm0lrOtHz_mImVQdEpJlwNfO7VIHSg6yP7ETYsUeAlx12yAcCMvq5Bx5y_m5wrqQ7kGYBJ0_NOmMZoL2MSEY3v0nKlHKXp-mlWHk9EOyhInQahq5rQ8nOSfdDoWC_qJAgB9M7g-oxOI2bv232pkhnpy6NfdAJxFRIgEFcCWpsNHWfR4i6DxzEL5eR8JP-CnWpknVz71Q5wtDSPe6HEi956zwl-NSeanEa8R7iVeodQHAH_5XyAwGn"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-contain" data-alt="Crisp front perspective of AccuDerm 20mg medicine carton showing clear typography and branding in high medical lighting on warm cream ground." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCm0lrOtHz_mImVQdEpJlwNfO7VIHSg6yP7ETYsUeAlx12yAcCMvq5Bx5y_m5wrqQ7kGYBJ0_NOmMZoL2MSEY3v0nKlHKXp-mlWHk9EOyhInQahq5rQ8nOSfdDoWC_qJAgB9M7g-oxOI2bv232pkhnpy6NfdAJxFRIgEFcCWpsNHWfR4i6DxzEL5eR8JP-CnWpknVz71Q5wtDSPe6HEi956zwl-NSeanEa8R7iVeodQHAH_5XyAwGn=w800"/>
 </Link>
 <button className="aspect-square rounded-xl border border-surface-variant bg-surface-container-lowest p-2 overflow-hidden flex items-center justify-center hover:border-outline transition">
-<img className="w-full h-full object-contain" data-alt="Macro close-up view of pharmaceutical blister strip back foil with batch numbers, expiry, and Cipla manufacturing details sharply visible." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQWM4THwV9WLog5sWhp8dy5Dj5bfZAcV1dAF0D14tzYiVMUqJw87hwxKyDD0ayUYJ-b8OJF00V4WKk9rJQ5vARIxvFZziBsN1kyGzfqisDO_rxzMPhaIy0717y-n5NtfFX0_wgBLeB7KWRxHKUBxpeNewaVpMbsTJCDUYsmagpqQNzA1eyuNwqrNFc_NcS_QBkA30s7BsASXXjaXIo9jCp4AmSfouHSfJX4zVDWicHSUZ2GfBGdxfA"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-contain" data-alt="Macro close-up view of pharmaceutical blister strip back foil with batch numbers, expiry, and Cipla manufacturing details sharply visible." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQWM4THwV9WLog5sWhp8dy5Dj5bfZAcV1dAF0D14tzYiVMUqJw87hwxKyDD0ayUYJ-b8OJF00V4WKk9rJQ5vARIxvFZziBsN1kyGzfqisDO_rxzMPhaIy0717y-n5NtfFX0_wgBLeB7KWRxHKUBxpeNewaVpMbsTJCDUYsmagpqQNzA1eyuNwqrNFc_NcS_QBkA30s7BsASXXjaXIo9jCp4AmSfouHSfJX4zVDWicHSUZ2GfBGdxfA=w800"/>
 </button>
 <button className="aspect-square rounded-xl border border-surface-variant bg-surface-container-lowest p-2 overflow-hidden flex items-center justify-center hover:border-outline transition">
-<img className="w-full h-full object-contain" data-alt="Detailed view of salt composition table printed on pharmaceutical carton, clinical white lighting and high legible contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGQf2pqhhJhaQyj4DfQx3wq8BvQOmlEeYRs8B1W5Z8b_Aj4FLgfv7DHSzfEr2DeeJDuNi_cNYLJAiomyoYJYVLZcmVd_RY2vWEs2L7zxVbAjcl1c_R-JyPzBATpp3aXMi4avZHREqthdHfaFySV9_PPO8q0iPuVOmfoVRF7j9Hsnw3aYndrPibU9WqJ2Ex_V1Ok4Bs05_INuQvy-xZvPcRCUGilthu_uunxC_ul0LPAwtj8XUoPYGJ"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-contain" data-alt="Detailed view of salt composition table printed on pharmaceutical carton, clinical white lighting and high legible contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGQf2pqhhJhaQyj4DfQx3wq8BvQOmlEeYRs8B1W5Z8b_Aj4FLgfv7DHSzfEr2DeeJDuNi_cNYLJAiomyoYJYVLZcmVd_RY2vWEs2L7zxVbAjcl1c_R-JyPzBATpp3aXMi4avZHREqthdHfaFySV9_PPO8q0iPuVOmfoVRF7j9Hsnw3aYndrPibU9WqJ2Ex_V1Ok4Bs05_INuQvy-xZvPcRCUGilthu_uunxC_ul0LPAwtj8XUoPYGJ=w800"/>
 </button>
 <button className="aspect-square rounded-xl border border-surface-variant bg-surface-container-lowest p-2 overflow-hidden flex items-center justify-center hover:border-outline transition">
-<img className="w-full h-full object-contain" data-alt="Microscopic inspection view of WHO-GMP certified holographic security seal glistening subtly on medicine packaging corner." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJa6CrCyWQEh_mmcHK7cc4ejzkuyI5EUrYKkFXU9Gtf1AdjQKM10hrvr3GY43BeCpiI7nG8PSCcUDr_nLEDKOHyqPaSW0nMa8_uw48GH1XRIf3vDkbesDdr8ltwUlem92HDLtC_20MmBUQss3V2qQg5oqN38sOmLWbKj3ZqVcEwWmuG1fmtBW85GYpAjmOG5rCrosLhmeQejta1kjiYiB84CBYD7aItaK-QNJKUaJOF2BXHOFN_yk7"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-contain" data-alt="Microscopic inspection view of WHO-GMP certified holographic security seal glistening subtly on medicine packaging corner." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJa6CrCyWQEh_mmcHK7cc4ejzkuyI5EUrYKkFXU9Gtf1AdjQKM10hrvr3GY43BeCpiI7nG8PSCcUDr_nLEDKOHyqPaSW0nMa8_uw48GH1XRIf3vDkbesDdr8ltwUlem92HDLtC_20MmBUQss3V2qQg5oqN38sOmLWbKj3ZqVcEwWmuG1fmtBW85GYpAjmOG5rCrosLhmeQejta1kjiYiB84CBYD7aItaK-QNJKUaJOF2BXHOFN_yk7=w800"/>
 </button>
 </div>
 </div>
@@ -613,7 +613,7 @@ export default function CurxxMedicineProductDetailAccuderm20mgPage() {
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col justify-between hover:shadow-sm transition">
 <div>
 <div className="relative aspect-square w-full rounded-lg bg-surface-container-low border border-surface-variant overflow-hidden mb-3 p-4 flex items-center justify-center">
-<img className="w-full h-full object-contain" data-alt="A minimalist white pump bottle of gentle hydrating clinical cleanser on a warm neutral surface with subtle water ripples, modern corporate medical studio photography, soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_dtcUfNoOrQFn4z_vGfFsCEyPdV5yoKznN8U32mPrYciGLsvU__BtEMXM8cdMO_1qpvSP0dVM3mOcKGy3a1hgSW2aBB4heLRtZo7vpQmk0ptkEzF3s1l10EjS1uQhNsO3dkrE1GtetMsy2xA4LE0Q5kvfTeNJQiUQzyGWSGK1jKyiM53ik3zWRONWqrbe0YWkm4Q5csVZ-U6cjEnUNbJ9N3iHZlWwZUcAISGj1mKYsBOqvSVQqnXj"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-contain" data-alt="A minimalist white pump bottle of gentle hydrating clinical cleanser on a warm neutral surface with subtle water ripples, modern corporate medical studio photography, soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_dtcUfNoOrQFn4z_vGfFsCEyPdV5yoKznN8U32mPrYciGLsvU__BtEMXM8cdMO_1qpvSP0dVM3mOcKGy3a1hgSW2aBB4heLRtZo7vpQmk0ptkEzF3s1l10EjS1uQhNsO3dkrE1GtetMsy2xA4LE0Q5kvfTeNJQiUQzyGWSGK1jKyiM53ik3zWRONWqrbe0YWkm4Q5csVZ-U6cjEnUNbJ9N3iHZlWwZUcAISGj1mKYsBOqvSVQqnXj=w800"/>
 </div>
 <span className="text-micro font-semibold text-outline">HYDRATION</span>
 <h3 className="text-caption-strong font-caption-strong text-on-surface mt-1">Gentle Hydrating Cleanser (150ml)</h3>
@@ -638,7 +638,7 @@ export default function CurxxMedicineProductDetailAccuderm20mgPage() {
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col justify-between hover:shadow-sm transition">
 <div>
 <div className="relative aspect-square w-full rounded-lg bg-surface-container-low border border-surface-variant overflow-hidden mb-3 p-4 flex items-center justify-center">
-<img className="w-full h-full object-contain" data-alt="A sleek medical sunscreen tube with SPF 50 rating, set in front of soft directional morning daylight on a clean limestone podium with minimalist red-accented packaging." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcKivfq6q8Zm-HTnUiTk3WMNcZ5lqXd69LqlUDNr48AMu-1nm8YsGsgb6gPOi16VtSujNfZdXLewzR_42PEIsPd9SxAh7H9lzEVY7wUNF-g1z4vjoKUmQYjaQtPx17p4Hmil_IXXKiElRZe_Rv5nABcZUd2bEK20SSDJYZvRLYkSs5dIzxs9LFjWdvlawhcPSBEdA81dP64XuCf4VM9xK6T__dnJ9-8Pdiy9aLypT_zAqM5dFsmUip"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-contain" data-alt="A sleek medical sunscreen tube with SPF 50 rating, set in front of soft directional morning daylight on a clean limestone podium with minimalist red-accented packaging." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcKivfq6q8Zm-HTnUiTk3WMNcZ5lqXd69LqlUDNr48AMu-1nm8YsGsgb6gPOi16VtSujNfZdXLewzR_42PEIsPd9SxAh7H9lzEVY7wUNF-g1z4vjoKUmQYjaQtPx17p4Hmil_IXXKiElRZe_Rv5nABcZUd2bEK20SSDJYZvRLYkSs5dIzxs9LFjWdvlawhcPSBEdA81dP64XuCf4VM9xK6T__dnJ9-8Pdiy9aLypT_zAqM5dFsmUip=w800"/>
 </div>
 <span className="text-micro font-semibold text-outline">BARRIER DEFENSE</span>
 <h3 className="text-caption-strong font-caption-strong text-on-surface mt-1">Ceramide Barrier Cream SPF 50 (50g)</h3>
@@ -663,7 +663,7 @@ export default function CurxxMedicineProductDetailAccuderm20mgPage() {
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col justify-between hover:shadow-sm transition">
 <div>
 <div className="relative aspect-square w-full rounded-lg bg-surface-container-low border border-surface-variant overflow-hidden mb-3 p-4 flex items-center justify-center">
-<img className="w-full h-full object-contain" data-alt="Clinical lip balm stick with SPF 30 sunscreen seal and shea butter icons in crisp focus against a calm off-white medical back-drop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOX_us1G7KV2PRVowKn_ZNUOa2jjSVrPC9MfC3yLAXbKy3pOiJfaElVJMs59vzUsIatYOE41SnjX8xXngJjQjWIhuxaQUVVuoW1g1S1SOwQaROwNG2-qEmZJvxvk32ufIYTE-DcHZuHUWQ4ppOVb8UeX-4KPtKbEkSuqj2biW1L-vi4e4hmq8en2mc8vIxv7YWasUFSMZL2kx76NEQebG7n_S8ThYM4fFSgDspZxlf05_aBosc61M9"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-contain" data-alt="Clinical lip balm stick with SPF 30 sunscreen seal and shea butter icons in crisp focus against a calm off-white medical back-drop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOX_us1G7KV2PRVowKn_ZNUOa2jjSVrPC9MfC3yLAXbKy3pOiJfaElVJMs59vzUsIatYOE41SnjX8xXngJjQjWIhuxaQUVVuoW1g1S1SOwQaROwNG2-qEmZJvxvk32ufIYTE-DcHZuHUWQ4ppOVb8UeX-4KPtKbEkSuqj2biW1L-vi4e4hmq8en2mc8vIxv7YWasUFSMZL2kx76NEQebG7n_S8ThYM4fFSgDspZxlf05_aBosc61M9=w800"/>
 </div>
 <span className="text-micro font-semibold text-outline">LIP HYDRATION</span>
 <h3 className="text-caption-strong font-caption-strong text-on-surface mt-1">Soothing Lip Balm SPF 30 (10g)</h3>
@@ -688,6 +688,18 @@ export default function CurxxMedicineProductDetailAccuderm20mgPage() {
 </section>
 </main>
 <Toast message={toast} />
+{/* Mobile sticky action bar */}
+<div className="lg:hidden fixed bottom-16 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#E7E5E4] px-margin py-3 flex items-center gap-3">
+<div className="min-w-0">
+<p className="font-micro text-micro text-[#78716C]">Total</p>
+<p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">₹{(PRODUCT.price * qty).toLocaleString('en-IN')}</p>
+</div>
+<button type="button" onClick={addProduct} className="flex-1 h-12 rounded-lg bg-primary-container hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-1.5">
+<span className="material-symbols-outlined text-[18px]">shopping_bag</span>
+<span>Add to Cart</span>
+</button>
+</div>
+<div className="h-20 lg:hidden" aria-hidden="true"></div>
 <Footer />
 
     </>

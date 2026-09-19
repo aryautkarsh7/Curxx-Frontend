@@ -1,6 +1,7 @@
 
 'use client';
 import Link from 'next/link';
+import FadeIn from '@/components/FadeIn';
 import { NEARBY_FACILITIES, mapsUrl } from '@/lib/facilities';
 import { useRouter } from 'next/navigation';
 import type { MouseEvent } from 'react';
@@ -33,7 +34,7 @@ export default function PagePage() {
 <section className="relative bg-surface-container-lowest overflow-hidden border-b border-surface-variant">
 {/* Subtle radial accent in background */}
 <div className="absolute -top-32 right-0 w-[550px] h-[550px] rounded-full bg-error-container/20 blur-3xl pointer-events-none"></div>
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
 {/* Left Column (approx 55%) */}
 <div className="lg:col-span-7 flex flex-col space-y-6">
 {/* Eyebrow Pill */}
@@ -118,7 +119,7 @@ export default function PagePage() {
 <div className="relative bg-surface-container-lowest rounded-2xl border border-surface-variant p-4 shadow-sm overflow-hidden">
 {/* Doctor Portrait Image */}
 <div className="relative w-full h-[400px] rounded-xl overflow-hidden bg-surface-container">
-<img className="w-full h-full object-cover" data-alt="Professional clinical headshot of an Indian female medical doctor wearing a white lab coat with a clean stethoscope around her neck, smiling warmly against a bright, modern clinic consultation room background with soft neutral lighting and high medical precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUZMYG3kDWBHUbrpKq_2tul0ZATsnUoLC2dMcTYZujo2wBOhz3Es5kMVhEEKFVZlHpV1PIV5YfbnD_rxRDtAB4nIY7VCGbOhW0vNF6_EnKpj9YkUh6WQfbbmrn1gXnn9QvtfkyJGbggis3CFH1T4GCcGTUaHguNKyjOyn0rw5jtjkYura65p47RJD4szM_PKYSyECs8cfHj_fZXEPw5CKO_W496Rc60HYMEgUtRYLMOLzY7uHqN_x1"/>
+<img loading="eager" fetchPriority="high" decoding="async" className="w-full h-full object-cover" data-alt="Professional clinical headshot of an Indian female medical doctor wearing a white lab coat with a clean stethoscope around her neck, smiling warmly against a bright, modern clinic consultation room background with soft neutral lighting and high medical precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUZMYG3kDWBHUbrpKq_2tul0ZATsnUoLC2dMcTYZujo2wBOhz3Es5kMVhEEKFVZlHpV1PIV5YfbnD_rxRDtAB4nIY7VCGbOhW0vNF6_EnKpj9YkUh6WQfbbmrn1gXnn9QvtfkyJGbggis3CFH1T4GCcGTUaHguNKyjOyn0rw5jtjkYura65p47RJD4szM_PKYSyECs8cfHj_fZXEPw5CKO_W496Rc60HYMEgUtRYLMOLzY7uHqN_x1=w800"/>
 {/* Triage Badge in Top-Right */}
 <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm border border-surface-variant shadow-sm flex items-center space-x-1.5">
 <span className="w-2 h-2 rounded-full bg-tertiary"></span>
@@ -145,8 +146,9 @@ export default function PagePage() {
 </div>
 </section>
 {/* ECOSYSTEM SECTION */}
+<FadeIn>
 <section className="bg-surface-container-low py-16 border-b border-surface-variant">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-10">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-10">
 {/* Section Header */}
 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
 <div>
@@ -230,9 +232,11 @@ export default function PagePage() {
 </div>
 </div>
 </section>
+</FadeIn>
 {/* NEARBY CARE SECTION */}
+<FadeIn>
 <section className="bg-surface-container-lowest py-space-2xl border-b border-surface-variant" id="nearby-care">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-8">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-8">
 <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
 <div>
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Near Indiranagar, Bengaluru</span>
@@ -282,9 +286,11 @@ export default function PagePage() {
 </div>
 </div>
 </section>
+</FadeIn>
 {/* CLINICAL SPECIALTIES SECTION */}
+<FadeIn>
 <section className="bg-surface-container-lowest py-16 border-b border-surface-variant" id="specialties">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-10">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-10">
 {/* Section Header */}
 <div className="flex items-end justify-between">
 <div>
@@ -361,9 +367,11 @@ export default function PagePage() {
 </div>
 </div>
 </section>
+</FadeIn>
 {/* VERIFIED DOCTORS SECTION */}
+<FadeIn>
 <section className="bg-surface-container-lowest py-16 border-b border-surface-variant" id="doctors">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-10">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-10">
 {/* Section Header */}
 <div className="flex items-end justify-between">
 <div>
@@ -382,7 +390,7 @@ export default function PagePage() {
 <div className="space-y-3">
 <div className="flex items-start space-x-3">
 <div className="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0 border border-surface-variant">
-<img className="w-full h-full object-cover" data-alt="Doctor headshot of a middle-aged Indian woman doctor with neat hair and stethoscope against a bright hospital consultation clinic background, wearing professional attire and displaying clinical confidence in clean light mode." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6I-pDVrIg65IOFc-5a99zl63XLFGQ2XxPyRTkjvrf2hjwfgdpknnomLzrPeEjXc-Wnea7twWVAtBMZIoO21Fodc3g7tP5C2w0PsOJYg11tG7gLdjNOqDmM0Mf4ZIXS_uNLigJ6L-T79CqZ17mUWmF5J-S1xxs1Gc5YHDrOJrZK1EtuaysmqSXI1xVHWha0V0tocTG6zx_PxZuYT5VmbWfcrm35V0dNfsvFtNuPH8nS1TdbDMjH3P0"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" data-alt="Doctor headshot of a middle-aged Indian woman doctor with neat hair and stethoscope against a bright hospital consultation clinic background, wearing professional attire and displaying clinical confidence in clean light mode." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6I-pDVrIg65IOFc-5a99zl63XLFGQ2XxPyRTkjvrf2hjwfgdpknnomLzrPeEjXc-Wnea7twWVAtBMZIoO21Fodc3g7tP5C2w0PsOJYg11tG7gLdjNOqDmM0Mf4ZIXS_uNLigJ6L-T79CqZ17mUWmF5J-S1xxs1Gc5YHDrOJrZK1EtuaysmqSXI1xVHWha0V0tocTG6zx_PxZuYT5VmbWfcrm35V0dNfsvFtNuPH8nS1TdbDMjH3P0=w800"/>
 </div>
 <div>
 <div className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary text-micro font-micro font-semibold">
@@ -433,7 +441,7 @@ export default function PagePage() {
 <div className="space-y-3">
 <div className="flex items-start space-x-3">
 <div className="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0 border border-surface-variant">
-<img className="w-full h-full object-cover" data-alt="Doctor headshot of a seasoned Indian male orthopedic surgeon wearing medical scrub suit and stethoscope against clean surgical clinic interior background with bright neutral overhead illumination in warm minimalist tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzDrh61bm9KTMQKFjbpXuVRypxNJ2Hw03u-vU0s-oGaXmhlDxfKALCfUBEzyZIzzn33eCyjxfZy4iZYCEwwhrSe7CYgUP0VJdTR4mAtvis1xwllCnbi4m1L7tgylkAhT5IMyVDojAB9r1bac-twO7hW7Q7q2Uz9iniJmceAerLC5K9s92WIbRX_c5oFZIsiAJublo1jdopqbbBJMrwt3upzdQKTtddWw3HhRxfO294uj9sR2xn-Gud"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" data-alt="Doctor headshot of a seasoned Indian male orthopedic surgeon wearing medical scrub suit and stethoscope against clean surgical clinic interior background with bright neutral overhead illumination in warm minimalist tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzDrh61bm9KTMQKFjbpXuVRypxNJ2Hw03u-vU0s-oGaXmhlDxfKALCfUBEzyZIzzn33eCyjxfZy4iZYCEwwhrSe7CYgUP0VJdTR4mAtvis1xwllCnbi4m1L7tgylkAhT5IMyVDojAB9r1bac-twO7hW7Q7q2Uz9iniJmceAerLC5K9s92WIbRX_c5oFZIsiAJublo1jdopqbbBJMrwt3upzdQKTtddWw3HhRxfO294uj9sR2xn-Gud=w800"/>
 </div>
 <div>
 <div className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary text-micro font-micro font-semibold">
@@ -484,7 +492,7 @@ export default function PagePage() {
 <div className="space-y-3">
 <div className="flex items-start space-x-3">
 <div className="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0 border border-surface-variant">
-<img className="w-full h-full object-cover" data-alt="Doctor portrait of a young Indian female dermatologist in white clinical coat with gentle friendly demeanor, set in a bright sterile dermatology clinic consulting room with pristine medical lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2OyCMEL31fIBQNDuqrpXhDy8Zj0mID0s0zrVd1l4pTav45sCl8FXrH-mEQTWi4r3Wj8ZYqE9UYIrR-OCoeoNbaGQvINX8UlGSyD8ZlFTv-8QW9HJkA8CbCmdICCuUvBCg9qOrOrsaTqKXOQT6pW4zY1F2Vc-Qx3U5mH6VdTF9RHEw08GAarpad6QjOHXNLXd51um1flnwvDwKfVhwWZLbs8GhkbyFkhDqnVNZu68kUVmZu9RoonJb"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" data-alt="Doctor portrait of a young Indian female dermatologist in white clinical coat with gentle friendly demeanor, set in a bright sterile dermatology clinic consulting room with pristine medical lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2OyCMEL31fIBQNDuqrpXhDy8Zj0mID0s0zrVd1l4pTav45sCl8FXrH-mEQTWi4r3Wj8ZYqE9UYIrR-OCoeoNbaGQvINX8UlGSyD8ZlFTv-8QW9HJkA8CbCmdICCuUvBCg9qOrOrsaTqKXOQT6pW4zY1F2Vc-Qx3U5mH6VdTF9RHEw08GAarpad6QjOHXNLXd51um1flnwvDwKfVhwWZLbs8GhkbyFkhDqnVNZu68kUVmZu9RoonJb=w800"/>
 </div>
 <div>
 <div className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary text-micro font-micro font-semibold">
@@ -550,9 +558,11 @@ export default function PagePage() {
 </div>
 </div>
 </section>
+</FadeIn>
 {/* ABHA / HEALTH ID INTEGRATION */}
+<FadeIn>
 <section className="bg-surface-container-lowest py-16 border-b border-surface-variant" id="abha">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 {/* Left Column: Copy & Actions */}
 <div className="lg:col-span-7 space-y-6">
 <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-surface-container-low border border-surface-variant">
@@ -623,9 +633,11 @@ export default function PagePage() {
 </div>
 </div>
 </section>
+</FadeIn>
 {/* HOW IT WORKS SECTION */}
+<FadeIn>
 <section className="bg-surface-container-low py-16 border-b border-surface-variant">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-12 text-center">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-12 text-center">
 <div className="max-w-xl mx-auto space-y-2">
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Transparent Process</span>
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface">How Curxx Works</h2>
@@ -676,9 +688,11 @@ export default function PagePage() {
 </div>
 </div>
 </section>
+</FadeIn>
 {/* PATIENT STORIES SECTION */}
+<FadeIn>
 <section className="bg-surface-container-lowest py-16 border-b border-surface-variant">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop space-y-12">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-12">
 <div className="text-center max-w-xl mx-auto space-y-2">
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Patient Stories</span>
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface">Trusted by 1.2M+ Happy Patients Across India</h2>
@@ -756,9 +770,11 @@ export default function PagePage() {
 </div>
 </div>
 </section>
+</FadeIn>
 {/* APP DOWNLOAD BAND */}
+<FadeIn>
 <section className="bg-primary text-on-primary py-12">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
 <div className="md:col-span-8 space-y-4">
 <span className="text-micro font-micro uppercase tracking-widest text-on-primary/80 font-semibold">Always In Your Pocket</span>
 <h2 className="text-display font-display text-on-primary">Healthcare that moves at your pace</h2>
@@ -790,9 +806,11 @@ export default function PagePage() {
 </div>
 </div>
 </section>
+</FadeIn>
 {/* INSTITUTIONAL TRUST BAR & SOS 108 */}
+<FadeIn>
 <section className="bg-surface-container-lowest py-8" id="emergency">
-<div className="w-full max-w-[1200px] mx-auto px-margin-desktop">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 <div className="bg-inverse-surface text-inverse-on-surface p-4 sm:p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-caption font-caption text-inverse-on-surface/90">
 <div className="flex items-center space-x-2">
@@ -815,6 +833,7 @@ export default function PagePage() {
 </div>
 </div>
 </section>
+</FadeIn>
 </main>
 <Footer />
 

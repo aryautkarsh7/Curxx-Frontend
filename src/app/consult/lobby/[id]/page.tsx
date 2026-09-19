@@ -10,7 +10,7 @@ export default function CurxxVideoConsultationLobbyScreenAPage() {
       
 <Header />
 {/* ==================== MAIN LOBBY CONTAINER ==================== */}
-<main className="flex-grow w-full max-w-[1200px] mx-auto px-margin-desktop py-6">
+<main className="flex-grow w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-6">
 {/* BREADCRUMB / SESSION BAR */}
 <section className="flex flex-wrap items-center justify-between gap-3 mb-6">
 <nav className="flex items-center gap-2 text-caption font-caption text-on-surface-variant">
@@ -47,7 +47,7 @@ export default function CurxxVideoConsultationLobbyScreenAPage() {
 {/* Video Preview Card (16:9) */}
 <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-inverse-surface border border-surface-dim shadow-inner">
 {/* Patient Camera Preview */}
-<img className="w-full h-full object-cover" data-alt="Realistic web camera video feed of a young Indian male patient seated in a bright study room with soft natural illumination, facing the camera with relaxed confidence, high definition teleconsultation interface aesthetic with high clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCb8czXmoNYiidYZUT3o1yS0gZXceA8kIs1F0Ad0CKVh5Cgw9QOJGK2y4REoHNcOi4Gk1qog1UIcmqjriFAneGbdRpgQ0skZI0Lr2rCfbFEwJJjub97TFHCBYs0xWpGTD2rv8mpvIsPmEntiXrulEEeTchnyXHZ4DgBrcST2waDHHSNso9YrG5Jvvx1hfDmYhW89HwPXv-LrDm8P8y7kg6t0yttjHzg5-sntb_HxS2Xfnbx7hp4nMhW"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" data-alt="Realistic web camera video feed of a young Indian male patient seated in a bright study room with soft natural illumination, facing the camera with relaxed confidence, high definition teleconsultation interface aesthetic with high clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCb8czXmoNYiidYZUT3o1yS0gZXceA8kIs1F0Ad0CKVh5Cgw9QOJGK2y4REoHNcOi4Gk1qog1UIcmqjriFAneGbdRpgQ0skZI0Lr2rCfbFEwJJjub97TFHCBYs0xWpGTD2rv8mpvIsPmEntiXrulEEeTchnyXHZ4DgBrcST2waDHHSNso9YrG5Jvvx1hfDmYhW89HwPXv-LrDm8P8y7kg6t0yttjHzg5-sntb_HxS2Xfnbx7hp4nMhW=w800"/>
 {/* Overlay Top-Left: Connection Quality Badge */}
 <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-surface-container-lowest/90 backdrop-blur-sm px-2.5 py-1 rounded-md border border-surface-dim shadow-sm">
 <span className="material-symbols-outlined text-[16px] text-tertiary font-bold">network_check</span>
@@ -79,7 +79,7 @@ export default function CurxxVideoConsultationLobbyScreenAPage() {
 <label className="block text-caption font-caption text-on-surface-variant mb-1">Camera Source</label>
 <div className="flex items-center gap-2 bg-surface-container-lowest border border-surface-dim rounded-lg px-3 py-2">
 <span className="material-symbols-outlined text-[20px] text-on-surface-variant">photo_camera</span>
-<select className="flex-grow bg-transparent border-0 p-0 text-caption font-caption text-on-surface focus:ring-0 cursor-pointer">
+<select className="min-w-0 w-full flex-grow bg-transparent border-0 p-0 text-caption font-caption text-on-surface focus:ring-0 cursor-pointer">
 <option >FaceTime HD Camera (Built-in)</option>
 <option>Logitech C920 Pro HD Webcam</option>
 <option>External USB Video Capture</option>
@@ -108,7 +108,7 @@ export default function CurxxVideoConsultationLobbyScreenAPage() {
 </div>
 <div className="flex items-center gap-2 bg-surface-container-lowest border border-surface-dim rounded-lg px-3 py-2">
 <span className="material-symbols-outlined text-[20px] text-on-surface-variant">mic</span>
-<select className="flex-grow bg-transparent border-0 p-0 text-caption font-caption text-on-surface focus:ring-0 cursor-pointer">
+<select className="min-w-0 w-full flex-grow bg-transparent border-0 p-0 text-caption font-caption text-on-surface focus:ring-0 cursor-pointer">
 <option >Default - Internal Microphone (Studio Quality)</option>
 <option>AirPods Pro Bluetooth Input</option>
 <option>USB Audio Device</option>
@@ -138,7 +138,7 @@ export default function CurxxVideoConsultationLobbyScreenAPage() {
 <div className="bg-surface-container-lowest border border-surface-dim rounded-xl p-4">
 <div className="flex items-start gap-3.5">
 <div className="relative">
-<img className="w-14 h-14 rounded-lg object-cover border border-surface-dim" data-alt="Professional clinical headshot of Dr. Priya Sharma, an experienced Indian female dermatologist wearing a sterile white coat with stethoscope, smiling gently against a high-end medical clinic background, clean lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxd_R6po-4khC0QnLvRvkyEj8H0lkTOYLswIVJDyJDvbfy9lFh0l4iiFHqF2c-B6zx5dRyKWa19_l25vu8x4aLDGFjpOtFOLLGyR1RFBrSUX7FXBflWKWvJ09-Z3AxsVH7AvLHBM0LG5y6M3aZdlnCElquWl0AXiWNQ19IuyCb_THPxlAZK8LFPWgGsaSft8jOzp2E2C5dgqHOWG48dA1UD2HJs4GXiqdPSoH1NNGqzi-WFN48kPlT"/>
+<img loading="lazy" decoding="async" className="w-14 h-14 rounded-lg object-cover border border-surface-dim" data-alt="Professional clinical headshot of Dr. Priya Sharma, an experienced Indian female dermatologist wearing a sterile white coat with stethoscope, smiling gently against a high-end medical clinic background, clean lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxd_R6po-4khC0QnLvRvkyEj8H0lkTOYLswIVJDyJDvbfy9lFh0l4iiFHqF2c-B6zx5dRyKWa19_l25vu8x4aLDGFjpOtFOLLGyR1RFBrSUX7FXBflWKWvJ09-Z3AxsVH7AvLHBM0LG5y6M3aZdlnCElquWl0AXiWNQ19IuyCb_THPxlAZK8LFPWgGsaSft8jOzp2E2C5dgqHOWG48dA1UD2HJs4GXiqdPSoH1NNGqzi-WFN48kPlT=w112"/>
 <span className="absolute -bottom-1 -right-1 bg-surface-container-lowest p-0.5 rounded-full">
 <span className="material-symbols-outlined text-[16px] text-tertiary" style={{"fontVariationSettings":"'FILL' 1"}}>verified</span>
 </span>

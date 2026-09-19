@@ -10,7 +10,7 @@ export default function CurxxAiSymptomTriageResultPage() {
       
 <Header />
 {/* MAIN CANVAS (Centered 880px container layout) */}
-<main className="flex-1 py-space-xl px-margin-desktop">
+<main className="flex-1 py-space-xl px-margin sm:px-margin-desktop">
 <div className="max-w-[880px] mx-auto space-y-6">
 {/* TOP RESULT HERO CARD */}
 <section className="bg-surface-container-lowest rounded-xl border border-surface-variant p-8 shadow-sm">
@@ -98,7 +98,7 @@ export default function CurxxAiSymptomTriageResultPage() {
 <div className="flex items-start gap-4">
 {/* Doctor Avatar */}
 <div className="relative shrink-0">
-<img className="w-[72px] h-[72px] rounded-full object-cover border border-surface-variant shadow-xs" data-alt="A dignified close-up portrait of Dr. Priya Sharma, an Indian senior female dermatologist wearing clinical attire and a stethoscope. The setting is a clean, bright medical clinic with soft ambient lighting and modern architectural lines. The image adheres to a restrained corporate clinical aesthetic with neutral tones and clean contrasts." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0Cw7B78BN5UtmgVbPjbGnkX-SqPNduDKiWfQYtEgXXbU_ShBuXtJCv1RHweR9IGGetcSCa9Efni2l_cjjAq8sKGKnptdneRq7FJu459fMD7aMLiixgb-aOuGSQc-IaW3tGEQA81TJaGzauZGHA5UAJcSA9LYS4780_LH-nC_rH-zEaXW_nimiIs_F9aa1gG0J_Dac6hPGJlAjv9_4ZFprhX1VKMb4Pesn9AUrx2ysiwyO5ApsChNo"/>
+<img loading="lazy" decoding="async" className="w-[72px] h-[72px] rounded-full object-cover border border-surface-variant shadow-xs" data-alt="A dignified close-up portrait of Dr. Priya Sharma, an Indian senior female dermatologist wearing clinical attire and a stethoscope. The setting is a clean, bright medical clinic with soft ambient lighting and modern architectural lines. The image adheres to a restrained corporate clinical aesthetic with neutral tones and clean contrasts." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0Cw7B78BN5UtmgVbPjbGnkX-SqPNduDKiWfQYtEgXXbU_ShBuXtJCv1RHweR9IGGetcSCa9Efni2l_cjjAq8sKGKnptdneRq7FJu459fMD7aMLiixgb-aOuGSQc-IaW3tGEQA81TJaGzauZGHA5UAJcSA9LYS4780_LH-nC_rH-zEaXW_nimiIs_F9aa1gG0J_Dac6hPGJlAjv9_4ZFprhX1VKMb4Pesn9AUrx2ysiwyO5ApsChNo=w144"/>
 <span className="absolute -bottom-1 -right-1 bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0] rounded-full p-0.5 flex items-center justify-center shadow-xs" title="Curxx Verified Specialist">
 <span className="material-symbols-outlined text-[14px]" style={{"fontVariationSettings":"'FILL' 1"}}>check_circle</span>
 </span>
@@ -151,7 +151,7 @@ export default function CurxxAiSymptomTriageResultPage() {
 <div className="flex items-start gap-4">
 {/* Doctor Avatar */}
 <div className="relative shrink-0">
-<img className="w-[72px] h-[72px] rounded-full object-cover border border-surface-variant shadow-xs" data-alt="A professional studio portrait of Dr. Rajeshwari Iyer, an experienced South Indian female dermatologist with silver-streaked hair, smiling warmly in a white lab coat. The background is a clean, modern medical consultation office with soft lighting and architectural symmetry. Minimalist, high-credibility clinical setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2vPBatCHCh2pYVE-13HXJlE0N1t8oxiOzMEN88WolNTglLJQpOey3xm4ggGCGF0vLaxKoB-K847VbVE8uFfQHX1C59CLyWLlq6rHRN68zLWMXAmH1yxXLi0GCT2Lb95LHInyO7A0cNk8oAd7qjgaZXCTaYw6cNjxdaR9uWyLP2cmIO6kkU22Qwi8-OA7bia8xPZbB74gAWZ3lm_EZYKKTrhAFKXVPbz9iwFKnXAMF-nkXl0RI4U73"/>
+<img loading="lazy" decoding="async" className="w-[72px] h-[72px] rounded-full object-cover border border-surface-variant shadow-xs" data-alt="A professional studio portrait of Dr. Rajeshwari Iyer, an experienced South Indian female dermatologist with silver-streaked hair, smiling warmly in a white lab coat. The background is a clean, modern medical consultation office with soft lighting and architectural symmetry. Minimalist, high-credibility clinical setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2vPBatCHCh2pYVE-13HXJlE0N1t8oxiOzMEN88WolNTglLJQpOey3xm4ggGCGF0vLaxKoB-K847VbVE8uFfQHX1C59CLyWLlq6rHRN68zLWMXAmH1yxXLi0GCT2Lb95LHInyO7A0cNk8oAd7qjgaZXCTaYw6cNjxdaR9uWyLP2cmIO6kkU22Qwi8-OA7bia8xPZbB74gAWZ3lm_EZYKKTrhAFKXVPbz9iwFKnXAMF-nkXl0RI4U73=w144"/>
 <span className="absolute -bottom-1 -right-1 bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0] rounded-full p-0.5 flex items-center justify-center shadow-xs" title="Curxx Verified Specialist">
 <span className="material-symbols-outlined text-[14px]" style={{"fontVariationSettings":"'FILL' 1"}}>check_circle</span>
 </span>
@@ -204,7 +204,7 @@ export default function CurxxAiSymptomTriageResultPage() {
 <div className="flex items-start gap-4">
 {/* Doctor Avatar */}
 <div className="relative shrink-0">
-<img className="w-[72px] h-[72px] rounded-full object-cover border border-surface-variant shadow-xs" data-alt="A portrait of Dr. Arvind Swaminathan, a senior Indian male physician and dermatologist in a clean grey necktie and professional hospital coat. Neutral hospital institute background with soft daylight illumination and sharp focus conveying authority and calm reassurance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCliEJmss8SROw0lBubfBAWxTUecbMidqpfr3ha_zbHDcDTmhW2TFcWRi6ya9OnmDnZgD8UUEtNfOv9ksq_sQERkFUS_a6lSu2-2tF3lTcflDHMY8Q7OEzqDiw39xpfyQNTLoptlo4WhDxlInvBxCi_6NgG70x3MuC96r4qjADlXiUpkqqK3SzVjPwA7irwKUupSWu3sEN8XTukky1Mndm7XiDHWKh19-XEmGrkg3U-tUKk7paPXD6H"/>
+<img loading="lazy" decoding="async" className="w-[72px] h-[72px] rounded-full object-cover border border-surface-variant shadow-xs" data-alt="A portrait of Dr. Arvind Swaminathan, a senior Indian male physician and dermatologist in a clean grey necktie and professional hospital coat. Neutral hospital institute background with soft daylight illumination and sharp focus conveying authority and calm reassurance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCliEJmss8SROw0lBubfBAWxTUecbMidqpfr3ha_zbHDcDTmhW2TFcWRi6ya9OnmDnZgD8UUEtNfOv9ksq_sQERkFUS_a6lSu2-2tF3lTcflDHMY8Q7OEzqDiw39xpfyQNTLoptlo4WhDxlInvBxCi_6NgG70x3MuC96r4qjADlXiUpkqqK3SzVjPwA7irwKUupSWu3sEN8XTukky1Mndm7XiDHWKh19-XEmGrkg3U-tUKk7paPXD6H=w144"/>
 <span className="absolute -bottom-1 -right-1 bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0] rounded-full p-0.5 flex items-center justify-center shadow-xs" title="Curxx Verified Specialist">
 <span className="material-symbols-outlined text-[14px]" style={{"fontVariationSettings":"'FILL' 1"}}>check_circle</span>
 </span>

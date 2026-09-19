@@ -1,4 +1,5 @@
 'use client';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { signIn } from '@/lib/session';
 
@@ -13,8 +14,6 @@ export default function LoginModal({ open, onClose, onSignedIn }: Props) {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
 
-  if (!open) return null;
-
   const phoneValid = /^[6-9]\d{9}$/.test(phone);
   const otpValid = /^\d{6}$/.test(otp);
 
@@ -25,9 +24,11 @@ export default function LoginModal({ open, onClose, onSignedIn }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[rgba(28,25,23,0.45)]" onClick={close} aria-hidden="true" />
-      <div role="dialog" aria-modal="true" aria-labelledby="login-title" className="relative w-full max-w-sm bg-surface-container-lowest border-t border-[#E7E5E4] rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.12)] p-6 space-y-5">
+    <AnimatePresence>
+      {open && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="absolute inset-0 bg-[rgba(28,25,23,0.45)]" onClick={close} aria-hidden="true" />
+      <motion.div initial={{ opacity: 0, scale: 0.96, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.97 }} transition={{ type: 'spring', stiffness: 380, damping: 32 }} role="dialog" aria-modal="true" aria-labelledby="login-title" className="relative w-full max-w-sm bg-surface-container-lowest border-t border-[#E7E5E4] rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.12)] p-6 space-y-5">
         <button type="button" onClick={close} aria-label="Close" className="absolute top-4 right-4 p-1 rounded-lg text-[#78716C] hover:bg-[#FAFAF9]">
           <span className="material-symbols-outlined text-[20px]">close</span>
         </button>
@@ -79,7 +80,9 @@ export default function LoginModal({ open, onClose, onSignedIn }: Props) {
             </button>
           </form>
         )}
-      </div>
-    </div>
+      </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 }

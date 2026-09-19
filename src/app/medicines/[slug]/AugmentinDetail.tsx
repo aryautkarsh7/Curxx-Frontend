@@ -31,7 +31,7 @@ export default function CurxxMedicineProductDetailAugmentin625DuoPage() {
       
 <Header />
 {/* MAIN CANVAS */}
-<main className="flex-1 w-full max-w-[1200px] mx-auto px-margin-desktop py-space-base">
+<main className="flex-1 w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-base">
 {/* BREADCRUMB */}
 <nav aria-label="Breadcrumb" className="mb-space-base">
 <ol className="flex items-center space-x-2 text-caption font-caption text-outline">
@@ -69,7 +69,7 @@ export default function CurxxMedicineProductDetailAugmentin625DuoPage() {
 </button>
 {/* Primary Medical Packaging Image */}
 <div className="w-full max-w-[360px] h-[300px] flex items-center justify-center my-4">
-<img className="max-h-full max-w-full object-contain" data-alt="High precision pharmaceutical product photograph of Augmentin 625 Duo tablets showing a silver foil blister strip and the white pharmaceutical box on an immaculate white reflective surface. Bright high-key studio lighting with subtle warm shadows, clinical hygiene atmosphere, crisp medical typography and red accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAuRZkiGACWQgPo8N6ktMBcyyswb1r40nPwEZHlVyBT2x5ujqkW7iXV5QDP4V1Yun_cYZYHHZtITJr4zD3WKaIJ2qtU1E4tNILg25Z4AmVuGR2jmxZC1maOU0db_hSoBaiRoWixpprksTSnkUr_tiPzO8SpKuFHDsbrzIwYy9YmyoxDDpnS0IuUuF4zHR0pWlEPrpa3NNB7GhNwJInBRyVCmiKEEsio7lsmD2gtxzQEweeEDCHk-Ad"/>
+<img loading="lazy" decoding="async" className="max-h-full max-w-full object-contain" data-alt="High precision pharmaceutical product photograph of Augmentin 625 Duo tablets showing a silver foil blister strip and the white pharmaceutical box on an immaculate white reflective surface. Bright high-key studio lighting with subtle warm shadows, clinical hygiene atmosphere, crisp medical typography and red accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAuRZkiGACWQgPo8N6ktMBcyyswb1r40nPwEZHlVyBT2x5ujqkW7iXV5QDP4V1Yun_cYZYHHZtITJr4zD3WKaIJ2qtU1E4tNILg25Z4AmVuGR2jmxZC1maOU0db_hSoBaiRoWixpprksTSnkUr_tiPzO8SpKuFHDsbrzIwYy9YmyoxDDpnS0IuUuF4zHR0pWlEPrpa3NNB7GhNwJInBRyVCmiKEEsio7lsmD2gtxzQEweeEDCHk-Ad=w800"/>
 </div>
 {/* Trust Badge micro watermark */}
 <div className="absolute bottom-4 right-4 flex items-center gap-1 text-outline font-micro text-micro">
@@ -80,16 +80,16 @@ export default function CurxxMedicineProductDetailAugmentin625DuoPage() {
 {/* Gallery Thumbnails */}
 <div className="grid grid-cols-4 gap-space-sm">
 <Link href="/medicines/augmentin-625" className="bg-surface-container-lowest border-2 border-primary-container rounded-lg p-2 flex items-center justify-center h-20 transition-all">
-<img className="h-full object-contain" data-alt="Front facing pack view of Augmentin 625 Duo pharmaceutical blister package on clean white background with soft hospital lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFFNHZfUqyk9hyafN2llL4bG2hgNhqzL4JdrPjV840D1TjD_ayRY-nTMvtOoohvv19DYdMUFIhVh1CVdgBKzhHhr6i-Jmdej2RA29LQK_c4L9d5iBF-K7b1OP6CJhxv3NLBqI5A9nqWqCcLa3stEHagv4X04UFTXDANVnvXTWjaEXziEXFXK9LM2zVJI-oHJ8tDUr0gaxCKkp5UUbZ1gITNAhHp0mPcLzFtxudyXjHLRDYFL0NA8y4"/>
+<img loading="lazy" decoding="async" className="h-full object-contain" data-alt="Front facing pack view of Augmentin 625 Duo pharmaceutical blister package on clean white background with soft hospital lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFFNHZfUqyk9hyafN2llL4bG2hgNhqzL4JdrPjV840D1TjD_ayRY-nTMvtOoohvv19DYdMUFIhVh1CVdgBKzhHhr6i-Jmdej2RA29LQK_c4L9d5iBF-K7b1OP6CJhxv3NLBqI5A9nqWqCcLa3stEHagv4X04UFTXDANVnvXTWjaEXziEXFXK9LM2zVJI-oHJ8tDUr0gaxCKkp5UUbZ1gITNAhHp0mPcLzFtxudyXjHLRDYFL0NA8y4=w800"/>
 </Link>
 <button className="bg-surface-container-lowest border border-surface-variant hover:border-outline rounded-lg p-2 flex items-center justify-center h-20 transition-all">
-<img className="h-full object-contain" data-alt="Back view of the silver foil blister pack showing batch details, expiry date, and composition stamps in crisp medical detail." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0zTyjXTsKGS-lnc0vISQmhJGlP7e6Q07aCDud0fw8via3E_q6Jh-TW6fk2i9BECZO-XL-GP8CN5gRTq516nLp8n-_y9jxGpMi4sS_eEaWeI8jl4TYOM2tq9joLbJn1SMYRpcLgNjPXolsIfNq23VJMxIi2nAQ3hJPNScaxz8GQBst3bqSv-Ktoon5YunYkXIOR8OAcuPiDOreQldmRniNoKQktyHt-2kUNjvqFPxLuLbENZVxAg4R"/>
+<img loading="lazy" decoding="async" className="h-full object-contain" data-alt="Back view of the silver foil blister pack showing batch details, expiry date, and composition stamps in crisp medical detail." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0zTyjXTsKGS-lnc0vISQmhJGlP7e6Q07aCDud0fw8via3E_q6Jh-TW6fk2i9BECZO-XL-GP8CN5gRTq516nLp8n-_y9jxGpMi4sS_eEaWeI8jl4TYOM2tq9joLbJn1SMYRpcLgNjPXolsIfNq23VJMxIi2nAQ3hJPNScaxz8GQBst3bqSv-Ktoon5YunYkXIOR8OAcuPiDOreQldmRniNoKQktyHt-2kUNjvqFPxLuLbENZVxAg4R=w800"/>
 </button>
 <Link href="/medicines/augmentin-625" className="bg-surface-container-lowest border border-surface-variant hover:border-outline rounded-lg p-2 flex items-center justify-center h-20 transition-all">
-<img className="h-full object-contain" data-alt="Detailed close-up shot of single white scored capsule-shaped Augmentin 625 Duo antibiotic tablet resting next to clinical blister packaging." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsU4U23OLIdgwUzz00V2wE73h-DCW7-d5q7lN9e3P9uDeRa98pOSSUu0fBP3YzrJc3-QvMD9l8umw4pHotLtm2aYlSY-gfpgEnukXNJXNJYphrTmeGebMFce5UaRB-fqTvqlsq4f2V5s1xmSvFGMUKcAmJ86pU2A03iKP3XHg6DmkIvdUOHlycDsZZZNbStGhqb31GBFH7nr4PNgVcH5EqecysR2UgUteodvwM1myREqXZmxQmQW2z"/>
+<img loading="lazy" decoding="async" className="h-full object-contain" data-alt="Detailed close-up shot of single white scored capsule-shaped Augmentin 625 Duo antibiotic tablet resting next to clinical blister packaging." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsU4U23OLIdgwUzz00V2wE73h-DCW7-d5q7lN9e3P9uDeRa98pOSSUu0fBP3YzrJc3-QvMD9l8umw4pHotLtm2aYlSY-gfpgEnukXNJXNJYphrTmeGebMFce5UaRB-fqTvqlsq4f2V5s1xmSvFGMUKcAmJ86pU2A03iKP3XHg6DmkIvdUOHlycDsZZZNbStGhqb31GBFH7nr4PNgVcH5EqecysR2UgUteodvwM1myREqXZmxQmQW2z=w800"/>
 </Link>
 <Link href="/medicines/augmentin-625" className="bg-surface-container-lowest border border-surface-variant hover:border-outline rounded-lg p-2 flex items-center justify-center h-20 transition-all">
-<img className="h-full object-contain" data-alt="Full cardboard pharmaceutical packaging box of Augmentin 625 Duo tablet showing GlaxoSmithKline official branding and certification codes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYkv7XEo2rJAv2ThnHM6cfB_ilNEO6xx6qQ1HKMDtrSs8W80R6D0isSzG482tNKT4WNQFs9EoLlZo8sxO2dVTcZrRRS_f32J2QNV2eDJmDmezRB_XVu9JAzuOcItxeuindM0h1Cf-Lg8w4t18yocEPauOF5E5robdliuvbLvHbIW4wz5JhMLEz6j8uNCJYS-0KlURpSvaqpyLvkhjNgsJ1UAt1U6pSOXsfFI-1kcSDUBJSvzQQZ3pr"/>
+<img loading="lazy" decoding="async" className="h-full object-contain" data-alt="Full cardboard pharmaceutical packaging box of Augmentin 625 Duo tablet showing GlaxoSmithKline official branding and certification codes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYkv7XEo2rJAv2ThnHM6cfB_ilNEO6xx6qQ1HKMDtrSs8W80R6D0isSzG482tNKT4WNQFs9EoLlZo8sxO2dVTcZrRRS_f32J2QNV2eDJmDmezRB_XVu9JAzuOcItxeuindM0h1Cf-Lg8w4t18yocEPauOF5E5robdliuvbLvHbIW4wz5JhMLEz6j8uNCJYS-0KlURpSvaqpyLvkhjNgsJ1UAt1U6pSOXsfFI-1kcSDUBJSvzQQZ3pr=w800"/>
 </Link>
 </div>
 {/* Clinical Quality Assurance Seals Row */}
@@ -238,7 +238,7 @@ export default function CurxxMedicineProductDetailAugmentin625DuoPage() {
 </div>
 </section>
 {/* STICKY CLINICAL SUB-NAVIGATION */}
-<div className="sticky top-16 z-40 bg-surface border-b border-surface-variant mb-space-xl -mx-margin-desktop px-margin-desktop">
+<div className="sticky top-16 z-40 bg-surface border-b border-surface-variant mb-space-xl -mx-margin-desktop px-margin sm:px-margin-desktop">
 <div className="max-w-[1200px] mx-auto flex items-center gap-8 overflow-x-auto no-scrollbar py-2">
 <a className="text-primary font-body-strong text-body-strong border-b-2 border-primary-container pb-2 whitespace-nowrap" href="#about">Description</a>
 <a className="text-on-surface-variant hover:text-primary font-body-default text-body-default pb-2 whitespace-nowrap transition-colors" href="#indications">Uses &amp; Indications</a>
@@ -569,7 +569,7 @@ export default function CurxxMedicineProductDetailAugmentin625DuoPage() {
 {/* SECTION 5: Pharmacist Review & Certification */}
 <section className="bg-surface-container-lowest border border-surface-variant rounded-xl p-space-lg flex flex-col md:flex-row items-center justify-between gap-6" id="pharmacist-review">
 <div className="flex items-center gap-4">
-<img className="w-16 h-16 rounded-xl object-cover border border-surface-variant shrink-0" data-alt="Portrait photo of an experienced Indian male clinical pharmacist in a professional white medical coat with stethoscope on a warm beige background, bright ambient pharmacy lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRhCjpKLVW-hNRLNPH4jHBdLRgn3bis0eKGGmkXwpWRpnqNrCyHElVHeRx90Xq3M1oWsbdgCL9lCBBLxV7K6j_krXdTAtggy6UE16Vj6oDCRrrh-pa7-fkuzk3sTpqwgRB7QyLQu7kB2V6cgCEcmMxOI94lOaFES0EptiPUpXxTDYGmeoUuT1NDoBXxOb2yGfAZLBTJ40Glu5jCVMsf7tmKF2ir06VWDGFFZL0hzoYBi0F7waUfhrW"/>
+<img loading="lazy" decoding="async" className="w-16 h-16 rounded-xl object-cover border border-surface-variant shrink-0" data-alt="Portrait photo of an experienced Indian male clinical pharmacist in a professional white medical coat with stethoscope on a warm beige background, bright ambient pharmacy lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRhCjpKLVW-hNRLNPH4jHBdLRgn3bis0eKGGmkXwpWRpnqNrCyHElVHeRx90Xq3M1oWsbdgCL9lCBBLxV7K6j_krXdTAtggy6UE16Vj6oDCRrrh-pa7-fkuzk3sTpqwgRB7QyLQu7kB2V6cgCEcmMxOI94lOaFES0EptiPUpXxTDYGmeoUuT1NDoBXxOb2yGfAZLBTJ40Glu5jCVMsf7tmKF2ir06VWDGFFZL0hzoYBi0F7waUfhrW=w128"/>
 <div>
 <div className="flex items-center gap-2">
 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] font-caption-strong text-micro">
@@ -601,7 +601,7 @@ export default function CurxxMedicineProductDetailAugmentin625DuoPage() {
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col justify-between">
 <div>
 <div className="h-32 flex items-center justify-center mb-3 bg-surface-container-low rounded-lg p-2">
-<img className="max-h-full object-contain" data-alt="Pharmaceutical box and blister pack of medical probiotic capsules containing Lactobacillus and Bifidobacterium on clean warm studio background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-gfQ0Xn4_omtr2tt2A2rMt3F55qZkdsBMUEfGvrE7bw3bCWdDv30oHfO4JU2O5QQKz8kH3xUAuhJxPHX2QoEbO23MMEdI6lX6yXU0Cilxzn0I_LeAymEwR042DO3EJdc1gTKq5KgSoY4GD2EzI7hot5SKJyRqF32JD9al4FtaQaGqDMoBT6HkDh9TLZLP_5Q_Eje9MR0qlUvcyNDU45-hk5brwogw5t6jDQDKI7p1NuRoPwh_Oj2n"/>
+<img loading="lazy" decoding="async" className="max-h-full object-contain" data-alt="Pharmaceutical box and blister pack of medical probiotic capsules containing Lactobacillus and Bifidobacterium on clean warm studio background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-gfQ0Xn4_omtr2tt2A2rMt3F55qZkdsBMUEfGvrE7bw3bCWdDv30oHfO4JU2O5QQKz8kH3xUAuhJxPHX2QoEbO23MMEdI6lX6yXU0Cilxzn0I_LeAymEwR042DO3EJdc1gTKq5KgSoY4GD2EzI7hot5SKJyRqF32JD9al4FtaQaGqDMoBT6HkDh9TLZLP_5Q_Eje9MR0qlUvcyNDU45-hk5brwogw5t6jDQDKI7p1NuRoPwh_Oj2n=w800"/>
 </div>
 <span className="font-micro text-micro text-outline">GUT HEALTH</span>
 <h3 className="font-body-strong text-body-strong text-on-surface mt-0.5">Econorm 250mg Capsule</h3>
@@ -621,7 +621,7 @@ export default function CurxxMedicineProductDetailAugmentin625DuoPage() {
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col justify-between">
 <div>
 <div className="h-32 flex items-center justify-center mb-3 bg-surface-container-low rounded-lg p-2">
-<img className="max-h-full object-contain" data-alt="Strip of chewable Vitamin C and Zinc supplements in orange packaging on clinical reflective white tabletop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoJjtXwHHUSz98HxcUg_KVI5Fh_1BWqiV1uK-toBbPP4VZKU0LnwVBHz3ElZqmd3r7GaJTIuYpWob-ax43WocsF9TMm1M0AOFCI0qSRo6ZGrgzgPNsxHBJ_oRgNb_1DalSzG2FuPVZQ1VeNd860RSQPRVkbUK0XCOgHqfS_mjMzQF-3GU6cvcy8t9psavzZWbvWuSSkyuC3EFs89qSocwQEmIRemo7nSgRbnxBjytnycUevp3W1bUI"/>
+<img loading="lazy" decoding="async" className="max-h-full object-contain" data-alt="Strip of chewable Vitamin C and Zinc supplements in orange packaging on clinical reflective white tabletop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoJjtXwHHUSz98HxcUg_KVI5Fh_1BWqiV1uK-toBbPP4VZKU0LnwVBHz3ElZqmd3r7GaJTIuYpWob-ax43WocsF9TMm1M0AOFCI0qSRo6ZGrgzgPNsxHBJ_oRgNb_1DalSzG2FuPVZQ1VeNd860RSQPRVkbUK0XCOgHqfS_mjMzQF-3GU6cvcy8t9psavzZWbvWuSSkyuC3EFs89qSocwQEmIRemo7nSgRbnxBjytnycUevp3W1bUI=w800"/>
 </div>
 <span className="font-micro text-micro text-outline">IMMUNITY BOOSTER</span>
 <h3 className="font-body-strong text-body-strong text-on-surface mt-0.5">Limcee 500mg Chewable</h3>
@@ -641,7 +641,7 @@ export default function CurxxMedicineProductDetailAugmentin625DuoPage() {
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col justify-between">
 <div>
 <div className="h-32 flex items-center justify-center mb-3 bg-surface-container-low rounded-lg p-2">
-<img className="max-h-full object-contain" data-alt="Official WHO formula oral rehydration salt packet sachet in pharmaceutical blue and white design on light background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSNSSqrEa8OWcGGIWOn-_nWABGhs6Km2ny6GE_-jExHvqf3XED70hzru1pkTQBhPSpMEA-jN6omGfC4WLXxgR-I6w5uS7AXdx4ZzoT86RRTHosddjOhL4sTgptvN0qZzfDfHxIB1lyALY0dzgamLPvI665MWgn-2-vJfehuk3_mj_cRM4Iis9hcT69X97W6uj9q1jhHzpGJtn_9xmAK029CaEcdKKFI4_oqHxNgxh45rH6vCT3-DEE"/>
+<img loading="lazy" decoding="async" className="max-h-full object-contain" data-alt="Official WHO formula oral rehydration salt packet sachet in pharmaceutical blue and white design on light background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSNSSqrEa8OWcGGIWOn-_nWABGhs6Km2ny6GE_-jExHvqf3XED70hzru1pkTQBhPSpMEA-jN6omGfC4WLXxgR-I6w5uS7AXdx4ZzoT86RRTHosddjOhL4sTgptvN0qZzfDfHxIB1lyALY0dzgamLPvI665MWgn-2-vJfehuk3_mj_cRM4Iis9hcT69X97W6uj9q1jhHzpGJtn_9xmAK029CaEcdKKFI4_oqHxNgxh45rH6vCT3-DEE=w800"/>
 </div>
 <span className="font-micro text-micro text-outline">HYDRATION CARE</span>
 <h3 className="font-body-strong text-body-strong text-on-surface mt-0.5">Electral Powder 21.8g</h3>
@@ -661,7 +661,7 @@ export default function CurxxMedicineProductDetailAugmentin625DuoPage() {
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col justify-between">
 <div>
 <div className="h-32 flex items-center justify-center mb-3 bg-surface-container-low rounded-lg p-2">
-<img className="max-h-full object-contain" data-alt="Pharmaceutical blister strip of Dolo 650 paracetamol tablets showing green and white medical label on clinical surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX0kfIBrGpliIZPnrHbqpRu6EvIR6dl06nIvwimR0yEcJOGPcZIKyrBZJkALAts4ez-F23ZERlZvPa6jW5q62OZb0uBemuh5Zsg237Xyy-fFxjKGvxlTZcnI_WkSB1JpAOWYVZktdxUqCR7rca-b8rHXXtnoA9pWZxunlbe9IZ2YQUwJEEuOJEXwQmpWpIyz-Q76GCqhVqtTuT2GjvwkPfUhV3XxH-1HN1R-eIC7Q8Ao_x9U5fgwle"/>
+<img loading="lazy" decoding="async" className="max-h-full object-contain" data-alt="Pharmaceutical blister strip of Dolo 650 paracetamol tablets showing green and white medical label on clinical surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX0kfIBrGpliIZPnrHbqpRu6EvIR6dl06nIvwimR0yEcJOGPcZIKyrBZJkALAts4ez-F23ZERlZvPa6jW5q62OZb0uBemuh5Zsg237Xyy-fFxjKGvxlTZcnI_WkSB1JpAOWYVZktdxUqCR7rca-b8rHXXtnoA9pWZxunlbe9IZ2YQUwJEEuOJEXwQmpWpIyz-Q76GCqhVqtTuT2GjvwkPfUhV3XxH-1HN1R-eIC7Q8Ao_x9U5fgwle=w800"/>
 </div>
 <span className="font-micro text-micro text-outline">ANTIPYRETIC / PAIN</span>
 <h3 className="font-body-strong text-body-strong text-on-surface mt-0.5">Dolo 650 Tablet</h3>
@@ -682,6 +682,18 @@ export default function CurxxMedicineProductDetailAugmentin625DuoPage() {
 </div>
 </main>
 <Toast message={toast} />
+{/* Mobile sticky action bar */}
+<div className="lg:hidden fixed bottom-16 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#E7E5E4] px-margin py-3 flex items-center gap-3">
+<div className="min-w-0">
+<p className="font-micro text-micro text-[#78716C]">Total</p>
+<p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">₹{(PRODUCT.price * qty).toLocaleString('en-IN')}</p>
+</div>
+<button type="button" onClick={addProduct} className="flex-1 h-12 rounded-lg bg-primary-container hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-1.5">
+<span className="material-symbols-outlined text-[18px]">shopping_bag</span>
+<span>Add to Cart</span>
+</button>
+</div>
+<div className="h-20 lg:hidden" aria-hidden="true"></div>
 <Footer />
 
     </>
