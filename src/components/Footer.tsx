@@ -17,9 +17,12 @@ const NETWORK_LINKS = [
   { label: 'Teleconsultation Policy', href: '/teleconsultation-policy' },
   { label: 'Hospital Network', href: '/bangalore/hospitals' },
   { label: 'Clinics Near You', href: '/bangalore/clinics' },
+  { label: 'Diagnostic Labs', href: '/bangalore/labs' },
+  { label: 'Home Lab Tests', href: '/lab-tests' },
 ];
 
 const LEGAL_LINKS = [
+  { label: 'Partner With Us', href: '/partner-with-us' },
   { label: 'Privacy Policy', href: '/privacy' },
   { label: 'Terms of Service', href: '/terms' },
   { label: 'Medical Council Regulations', href: '/teleconsultation-policy' },

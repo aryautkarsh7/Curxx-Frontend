@@ -1,25 +1,15 @@
 'use client';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import { startSlotHold } from '@/components/SlotCountdown';
-import { LAB_CATEGORIES, formatINR, type LabPackage } from '@/lib/lab-tests';
-
-const PATIENTS = [
-  { id: 'self', label: 'Self (Rahul S., 34)' },
-  { id: 'mother', label: 'Mother (Sunita S., 62)' },
-];
-
-const DATES = [
-  { day: 'Today', date: '24', full: true },
-  { day: 'Tomorrow', date: '25' },
-  { day: 'Sun', date: '26' },
-  { day: 'Mon', date: '27' },
-  { day: 'Tue', date: '28' },
-];
-
-const SLOTS = ['06:30 - 07:00 AM', '07:00 - 07:30 AM', '07:30 - 08:00 AM', '08:00 - 08:30 AM', '08:30 - 09:00 AM'];
+import CollectionSlotPicker, { type CollectionChoice } from '@/components/labs/CollectionSlotPicker';
+import LabTestCard, { labCartItem } from '@/components/labs/LabTestCard';
+import { AccreditationBadges } from '@/components/labs/LabCard';
+import { rupees, type LabCategory, type LabSummary, type LabTest, type Near } from '@/lib/api';
+import { addToCart, removeFromCart, useCart } from '@/lib/cart';
+import { saveLabSlot } from '@/lib/lab-booking';
 
 function parameterGridClass(count: number) {
   if (count <= 2) return 'grid grid-cols-2 gap-2';
@@ -27,26 +17,27 @@ function parameterGridClass(count: number) {
   return 'grid grid-cols-2 sm:grid-cols-3 gap-2';
 }
 
-export default function LabTestDetail({ pkg }: { pkg: LabPackage }) {
-  const [mode, setMode] = useState<'home' | 'lab'>('home');
-  const [patient, setPatient] = useState(PATIENTS[0].id);
-  const [dateIndex, setDateIndex] = useState(1);
-  const [slot, setSlot] = useState(SLOTS[0]);
-  const [openGroups, setOpenGroups] = useState<string[]>(() => pkg.parameterGroups.slice(0, 1).map((g) => g.name));
+type Availability = { labCount: number; near: Near; nearest: (LabSummary & { canCollect: boolean }) | null };
+type Props = { pkg: LabTest; related: LabTest[]; category: LabCategory | null; availability?: Availability };
 
+export default function LabTestDetail({ pkg, related, category, availability }: Props) {
+  const nearest = availability?.nearest ?? null;
+  const router = useRouter();
+  const labCart = useCart('lab');
+  const inBooking = labCart.has(pkg.slug);
+  const [slot, setSlot] = useState<CollectionChoice | null>(null);
+  const [openGroups, setOpenGroups] = useState<string[]>(() => pkg.parameterGroups.slice(0, 1).map((g) => g.name));
   const allOpen = openGroups.length === pkg.parameterGroups.length;
-  const category = LAB_CATEGORIES.find((c) => c.slug === pkg.categories[0]);
-  const bookingHref = `/book?${new URLSearchParams({
-    type: 'lab',
-    test: pkg.slug,
-    mode,
-    patient,
-    date: `${DATES[dateIndex].day} ${DATES[dateIndex].date}`,
-    slot,
-  })}`;
 
   function setGroupOpen(name: string, open: boolean) {
     setOpenGroups((prev) => (open ? (prev.includes(name) ? prev : [...prev, name]) : prev.filter((n) => n !== name)));
+  }
+
+  /** Adds this test to the booking (keeping any others) and carries the chosen slot across. */
+  function book() {
+    if (!inBooking) addToCart(labCartItem(pkg), 1, 'lab');
+    if (slot) saveLabSlot(slot);
+    router.push('/lab-tests/book');
   }
 
   return (
@@ -62,7 +53,7 @@ export default function LabTestDetail({ pkg }: { pkg: LabPackage }) {
 {category && (
 <>
 <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-<Link className="hover:text-primary transition-colors" href={`/lab-tests?category=${category.slug}#packages`}>{category.name} Packages</Link>
+<Link className="hover:text-primary transition-colors" href={`/lab-tests?category=${category.slug}#packages`}>{category.name}</Link>
 </>
 )}
 <span className="material-symbols-outlined text-[14px]">chevron_right</span>
@@ -77,7 +68,7 @@ export default function LabTestDetail({ pkg }: { pkg: LabPackage }) {
 <div className="flex flex-wrap items-center gap-2 mb-space-sm">
 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-micro font-micro bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857]">
 <span className="material-symbols-outlined text-[13px]" style={{"fontVariationSettings":"'FILL' 1"}}>verified</span>
-              NABL &amp; CAP Certified Lab
+              NABL-accredited labs
             </span>
 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-micro font-micro bg-surface-container border border-surface-variant text-on-surface-variant">
               {pkg.testsIncluded} parameters covered across {pkg.parameterGroups.length} profiles
@@ -90,8 +81,8 @@ export default function LabTestDetail({ pkg }: { pkg: LabPackage }) {
             {pkg.name}
           </h1>
 <div className="flex items-center gap-2 text-caption font-caption text-on-surface-variant">
-<span className="font-caption-strong text-on-surface">Conducted by:</span>
-<span>Curxx Central Pathology Reference Labs, Sector 62 Hub</span>
+<span className="font-caption-strong text-on-surface">Available at:</span>
+<Link href={`/bangalore/labs?test=${pkg.slug}`} className="text-primary-container hover:underline">{availability?.labCount ? `${availability.labCount} partner ${availability.labCount === 1 ? 'lab' : 'labs'} in Bengaluru` : 'NABL-accredited partner labs'}</Link>
 <span className="w-1 h-1 rounded-full bg-outline"></span>
 <span className="text-tertiary font-semibold">100% Barcode Traced</span>
 </div>
@@ -277,159 +268,74 @@ export default function LabTestDetail({ pkg }: { pkg: LabPackage }) {
 </div>
 </div>
 </section>
-{/* RIGHT COLUMN: Sticky Booking Card (~35% / 400px width) */}
-<aside className="lg:col-span-4 sticky top-20">
+{/* RIGHT COLUMN: Sticky Booking Card */}
+<aside className="lg:col-span-4 lg:sticky lg:top-20" id="book">
 <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-space-base shadow-sm space-y-space-base">
-{/* Pricing Block with Discount Flag */}
-<div className="flex items-baseline justify-between border-b border-surface-variant pb-space-sm">
+<div className="flex items-start justify-between gap-2 border-b border-surface-variant pb-space-sm">
 <div>
-<div className="flex items-center gap-2">
-<span className="font-display text-display text-on-surface">{formatINR(pkg.price)}</span>
-<span className="text-caption font-caption text-outline line-through">{formatINR(pkg.mrp)}</span>
-<span className="inline-block bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro font-bold px-1.5 py-0.5 rounded">
-                  {pkg.discount}% OFF
-                </span>
+<div className="flex items-center gap-2 flex-wrap">
+<span className="font-display text-display text-on-surface">{rupees(pkg.price)}</span>
+<span className="text-caption font-caption text-outline line-through">{rupees(pkg.mrp)}</span>
+{pkg.discount > 0 && <span className="inline-block bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro font-bold px-1.5 py-0.5 rounded">{pkg.discount}% OFF</span>}
 </div>
-<span className="text-micro font-micro text-outline">Inclusive of all sample logistics &amp; taxes</span>
+<span className="text-micro font-micro text-outline">Inclusive of sample logistics &amp; taxes</span>
 </div>
-<div className="text-right">
-<span className="text-micro font-micro font-semibold text-tertiary flex items-center justify-end gap-1">
-<span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Free Home Pickup
-              </span>
+<span className="text-micro font-micro font-semibold text-tertiary flex items-center gap-1 shrink-0 mt-2"><span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Free home pickup</span>
 </div>
+<div className="flex items-center gap-2 p-2.5 rounded-lg bg-surface-container-low border border-surface-variant">
+<span className="material-symbols-outlined text-[20px] text-primary">home_health</span>
+<p className="text-caption font-caption text-on-surface-variant"><span className="font-caption-strong text-on-surface">Home sample collection</span> by a certified phlebotomist. {pkg.sampleType} sample.</p>
 </div>
-{/* Sample Collection Mode Toggle */}
-<div>
-<label className="block text-caption-strong font-caption-strong text-on-surface mb-2">Sample Collection Mode</label>
-<div className="grid grid-cols-2 p-1 bg-surface-container-low rounded-lg border border-surface-variant text-caption font-caption">
-<button aria-pressed={mode === 'home'} onClick={() => setMode('home')} className={mode === 'home' ? 'py-2 px-3 rounded-md bg-surface-container-lowest font-caption-strong text-primary shadow-sm text-center transition' : 'py-2 px-3 rounded-md text-on-surface-variant hover:text-on-surface text-center transition'} type="button">
-                Home Collection (Free)
-              </button>
-<button aria-pressed={mode === 'lab'} onClick={() => setMode('lab')} className={mode === 'lab' ? 'py-2 px-3 rounded-md bg-surface-container-lowest font-caption-strong text-primary shadow-sm text-center transition' : 'py-2 px-3 rounded-md text-on-surface-variant hover:text-on-surface text-center transition'} type="button">
-                Visit Partner Lab
-              </button>
+{nearest && (
+<div className="p-3 rounded-lg border border-surface-variant bg-surface-container-lowest space-y-1">
+<div className="flex items-center justify-between gap-2">
+<span className="text-micro font-micro uppercase tracking-wide text-outline font-semibold">Nearest lab to {availability!.near.area}</span>
+<AccreditationBadges items={nearest.accreditations.slice(0, 2)} />
 </div>
+<Link href={`/lab/${nearest.slug}`} className="block font-caption-strong text-caption-strong text-on-surface hover:text-primary-container">{nearest.name}</Link>
+<p className="text-micro font-micro text-on-surface-variant flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">location_on</span>{nearest.area} · {nearest.distanceKm} km · Reports in {nearest.reportTat}</p>
+<p className="text-micro font-micro text-outline">We confirm the lab for your exact address at checkout. <Link href={`/bangalore/labs?test=${pkg.slug}`} className="text-primary-container hover:underline">All labs</Link></p>
 </div>
-{/* Patient Profile Selector */}
-<div>
-<div className="flex justify-between items-center mb-2">
-<label className="text-caption-strong font-caption-strong text-on-surface">Selected Patient</label>
-<span className="text-micro font-micro text-outline">Manage profiles</span>
-</div>
-<div className="flex gap-2 overflow-x-auto custom-scroll pb-1">
-{PATIENTS.map((p) => (
-p.id === patient ? (
-<button key={p.id} type="button" aria-pressed="true" className="flex-shrink-0 px-3 py-1.5 rounded-full text-caption font-caption bg-[#FFF1F2] border border-[#F9C6C9] text-primary font-semibold flex items-center gap-1">
-<span className="material-symbols-outlined text-[14px]">check</span>
-                {p.label}
-              </button>
-) : (
-<button key={p.id} type="button" aria-pressed="false" onClick={() => setPatient(p.id)} className="flex-shrink-0 px-3 py-1.5 rounded-full text-caption font-caption bg-surface-container-low border border-surface-variant text-on-surface-variant hover:border-outline">
-                {p.label}
-              </button>
-)
-))}
-<button type="button" className="flex-shrink-0 px-3 py-1.5 rounded-full text-caption font-caption border border-dashed border-outline text-on-surface-variant hover:text-primary flex items-center gap-1">
-<span className="material-symbols-outlined text-[14px]">add</span> Add Member
-              </button>
-</div>
-</div>
-{/* 7-Day Date Strip */}
-<div>
-<div className="flex justify-between items-center mb-2">
-<label className="text-caption-strong font-caption-strong text-on-surface">Select Collection Date</label>
-<span className="text-micro font-micro text-tertiary font-semibold flex items-center gap-1">
-<span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span> {pkg.fastingHours ? 'Fasting slots available' : 'Slots available'}
-              </span>
-</div>
-<div className="grid grid-cols-5 gap-1.5">
-{DATES.map((d, i) => (
-d.full ? (
-<button key={d.day} type="button" disabled className="flex flex-col items-center py-2 px-1 rounded-lg border border-surface-variant bg-surface-container opacity-60 cursor-not-allowed">
-<span className="text-micro font-micro text-outline">{d.day}</span>
-<span className="font-body-strong text-caption text-outline">{d.date}</span>
-<span className="text-micro font-micro text-outline">Full</span>
-</button>
-) : i === dateIndex ? (
-<button key={d.day} type="button" aria-pressed="true" className="flex flex-col items-center py-2 px-1 rounded-lg border border-primary-container bg-[#FFF1F2] text-primary font-semibold shadow-sm">
-<span className="text-micro font-micro">{d.day}</span>
-<span className="font-body-strong text-caption">{d.date}</span>
-<span className="w-1 h-1 rounded-full bg-tertiary mt-0.5"></span>
-</button>
-) : (
-<button key={d.day} type="button" aria-pressed="false" onClick={() => setDateIndex(i)} className="flex flex-col items-center py-2 px-1 rounded-lg border border-surface-variant bg-surface-container-low hover:bg-surface-container transition">
-<span className="text-micro font-micro text-on-surface-variant">{d.day}</span>
-<span className="font-body-strong text-caption text-on-surface">{d.date}</span>
-<span className="w-1 h-1 rounded-full bg-tertiary mt-0.5"></span>
-</button>
-)
-))}
-</div>
-</div>
-{/* Time Slot Selection (Fasting Morning Focus) */}
-<div>
-<div className="flex items-center justify-between mb-2">
-<label className="text-caption-strong font-caption-strong text-on-surface flex items-center gap-1">
-<span className="material-symbols-outlined text-[16px] text-primary">wb_twilight</span>
-                {pkg.fastingHours ? 'Morning Fasting Slots' : 'Morning Slots'}
-              </label>
-<span className="text-micro font-micro text-outline">30-min precision window</span>
-</div>
-<div className="grid grid-cols-2 gap-2 text-caption font-caption">
-{SLOTS.map((s, i) => (
-s === slot ? (
-<button key={s} type="button" aria-pressed="true" className={`py-2 px-2.5 rounded-lg border border-primary-container bg-[#FFF1F2] text-primary font-semibold text-left flex items-center justify-between${i === SLOTS.length - 1 ? ' col-span-2' : ''}`}>
-<span>{s}</span>
-<span className="material-symbols-outlined text-[16px]">check_circle</span>
-</button>
-) : (
-<button key={s} type="button" aria-pressed="false" onClick={() => setSlot(s)} className={`py-2 px-2.5 rounded-lg border border-surface-variant bg-surface-container-low hover:bg-surface-container text-on-surface text-left${i === SLOTS.length - 1 ? ' col-span-2' : ''}`}>
-                {s}
-              </button>
-)
-))}
-</div>
-</div>
-{/* Primary CTA Action (Single primary red button rule) */}
-<div className="pt-2">
-<Link href={bookingHref} onClick={startSlotHold} className="w-full h-12 bg-primary-container hover:bg-primary text-on-primary font-body-strong text-body-strong rounded-lg flex items-center justify-center gap-2 shadow-sm transition duration-150 ease-in-out active:scale-95">
-<span>{mode === 'home' ? 'Book Home Collection' : 'Book Lab Visit'} • {formatINR(pkg.price)}</span>
+)}
+<CollectionSlotPicker value={slot} onChange={setSlot} fasting={Boolean(pkg.fastingHours)} lab={nearest?.slug} />
+<div className="pt-1 space-y-2">
+<button type="button" onClick={book} className="w-full h-12 bg-primary-container hover:bg-primary text-on-primary font-body-strong text-body-strong rounded-lg flex items-center justify-center gap-2 shadow-sm transition duration-150 active:scale-95">
+<span>{slot ? 'Continue to book' : 'Book home collection'} • {rupees(pkg.price)}</span>
 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-</Link>
-<div className="text-right mt-2">
-<button type="button" onClick={() => setMode(mode === 'home' ? 'lab' : 'home')} className="text-caption font-caption text-primary hover:underline inline-flex items-center gap-1">
-                {mode === 'home' ? 'Visit NABL lab center instead →' : 'Switch to free home collection →'}
-              </button>
+</button>
+<button type="button" onClick={() => (inBooking ? removeFromCart(pkg.slug, 'lab') : addToCart(labCartItem(pkg), 1, 'lab'))} className="w-full h-10 rounded-lg border border-surface-variant text-caption-strong font-caption-strong text-on-surface hover:bg-surface-container-low">
+{inBooking ? '✓ Added to booking · Remove' : '+ Add to booking and keep browsing'}
+</button>
+{labCart.count > 0 && (
+<p className="text-center text-micro font-micro text-on-surface-variant">{labCart.count} {labCart.count === 1 ? 'test' : 'tests'} in your booking · one visit collects all samples</p>
+)}
 </div>
-</div>
-{/* Clinical Trust Safeguards */}
 <div className="pt-3 border-t border-surface-variant space-y-2">
-<div className="flex items-center gap-2 text-micro font-micro text-on-surface-variant">
-<span className="material-symbols-outlined text-tertiary text-[16px]">sanitizer</span>
-<span>Sterile single-use sealed vacutainers</span>
-</div>
-<div className="flex items-center gap-2 text-micro font-micro text-on-surface-variant">
-<span className="material-symbols-outlined text-tertiary text-[16px]">verified</span>
-<span>100% ICMR &amp; NABL recognized pathology network</span>
-</div>
-<div className="flex items-center gap-2 text-micro font-micro text-on-surface-variant">
-<span className="material-symbols-outlined text-tertiary text-[16px]">support_agent</span>
-<span>Complimentary teleconsultation post report delivery</span>
-</div>
+<div className="flex items-center gap-2 text-micro font-micro text-on-surface-variant"><span className="material-symbols-outlined text-tertiary text-[16px]">sanitizer</span><span>Sterile single-use sealed vacutainers</span></div>
+<div className="flex items-center gap-2 text-micro font-micro text-on-surface-variant"><span className="material-symbols-outlined text-tertiary text-[16px]">verified</span><span>NABL-accredited partner labs</span></div>
+<div className="flex items-center gap-2 text-micro font-micro text-on-surface-variant"><span className="material-symbols-outlined text-tertiary text-[16px]">support_agent</span><span>Free doctor review of abnormal results</span></div>
 </div>
 </div>
 </aside>
 </div>
+{related.length > 0 && (
+<section className="mt-space-2xl space-y-space-base">
+<h2 className="text-headline-h2 font-headline-h2 text-on-surface">Often booked together</h2>
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+{related.map((t) => <LabTestCard key={t.slug} test={t} />)}
+</div>
+</section>
+)}
 </main>
 {/* Mobile sticky action bar */}
 <div className="lg:hidden fixed bottom-16 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#E7E5E4] px-margin py-3 flex items-center gap-3">
 <div className="min-w-0">
-<p className="font-micro text-micro text-[#78716C]">{pkg.testsIncluded} tests</p>
-<p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">{formatINR(pkg.price)}</p>
+<p className="font-micro text-micro text-[#78716C]">{pkg.kind === 'package' ? `${pkg.testsIncluded} tests` : pkg.fastingLabel}</p>
+<p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">{rupees(pkg.price)}</p>
 </div>
-<Link href={bookingHref} onClick={startSlotHold} className="flex-1 h-12 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-body-strong text-body-strong flex items-center justify-center gap-1.5">
-<span>Book {mode === 'home' ? 'Home Collection' : 'Lab Visit'}</span>
-</Link>
+<button type="button" onClick={book} className="flex-1 h-12 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-body-strong text-body-strong flex items-center justify-center gap-1.5">
+<span>{slot ? 'Continue to book' : 'Book home collection'}</span>
+</button>
 </div>
 <div className="h-20 lg:hidden" aria-hidden="true"></div>
 <Footer />

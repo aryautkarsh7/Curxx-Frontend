@@ -5,14 +5,25 @@ import { useState, type MouseEvent } from 'react';
 import { useEmergency } from '@/components/EmergencyModal';
 import LoginModal from '@/components/LoginModal';
 import NotificationDrawer from '@/components/NotificationDrawer';
-import { isSignedIn } from '@/lib/session';
+import { isSignedIn, signOut, useSession } from '@/lib/session';
 
-const NAV_LINKS = [
+type NavLink = {
+  label: string;
+  href: string;
+  /** Hidden on narrower desktops so the bar never overflows. */
+  wide?: boolean;
+  /** Other path prefixes that belong to this section. */
+  also?: string[];
+};
+
+const NAV_LINKS: NavLink[] = [
   { label: 'Specialties', href: '/bangalore/dermatologist' },
   { label: 'Doctors', href: '/bangalore/doctors' },
   { label: 'ABHA ID', href: '/records' },
   { label: 'Medicines', href: '/medicines' },
   { label: 'Lab Tests', href: '/lab-tests' },
+  { label: 'Labs', href: '/bangalore/labs', also: ['/lab/'] },
+  { label: 'Partner With Us', href: '/partner-with-us', wide: true },
 ];
 
 const ACTIVE_LINK = 'text-primary-container border-b-2 border-primary-container font-body-strong text-body-strong pb-1';
@@ -23,10 +34,11 @@ export default function Header() {
   const router = useRouter();
   const emergency = useEmergency();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const session = useSession();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
 
-  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  const isActive = (href: string, also: string[] = []) => pathname === href || pathname.startsWith(`${href}/`) || also.some((p) => pathname.startsWith(p));
 
   // Phones dial 108 straight away; larger screens (no dialer) get the emergency modal.
   function handleEmergency(e: MouseEvent) {
@@ -41,8 +53,8 @@ export default function Header() {
     else setLoginOpen(true);
   }
 
-  const navLink = (item: { label: string; href: string }) => (
-    <Link key={item.href} className={isActive(item.href) ? ACTIVE_LINK : INACTIVE_LINK} href={item.href}>
+  const navLink = (item: NavLink) => (
+    <Link key={item.href} className={`${isActive(item.href, item.also) ? ACTIVE_LINK : INACTIVE_LINK}${item.wide ? ' hidden xl:inline-block' : ''}`} href={item.href}>
       {item.label}
     </Link>
   );
@@ -85,7 +97,11 @@ export default function Header() {
             {/* User Profile Avatar */}
             <button type="button" aria-label="Account" onClick={handleAvatar} className="flex items-center space-x-2 sm:pl-2 cursor-pointer">
               <div className="w-9 h-9 rounded-lg border border-surface-variant bg-surface-container flex items-center justify-center text-caption-strong text-on-surface overflow-hidden">
-                <span className="material-symbols-outlined text-on-surface-variant text-[22px]">account_circle</span>
+                {session.user?.name ? (
+                  <span className="font-caption-strong text-caption-strong text-primary-container uppercase">{session.user.name.trim().charAt(0)}</span>
+                ) : (
+                  <span className={`material-symbols-outlined text-[22px] ${session.signedIn ? 'text-primary-container' : 'text-on-surface-variant'}`}>account_circle</span>
+                )}
               </div>
               <span className="material-symbols-outlined text-[16px] text-on-surface-variant hidden sm:block">expand_more</span>
             </button>
@@ -98,13 +114,18 @@ export default function Header() {
         {mobileOpen && (
           <nav className="lg:hidden border-t border-surface-variant bg-surface-container-lowest px-margin py-3 flex flex-col gap-3" onClick={() => setMobileOpen(false)}>
             {NAV_LINKS.map((item) => (
-              <Link key={item.href} href={item.href} className={isActive(item.href) ? 'text-primary-container font-body-strong text-body-strong' : 'text-on-surface-variant font-body-default text-body-default'}>
+              <Link key={item.href} href={item.href} className={isActive(item.href, item.also) ? 'text-primary-container font-body-strong text-body-strong' : 'text-on-surface-variant font-body-default text-body-default'}>
                 {item.label}
               </Link>
             ))}
             <button type="button" onClick={() => setNotificationsOpen(true)} className="sm:hidden text-left text-on-surface-variant font-body-default text-body-default">
               Notifications
             </button>
+            {session.signedIn && (
+              <button type="button" onClick={signOut} className="text-left text-on-surface-variant font-body-default text-body-default">
+                Sign out
+              </button>
+            )}
           </nav>
         )}
       </header>

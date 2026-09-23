@@ -404,7 +404,7 @@ export default function CurxxHealthFeedEditorialArticlesPage() {
               Have a symptom or question? Get an answer from verified clinicians within 24h.
             </p>
 </div>
-<Link href="/consult/lobby/cx-88421" className="w-full h-11 rounded-lg border border-[#C1121F] text-primary font-body-strong text-body-strong hover:bg-surface-container-low transition duration-150 flex items-center justify-center gap-2 mt-1">
+<Link href="/consult/video" className="w-full h-11 rounded-lg border border-[#C1121F] text-primary font-body-strong text-body-strong hover:bg-surface-container-low transition duration-150 flex items-center justify-center gap-2 mt-1">
 <span className="material-symbols-outlined text-lg" data-icon="chat">chat</span>
 <span>Ask a Doctor</span>
 </Link>

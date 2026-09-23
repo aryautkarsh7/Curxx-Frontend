@@ -35,8 +35,9 @@ function writeHold(value: { expiresAt: number } | null) {
 }
 
 /** Call when the user picks a slot: (re)starts the 8:00 hold. */
-export function startSlotHold() {
-  writeHold({ expiresAt: Date.now() + HOLD_MS });
+export function startSlotHold(expiresAt?: string | number) {
+  const at = typeof expiresAt === 'string' ? new Date(expiresAt).getTime() : expiresAt;
+  writeHold({ expiresAt: at && Number.isFinite(at) ? at : Date.now() + HOLD_MS });
 }
 
 export function clearSlotHold() {

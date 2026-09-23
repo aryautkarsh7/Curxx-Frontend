@@ -1,19 +1,32 @@
 import type { Metadata } from 'next';
+import { api, type LabQuery } from '@/lib/api';
 import LabTestsHome from './LabTestsHome';
 
 export const metadata: Metadata = {
   title: 'Lab Tests at Home, Reports in 24 Hours | Curxx',
-  description: 'Book NABL & CAP accredited lab tests and full body checkups with free home sample collection across Bengaluru.',
+  description: 'Book NABL-accredited lab tests and full body checkups with free home sample collection across Bengaluru. Digital reports in 24 hours.',
+  alternates: { canonical: '/lab-tests' },
 };
 
-type SearchParams = Promise<{ category?: string | string[]; q?: string | string[] }>;
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;
 
 export default async function LabTestsPage({ searchParams }: { searchParams: SearchParams }) {
-  const { category, q } = await searchParams;
-  return (
-    <LabTestsHome
-      category={typeof category === 'string' ? category : undefined}
-      query={typeof q === 'string' ? q : undefined}
-    />
-  );
+  const params = await searchParams;
+  const kind = one(params.kind);
+  const sort = one(params.sort);
+  const query: LabQuery = {
+    category: one(params.category),
+    q: one(params.q),
+    kind: kind === 'package' || kind === 'test' ? kind : undefined,
+    sort: sort === 'discount' || sort === 'price_asc' || sort === 'price_desc' ? sort : 'popular',
+    page: Math.max(1, Number(one(params.page)) || 1),
+    limit: 9,
+  };
+  const [categories, results, labs] = await Promise.all([
+    api.labCategories().then((r) => r.categories).catch(() => []),
+    api.labTests(query).catch(() => ({ items: [], total: 0, page: 1, limit: 9, pages: 1 })),
+    api.labs({ limit: 4 }).then((r) => ({ items: r.items, total: r.total, near: r.near })).catch(() => null),
+  ]);
+  return <LabTestsHome categories={categories} results={results} query={query} labs={labs} />;
 }

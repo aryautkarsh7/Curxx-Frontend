@@ -1,4 +1,5 @@
-// Specialties we list doctors for, keyed by URL slug (/bangalore/{slug}).
+// URL-slug catalogue used for routing and metadata. Listings and the homepage grid
+// read the live catalogue from the API; this stays the source of valid /bangalore/{slug} routes.
 export type Specialty = { slug: string; name: string; plural: string; icon: string; fromPrice: number };
 
 export const SPECIALTIES: Specialty[] = [
@@ -23,9 +24,6 @@ export const SPECIALTIES: Specialty[] = [
 
 /** `/bangalore/doctors` lists every specialty. */
 export const ALL_DOCTORS = { slug: 'doctors', name: 'Doctor', plural: 'Doctors' } as const;
-
-/** Specialties that have doctor listings in the mock data; the rest render the zero-results state. */
-export const LISTED_SPECIALTIES = new Set(['dermatologist', ALL_DOCTORS.slug]);
 
 export function getSpecialty(slug: string) {
   return SPECIALTIES.find((s) => s.slug === slug);

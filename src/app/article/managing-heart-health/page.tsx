@@ -243,7 +243,7 @@ export default function CurxxMedicalArticleDetailHeartHealthPage() {
 <p className="font-caption text-caption text-on-surface-variant mb-3 leading-tight">
             Review your lipid &amp; inflammatory lab reports with an experienced physician in under 15 minutes.
           </p>
-<Link href="/consult/lobby/cx-88421" className="w-full py-2.5 px-3 bg-primary-container text-white rounded-lg font-caption-strong text-caption-strong hover:bg-primary transition duration-150 active:scale-95 flex items-center justify-center gap-1.5 shadow-sm">
+<Link href="/consult/video/cardiologist" className="w-full py-2.5 px-3 bg-primary-container text-white rounded-lg font-caption-strong text-caption-strong hover:bg-primary transition duration-150 active:scale-95 flex items-center justify-center gap-1.5 shadow-sm">
 <span className="material-symbols-outlined" style={{"fontSize":"16px"}}>videocam</span>
 <span>Book ₹399 Teleconsult</span>
 </Link>

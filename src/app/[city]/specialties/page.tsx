@@ -4,15 +4,21 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { canonicalCity } from '@/lib/cities';
-import { SPECIALTIES } from '@/lib/specialties';
+import { api } from '@/lib/api';
 
-export const metadata: Metadata = { title: 'All Specialties in Bangalore | Curxx' };
+export const metadata: Metadata = {
+  title: 'All Specialties in Bangalore — Book a Verified Doctor | Curxx',
+  description: 'Browse every clinical specialty on Curxx and book a verified doctor in Bangalore for a video consult or an in-clinic visit.',
+  alternates: { canonical: '/bangalore/specialties' },
+};
 
 export default async function SpecialtiesPage({ params }: { params: Promise<{ city: string }> }) {
   const { city } = await params;
   const canonical = canonicalCity(city);
   if (!canonical) notFound();
   if (canonical !== city) permanentRedirect(`/${canonical}/specialties`);
+
+  const { specialties } = await api.specialties();
 
   return (
     <>
@@ -27,10 +33,10 @@ export default async function SpecialtiesPage({ params }: { params: Promise<{ ci
           <div>
             <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Clinical Specialties</span>
             <h1 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">All Specialties in Bangalore</h1>
-            <p className="text-body-default font-body-default text-on-surface-variant mt-1">Verified doctors across {SPECIALTIES.length} clinical disciplines, for video consults and clinic visits.</p>
+            <p className="text-body-default font-body-default text-on-surface-variant mt-1">Verified doctors across {specialties.length} clinical disciplines, for video consults and clinic visits.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {SPECIALTIES.map((s) => (
+            {specialties.map((s) => (
               <Link key={s.slug} href={`/${canonical}/${s.slug}`} className="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
                 <span className="material-symbols-outlined text-outline text-[28px] mb-2">{s.icon}</span>
                 <div className="text-caption-strong font-caption-strong text-on-surface">{s.name}</div>
