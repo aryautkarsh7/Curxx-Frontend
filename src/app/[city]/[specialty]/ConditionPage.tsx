@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import FaqAccordion from '@/components/seo/FaqAccordion';
 import { api, type ConditionDetail } from '@/lib/api';
-import { getCity } from '@/lib/cities';
+import { resolveCity } from '@/lib/catalogue-live';
 import { JsonLd } from '@/lib/seo';
 import { conditionHref } from '@/lib/specialties';
 import DoctorListing from './DoctorListing';
@@ -21,7 +21,7 @@ export async function conditionMetadata(city: string, slug: string): Promise<Met
   const detail = await load(city, slug);
   if (!detail) return {};
   const { condition, specialty } = detail;
-  const cityName = getCity(city)!.name;
+  const cityName = (await resolveCity(city))!.name;
   const title = `${condition.name} Treatment in ${cityName} — Consult ${specialty?.plural ?? 'Doctors'} Online or In-Clinic | Curxx`;
   const description = `${condition.summary} Book a verified ${specialty?.name.toLowerCase() ?? 'doctor'} in ${cityName} for ${condition.name.toLowerCase()} — video consult or clinic visit.`;
   const path = conditionHref(city, slug);
@@ -35,7 +35,7 @@ export default async function ConditionPage({ city, slug, searchParams }: { city
   const detail = await load(city, slug);
   if (!detail || !detail.specialty) notFound();
   const { condition, specialty } = detail;
-  const cityInfo = getCity(city)!;
+  const cityInfo = (await resolveCity(city))!;
   const filters = queryFrom(searchParams);
   const listing = await loadDoctors({ ...filters, q: undefined, city, specialty: specialty.slug });
   const path = conditionHref(city, slug);

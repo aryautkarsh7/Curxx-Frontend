@@ -1,4 +1,4 @@
-import type { Faq } from '@/lib/home-content';
+import type { Faq } from '@/lib/api';
 
 /**
  * FAQ block for both pages and search results: section heading is an H2,

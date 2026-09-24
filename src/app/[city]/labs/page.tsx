@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { api, type LabDirectoryQuery } from '@/lib/api';
-import { canonicalCity, getCity } from '@/lib/cities';
+import { resolveCity } from '@/lib/catalogue-live';
 import LabsListing from './LabsListing';
 
 type Props = { params: Promise<{ city: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const canonical = canonicalCity((await params).city);
-  if (!canonical) return {};
-  const name = getCity(canonical)!.name;
+  const info = await resolveCity((await params).city);
+  if (!info) return {};
+  const { slug: canonical, name } = info;
   return {
     title: { absolute: `Diagnostic Labs in ${name} — NABL Accredited, Home Collection | Curxx` },
     description: `NABL and CAP accredited diagnostic labs and imaging centres in ${name} with timings, tests offered, home sample collection areas and walk-in counters.`,
@@ -21,8 +21,9 @@ const ACCREDITATIONS = ['NABL', 'CAP', 'ISO 15189'] as const;
 
 export default async function CityLabsPage({ params, searchParams }: Props) {
   const { city } = await params;
-  const canonical = canonicalCity(city);
-  if (!canonical) notFound();
+  const info = await resolveCity(city);
+  if (!info) notFound();
+  const canonical = info.slug;
   if (canonical !== city) permanentRedirect(`/${canonical}/labs`);
 
   const sp = await searchParams;
@@ -49,8 +50,8 @@ export default async function CityLabsPage({ params, searchParams }: Props) {
       items={data?.items ?? []}
       total={data?.total ?? 0}
       city={canonical}
-      cityName={getCity(canonical)!.name}
-      near={data?.near ?? { pincode: getCity(canonical)!.localities[0]!.pincode, area: getCity(canonical)!.localities[0]!.name }}
+      cityName={info.name}
+      near={data?.near ?? { pincode: info.localities[0]?.pincode ?? '', area: info.localities[0]?.name ?? info.name }}
       areas={data?.facets.areas ?? []}
       accreditations={data?.facets.accreditations ?? []}
       tests={tests}

@@ -8,10 +8,6 @@ import Header from '@/components/Header';
 import Toast, { useToast } from '@/components/Toast';
 import { api, photo, rupees, type Doctor, type Facility, type Slot } from '@/lib/api';
 
-/** Interior shots shown alongside each facility's own exterior photo. */
-const GALLERY = [
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuB-yeCH51N12rpPo_7G6QMICKO9iJHLhO5ZRVk0lmOrt1YeQupaCNjnwLZcuapTVpibWhJUa2w4qzgz6nsS7bzPCsi-cJCsHMuJgn9za5FoR6BkS-4VlmUuxK-VN5DV6S06-RIgtkMLdirPtkfQ0XvkDLMgcO9dTyD2be344CRi2mUpU4g4k90PyNQfxT88gJEi81dBS6rG2cEYX0ev9u64qiJf1_g_v1DONcbk2fXWlpPRfU0Co2WA',
-];
 const AMENITY_ICON: Record<string, string> = {
   '24x7 Pharmacy': 'medication', 'Cashless Insurance Desk': 'credit_card', 'Ambulance Service': 'ambulance', 'Digital Reports': 'description',
   'Wheelchair Accessible': 'accessible', 'Car Parking': 'local_parking', Cafeteria: 'restaurant', 'Online Payments': 'payments', 'Air-conditioned Waiting': 'ac_unit',
@@ -20,7 +16,8 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 const mapsUrl = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 const specialtyLabel = (slug: string) => slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
-export default function ClinicProfile({ facility: f, doctors }: { facility: Facility; doctors: Doctor[] }) {
+/** `interior`: the site-wide default photo beside the clinic's own, used when it has no gallery. */
+export default function ClinicProfile({ facility: f, doctors, interior }: { facility: Facility; doctors: Doctor[]; interior: string }) {
   const router = useRouter();
   const [toast, showToast] = useToast();
   const [dept, setDept] = useState<string | null>(null);
@@ -81,14 +78,14 @@ export default function ClinicProfile({ facility: f, doctors }: { facility: Faci
         {/* GALLERY */}
         <section className="grid grid-cols-12 gap-3 h-[220px] sm:h-[340px] rounded-2xl overflow-hidden bg-surface-container-lowest border border-[#E7E5E4] shadow-sm mb-space-base">
           <div className="col-span-12 sm:col-span-8 relative overflow-hidden h-full">
-            {f.photoUrl && <img className="w-full h-full object-cover" alt={`${f.name} exterior`} src={`${f.photoUrl}=w1200`} />}
+            {f.photoUrl && <img className="w-full h-full object-cover" alt={`${f.name} exterior`} src={photo(f.photoUrl, 1200)} />}
             <div className="absolute bottom-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[#E7E5E4] flex items-center gap-2">
               <span className="material-symbols-outlined text-primary text-[18px]">verified</span>
               <span className="font-caption-strong text-caption-strong text-on-surface">{f.tagline}</span>
             </div>
           </div>
           <div className="hidden sm:block col-span-4 h-full overflow-hidden rounded-lg">
-            <img loading="lazy" className="w-full h-full object-cover" alt={`${f.shortName} interior`} src={`${GALLERY[0]}=w600`} />
+            <img loading="lazy" className="w-full h-full object-cover" alt={`${f.shortName} interior`} src={photo(f.gallery?.[0] || interior, 600)} />
           </div>
         </section>
 

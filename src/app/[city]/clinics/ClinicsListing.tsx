@@ -4,9 +4,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import FilterPillSheet from '@/components/FilterPillSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import type { Facet, Facility, FacilityQuery } from '@/lib/api';
+import { photo, type Facet, type Facility, type FacilityQuery } from '@/lib/api';
 
-const DEPARTMENTS = ['Cardiology', 'Neurology', 'Orthopaedics', 'Paediatrics', 'Obstetrics & Gynaecology', 'Dermatology', 'ENT', 'Ophthalmology', 'Gastroenterology', 'General Medicine', 'Psychiatry', 'Dental'];
 const SORTS = [
   { value: 'rating', label: 'Rating (highest first)' },
   { value: 'reviews', label: 'Most reviewed' },
@@ -31,6 +30,8 @@ type Props = {
   page: number;
   pages: number;
   areas: Facet[];
+  /** Departments offered in this city, most common first (from the API). */
+  departments: Facet[];
   query: FacilityQuery;
 };
 
@@ -40,7 +41,7 @@ export function FacilityCard({ f }: { f: Facility }) {
     <article className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 hover:shadow-md transition duration-150">
       <div className="flex flex-col md:flex-row gap-5">
         <Link href={`/clinic/${f.slug}`} className="relative w-full md:w-40 h-40 shrink-0 rounded-xl overflow-hidden bg-[#FAFAF9] border border-[#E7E5E4] block">
-          {f.photoUrl && <img loading="lazy" decoding="async" alt={`${f.name} exterior`} className="w-full h-full object-cover" src={`${f.photoUrl}=w480`} />}
+          {f.photoUrl && <img loading="lazy" decoding="async" alt={`${f.name} exterior`} className="w-full h-full object-cover" src={photo(f.photoUrl, 480)} />}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {f.nabh && (
               <span className="inline-flex items-center gap-0.5 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-1.5 py-0.5 rounded shadow-xs"><span className="material-symbols-outlined text-[12px]">shield</span>NABH</span>
@@ -107,7 +108,7 @@ export function FacilityCard({ f }: { f: Facility }) {
   );
 }
 
-export default function ClinicsListing({ type, city, cityName, categories, items, total, page, pages, areas, query }: Props) {
+export default function ClinicsListing({ type, city, cityName, categories, items, total, page, pages, areas, departments, query }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -125,6 +126,9 @@ export default function ClinicsListing({ type, city, cityName, categories, items
 
   // Facility type (what kind of place) is separate from department (what it treats).
   const typeOptions = categories.filter((c) => c.group === type);
+  // The most common departments here, plus the one being filtered on.
+  const departmentOptions = departments.slice(0, 12);
+  if (query.department && !departmentOptions.some((d) => d.value === query.department)) departmentOptions.push({ value: query.department, count: 0 });
   const chips = [
     query.category && { key: 'category', label: categories.find((c) => c.value === query.category)?.label ?? query.category },
     query.emergency && { key: 'emergency', label: '24x7 emergency' },
@@ -164,16 +168,19 @@ export default function ClinicsListing({ type, city, cityName, categories, items
           ))}
         </div>
       </div>
+      {departmentOptions.length > 0 && (
       <div className="space-y-2 pt-2 border-t border-[#E7E5E4]">
         <span className="font-caption-strong text-caption-strong text-on-surface block">Specialisation</span>
         <div className="space-y-1.5 text-caption font-caption text-on-surface">
-          {DEPARTMENTS.map((d) => (
-            <label key={d} className="flex items-center gap-2.5 cursor-pointer">
-              <input type="checkbox" checked={query.department === d} onChange={() => toggle('department', d)} className="w-4 h-4 rounded text-[#C1121F] border-[#78716C]" />{d}
+          {departmentOptions.map((d) => (
+            <label key={d.value} className="flex items-center justify-between gap-2 cursor-pointer">
+              <span className="flex items-center gap-2.5"><input type="checkbox" checked={query.department === d.value} onChange={() => toggle('department', d.value)} className="w-4 h-4 rounded text-[#C1121F] border-[#78716C]" />{d.value}</span>
+              {d.count > 0 && <span className="text-micro text-outline">{d.count}</span>}
             </label>
           ))}
         </div>
       </div>
+      )}
       <div className="space-y-2 pt-2 border-t border-[#E7E5E4]">
         <span className="font-caption-strong text-caption-strong text-on-surface block">Locality</span>
         <div className="space-y-1.5 text-caption font-caption text-on-surface">

@@ -25,4 +25,5 @@ export const conditionFromSegment = (segment: string) =>
 export const conditionHref = (city: string, slug: string) => `/${city}/${CONDITION_PREFIX}${slug}`;
 
 /** The total we advertise ("55+ specialties") — the catalogue minus General Surgeon, which lives under surgeries. */
-export const SPECIALTY_COUNT_LABEL = `${Math.floor((SPECIALTY_LIST.length - 1) / 5) * 5}+`;
+export const specialtyCountLabel = (count: number) => `${Math.floor((count - 1) / 5) * 5}+`;
+export const SPECIALTY_COUNT_LABEL = specialtyCountLabel(SPECIALTY_LIST.length);

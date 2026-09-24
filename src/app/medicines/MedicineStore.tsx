@@ -8,6 +8,7 @@ import MedicineCard from '@/components/pharmacy/MedicineCard';
 import Toast, { useToast } from '@/components/Toast';
 import { api, type Address, type Medicine, type MedicineCategory, type MedicineQuery, type Paged } from '@/lib/api';
 import { useCart } from '@/lib/cart';
+import type { Feature } from '@/lib/content-types';
 import { getToken, useSession } from '@/lib/session';
 
 type Props = {
@@ -15,6 +16,9 @@ type Props = {
   results: Paged<Medicine>;
   deals: Medicine[];
   query: MedicineQuery;
+  /** Editable in the admin panel (Page content → medicines). */
+  popularSearches: string[];
+  trust: Feature[];
 };
 
 const SORT_OPTIONS = [
@@ -24,13 +28,12 @@ const SORT_OPTIONS = [
   { value: 'price_desc', label: 'Price: high to low' },
   { value: 'rating', label: 'Top rated' },
 ];
-const POPULAR_SEARCHES = ['Paracetamol', 'Metformin', 'Vitamin C', 'Minoxidil', 'Cetirizine'];
-const TRUST = [
-  { icon: 'verified_user', title: '100% Genuine Medicines', body: 'Direct from certified pharma brands', tone: 'bg-tertiary-container/10 text-tertiary-container' },
-  { icon: 'ac_unit', title: 'Cold-Chain Delivery', body: 'Insulated vaccine & insulin transport', tone: 'bg-surface-container-high text-primary-container' },
-  { icon: 'medical_services', title: 'Licensed Pharmacy', body: 'CDSCO & State Council approved', tone: 'bg-surface-container-high text-outline' },
-  { icon: 'keyboard_return', title: 'Easy 7-Day Returns', body: 'Hassle-free pickups for sealed packs', tone: 'bg-surface-container-high text-outline' },
-];
+/** Trust strip icon colours, by the tone set in the admin panel. */
+const TONES: Record<NonNullable<Feature['tone']>, string> = {
+  tertiary: 'bg-tertiary-container/10 text-tertiary-container',
+  primary: 'bg-surface-container-high text-primary-container',
+  neutral: 'bg-surface-container-high text-outline',
+};
 
 /** Deals refresh at midnight, so the countdown runs to the end of today. */
 function useMidnightCountdown() {
@@ -51,7 +54,7 @@ function useMidnightCountdown() {
   return left;
 }
 
-export default function MedicineStore({ categories, results, deals, query }: Props) {
+export default function MedicineStore({ categories, results, deals, query, popularSearches, trust }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -180,14 +183,16 @@ export default function MedicineStore({ categories, results, deals, query }: Pro
                 Search
               </button>
             </form>
+            {popularSearches.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap pt-1">
               <span className="text-caption font-caption text-outline">Popular searches:</span>
-              {POPULAR_SEARCHES.map((term) => (
+              {popularSearches.map((term) => (
                 <Link key={term} href={`/medicines?q=${encodeURIComponent(term)}#results`} className="px-3 py-1 bg-surface-container-lowest border border-surface-variant hover:border-outline-variant rounded-full text-caption font-caption text-on-surface transition duration-150">
                   {term}
                 </Link>
               ))}
             </div>
+            )}
           </div>
           <div className="lg:col-span-5 bg-surface-container-lowest border-2 border-dashed border-primary-container/40 rounded-2xl p-space-lg space-y-space-base shadow-sm">
             <div className="flex items-start gap-space-md">
@@ -212,10 +217,11 @@ export default function MedicineStore({ categories, results, deals, query }: Pro
         </section>
 
         {/* TRUST STRIP */}
+        {trust.length > 0 && (
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-base">
-          {TRUST.map((t) => (
+          {trust.map((t) => (
             <div key={t.title} className="bg-surface-container-lowest border border-surface-variant rounded-xl p-space-base flex items-center gap-3 shadow-sm">
-              <div className={`w-11 h-11 rounded-lg ${t.tone} flex items-center justify-center shrink-0`}>
+              <div className={`w-11 h-11 rounded-lg ${TONES[t.tone ?? 'neutral'] ?? TONES.neutral} flex items-center justify-center shrink-0`}>
                 <span className="material-symbols-outlined text-2xl">{t.icon}</span>
               </div>
               <div>
@@ -225,6 +231,7 @@ export default function MedicineStore({ categories, results, deals, query }: Pro
             </div>
           ))}
         </section>
+        )}
 
         {/* CATEGORY GRID */}
         <section className="space-y-space-base">

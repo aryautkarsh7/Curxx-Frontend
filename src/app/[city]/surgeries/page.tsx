@@ -6,15 +6,15 @@ import Header from '@/components/Header';
 import FaqAccordion from '@/components/seo/FaqAccordion';
 import SurgeryLeadForm from '@/components/surgery/SurgeryLeadForm';
 import { api, rupees, type SurgerySummary } from '@/lib/api';
-import { SURGERY_CATEGORIES, SURGERY_LIST } from '@/lib/catalogue-data';
-import { canonicalCity, getCity } from '@/lib/cities';
+import { liveCatalogue, resolveCity } from '@/lib/catalogue-live';
 
 type Props = { params: Promise<{ city: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const canonical = canonicalCity((await params).city);
-  if (!canonical) return {};
-  const name = getCity(canonical)!.name;
+  const info = await resolveCity((await params).city);
+  if (!info) return {};
+  const { slug: canonical, name } = info;
+  const { surgeries: SURGERY_LIST } = await liveCatalogue();
   return {
     title: { absolute: `Surgery in ${name} — Costs, Top Hospitals & Free Consultation | Curxx` },
     description: `Compare ${SURGERY_LIST.length} common surgeries in ${name} — laser piles, cataract, hernia, knee replacement, LASIK and more. See cost ranges, recovery time and partner hospitals, and book a free surgeon consultation.`,
@@ -32,11 +32,12 @@ async function load(city: string): Promise<SurgerySummary[]> {
 
 export default async function SurgeriesPage({ params }: Props) {
   const { city } = await params;
-  const canonical = canonicalCity(city);
-  if (!canonical) notFound();
+  const info = await resolveCity(city);
+  if (!info) notFound();
+  const canonical = info.slug;
   if (canonical !== city) permanentRedirect(`/${canonical}/surgeries`);
-  const cityName = getCity(canonical)!.name;
-  const surgeries = await load(canonical);
+  const cityName = info.name;
+  const [surgeries, { surgeries: SURGERY_LIST, surgeryCategories: SURGERY_CATEGORIES }] = await Promise.all([load(canonical), liveCatalogue()]);
   const groups = SURGERY_CATEGORIES.map((category) => ({ category, items: surgeries.filter((s) => s.category === category) })).filter((g) => g.items.length);
 
   const faqs = [

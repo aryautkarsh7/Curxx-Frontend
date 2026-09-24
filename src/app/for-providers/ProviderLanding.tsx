@@ -3,8 +3,20 @@
 import Link from 'next/link';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import type { Faq, Plan, Testimonial } from '@/lib/api';
+import { boldParts } from '@/lib/site';
 
-export default function ProviderLanding() {
+type Props = {
+  /** Verified doctors on Curxx, rounded down ("3,200+"); null hides the number. */
+  doctorsLabel: string | null;
+  plans: Plan[];
+  testimonials: Testimonial[];
+  faqs: Faq[];
+};
+
+const periodLabel = (period: string) => ` / ${period}`;
+
+export default function ProviderLanding({ doctorsLabel, plans, testimonials, faqs }: Props) {
   return (
     <>
       
@@ -19,7 +31,7 @@ export default function ProviderLanding() {
 {/* Eyebrow */}
 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro font-semibold mb-4">
 <span className="material-symbols-outlined text-[#047857] text-[16px]">verified</span>
-<span>TRUSTED BY 10,000+ INDIAN DOCTORS</span>
+<span>{doctorsLabel ? `TRUSTED BY ${doctorsLabel} INDIAN DOCTORS` : 'TRUSTED BY INDIAN DOCTORS'}</span>
 </div>
 {/* Headline */}
 <h1 className="text-on-surface font-display text-[36px] leading-[44px] lg:text-[42px] lg:leading-[50px] font-bold tracking-tight mb-4">
@@ -626,131 +638,42 @@ export default function ProviderLanding() {
 </div>
 {/* 3 Tier Cards */}
 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-{/* Tier 1: Free */}
-<div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 flex flex-col justify-between shadow-sm">
-<div>
-<div className="mb-4">
-<h3 className="text-headline-h2 font-headline-h2 text-on-surface">Free</h3>
-<p className="text-caption font-caption text-on-surface-variant mt-1">For independent doctors starting out.</p>
-</div>
-<div className="mb-6">
-<span className="text-display font-display font-bold text-on-surface">₹0</span>
-<span className="text-caption font-caption text-[#78716C]"> / forever</span>
-</div>
-<ul className="space-y-3 mb-6 text-caption font-caption text-on-surface">
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Basic verified profile listing</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Up to 15 appointments / month</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Standard patient ratings &amp; reviews</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Manual OPD slot management</span>
-</li>
-<li className="flex items-center gap-2 text-[#A8A29E]">
-<span className="material-symbols-outlined text-[16px]">close</span>
-<span>ABHA health record dispatch</span>
-</li>
-</ul>
-</div>
-<a className="w-full h-11 border border-[#E7E5E4] hover:bg-[#FAFAF9] text-on-surface rounded-lg font-body-strong text-body-strong flex items-center justify-center transition-colors" href="#signup-form">
-              Start Free
-            </a>
-</div>
-{/* Tier 2: Professional (Elevated / Most Popular) */}
-<div className="bg-white border-2 border-[#C1121F] rounded-2xl p-6 flex flex-col justify-between shadow-md relative bg-gradient-to-b from-[#FFF1F2]/30 to-white">
+{plans.map((plan) => (
+<div key={plan.slug} className={plan.highlight ? 'bg-white border-2 border-[#C1121F] rounded-2xl p-6 flex flex-col justify-between shadow-md relative bg-gradient-to-b from-[#FFF1F2]/30 to-white' : 'bg-white border border-[#E7E5E4] rounded-2xl p-6 flex flex-col justify-between shadow-sm relative'}>
+{plan.badge && (
 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#C1121F] text-white text-micro font-micro font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-              MOST POPULAR
+              {plan.badge}
             </div>
+)}
 <div>
-<div className="mb-4 mt-2">
-<h3 className="text-headline-h2 font-headline-h2 text-on-surface">Professional</h3>
-<p className="text-caption font-caption text-on-surface-variant mt-1">For active clinicians and private practices.</p>
+<div className={plan.badge ? 'mb-4 mt-2' : 'mb-4'}>
+<h3 className="text-headline-h2 font-headline-h2 text-on-surface">{plan.name}</h3>
+<p className="text-caption font-caption text-on-surface-variant mt-1">{plan.tagline}</p>
 </div>
 <div className="mb-6">
-<span className="text-display font-display font-bold text-primary">₹1,499</span>
-<span className="text-caption font-caption text-[#78716C]"> / month</span>
+<span className={`text-display font-display font-bold ${plan.highlight ? 'text-primary' : 'text-on-surface'}`}>₹{plan.price.toLocaleString('en-IN')}</span>
+<span className="text-caption font-caption text-[#78716C]">{periodLabel(plan.period)}</span>
 </div>
 <ul className="space-y-3 mb-6 text-caption font-caption text-on-surface">
-<li className="flex items-center gap-2">
+{plan.perks.map((perk) => (
+<li key={perk} className="flex items-center gap-2">
 <span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span className="font-semibold">Unlimited clinic appointments</span>
+<span>{boldParts(perk).map((part, i) => (part.bold ? <span key={i} className="font-semibold">{part.text}</span> : part.text))}</span>
 </li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span className="font-semibold">Unlimited 1080p video consults</span>
+))}
+{plan.excluded.map((item) => (
+<li key={item} className="flex items-center gap-2 text-[#A8A29E]">
+<span className="material-symbols-outlined text-[16px]">close</span>
+<span>{item}</span>
 </li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Digital Rx writer with ICD-10 suggestions</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Direct ABHA ID patient record syncing</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Automated WhatsApp &amp; SMS reminders</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Priority search ranking in your city</span>
-</li>
+))}
 </ul>
 </div>
-<a className="w-full h-11 bg-[#C1121F] hover:bg-[#8E0E17] text-white rounded-lg font-body-strong text-body-strong flex items-center justify-center transition-colors shadow-sm" href="#signup-form">
-              Start 90-Day Free Trial
+<a className={plan.highlight ? 'w-full h-11 bg-[#C1121F] hover:bg-[#8E0E17] text-white rounded-lg font-body-strong text-body-strong flex items-center justify-center transition-colors shadow-sm' : 'w-full h-11 border border-[#E7E5E4] hover:bg-[#FAFAF9] text-on-surface rounded-lg font-body-strong text-body-strong flex items-center justify-center transition-colors'} href="#signup-form">
+              {plan.ctaLabel || `Choose ${plan.name}`}
             </a>
 </div>
-{/* Tier 3: Clinic & Hospital */}
-<div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 flex flex-col justify-between shadow-sm">
-<div>
-<div className="mb-4">
-<h3 className="text-headline-h2 font-headline-h2 text-on-surface">Clinic &amp; Hospital</h3>
-<p className="text-caption font-caption text-on-surface-variant mt-1">For polyclinics, nursing homes &amp; OPDs.</p>
-</div>
-<div className="mb-6">
-<span className="text-display font-display font-bold text-on-surface">₹4,999</span>
-<span className="text-caption font-caption text-[#78716C]"> / month</span>
-</div>
-<ul className="space-y-3 mb-6 text-caption font-caption text-on-surface">
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Up to 10 verified doctor profiles</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Dedicated receptionist role &amp; token queue</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Multi-room OPD queue management</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Advanced revenue &amp; collection analytics</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Custom pharmacy &amp; lab dispatch tie-ins</span>
-</li>
-<li className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[#047857] text-[16px]">check</span>
-<span>Dedicated account manager &amp; onboarding</span>
-</li>
-</ul>
-</div>
-<a className="w-full h-11 border border-[#E7E5E4] hover:bg-[#FAFAF9] text-on-surface rounded-lg font-body-strong text-body-strong flex items-center justify-center transition-colors" href="#signup-form">
-              Contact Enterprise
-            </a>
-</div>
+))}
 </div>
 </div>
 </section>
@@ -767,71 +690,32 @@ export default function ProviderLanding() {
             Real feedback from verified doctors transforming patient care with Curxx.
           </p>
 </div>
-{/* 3 Doctor Quote Cards */}
+{/* Doctor Quote Cards */}
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-{/* Card 1 */}
-<div className="bg-white border border-[#E7E5E4] rounded-xl p-6 shadow-sm flex flex-col justify-between">
+{testimonials.map((t) => (
+<div key={t.slug} className="bg-white border border-[#E7E5E4] rounded-xl p-6 shadow-sm flex flex-col justify-between">
 <div>
+{t.badge?.label && (
 <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro font-semibold mb-4">
-<span className="material-symbols-outlined text-[14px]">trending_up</span>
-<span>3.4x Booking Growth</span>
+<span className="material-symbols-outlined text-[14px]">{t.badge.icon || 'verified'}</span>
+<span>{t.badge.label}</span>
 </div>
+)}
 <p className="text-body-default font-body-default text-on-surface mb-6 italic">
-                &quot;Curxx cut my clinic no-shows in half and brought verified patients looking specifically for clinical acne treatments. The prescription writer with ICD-10 suggestions is by far the best I&apos;ve used.&quot;
+                &quot;{t.text}&quot;
               </p>
 </div>
 <div className="flex items-center gap-3 pt-4 border-t border-[#E7E5E4]">
 <div className="w-10 h-10 rounded-full bg-[#FFF1F2] border border-[#F9C6C9] flex items-center justify-center text-primary font-bold text-caption">
-                PS
+                {t.initials}
               </div>
 <div>
-<p className="text-caption-strong font-caption-strong text-on-surface">Dr. Priya Sharma</p>
-<p className="text-micro font-micro text-[#78716C]">MD Dermatology • Bengaluru</p>
+<p className="text-caption-strong font-caption-strong text-on-surface">{t.name}</p>
+<p className="text-micro font-micro text-[#78716C]">{t.location}</p>
 </div>
 </div>
 </div>
-{/* Card 2 */}
-<div className="bg-white border border-[#E7E5E4] rounded-xl p-6 shadow-sm flex flex-col justify-between">
-<div>
-<div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro font-semibold mb-4">
-<span className="material-symbols-outlined text-[14px]">schedule</span>
-<span>+4.5 hrs saved weekly</span>
-</div>
-<p className="text-body-default font-body-default text-on-surface mb-6 italic">
-                &quot;Transitioning to ABDM compliance seemed daunting until we integrated Curxx. The patient ABHA locker sync is completely seamless and our front-desk paperwork has essentially dropped to zero.&quot;
-              </p>
-</div>
-<div className="flex items-center gap-3 pt-4 border-t border-[#E7E5E4]">
-<div className="w-10 h-10 rounded-full bg-[#FFF1F2] border border-[#F9C6C9] flex items-center justify-center text-primary font-bold text-caption">
-                AK
-              </div>
-<div>
-<p className="text-caption-strong font-caption-strong text-on-surface">Dr. Arvind Kumar</p>
-<p className="text-micro font-micro text-[#78716C]">MBBS, MD Internal Medicine • Apollo Clinic</p>
-</div>
-</div>
-</div>
-{/* Card 3 */}
-<div className="bg-white border border-[#E7E5E4] rounded-xl p-6 shadow-sm flex flex-col justify-between">
-<div>
-<div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro font-semibold mb-4">
-<span className="material-symbols-outlined text-[14px]">payments</span>
-<span>₹2.1L Monthly Teleconsults</span>
-</div>
-<p className="text-body-default font-body-default text-on-surface mb-6 italic">
-                &quot;The video consultation room feels like an actual clinic desk. Instant e-prescriptions and automated same-day payouts make managing teleconsultations between hospital rounds truly effortless.&quot;
-              </p>
-</div>
-<div className="flex items-center gap-3 pt-4 border-t border-[#E7E5E4]">
-<div className="w-10 h-10 rounded-full bg-[#FFF1F2] border border-[#F9C6C9] flex items-center justify-center text-primary font-bold text-caption">
-                RR
-              </div>
-<div>
-<p className="text-caption-strong font-caption-strong text-on-surface">Dr. Ramesh Rao</p>
-<p className="text-micro font-micro text-[#78716C]">Cardiologist • Fortis Hospital Network</p>
-</div>
-</div>
-</div>
+))}
 </div>
 </div>
 </section>
@@ -850,56 +734,17 @@ export default function ProviderLanding() {
 </div>
 {/* Accordion Items */}
 <div className="space-y-4">
-{/* FAQ 1 */}
-<details className="group bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-4 transition-all duration-150 open:bg-white open:shadow-sm" open>
+{faqs.map((faq, index) => (
+<details key={faq.question} className="group bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-4 transition-all duration-150 open:bg-white open:shadow-sm" open={index === 0}>
 <summary className="flex items-center justify-between cursor-pointer font-headline-h3 text-headline-h3 text-on-surface list-none">
-<span>What documentation is required to list my practice on Curxx?</span>
+<span>{faq.question}</span>
 <span className="material-symbols-outlined text-[#78716C] group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
 <p className="mt-3 text-body-default font-body-default text-on-surface-variant border-t border-[#E7E5E4] pt-3">
-              We require your National Medical Commission (NMC) or State Medical Council registration certificate, qualifying degree certificates (MBBS, MD, MS, DNB), and proof of clinic address. Our credentialing team verifies records against state databases within 12-24 hours.
+              {faq.answer}
             </p>
 </details>
-{/* FAQ 2 */}
-<details className="group bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-4 transition-all duration-150 open:bg-white open:shadow-sm">
-<summary className="flex items-center justify-between cursor-pointer font-headline-h3 text-headline-h3 text-on-surface list-none">
-<span>How do patient fee payouts and settlements work?</span>
-<span className="material-symbols-outlined text-[#78716C] group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<p className="mt-3 text-body-default font-body-default text-on-surface-variant border-t border-[#E7E5E4] pt-3">
-              All consultation fees collected through online bookings are automatically settled to your verified bank account on a T+1 business day basis via NEFT/UPI. Curxx charges 0% commission on in-clinic OPD visits and provides itemized automated GST tax invoices.
-            </p>
-</details>
-{/* FAQ 3 */}
-<details className="group bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-4 transition-all duration-150 open:bg-white open:shadow-sm">
-<summary className="flex items-center justify-between cursor-pointer font-headline-h3 text-headline-h3 text-on-surface list-none">
-<span>Is Curxx compliant with Telemedicine Guidelines and ABDM?</span>
-<span className="material-symbols-outlined text-[#78716C] group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<p className="mt-3 text-body-default font-body-default text-on-surface-variant border-t border-[#E7E5E4] pt-3">
-              Yes, Curxx is 100% compliant with the National Health Authority (NHA) Ayushman Bharat Digital Mission (ABDM) Milestone 1, 2, and 3 certifications. It adheres strictly to the Board of Governors / NMC Telemedicine Practice Guidelines and the Digital Personal Data Protection (DPDP) Act 2023.
-            </p>
-</details>
-{/* FAQ 4 */}
-<details className="group bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-4 transition-all duration-150 open:bg-white open:shadow-sm">
-<summary className="flex items-center justify-between cursor-pointer font-headline-h3 text-headline-h3 text-on-surface list-none">
-<span>Can my clinic receptionist or staff manage slots and patient check-ins?</span>
-<span className="material-symbols-outlined text-[#78716C] group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<p className="mt-3 text-body-default font-body-default text-on-surface-variant border-t border-[#E7E5E4] pt-3">
-              Yes. Role-based access allows clinic managers, desk staff, and receptionists to log into a restricted front-desk dashboard to handle walk-ins, print physical tokens, mark patient arrivals, and collect offline billing without seeing doctor-confidential EHR notes.
-            </p>
-</details>
-{/* FAQ 5 */}
-<details className="group bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-4 transition-all duration-150 open:bg-white open:shadow-sm">
-<summary className="flex items-center justify-between cursor-pointer font-headline-h3 text-headline-h3 text-on-surface list-none">
-<span>What happens after the 3-month free trial ends?</span>
-<span className="material-symbols-outlined text-[#78716C] group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<p className="mt-3 text-body-default font-body-default text-on-surface-variant border-t border-[#E7E5E4] pt-3">
-              After your initial 90 days, you can choose to continue on the Free plan forever (15 appointments/month) or upgrade to the Professional plan at ₹1,499/month. There are never any automatic debits or credit card lock-ins.
-            </p>
-</details>
+))}
 </div>
 </div>
 </section>
@@ -910,7 +755,7 @@ export default function ProviderLanding() {
           START YOUR MODERN PRACTICE TODAY
         </span>
 <h2 className="text-display font-display text-[32px] md:text-[40px] font-bold text-white mb-4 max-w-2xl mx-auto leading-tight">
-          Join 10,000+ doctors delivering precision care to millions.
+          {doctorsLabel ? `Join ${doctorsLabel} doctors delivering precision care to millions.` : 'Join the doctors delivering precision care to millions.'}
         </h2>
 <p className="text-body-default font-body-default text-[#FFDAD6] max-w-xl mx-auto mb-8">
           Set up your digital profile in under 10 minutes. First 3 months completely free with zero credit card required.

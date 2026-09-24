@@ -4,6 +4,8 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import PartnerSections from '@/components/PartnerSections';
 import TrustStrip from '@/components/TrustStrip';
+import type { PartnerSection } from '@/lib/content-types';
+import { items, loadSite } from '@/lib/site';
 
 const TITLE = 'Partner With Curxx — For Doctors, Clinics, Hospitals & Corporates';
 const DESCRIPTION =
@@ -28,7 +30,8 @@ const STEPS = [
   ['Go live', 'Your profile, OPD slots and teleconsultation availability go live for patients across India.'],
 ];
 
-export default function PartnerWithUsPage() {
+export default async function PartnerWithUsPage() {
+  const { sections } = await loadSite('shared');
   return (
     <>
       <Header />
@@ -70,9 +73,9 @@ export default function PartnerWithUsPage() {
         </div>
       </section>
 
-      <PartnerSections eyebrow="Partner programmes" title="Choose the programme built for you" />
+      <PartnerSections sections={items<PartnerSection>(sections, 'shared/partner-sections')} eyebrow="Partner programmes" title="Choose the programme built for you" />
 
-      <TrustStrip />
+      <TrustStrip badges={items<string>(sections, 'shared/trust-badges')} />
 
       <section className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-2xl space-y-8">
         <h2 className="text-headline-h1 font-headline-h1 text-on-surface">How Onboarding Works</h2>

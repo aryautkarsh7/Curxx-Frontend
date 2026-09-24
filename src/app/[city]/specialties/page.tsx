@@ -5,17 +5,18 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import FaqAccordion from '@/components/seo/FaqAccordion';
 import { api, type Specialty } from '@/lib/api';
-import { canonicalCity, getCity } from '@/lib/cities';
-import { SPECIALTIES, SPECIALTY_CATEGORIES, SPECIALTY_COUNT_LABEL } from '@/lib/specialties';
+import { liveCatalogue, resolveCity } from '@/lib/catalogue-live';
+import { specialtyCountLabel } from '@/lib/specialties';
 
 type Props = { params: Promise<{ city: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const canonical = canonicalCity((await params).city);
-  if (!canonical) return {};
-  const name = getCity(canonical)!.name;
+  const info = await resolveCity((await params).city);
+  if (!info) return {};
+  const { slug: canonical, name } = info;
+  const { specialties: SPECIALTIES } = await liveCatalogue();
   return {
-    title: { absolute: `All ${SPECIALTY_COUNT_LABEL} Specialties in ${name} — Book a Verified Doctor | Curxx` },
+    title: { absolute: `All ${specialtyCountLabel(SPECIALTIES.length)} Specialties in ${name} — Book a Verified Doctor | Curxx` },
     description: `Browse all ${SPECIALTIES.length} clinical specialties on Curxx — from general physicians and dermatologists to oncologists, physiotherapists and AYUSH doctors — and book a verified doctor in ${name} online or in-clinic.`,
     alternates: { canonical: `/${canonical}/specialties` },
   };
@@ -32,11 +33,14 @@ async function loadCounts(city: string): Promise<Map<string, Specialty>> {
 
 export default async function SpecialtiesPage({ params }: Props) {
   const { city } = await params;
-  const canonical = canonicalCity(city);
-  if (!canonical) notFound();
+  const info = await resolveCity(city);
+  if (!info) notFound();
+  const canonical = info.slug;
   if (canonical !== city) permanentRedirect(`/${canonical}/specialties`);
 
-  const cityName = getCity(canonical)!.name;
+  const cityName = info.name;
+  const { specialties: SPECIALTIES, specialtyCategories: SPECIALTY_CATEGORIES } = await liveCatalogue();
+  const SPECIALTY_COUNT_LABEL = specialtyCountLabel(SPECIALTIES.length);
   const counts = await loadCounts(canonical);
   const doctorTotal = [...counts.values()].reduce((n, s) => n + (s.doctorCount ?? 0), 0);
   const groups = SPECIALTY_CATEGORIES.map((category) => ({ category, items: SPECIALTIES.filter((s) => s.category === category) })).filter((g) => g.items.length);

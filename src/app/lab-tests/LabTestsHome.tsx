@@ -7,27 +7,9 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { LabMiniCard } from '@/components/labs/LabCard';
 import LabTestCard from '@/components/labs/LabTestCard';
-import { api, type Address, type LabCategory, type LabQuery, type LabSummary, type LabTest, type Near, type Paged } from '@/lib/api';
+import { api, photo, type Address, type LabCategory, type LabQuery, type LabSummary, type LabTest, type Near, type Paged } from '@/lib/api';
 import { useCart } from '@/lib/cart';
 import { getToken, useSession } from '@/lib/session';
-
-const TRENDING_SEARCHES = [
-  { label: 'CBC Test', q: 'CBC' },
-  { label: 'HbA1c', q: 'HbA1c' },
-  { label: 'Lipid Profile', q: 'Lipid' },
-  { label: 'Thyroid T3/T4/TSH', q: 'Thyroid' },
-];
-
-const SYMPTOMS = [
-  { label: 'Fatigue & Weakness', icon: 'bolt', category: 'vitamin-d-b12' },
-  { label: 'Joint Pain', icon: 'accessibility_new', category: 'vitamin-d-b12' },
-  { label: 'Hairfall', icon: 'content_cut', category: 'thyroid' },
-  { label: 'Unexplained Weight Gain', icon: 'monitor_weight', category: 'thyroid' },
-  { label: 'Chest Discomfort', icon: 'ecg_heart', category: 'heart-health', emergency: true },
-  { label: 'Frequent Urination', icon: 'water_drop', category: 'diabetes' },
-  { label: 'Digestive Issues', icon: 'save_as', category: 'liver-function' },
-  { label: 'Fever', icon: 'thermostat', category: 'fever-infections' },
-];
 
 const SORTS = [
   { value: 'popular', label: 'Most booked' },
@@ -40,9 +22,23 @@ const SYMPTOM_CHIP = 'flex items-center space-x-2 px-4 py-2 rounded-full border 
 
 const categoryHref = (slug: string) => `/lab-tests?category=${slug}#packages`;
 
-type Props = { categories: LabCategory[]; results: Paged<LabTest>; query: LabQuery; labs: { items: LabSummary[]; total: number; near: Near } | null };
+type Trending = { label: string; q: string };
+type Symptom = { label: string; icon: string; category: string; emergency?: boolean };
 
-export default function LabTestsHome({ categories, results, query, labs }: Props) {
+type Props = {
+  categories: LabCategory[];
+  results: Paged<LabTest>;
+  query: LabQuery;
+  labs: { items: LabSummary[]; total: number; near: Near } | null;
+  /** Editable in the admin panel (Page content → lab-tests). */
+  trending: Trending[];
+  symptoms: Symptom[];
+  heroImage: string;
+  /** "250+", from the live test count; null hides the number. */
+  testsLabel: string | null;
+};
+
+export default function LabTestsHome({ categories, results, query, labs, trending, symptoms, heroImage, testsLabel }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -128,15 +124,17 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
               Search
             </button>
 </form>
+{trending.length > 0 && (
 <div className="flex items-center space-x-2 mt-3 text-micro font-micro text-on-surface-variant">
 <span className="font-caption-strong text-on-surface">Trending Searches:</span>
-{TRENDING_SEARCHES.map((t, i) => (
+{trending.map((t, i) => (
 <span key={t.q} className="contents">
 {i > 0 && <span>•</span>}
 <Link className="underline hover:text-primary" href={`/lab-tests?q=${encodeURIComponent(t.q)}#packages`}>{t.label}</Link>
 </span>
 ))}
 </div>
+)}
 </div>
 </div>
 {/* Right Column: Medical Illustration / Badge Card */}
@@ -150,7 +148,7 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
 <span className="text-micro font-micro text-on-surface-variant">Standard Operating Protocol 9.4</span>
 </div>
 <div className="relative h-56 rounded-lg overflow-hidden border border-surface-variant bg-white">
-<img loading="lazy" decoding="async" className="w-full h-full object-cover" alt="Barcoded vacutainer test tubes in a sterile rack" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwu5owhCgxV-ZuLFrP6N0j8o7REsL33cYSZ-igKDivGBT_ApQr_YWhm437wc9S9h2PKqIhT4WagifiPv7AW5vOCM4WLosLoobANYEkLX_skYchD9d1IKLGr0F1m0r_Ve5UyVodiaM_Bo5cQCzaglhZcUhn4MLeBpNT6I258Y1KbrMiDSLV60wPpONpkCPuMrahhOwBF_dgEYnjOOazhoOCacLhzxYhmLdIeB3Ld5NgH-ulm_LV_Klq=w800"/>
+<img loading="lazy" decoding="async" className="w-full h-full object-cover" alt="Barcoded vacutainer test tubes in a sterile rack" src={photo(heroImage, 800)}/>
 {/* 60-min badge floating */}
 <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm border border-surface-variant px-3 py-1.5 rounded-lg flex items-center space-x-2 shadow-sm">
 <span className="material-symbols-outlined text-primary text-[18px]" data-icon="electric_bolt">electric_bolt</span>
@@ -298,7 +296,7 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
 <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-3">
 <div>
 <span className="text-micro font-micro text-primary uppercase tracking-wider font-semibold">DIAGNOSTIC CENTRE TEST DIRECTORY</span>
-<h2 className="text-headline-1 font-headline-h1 text-on-surface mt-1">250+ Tests &amp; Scans by Department</h2>
+<h2 className="text-headline-1 font-headline-h1 text-on-surface mt-1">{testsLabel ? `${testsLabel} Tests & Scans by Department` : 'Tests & Scans by Department'}</h2>
 <p className="text-caption font-caption text-on-surface-variant mt-1 max-w-2xl">Everything a full diagnostic centre offers — pathology, imaging, cardiac, neuro, pulmonary and more. Blood and urine tests can be collected at home; scans and procedures are done at the centre.</p>
 </div>
 </div>
@@ -331,7 +329,7 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
 <span className="text-caption font-caption text-on-surface-variant mt-1 md:mt-0">Matched automatically with relevant biomarker tests</span>
 </div>
 <div className="flex flex-wrap gap-2.5 mt-5">
-{SYMPTOMS.map((s) => {
+{symptoms.map((s) => {
   const content = (
     <>
 <span className="material-symbols-outlined text-[18px] text-primary" data-icon={s.icon}>{s.icon}</span>
@@ -340,7 +338,7 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
   );
   // Chest discomfort can be cardiac: surface 108 before offering tests.
   return s.emergency ? (
-<button key={s.label} type="button" className={SYMPTOM_CHIP} onClick={() => emergency.open({ continueTo: { href: categoryHref(s.category), label: 'Not an emergency? See heart health tests' } })}>{content}</button>
+<button key={s.label} type="button" className={SYMPTOM_CHIP} onClick={() => emergency.open({ continueTo: { href: categoryHref(s.category), label: s.category === 'heart-health' ? 'Not an emergency? See heart health tests' : `Not an emergency? See tests for ${s.label.toLowerCase()}` } })}>{content}</button>
   ) : (
 <Link key={s.label} className={SYMPTOM_CHIP} href={categoryHref(s.category)}>{content}</Link>
   );

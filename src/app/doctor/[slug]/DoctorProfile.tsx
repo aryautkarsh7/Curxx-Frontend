@@ -81,7 +81,7 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
     '@type': 'Physician',
     name: doctor.name,
     medicalSpecialty: doctor.specialtyName,
-    image: doctor.photoUrl ? `${doctor.photoUrl}=w400` : undefined,
+    image: doctor.photoUrl ? photo(doctor.photoUrl, 400) : undefined,
     address: { '@type': 'PostalAddress', streetAddress: facility?.address ?? doctor.area, addressLocality: cityName, addressCountry: 'IN' },
     priceRange: `₹${Math.min(doctor.fee, doctor.videoFee)}–₹${Math.max(doctor.fee, doctor.videoFee)}`,
     ...(reviewTotal > 0 ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: doctor.reviewSummary.average, reviewCount: reviewTotal, bestRating: 5 } } : {}),
@@ -241,7 +241,7 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
             <section id="clinic" className="bg-white border border-[#E7E5E4] rounded-2xl p-5 sm:p-8 space-y-4 scroll-mt-32">
               <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Where {firstName} practises</h2>
               <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-[#E7E5E4]">
-                {facility?.photoUrl && <img src={`${facility.photoUrl}=w400`} alt={facility.name} loading="lazy" className="w-full sm:w-40 h-32 rounded-lg object-cover" />}
+                {facility?.photoUrl && <img src={photo(facility.photoUrl, 400)} alt={facility.name} loading="lazy" className="w-full sm:w-40 h-32 rounded-lg object-cover" />}
                 <div className="flex-1 min-w-0 space-y-1">
                   <h3 className="font-body-strong text-body-strong text-[#1C1917]">
                     {facility ? <Link href={`/clinic/${facility.slug}`} className="hover:text-[#C1121F]">{facility.name}</Link> : doctor.clinicName}

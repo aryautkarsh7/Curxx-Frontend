@@ -3,6 +3,8 @@
  * Server components call it directly; browser code goes through the same helpers
  * so the JWT and error shape are handled in one place.
  */
+import type { CityInfo, ConditionInfo, FacilityTypeInfo, SpecialtyInfo, SurgeryInfo } from './catalogue-data';
+
 const BASE = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1').replace(/\/$/, '');
 
 export const TOKEN_KEY = 'curxx_token';
@@ -237,6 +239,8 @@ export type Facility = {
   amenities: string[];
   insurers: string[];
   photoUrl: string;
+  /** Extra photos (interior, equipment) beside the main one. */
+  gallery?: string[];
   doctorCount?: number;
 };
 
@@ -440,6 +444,73 @@ export type SearchResults = {
   articles: Pick<Article, 'id' | 'slug' | 'title' | 'category' | 'readMinutes'>[];
 };
 
+// ---------------------------------------------------------------- Editable website data
+
+/** Editable single values (claims, links, images), keyed by setting slug. */
+export type SiteSettings = Record<string, string>;
+
+/** Counts the website shows about itself, computed from the database. */
+export type SiteStats = {
+  doctors: number;
+  verifiedDoctors: number;
+  instantDoctors: number;
+  facilities: number;
+  hospitals: number;
+  clinics: number;
+  accreditedFacilities: number;
+  emergencyFacilities: number;
+  labs: number;
+  labTests: number;
+  specialties: number;
+  cities: number;
+  conditions: number;
+  surgeries: number;
+  reviews: number;
+  averageRating: number | null;
+};
+
+/** One editable page section; `items` has a section-specific shape. */
+export type ContentSection<T = unknown> = { title: string; intro: string; items: T[] };
+
+export type Testimonial = {
+  slug: string;
+  audience: 'patient' | 'provider';
+  name: string;
+  initials: string;
+  location: string;
+  city: string;
+  rating: number;
+  text: string;
+  doctorSlug?: string;
+  badge?: { icon: string; label: string };
+};
+
+export type Plan = {
+  slug: string;
+  audience: 'plus' | 'provider';
+  name: string;
+  tagline: string;
+  price: number;
+  period: string;
+  members: string;
+  highlight: boolean;
+  badge: string;
+  perks: string[];
+  excluded: string[];
+  ctaLabel: string;
+};
+
+export type RoutingCatalogue = {
+  cities: (CityInfo & { popularOrder: number })[];
+  specialtyCategories: string[];
+  specialties: (SpecialtyInfo & { homeOrder: number })[];
+  specialtyAliases: Record<string, string>;
+  conditions: (ConditionInfo & { popularOrder: number })[];
+  surgeryCategories: string[];
+  surgeries: SurgeryInfo[];
+  facilityTypes: FacilityTypeInfo[];
+};
+
 export type Registration = { name: string; email?: string; gender?: 'female' | 'male' | 'other' | ''; dob?: string };
 
 // ---------------------------------------------------------------- Transport
@@ -503,7 +574,26 @@ export type DoctorQuery = {
 
 export type DoctorList = { doctors: Doctor[]; page: number; limit: number; total: number; pages: number; facets?: { areas: Facet[]; languages: Facet[] }; matchedSpecialties?: string[] };
 
-export type FacilityQuery = { city?: string; type?: 'hospital' | 'clinic'; category?: string; specialty?: string; area?: string; department?: string; emergency?: boolean; q?: string; sort?: 'distance' | 'rating' | 'reviews'; page?: number; limit?: number };
+export type FacilityQuery = {
+  city?: string;
+  type?: 'hospital' | 'clinic';
+  category?: string;
+  /** Facility type slugs to leave out, comma-separated. */
+  excludeCategory?: string;
+  specialty?: string;
+  area?: string;
+  department?: string;
+  emergency?: boolean;
+  q?: string;
+  sort?: 'distance' | 'rating' | 'reviews';
+  /** With sort=distance: measure from this point instead of the listed distance. */
+  lat?: number;
+  lng?: number;
+  /** …or from a known pincode (the patient's locality). */
+  pincode?: string;
+  page?: number;
+  limit?: number;
+};
 export type MedicineQuery = { category?: string; q?: string; rx?: 'required' | 'otc'; sort?: 'popular' | 'price_asc' | 'price_desc' | 'discount' | 'rating'; page?: number; limit?: number };
 export type LabQuery = { category?: string; kind?: LabTest['kind']; department?: string; homeCollection?: boolean; q?: string; sort?: 'popular' | 'price_asc' | 'price_desc' | 'discount'; page?: number; limit?: number };
 
@@ -532,7 +622,7 @@ export const api = {
 
   // Catalogue — facilities
   facilities: (query: FacilityQuery = {}) =>
-    request<Paged<Facility> & { city?: string; facets: { areas: Facet[]; categories?: { value: string; label: string; group: string; icon: string; count: number }[] } }>(`/facilities${qs(query)}`, cached(60)),
+    request<Paged<Facility> & { city?: string; facets: { areas: Facet[]; departments?: Facet[]; categories?: { value: string; label: string; group: string; icon: string; count: number }[] } }>(`/facilities${qs(query)}`, cached(60)),
   facility: (slug: string) => request<{ facility: Facility; doctors: Doctor[]; similar?: Facility[] }>(`/facilities/${slug}`, cached(60)),
 
   // Catalogue — pharmacy & labs
@@ -547,6 +637,15 @@ export const api = {
   labs: (query: LabDirectoryQuery = {}) => request<Paged<LabSummary> & { near: Near; facets: { areas: Facet[]; accreditations: Facet[] } }>(`/labs${qs(query)}`, cached(60)),
   lab: (slug: string, pincode?: string) => request<{ lab: Lab; near: Near; tests: LabTest[]; nearby: LabSummary[] }>(`/labs/${slug}${qs({ pincode })}`, cached(60)),
   labMatch: (query: { pincode?: string; city?: string; tests: string[]; mode: CollectionMode }) => request<LabMatch>(`/labs/match${qs({ ...query, tests: query.tests.join(',') })}`, fresh),
+
+  // Editable website data (admin panel → Website)
+  siteSettings: () => request<{ settings: SiteSettings }>('/site/settings', cached(300)),
+  siteStats: () => request<{ stats: SiteStats }>('/site/stats', cached(300)),
+  /** Sections of one or more pages, keyed "page/section". */
+  content: (...pages: string[]) => request<{ sections: Record<string, ContentSection> }>(`/content/${pages.join(',')}`, cached(300)),
+  testimonials: (audience: Testimonial['audience'] = 'patient') => request<{ testimonials: Testimonial[] }>(`/testimonials${qs({ audience })}`, cached(300)),
+  plans: (audience: Plan['audience'] = 'plus') => request<{ plans: Plan[] }>(`/plans${qs({ audience })}`, cached(300)),
+  routing: () => request<RoutingCatalogue>('/catalogue/routing', cached(300)),
 
   // Content
   articles: (query: { category?: string; featured?: boolean; page?: number; limit?: number } = {}) =>
@@ -608,8 +707,8 @@ export const api = {
   summary: (token: string) => request<{ upcomingAppointments: number; orders: number; records: number; activeGrants: number }>('/me/summary', { token, ...fresh }),
 };
 
-/** lh3 portrait URLs take a `=w<px>` size suffix; keep requests as small as they render. */
-export const photo = (url: string, width: number) => (url ? `${url}=w${width}` : '');
+/** lh3 portrait URLs take a `=w<px>` size suffix; keep requests as small as they render. Other URLs are used as they are. */
+export const photo = (url: string, width: number) => (!url ? '' : url.includes('googleusercontent.com/') && !/=w\d+$/.test(url) ? `${url}=w${width}` : url);
 
 export const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN')}`;
 

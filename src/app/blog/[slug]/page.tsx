@@ -5,7 +5,8 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { ApiError, api, photo } from '@/lib/api';
 import { JsonLd } from '@/lib/seo';
-import { conditionHref, getSpecialty } from '@/lib/specialties';
+import { resolveSpecialty } from '@/lib/catalogue-live';
+import { conditionHref } from '@/lib/specialties';
 import { categoryLabel } from '@/lib/blog';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: { absolute: `${article.title} | Curxx Blog` },
     description: article.excerpt,
     alternates: { canonical: `/blog/${article.slug}` },
-    openGraph: { title: article.title, description: article.excerpt, type: 'article', images: article.coverUrl ? [`${article.coverUrl}=w1200`] : undefined },
+    openGraph: { title: article.title, description: article.excerpt, type: 'article', images: article.coverUrl ? [photo(article.coverUrl, 1200)] : undefined },
   };
 }
 
@@ -36,7 +37,7 @@ export default async function BlogArticlePage({ params }: Props) {
   const data = await load(slug);
   if (!data) notFound();
   const { article, author, related } = data;
-  const specialty = author ? getSpecialty(author.specialty) : undefined;
+  const specialty = author ? await resolveSpecialty(author.specialty) : undefined;
   const city = author?.city ?? 'bangalore';
   const condition = (article as { condition?: string }).condition;
   const published = new Date(article.publishedAt);
@@ -51,7 +52,7 @@ export default async function BlogArticlePage({ params }: Props) {
           headline: article.title,
           description: article.excerpt,
           datePublished: article.publishedAt,
-          image: article.coverUrl ? `${article.coverUrl}=w1200` : undefined,
+          image: article.coverUrl ? photo(article.coverUrl, 1200) : undefined,
           author: { '@type': 'Physician', name: article.author.name, url: `/doctor/${article.author.slug}` },
           reviewedBy: { '@type': 'Physician', name: article.author.name },
           publisher: { '@type': 'Organization', name: 'Curxx' },
@@ -79,7 +80,7 @@ export default async function BlogArticlePage({ params }: Props) {
               </div>
             </div>
           </header>
-          {article.coverUrl && <img src={`${article.coverUrl}=w1200`} alt="" className="w-full max-h-[420px] object-cover rounded-2xl bg-surface-container" />}
+          {article.coverUrl && <img src={photo(article.coverUrl, 1200)} alt="" className="w-full max-h-[420px] object-cover rounded-2xl bg-surface-container" />}
           {(article.keyTakeaways?.length ?? 0) > 0 && (
             <aside className="p-5 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0]">
               <p className="font-caption-strong text-caption-strong text-[#047857] uppercase tracking-wider mb-2">Key takeaways</p>

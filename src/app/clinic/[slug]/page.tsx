@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ApiError, api } from '@/lib/api';
+import { image } from '@/lib/site';
 import ClinicProfile from './ClinicProfile';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ClinicPage({ params }: Props) {
-  const data = await load((await params).slug);
+  const [data, settings] = await Promise.all([load((await params).slug), api.siteSettings().then((r) => r.settings).catch(() => ({}))]);
   if (!data) notFound();
-  return <ClinicProfile facility={data.facility} doctors={data.doctors} />;
+  return <ClinicProfile facility={data.facility} doctors={data.doctors} interior={image(settings, 'image-clinic-interior')} />;
 }

@@ -1,4 +1,4 @@
-import type { Faq } from './home-content';
+import type { Faq } from './api';
 
 /** schema.org FAQPage payload for a set of questions. */
 export function faqSchema(faqs: Faq[]) {

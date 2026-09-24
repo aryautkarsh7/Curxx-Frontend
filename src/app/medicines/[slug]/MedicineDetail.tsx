@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import MedicineCard from '@/components/pharmacy/MedicineCard';
 import Toast, { useToast } from '@/components/Toast';
-import { discountPct, rupees, type Medicine } from '@/lib/api';
+import { discountPct, rupees, type Medicine, photo } from '@/lib/api';
 import { addToCart, useCart } from '@/lib/cart';
 
 type Props = { medicine: Medicine; substitutes: Medicine[]; similar: Medicine[]; categoryName: string | null };
@@ -75,7 +75,7 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
                 </span>
               )}
               {m.imageUrl ? (
-                <img src={`${m.imageUrl}=w900`} alt={m.name} className="max-h-[360px] w-auto object-contain rounded-lg" />
+                <img src={photo(m.imageUrl, 900)} alt={m.name} className="max-h-[360px] w-auto object-contain rounded-lg" />
               ) : (
                 <div className="w-40 h-40 rounded-3xl bg-surface-container flex items-center justify-center text-primary-container">
                   <span className="material-symbols-outlined text-[88px]">{m.icon}</span>

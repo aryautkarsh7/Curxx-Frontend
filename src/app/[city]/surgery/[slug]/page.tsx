@@ -6,7 +6,7 @@ import Header from '@/components/Header';
 import FaqAccordion from '@/components/seo/FaqAccordion';
 import SurgeryLeadForm from '@/components/surgery/SurgeryLeadForm';
 import { ApiError, api, photo, rupees } from '@/lib/api';
-import { canonicalCity, getCity } from '@/lib/cities';
+import { resolveCity } from '@/lib/catalogue-live';
 import { JsonLd } from '@/lib/seo';
 
 type Props = { params: Promise<{ city: string; slug: string }> };
@@ -22,12 +22,13 @@ async function load(slug: string, city: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city, slug } = await params;
-  const canonical = canonicalCity(city);
-  if (!canonical) return {};
+  const info = await resolveCity(city);
+  if (!info) return {};
+  const canonical = info.slug;
   const data = await load(slug, canonical);
   if (!data) return {};
   const { surgery } = data;
-  const name = getCity(canonical)!.name;
+  const name = info.name;
   return {
     title: { absolute: `${surgery.name} in ${name} — Cost ${rupees(surgery.cost[0])}–${rupees(surgery.cost[1])}, Top Hospitals | Curxx` },
     description: `${surgery.description} Typical cost in ${name}: ${rupees(surgery.cost[0])} to ${rupees(surgery.cost[1])}. ${surgery.stay} stay, ${surgery.recovery} recovery. Book a free surgeon consultation.`,
@@ -37,13 +38,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SurgeryPage({ params }: Props) {
   const { city, slug } = await params;
-  const canonical = canonicalCity(city);
-  if (!canonical) notFound();
+  const info = await resolveCity(city);
+  if (!info) notFound();
+  const canonical = info.slug;
   if (canonical !== city) permanentRedirect(`/${canonical}/surgery/${slug}`);
   const data = await load(slug, canonical);
   if (!data) notFound();
   const { surgery, hospitals, surgeons, related, otherCities, faqs, specialty } = data;
-  const cityName = getCity(canonical)!.name;
+  const cityName = info.name;
 
   const facts: [string, string, string][] = [
     ['payments', 'Typical cost', `${rupees(surgery.cost[0])} – ${rupees(surgery.cost[1])}`],

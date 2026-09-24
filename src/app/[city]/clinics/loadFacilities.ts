@@ -18,6 +18,6 @@ export async function loadFacilities(type: 'hospital' | 'clinic', city: string, 
     page: Math.max(1, Number(one(params.page)) || 1),
     limit: 8,
   };
-  const data = await api.facilities(query).catch(() => ({ items: [], total: 0, page: 1, limit: 8, pages: 1, facets: { areas: [], categories: [] } }));
+  const data = await api.facilities(query).catch(() => ({ items: [], total: 0, page: 1, limit: 8, pages: 1, facets: { areas: [], departments: [], categories: [] } }));
   return { query, data };
 }

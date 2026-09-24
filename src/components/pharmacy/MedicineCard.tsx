@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { discountPct, rupees, type Medicine } from '@/lib/api';
+import { discountPct, rupees, type Medicine, photo } from '@/lib/api';
 import { addToCart, useCart } from '@/lib/cart';
 import QtyStepper from './QtyStepper';
 
@@ -31,7 +31,7 @@ export default function MedicineCard({ medicine: m, variant = 'grid', onAdded }:
       <Link href={`/medicines/${m.slug}`} className={`space-y-3 ${variant === 'deal' ? 'pt-4' : ''}`}>
         <div className={`${variant === 'deal' ? 'w-full h-32' : 'w-full h-24'} rounded-lg bg-surface-container-low flex items-center justify-center text-outline overflow-hidden`}>
           {m.imageUrl ? (
-            <img src={`${m.imageUrl}=w320`} alt={m.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+            <img src={photo(m.imageUrl, 320)} alt={m.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
           ) : (
             <span className="material-symbols-outlined text-4xl text-primary-container">{m.icon}</span>
           )}

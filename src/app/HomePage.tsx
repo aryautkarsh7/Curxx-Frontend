@@ -9,11 +9,26 @@ import PartnerCta from '@/components/PartnerCta';
 import PartnerSections from '@/components/PartnerSections';
 import TrustStrip from '@/components/TrustStrip';
 import { LabMiniCard } from '@/components/labs/LabCard';
-import type { Doctor, Facility, LabSummary, Near, Specialty } from '@/lib/api';
-import { HOME_BANDS, HOME_FAQS } from '@/lib/home-content';
+import type { Doctor, Facility, LabSummary, Near, Testimonial } from '@/lib/api';
+import type { Band, Faq, PartnerSection, ServiceCard, Step } from '@/lib/content-types';
+import { countLabel, fill, image, items, type SiteData } from '@/lib/site';
 
 type Labs = { items: LabSummary[]; total: number; near: Near } | null;
-type HomeProps = { doctors: Doctor[]; specialties: Specialty[]; facilities: Facility[]; labs: Labs };
+type Tile = { slug: string; name: string; icon: string; fromPrice: number };
+type HomeProps = {
+  doctors: Doctor[];
+  facilities: Facility[];
+  labs: Labs;
+  /** Editable copy, claims and counts (admin panel → Website). */
+  site: SiteData;
+  testimonials: Testimonial[];
+  /** An online-now GP for the hero card. */
+  gp: Doctor | null;
+  /** The homepage specialty tiles and consultation chips, in admin order. */
+  tiles: Tile[];
+  chips: { label: string; condition: string }[];
+  specialtyCount: number;
+};
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState, type MouseEvent } from 'react';
 import CityPicker from '@/components/CityPicker';
@@ -21,38 +36,31 @@ import { useEmergency } from '@/components/EmergencyModal';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import SearchSuggest, { searchHref } from '@/components/SearchSuggest';
-import { api } from '@/lib/api';
+import { api, photo } from '@/lib/api';
 import { DEFAULT_CITY } from '@/lib/cities';
 import { useCity } from '@/lib/city-store';
-import { SPECIALTIES, SPECIALTY_COUNT_LABEL, conditionHref } from '@/lib/specialties';
+import { conditionHref, specialtyCountLabel } from '@/lib/specialties';
 
-/** The 12 specialty tiles, most-searched first. */
-const HOME_SPECIALTIES = ['general-physician', 'dermatologist', 'gynecologist', 'pediatrician', 'orthopedist', 'dentist', 'cardiologist', 'psychiatrist', 'ent-specialist', 'gastroenterologist', 'ophthalmologist', 'neurologist'];
+/** "Dr. Meera Nambiar, MD" from "MBBS, MD - General Medicine". */
+const shortDegree = (qualification: string) => qualification.split(',').map((q) => q.trim()).filter(Boolean).pop()?.split(' - ')[0] ?? '';
 
-/** Second row of the care-ecosystem grid: the rest of what Curxx does. */
-const moreCards = (city: string) => [
-  { eyebrow: 'Free First Consult', title: 'Free Video Consultation', body: 'Talk to verified doctors who offer a free first video consult — no charge for the call, prescription included.', icon: 'redeem', cta: 'See free consults', href: '/consult/video/general-physician/all?when=free' },
-  { eyebrow: 'Planned Surgery', title: 'Surgery Care', body: 'Laser piles, cataract, hernia, knee replacement and more — cost estimates, top hospitals and a free surgeon consultation.', icon: 'healing', cta: 'Explore surgeries', href: `/${city}/surgeries` },
-  { eyebrow: 'Symptom Checker', title: 'Check Your Symptoms', body: 'Answer a few quick questions and get the right specialist, how soon to see them, and doctors available now.', icon: 'symptoms', cta: 'Start symptom check', href: '/triage' },
-  { eyebrow: 'Health Records', title: 'Digital Health Locker', body: 'Prescriptions, lab reports and scans in one place, linked to your ABHA ID and shared only with your consent.', icon: 'folder_shared', cta: 'Open health locker', href: '/records' },
-];
+function Stars({ rating }: { rating: number }) {
+  return (
+    <div className="flex text-primary-container space-x-1">
+      {Array.from({ length: Math.max(1, Math.min(5, Math.round(rating))) }, (_, i) => (
+        <span key={i} className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
+      ))}
+    </div>
+  );
+}
 
-/** Popular consultations, each with its own clean, indexable condition page. */
-const POPULAR_CHIPS = [
-  { label: 'Cough & Cold', condition: 'cough-and-cold' },
-  { label: 'Skin Acne', condition: 'acne' },
-  { label: 'Depression & Anxiety', condition: 'depression-and-anxiety' },
-  { label: 'Stomach Ache', condition: 'stomach-pain' },
-  { label: 'Women\'s Health', condition: 'womens-health' },
-];
-
-export default function HomePage({ doctors: initialDoctors, specialties, facilities: initialFacilities, labs: initialLabs }: HomeProps) {
+export default function HomePage({ doctors: initialDoctors, facilities: initialFacilities, labs: initialLabs, site, testimonials, gp: initialGp, tiles, chips, specialtyCount }: HomeProps) {
   const router = useRouter();
   const emergency = useEmergency();
   const { city, cityName, locality } = useCity();
   const [careQuery, setCareQuery] = useState('');
   const [cityOpen, setCityOpen] = useState(false);
-  const [nearby, setNearby] = useState({ city: DEFAULT_CITY, doctors: initialDoctors, facilities: initialFacilities, labs: initialLabs });
+  const [nearby, setNearby] = useState({ city: DEFAULT_CITY, doctors: initialDoctors, facilities: initialFacilities, labs: initialLabs, gp: initialGp });
   const onQueryChange = useCallback((q: string) => setCareQuery(q), []);
 
   // The page is rendered for Bengaluru; another chosen city refreshes the nearby sections.
@@ -63,16 +71,26 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
       api.doctors({ city, sort: 'rating', limit: 3 }).then((r) => r.doctors).catch(() => []),
       api.facilities({ city, sort: 'rating', limit: 4 }).then((r) => r.items).catch(() => []),
       api.labs({ city, limit: 4 }).then((r) => ({ items: r.items, total: r.total, near: r.near })).catch(() => null),
-    ]).then(([doctors, facilities, labs]) => !cancelled && setNearby({ city, doctors, facilities, labs }));
+      api.doctors({ city, specialty: 'general-physician', availability: 'now', limit: 1 }).then((r) => r.doctors[0] ?? null).catch(() => null),
+    ]).then(([doctors, facilities, labs, gp]) => !cancelled && setNearby({ city, doctors, facilities, labs, gp }));
     return () => {
       cancelled = true;
     };
   }, [city, nearby.city]);
-  const { doctors, facilities, labs } = nearby;
+  const { doctors, facilities, labs, gp } = nearby;
   const place = locality ? `${locality.name}, ${cityName}` : cityName;
-  // The grid shows the popular specialties first, from the live catalogue when available.
-  const live = new Map(specialties.map((s) => [s.slug, s]));
-  const grid = HOME_SPECIALTIES.map((slug) => SPECIALTIES.find((s) => s.slug === slug)!).map((s) => ({ ...s, fromPrice: live.get(s.slug)?.fromPrice ?? s.fromPrice }));
+  const SPECIALTY_COUNT_LABEL = specialtyCountLabel(specialtyCount);
+
+  // Editable copy and claims, and counts from the database.
+  const { settings, stats, sections } = site;
+  const claim = (key: string) => settings[key] ?? '';
+  const doctorsPlus = countLabel(stats?.verifiedDoctors);
+  const accredited = countLabel(stats?.accreditedFacilities);
+  const bands = items<Band>(sections, 'home/bands');
+  const services = items<ServiceCard>(sections, 'home/services');
+  const steps = items<Step>(sections, 'home/how-it-works');
+  const faqSection = sections['home/faqs'];
+  const faqs = items<Faq>(sections, 'home/faqs');
 
   function findCare() {
     router.push(searchHref(careQuery, city, locality?.slug));
@@ -99,7 +117,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <div className="inline-flex items-center space-x-2.5 px-3 py-1 rounded-full bg-surface-container-low border border-surface-variant w-max max-w-full">
 <span className="w-2 h-2 shrink-0 rounded-full bg-tertiary"></span>
 <span className="text-micro font-micro uppercase tracking-wide sm:tracking-wider text-on-surface-variant font-semibold truncate">
-              TELEHEALTH NETWORK · 3,420 DOCTORS ACTIVE NOW
+              TELEHEALTH NETWORK{stats ? ` · ${stats.verifiedDoctors.toLocaleString('en-IN')} DOCTORS ACTIVE NOW` : ''}
             </span>
 </div>
 {/* Headline */}
@@ -140,7 +158,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <div className="flex flex-col space-y-2 pt-1">
 <h3 className="text-micro font-micro text-on-surface-variant font-semibold tracking-wider uppercase">Popular Consultations:</h3>
 <div className="flex flex-wrap gap-2">
-{POPULAR_CHIPS.map((chip) => (
+{chips.map((chip) => (
 <Link key={chip.condition} href={conditionHref(city, chip.condition)} className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">{chip.label}</Link>
 ))}
 <button type="button" onClick={() => emergency.open({ continueTo: { href: conditionHref(city, 'chest-pain'), label: 'Not an emergency? See cardiologists' } })} className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Chest Pain</button>
@@ -151,22 +169,22 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-outline text-[20px]" data-icon="verified_user">verified_user</span>
 <div>
-<div className="text-caption-strong font-caption-strong text-on-surface">3,420+ Verified</div>
+<div className="text-caption-strong font-caption-strong text-on-surface">{doctorsPlus ? `${doctorsPlus} Verified` : 'Verified'}</div>
 <div className="text-micro font-micro text-on-surface-variant">Active Indian MDs</div>
 </div>
 </div>
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-outline text-[20px]" data-icon="star">star</span>
 <div>
-<div className="text-caption-strong font-caption-strong text-on-surface">4.9/5 Rating</div>
-<div className="text-micro font-micro text-on-surface-variant">1.2M+ Consultations</div>
+<div className="text-caption-strong font-caption-strong text-on-surface">{stats?.averageRating ? `${stats.averageRating}/5 Rating` : 'Patient Rated'}</div>
+<div className="text-micro font-micro text-on-surface-variant">{claim('claim-consultations') ? `${claim('claim-consultations')} Consultations` : 'Verified Reviews'}</div>
 </div>
 </div>
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-outline text-[20px]" data-icon="health_and_safety">health_and_safety</span>
 <div>
-<div className="text-caption-strong font-caption-strong text-on-surface">ABDM &amp; NABH</div>
-<div className="text-micro font-micro text-on-surface-variant">Certified Protocol</div>
+<div className="text-caption-strong font-caption-strong text-on-surface">{claim('claim-certification-title')}</div>
+<div className="text-micro font-micro text-on-surface-variant">{claim('claim-certification-subtitle')}</div>
 </div>
 </div>
 </div>
@@ -176,7 +194,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <div className="relative bg-surface-container-lowest rounded-2xl border border-surface-variant p-4 shadow-sm overflow-hidden">
 {/* Doctor Portrait Image */}
 <div className="relative w-full h-[400px] rounded-xl overflow-hidden bg-surface-container">
-<img loading="eager" fetchPriority="high" decoding="async" className="w-full h-full object-cover" data-alt="Professional clinical headshot of an Indian female medical doctor wearing a white lab coat with a clean stethoscope around her neck, smiling warmly against a bright, modern clinic consultation room background with soft neutral lighting and high medical precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUZMYG3kDWBHUbrpKq_2tul0ZATsnUoLC2dMcTYZujo2wBOhz3Es5kMVhEEKFVZlHpV1PIV5YfbnD_rxRDtAB4nIY7VCGbOhW0vNF6_EnKpj9YkUh6WQfbbmrn1gXnn9QvtfkyJGbggis3CFH1T4GCcGTUaHguNKyjOyn0rw5jtjkYura65p47RJD4szM_PKYSyECs8cfHj_fZXEPw5CKO_W496Rc60HYMEgUtRYLMOLzY7uHqN_x1=w800"/>
+<img loading="eager" fetchPriority="high" decoding="async" className="w-full h-full object-cover" data-alt="Professional clinical headshot of an Indian female medical doctor wearing a white lab coat with a clean stethoscope around her neck, smiling warmly against a bright, modern clinic consultation room background with soft neutral lighting and high medical precision." src={photo(image(settings, 'image-home-hero'), 800)}/>
 {/* Triage Badge in Top-Right */}
 <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm border border-surface-variant shadow-sm flex items-center space-x-1.5">
 <span className="w-2 h-2 rounded-full bg-tertiary"></span>
@@ -191,7 +209,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 </div>
 <div>
 <div className="text-micro font-micro uppercase font-semibold text-on-surface-variant">Next Available GP</div>
-<div className="text-body-strong font-body-strong text-on-surface">Dr. Meera Nambiar, MD</div>
+<div className="text-body-strong font-body-strong text-on-surface">{gp ? [gp.name, shortDegree(gp.qualification)].filter(Boolean).join(', ') : 'Online GPs, 24x7'}</div>
 </div>
 </div>
 <Link href="/consult/video/general-physician/all" className="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-caption-strong text-caption hover:bg-primary transition duration-150 active:scale-95 shadow-sm">
@@ -222,93 +240,24 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Find &amp; Book Any Doctor — Online or In-Clinic</h2>
 </div>
 <p className="text-body-default font-body-default text-on-surface-variant max-w-md md:text-right">
-            Browse 10,000+ verified medical professionals across {SPECIALTY_COUNT_LABEL} specialties on curxx.in. Filter by location, consultation fee, real-time availability, and patient ratings. Every doctor profile has two buttons: <strong className="text-on-surface">Video Consult</strong> for an instant online session, or <strong className="text-on-surface">Clinic Visit</strong> to book a fixed, zero-wait-time slot at their in-person practice.
+            Browse {doctorsPlus ? `${doctorsPlus} ` : ''}verified medical professionals across {SPECIALTY_COUNT_LABEL} specialties on curxx.in. Filter by location, consultation fee, real-time availability, and patient ratings. Every doctor profile has two buttons: <strong className="text-on-surface">Video Consult</strong> for an instant online session, or <strong className="text-on-surface">Clinic Visit</strong> to book a fixed, zero-wait-time slot at their in-person practice.
           </p>
 </div>
 {/* 4 Grid Cards */}
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-{/* Card 1 */}
-<Link href="/consult/video" className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
+{services.map((card) => (
+<Link key={card.title} href={fill(card.href, { city })} id={card.anchor || undefined} className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
 <div className="space-y-4">
 <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
-<span className="material-symbols-outlined text-[24px]" data-icon="video_chat">video_chat</span>
-</div>
-<span className="text-micro font-micro uppercase font-semibold text-on-surface-variant">Instant Consult</span>
-<h3 className="text-headline-h3 font-headline-h3 text-on-surface">Instant Video Consult</h3>
-<p className="text-caption font-caption text-on-surface-variant">
-                Connect in 60 seconds with certified Indian GPs and senior clinical specialists on secure video.
-              </p>
-</div>
-<span className="mt-6 inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container group-hover:underline">
-<span>Consult in 60s</span>
-<span className="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
-</span>
-</Link>
-{/* Card 2 */}
-<Link href={`/${city}/clinics`} className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
-<div className="space-y-4">
-<div className="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
-<span className="material-symbols-outlined text-[24px]" data-icon="local_hospital">local_hospital</span>
-</div>
-<span className="text-micro font-micro uppercase font-semibold text-on-surface-variant">In-Person Care</span>
-<h3 className="text-headline-h3 font-headline-h3 text-on-surface">Book Clinic Visit</h3>
-<p className="text-caption font-caption text-on-surface-variant">
-                Zero wait-time appointments at 2,400+ accredited neighborhood hospitals and polyclinics.
-              </p>
-</div>
-<span className="mt-6 inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container group-hover:underline">
-<span>Find Clinics</span>
-<span className="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
-</span>
-</Link>
-{/* Card 3 */}
-<Link href="/medicines" className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group" id="medicines">
-<div className="space-y-4">
-<div className="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
-<span className="material-symbols-outlined text-[24px]" data-icon="medication">medication</span>
-</div>
-<span className="text-micro font-micro uppercase font-semibold text-on-surface-variant">Doorstep Pharmacy</span>
-<h3 className="text-headline-h3 font-headline-h3 text-on-surface">Prescribed Medicines</h3>
-<p className="text-caption font-caption text-on-surface-variant">
-                100% authentic medicines dispensed by verified pharmacies and delivered within 2 hours.
-              </p>
-</div>
-<span className="mt-6 inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container group-hover:underline">
-<span>Order Medicines</span>
-<span className="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
-</span>
-</Link>
-{/* Card 4 */}
-<Link href="/lab-tests" className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
-<div className="space-y-4">
-<div className="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
-<span className="material-symbols-outlined text-[24px]" data-icon="science">science</span>
-</div>
-<span className="text-micro font-micro uppercase font-semibold text-on-surface-variant">Diagnostic Labs</span>
-<h3 className="text-headline-h3 font-headline-h3 text-on-surface">Home Lab Tests</h3>
-<p className="text-caption font-caption text-on-surface-variant">
-                Certified phlebotomist sample collection from your doorstep with digital reports in 6 hours.
-              </p>
-</div>
-<span className="mt-6 inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container group-hover:underline">
-<span>Book Lab Test</span>
-<span className="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
-</span>
-</Link>
-{/* Cards 5–8 */}
-{moreCards(city).map((card) => (
-<Link key={card.title} href={card.href} className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
-<div className="space-y-4">
-<div className="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
-<span className="material-symbols-outlined text-[24px]">{card.icon}</span>
+<span className="material-symbols-outlined text-[24px]" data-icon={card.icon}>{card.icon}</span>
 </div>
 <span className="text-micro font-micro uppercase font-semibold text-on-surface-variant">{card.eyebrow}</span>
 <h3 className="text-headline-h3 font-headline-h3 text-on-surface">{card.title}</h3>
-<p className="text-caption font-caption text-on-surface-variant">{card.body}</p>
+<p className="text-caption font-caption text-on-surface-variant">{fill(card.body, { accreditedFacilities: accredited, city: cityName })}</p>
 </div>
 <span className="mt-6 inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container group-hover:underline">
 <span>{card.cta}</span>
-<span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+<span className="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
 </span>
 </Link>
 ))}
@@ -316,7 +265,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 </div>
 </section>
 </FadeIn>
-<FadeIn><FeatureBand band={HOME_BANDS[0]!} /></FadeIn>
+{bands[0] && <FadeIn><FeatureBand band={bands[0]} /></FadeIn>}
 {/* NEARBY CARE SECTION */}
 <FadeIn>
 <section className="bg-surface-container-lowest py-space-2xl border-b border-surface-variant" id="nearby-care">
@@ -325,7 +274,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <div>
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Near {place}</span>
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Prefer to See a Doctor In Person? Book a Clinic Visit Instantly</h2>
-<p className="text-caption font-caption text-on-surface-variant mt-1">Not every consultation needs to be virtual. Book a confirmed, zero-wait-time appointment at any of our 2,400+ NABH-accredited clinics and hospitals — the same verified doctors, the same digital prescription and follow-up, just in person.</p>
+<p className="text-caption font-caption text-on-surface-variant mt-1">Not every consultation needs to be virtual. Book a confirmed, zero-wait-time appointment at any of our {accredited ? `${accredited} ` : ''}NABH-accredited clinics and hospitals — the same verified doctors, the same digital prescription and follow-up, just in person.</p>
 </div>
 <Link href={`/${city}/hospitals`} className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline">
 <span>View all hospitals &amp; clinics</span>
@@ -419,7 +368,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 </div>
 {/* 6x2 Specialties Grid */}
 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-{grid.map((specialty) => (
+{tiles.map((specialty) => (
 <Link key={specialty.slug} href={`/${city}/${specialty.slug}`} className="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
 <span className="material-symbols-outlined text-outline text-[28px] mb-2">{specialty.icon}</span>
 <h3 className="text-caption-strong font-caption-strong text-on-surface">{specialty.name}</h3>
@@ -549,10 +498,8 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 </div>
 </section>
 </FadeIn>
-<FadeIn><FeatureBand band={HOME_BANDS[1]!} flip /></FadeIn>
-<FadeIn><FeatureBand band={HOME_BANDS[2]!} /></FadeIn>
-<FadeIn><FeatureBand band={HOME_BANDS[3]!} flip /></FadeIn>
-<FadeIn><PartnerSections sectionHeadings /></FadeIn>
+{bands.slice(1).map((band, i) => <FadeIn key={band.id}><FeatureBand band={band} flip={i % 2 === 0} /></FadeIn>)}
+<FadeIn><PartnerSections sections={items<PartnerSection>(sections, 'shared/partner-sections')} sectionHeadings /></FadeIn>
 <FadeIn><PartnerCta /></FadeIn>
 {/* HOW IT WORKS SECTION */}
 <FadeIn>
@@ -566,133 +513,62 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
           </p>
 </div>
 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-{/* Step 1 */}
-<div className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant space-y-4 shadow-sm">
+{steps.map((step, index) => (
+<div key={step.title} className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant space-y-4 shadow-sm">
 <div className="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-h3">
-              1
+              {index + 1}
             </div>
-<h3 className="text-headline-h3 font-headline-h3 text-on-surface">Search Verified Doctor</h3>
+<h3 className="text-headline-h3 font-headline-h3 text-on-surface">{step.title}</h3>
 <p className="text-caption font-caption text-on-surface-variant">
-              Filter by specialty, symptom, clinical experience, languages spoken, and clinic location in your neighborhood.
+              {step.body}
             </p>
+{step.footnote && (
 <div className="pt-2 text-micro font-micro text-on-surface-variant border-t border-surface-variant">
-              100% Medical Council of India verified
+              {step.footnote}
             </div>
+)}
 </div>
-{/* Step 2 */}
-<div className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant space-y-4 shadow-sm">
-<div className="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-h3">
-              2
-            </div>
-<h3 className="text-headline-h3 font-headline-h3 text-on-surface">Consult Online or In-Person</h3>
-<p className="text-caption font-caption text-on-surface-variant">
-              Start an instant HD video consultation in 60s or book an appointment at an accredited polyclinic near you.
-            </p>
-<div className="pt-2 text-micro font-micro text-on-surface-variant border-t border-surface-variant">
-              Zero waiting room time guaranteed
-            </div>
-</div>
-{/* Step 3 */}
-<div className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant space-y-4 shadow-sm">
-<div className="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-h3">
-              3
-            </div>
-<h3 className="text-headline-h3 font-headline-h3 text-on-surface">Get Digital Rx &amp; Follow-up</h3>
-<p className="text-caption font-caption text-on-surface-variant">
-              Receive a digitally signed e-prescription valid at any chemist, plus 7-day free chat follow-up with your doctor.
-            </p>
-<div className="pt-2 text-micro font-micro text-on-surface-variant border-t border-surface-variant">
-              Auto-synced to your ABHA health record
-            </div>
-</div>
+))}
 </div>
 </div>
 </section>
 </FadeIn>
-<FadeIn><TrustStrip /></FadeIn>
+<FadeIn><TrustStrip badges={items<string>(sections, 'shared/trust-badges')} /></FadeIn>
 {/* PATIENT STORIES SECTION */}
+{testimonials.length > 0 && (
 <FadeIn>
 <section className="bg-surface-container-lowest py-16 border-b border-surface-variant">
 <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-12">
 <div className="text-center max-w-xl mx-auto space-y-2">
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Patient Stories</span>
-<h2 className="text-headline-h1 font-headline-h1 text-on-surface">Trusted by 1.2M+ Happy Patients Across India</h2>
+<h2 className="text-headline-h1 font-headline-h1 text-on-surface">{claim('claim-patients') ? `Trusted by ${claim('claim-patients')} Happy Patients Across India` : 'Trusted by Patients Across India'}</h2>
 </div>
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-<div className="p-6 rounded-xl border border-surface-variant bg-surface-container-lowest space-y-4 shadow-sm flex flex-col justify-between">
+{testimonials.map((t) => (
+<div key={t.slug} className="p-6 rounded-xl border border-surface-variant bg-surface-container-lowest space-y-4 shadow-sm flex flex-col justify-between">
 <div className="space-y-3">
-<div className="flex text-primary-container space-x-1">
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-</div>
+<Stars rating={t.rating} />
 <p className="text-caption font-caption text-on-surface leading-relaxed">
-                &quot;My 4-year-old had a sudden high fever at 11 PM. Within 90 seconds, Dr. Nambiar was on video, assessed his symptoms calmly, and the prescribed medicines arrived before midnight. Invaluable reassurance.&quot;
+                &quot;{t.text}&quot;
               </p>
 </div>
 <div className="flex items-center space-x-3 pt-3 border-t border-surface-variant">
 <div className="w-9 h-9 rounded-full bg-surface-container-low border border-surface-variant flex items-center justify-center text-caption-strong text-primary-container">
-                PS
+                {t.initials}
               </div>
 <div>
-<div className="text-caption-strong font-caption-strong text-on-surface">Priya Sharma</div>
-<div className="text-micro font-micro text-on-surface-variant">Bengaluru, Karnataka</div>
+<div className="text-caption-strong font-caption-strong text-on-surface">{t.name}</div>
+<div className="text-micro font-micro text-on-surface-variant">{t.location}</div>
 </div>
 </div>
 </div>
-<div className="p-6 rounded-xl border border-surface-variant bg-surface-container-lowest space-y-4 shadow-sm flex flex-col justify-between">
-<div className="space-y-3">
-<div className="flex text-primary-container space-x-1">
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-</div>
-<p className="text-caption font-caption text-on-surface leading-relaxed">
-                &quot;Connecting my existing ABHA card was completely seamless. All my previous spine reports were right there for Dr. Arvind to inspect. Avoided carrying heavy paper files.&quot;
-              </p>
-</div>
-<div className="flex items-center space-x-3 pt-3 border-t border-surface-variant">
-<div className="w-9 h-9 rounded-full bg-surface-container-low border border-surface-variant flex items-center justify-center text-caption-strong text-primary-container">
-                RM
-              </div>
-<div>
-<div className="text-caption-strong font-caption-strong text-on-surface">Rohan Mehta</div>
-<div className="text-micro font-micro text-on-surface-variant">Mumbai, Maharashtra</div>
-</div>
-</div>
-</div>
-<div className="p-6 rounded-xl border border-surface-variant bg-surface-container-lowest space-y-4 shadow-sm flex flex-col justify-between">
-<div className="space-y-3">
-<div className="flex text-primary-container space-x-1">
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-<span className="material-symbols-outlined text-[18px]" data-icon="star" data-weight="fill" style={{"fontVariationSettings":"'FILL' 1"}}>star</span>
-</div>
-<p className="text-caption font-caption text-on-surface leading-relaxed">
-                &quot;The AI triage feature directed me straight to a dermatologist instead of guessing. Dr. Sen resolved my persistent skin allergy within two weeks with the 7-day chat follow-up.&quot;
-              </p>
-</div>
-<div className="flex items-center space-x-3 pt-3 border-t border-surface-variant">
-<div className="w-9 h-9 rounded-full bg-surface-container-low border border-surface-variant flex items-center justify-center text-caption-strong text-primary-container">
-                KK
-              </div>
-<div>
-<div className="text-caption-strong font-caption-strong text-on-surface">Kavita Krishnan</div>
-<div className="text-micro font-micro text-on-surface-variant">Chennai, Tamil Nadu</div>
-</div>
-</div>
-</div>
+))}
 </div>
 </div>
 </section>
 </FadeIn>
-<FadeIn><FaqSection faqs={HOME_FAQS} intro="Booking, prescriptions, refunds and health records — the questions patients ask us most." /></FadeIn>
+)}
+{faqs.length > 0 && <FadeIn><FaqSection faqs={faqs} heading={faqSection?.title || undefined} intro={faqSection?.intro || undefined} /></FadeIn>}
 {/* APP DOWNLOAD BAND */}
 <FadeIn>
 <section className="bg-primary text-on-primary py-12">
@@ -704,11 +580,11 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
             Download the Curxx app for 1-click video consultations, real-time medicine tracking, and SOS medical dispatch wherever you are in India.
           </p>
 <div className="flex flex-wrap gap-3 pt-2">
-<a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-lg bg-surface-container-lowest text-on-surface font-caption-strong text-caption flex items-center space-x-2 hover:bg-surface-container-low transition">
+<a href={claim('url-app-store') || 'https://apps.apple.com'} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-lg bg-surface-container-lowest text-on-surface font-caption-strong text-caption flex items-center space-x-2 hover:bg-surface-container-low transition">
 <span className="material-symbols-outlined text-[20px]" data-icon="phone_iphone">phone_iphone</span>
 <span>App Store</span>
 </a>
-<a href="https://play.google.com" target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-lg bg-surface-container-lowest text-on-surface font-caption-strong text-caption flex items-center space-x-2 hover:bg-surface-container-low transition">
+<a href={claim('url-play-store') || 'https://play.google.com'} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-lg bg-surface-container-lowest text-on-surface font-caption-strong text-caption flex items-center space-x-2 hover:bg-surface-container-low transition">
 <span className="material-symbols-outlined text-[20px]" data-icon="android">android</span>
 <span>Google Play</span>
 </a>
@@ -722,7 +598,7 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 <div>
 <div className="text-caption-strong font-caption-strong text-on-surface">Scan to Download</div>
 <div className="text-micro font-micro text-on-surface-variant mt-0.5">Available on iOS &amp; Android</div>
-<div className="text-micro font-micro text-tertiary font-semibold mt-2">⭐ 4.9 · 100K+ Downloads</div>
+{(claim('claim-app-rating') || claim('claim-app-downloads')) && <div className="text-micro font-micro text-tertiary font-semibold mt-2">{[claim('claim-app-rating') && `⭐ ${claim('claim-app-rating')}`, claim('claim-app-downloads') && `${claim('claim-app-downloads')} Downloads`].filter(Boolean).join(' · ')}</div>}
 </div>
 </div>
 </div>
@@ -737,7 +613,7 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-caption font-caption text-inverse-on-surface/90">
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-[20px] text-tertiary-fixed" data-icon="verified">verified</span>
-<span>3,200+ Verified Indian Doctors</span>
+<span>{doctorsPlus ? `${doctorsPlus} Verified Indian Doctors` : 'Verified Indian Doctors'}</span>
 </div>
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-[20px] text-tertiary-fixed" data-icon="encrypted">encrypted</span>

@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import ListingSeoContent, { allDoctorsFaqs } from '@/components/listing/ListingSeoContent';
 import FaqAccordion from '@/components/seo/FaqAccordion';
 import { api, type DoctorList, type DoctorQuery, type SpecialtyContent } from '@/lib/api';
-import { getCity } from '@/lib/cities';
+import { liveCatalogue, resolveCity, resolveSpecialty } from '@/lib/catalogue-live';
+import type { CityInfo, SpecialtyInfo } from '@/lib/catalogue-data';
 import { JsonLd } from '@/lib/seo';
-import { ALL_DOCTORS, SPECIALTIES, getSpecialty } from '@/lib/specialties';
+import { ALL_DOCTORS } from '@/lib/specialties';
 import DoctorListing, { type Crumb } from './DoctorListing';
 import Link from 'next/link';
 
@@ -56,9 +57,9 @@ const isVariant = (params: SearchParams) => Object.keys(params).some((k) => para
 type Scope = { city: string; specialty: string; locality?: string };
 
 export async function listingMetadata({ city, specialty: slug, locality }: Scope, params: SearchParams): Promise<Metadata> {
-  const cityInfo = getCity(city)!;
-  const specialty = slug === ALL_DOCTORS.slug ? ALL_DOCTORS : getSpecialty(slug);
-  if (!specialty) return {};
+  const cityInfo = await resolveCity(city);
+  const specialty = slug === ALL_DOCTORS.slug ? ALL_DOCTORS : await resolveSpecialty(slug);
+  if (!specialty || !cityInfo) return {};
   const area = locality ? cityInfo.localities.find((l) => l.slug === locality) : undefined;
   const place = area ? `${area.name}, ${cityInfo.name}` : cityInfo.name;
   const q = one(params.q)?.trim();
@@ -82,9 +83,10 @@ export async function listingMetadata({ city, specialty: slug, locality }: Scope
 }
 
 export async function renderListing({ city, specialty: slug, locality }: Scope, params: SearchParams) {
-  const cityInfo = getCity(city)!;
+  const cityInfo = (await resolveCity(city))!;
+  const { specialties } = await liveCatalogue();
   const all = slug === ALL_DOCTORS.slug;
-  const specialty = all ? ALL_DOCTORS : getSpecialty(slug)!;
+  const specialty = all ? ALL_DOCTORS : specialties.find((s) => s.slug === slug)!;
   const area = locality ? cityInfo.localities.find((l) => l.slug === locality) : undefined;
   const place = area ? `${area.name}, ${cityInfo.name}` : cityInfo.name;
   const filters = queryFrom(params);
@@ -105,7 +107,7 @@ export async function renderListing({ city, specialty: slug, locality }: Scope, 
     ...(area ? [{ label: specialty.plural, href: basePath }, { label: area.name }] : [{ label: specialty.plural }]),
   ];
   const heading = q ? `Doctors for “${q}” in ${place}` : `${specialty.plural} in ${place}`;
-  const matched = listing.matchedSpecialties?.map((s) => getSpecialty(s)?.plural).filter(Boolean).slice(0, 3) as string[] | undefined;
+  const matched = listing.matchedSpecialties?.map((s) => specialties.find((sp) => sp.slug === s)?.plural).filter(Boolean).slice(0, 3) as string[] | undefined;
   const subheading = q
     ? `${listing.total.toLocaleString('en-IN')} verified doctors${matched?.length ? ` — ${matched.join(', ')}` : ''} · ${place}`
     : widened
@@ -134,22 +136,22 @@ export async function renderListing({ city, specialty: slug, locality }: Scope, 
         lockedArea={Boolean(area) && !widened}
         emptyAction={area ? { href: basePath, label: `See all ${specialty.plural.toLowerCase()} in ${cityInfo.name}` } : undefined}
       >
-        {content ? <ListingSeoContent content={content as SpecialtyContent} basePath={basePath} /> : all ? <AllDoctorsContent city={city} cityName={cityInfo.name} total={listing.total} locality={area?.slug} /> : null}
+        {content ? <ListingSeoContent content={content as SpecialtyContent} basePath={basePath} /> : all ? <AllDoctorsContent city={cityInfo} specialties={specialties} total={listing.total} locality={area?.slug} /> : null}
       </DoctorListing>
     </>
   );
 }
 
 /** /{city}/doctors: every specialty, with links into each. */
-function AllDoctorsContent({ city, cityName, total, locality }: { city: string; cityName: string; total: number; locality?: string }) {
-  const cityInfo = getCity(city)!;
+function AllDoctorsContent({ city: cityInfo, specialties, total, locality }: { city: CityInfo; specialties: SpecialtyInfo[]; total: number; locality?: string }) {
+  const { slug: city, name: cityName } = cityInfo;
   return (
     <>
       <section className="bg-[#FAFAF9] border-y border-[#E7E5E4] py-12">
         <div className="w-full max-w-[900px] mx-auto px-6 space-y-4">
           <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Book Verified Doctors in {cityName}</h2>
           <p className="text-body-default font-body-default text-[#5c403d] leading-relaxed">
-            Curxx lists {total.toLocaleString('en-IN')} verified doctors in {cityName} across {SPECIALTIES.length - 1}+ specialties. Compare consultation fees, years of experience and verified patient reviews, then book a clinic visit or a secure video consultation in under a minute.
+            Curxx lists {total.toLocaleString('en-IN')} verified doctors in {cityName} across {specialties.length - 1}+ specialties. Compare consultation fees, years of experience and verified patient reviews, then book a clinic visit or a secure video consultation in under a minute.
           </p>
           <FaqAccordion faqs={allDoctorsFaqs(cityName, total)} heading={`Frequently Asked Questions About Doctors in ${cityName}`} className="pt-6" />
         </div>
@@ -158,7 +160,7 @@ function AllDoctorsContent({ city, cityName, total, locality }: { city: string; 
         <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-8">
           <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Browse Doctors by Specialty</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-y-2 gap-x-4 text-caption font-caption">
-            {SPECIALTIES.map((s) => (
+            {specialties.map((s) => (
               <Link key={s.slug} href={`/${city}/${s.slug}${locality ? `/${locality}` : ''}`} className="text-[#78716C] hover:text-[#C1121F] transition-colors">
                 {s.plural} in {cityName}
               </Link>

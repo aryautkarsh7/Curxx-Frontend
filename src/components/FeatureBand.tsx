@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { Band } from '@/lib/home-content';
+import type { Band } from '@/lib/content-types';
 
 /** One content section from the SEO spec: eyebrow, H2, body, proof points and a CTA. */
 export default function FeatureBand({ band, flip = false }: { band: Band; flip?: boolean }) {

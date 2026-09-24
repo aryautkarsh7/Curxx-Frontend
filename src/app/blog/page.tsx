@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import { api, type Article } from '@/lib/api';
+import { api, type Article, photo } from '@/lib/api';
 import { categoryLabel } from '@/lib/blog';
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
@@ -66,7 +66,7 @@ export default async function BlogPage({ searchParams }: Props) {
 
           {lead && page === 1 && (
             <Link href={`/blog/${lead.slug}`} className="grid md:grid-cols-2 gap-6 p-4 rounded-2xl border border-surface-variant hover:border-outline transition">
-              {lead.coverUrl && <img src={`${lead.coverUrl}=w900`} alt="" className="w-full h-60 md:h-full object-cover rounded-xl bg-surface-container" />}
+              {lead.coverUrl && <img src={photo(lead.coverUrl, 900)} alt="" className="w-full h-60 md:h-full object-cover rounded-xl bg-surface-container" />}
               <div className="space-y-3 py-2">
                 <span className="text-micro font-micro uppercase tracking-wider text-primary-container font-semibold">{categoryLabel(lead.category)} · {lead.readMinutes} min read</span>
                 <h2 className="text-headline-h1 font-headline-h1 text-on-surface">{lead.title}</h2>
@@ -84,7 +84,7 @@ export default async function BlogPage({ searchParams }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {(page === 1 ? rest : data.items).map((a) => (
                   <Link key={a.slug} href={`/blog/${a.slug}`} className="rounded-xl border border-surface-variant overflow-hidden hover:border-outline transition flex flex-col">
-                    {a.coverUrl && <img src={`${a.coverUrl}=w600`} alt="" loading="lazy" className="w-full h-40 object-cover bg-surface-container" />}
+                    {a.coverUrl && <img src={photo(a.coverUrl, 600)} alt="" loading="lazy" className="w-full h-40 object-cover bg-surface-container" />}
                     <div className="p-4 space-y-2 flex-1 flex flex-col">
                       <span className="text-micro font-micro uppercase tracking-wider text-on-surface-variant">{categoryLabel(a.category)} · {a.readMinutes} min</span>
                       <h3 className="text-headline-h3 font-headline-h3 text-on-surface">{a.title}</h3>

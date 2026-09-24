@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { POPULAR_CITIES, getCity } from '@/lib/cities';
 import { useCity } from '@/lib/city-store';
+import { SPECIALTY_COUNT_LABEL } from '@/lib/specialties';
 
 const specialtyLinks = (city: string) => [
   { label: 'General Medicine', href: `/${city}/general-physician` },
@@ -10,7 +11,7 @@ const specialtyLinks = (city: string) => [
   { label: 'Obstetrics & Gynecology', href: `/${city}/gynecologist` },
   { label: 'Orthopedics & Joint Care', href: `/${city}/orthopedist` },
   { label: 'Cardiology & Vascular', href: `/${city}/cardiologist` },
-  { label: 'All 55+ Specialties', href: `/${city}/specialties` },
+  { label: `All ${SPECIALTY_COUNT_LABEL} Specialties`, href: `/${city}/specialties` },
 ];
 
 const networkLinks = (city: string) => [
