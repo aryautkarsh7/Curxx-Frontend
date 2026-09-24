@@ -26,6 +26,17 @@ import { DEFAULT_CITY } from '@/lib/cities';
 import { useCity } from '@/lib/city-store';
 import { SPECIALTIES, SPECIALTY_COUNT_LABEL, conditionHref } from '@/lib/specialties';
 
+/** The 12 specialty tiles, most-searched first. */
+const HOME_SPECIALTIES = ['general-physician', 'dermatologist', 'gynecologist', 'pediatrician', 'orthopedist', 'dentist', 'cardiologist', 'psychiatrist', 'ent-specialist', 'gastroenterologist', 'ophthalmologist', 'neurologist'];
+
+/** Second row of the care-ecosystem grid: the rest of what Curxx does. */
+const moreCards = (city: string) => [
+  { eyebrow: 'Free First Consult', title: 'Free Video Consultation', body: 'Talk to verified doctors who offer a free first video consult — no charge for the call, prescription included.', icon: 'redeem', cta: 'See free consults', href: '/consult/video/general-physician/all?when=free' },
+  { eyebrow: 'Planned Surgery', title: 'Surgery Care', body: 'Laser piles, cataract, hernia, knee replacement and more — cost estimates, top hospitals and a free surgeon consultation.', icon: 'healing', cta: 'Explore surgeries', href: `/${city}/surgeries` },
+  { eyebrow: 'Symptom Checker', title: 'Check Your Symptoms', body: 'Answer a few quick questions and get the right specialist, how soon to see them, and doctors available now.', icon: 'symptoms', cta: 'Start symptom check', href: '/triage' },
+  { eyebrow: 'Health Records', title: 'Digital Health Locker', body: 'Prescriptions, lab reports and scans in one place, linked to your ABHA ID and shared only with your consent.', icon: 'folder_shared', cta: 'Open health locker', href: '/records' },
+];
+
 /** Popular consultations, each with its own clean, indexable condition page. */
 const POPULAR_CHIPS = [
   { label: 'Cough & Cold', condition: 'cough-and-cold' },
@@ -60,7 +71,8 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
   const { doctors, facilities, labs } = nearby;
   const place = locality ? `${locality.name}, ${cityName}` : cityName;
   // The grid shows the popular specialties first, from the live catalogue when available.
-  const grid = (specialties.length ? specialties : SPECIALTIES).filter((s) => SPECIALTIES.find((x) => x.slug === s.slug)?.popular).slice(0, 12);
+  const live = new Map(specialties.map((s) => [s.slug, s]));
+  const grid = HOME_SPECIALTIES.map((slug) => SPECIALTIES.find((s) => s.slug === slug)!).map((s) => ({ ...s, fromPrice: live.get(s.slug)?.fromPrice ?? s.fromPrice }));
 
   function findCare() {
     router.push(searchHref(careQuery, city, locality?.slug));
@@ -126,7 +138,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 </div>
 {/* Popular Consultations Chips */}
 <div className="flex flex-col space-y-2 pt-1">
-<span className="text-micro font-micro text-on-surface-variant font-semibold tracking-wider uppercase">Popular Consultations:</span>
+<h3 className="text-micro font-micro text-on-surface-variant font-semibold tracking-wider uppercase">Popular Consultations:</h3>
 <div className="flex flex-wrap gap-2">
 {POPULAR_CHIPS.map((chip) => (
 <Link key={chip.condition} href={conditionHref(city, chip.condition)} className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">{chip.label}</Link>
@@ -195,7 +207,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <section className="bg-surface-container-lowest border-b border-surface-variant">
 <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-10 sm:py-12">
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface">One Website for Every Way You See a Doctor</h2>
-<p className="text-body-default font-body-default text-on-surface-variant mt-2 max-w-3xl">Video call a doctor in 60 seconds, or walk into a partner clinic with a confirmed slot. Curxx gives you both — the same verified doctors, the same digital prescription, and the same health record either way.</p>
+<p className="text-body-default font-body-default text-on-surface-variant mt-2 max-w-3xl">Video call a doctor in 60 seconds, or walk into a partner clinic with a confirmed slot — Curxx gives you both, with the same verified doctors, the same digital prescription, and the same health record either way.</p>
 </div>
 </section>
 </FadeIn>
@@ -210,7 +222,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Find &amp; Book Any Doctor — Online or In-Clinic</h2>
 </div>
 <p className="text-body-default font-body-default text-on-surface-variant max-w-md md:text-right">
-            Browse 3,200+ verified doctors across {SPECIALTY_COUNT_LABEL} specialties in 24 cities. Filter by location, consultation fee, real-time availability and patient ratings — then choose Video Consult or Clinic Visit.
+            Browse 10,000+ verified medical professionals across {SPECIALTY_COUNT_LABEL} specialties on curxx.in. Filter by location, consultation fee, real-time availability, and patient ratings. Every doctor profile has two buttons: <strong className="text-on-surface">Video Consult</strong> for an instant online session, or <strong className="text-on-surface">Clinic Visit</strong> to book a fixed, zero-wait-time slot at their in-person practice.
           </p>
 </div>
 {/* 4 Grid Cards */}
@@ -270,7 +282,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <Link href="/lab-tests" className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
 <div className="space-y-4">
 <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
-<span className="material-symbols-outlined text-[24px]" data-icon="biotechnology">chips</span>
+<span className="material-symbols-outlined text-[24px]" data-icon="science">science</span>
 </div>
 <span className="text-micro font-micro uppercase font-semibold text-on-surface-variant">Diagnostic Labs</span>
 <h3 className="text-headline-h3 font-headline-h3 text-on-surface">Home Lab Tests</h3>
@@ -283,6 +295,23 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <span className="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
 </span>
 </Link>
+{/* Cards 5–8 */}
+{moreCards(city).map((card) => (
+<Link key={card.title} href={card.href} className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
+<div className="space-y-4">
+<div className="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
+<span className="material-symbols-outlined text-[24px]">{card.icon}</span>
+</div>
+<span className="text-micro font-micro uppercase font-semibold text-on-surface-variant">{card.eyebrow}</span>
+<h3 className="text-headline-h3 font-headline-h3 text-on-surface">{card.title}</h3>
+<p className="text-caption font-caption text-on-surface-variant">{card.body}</p>
+</div>
+<span className="mt-6 inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container group-hover:underline">
+<span>{card.cta}</span>
+<span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+</span>
+</Link>
+))}
 </div>
 </div>
 </section>
@@ -296,7 +325,7 @@ export default function HomePage({ doctors: initialDoctors, specialties, facilit
 <div>
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Near {place}</span>
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Prefer to See a Doctor In Person? Book a Clinic Visit Instantly</h2>
-<p className="text-caption font-caption text-on-surface-variant mt-1">Not every consultation needs to be virtual. Book a confirmed, zero-wait-time slot at 2,400+ NABH-accredited clinics and hospitals — same verified doctors, same digital prescription, same health record, just in person.</p>
+<p className="text-caption font-caption text-on-surface-variant mt-1">Not every consultation needs to be virtual. Book a confirmed, zero-wait-time appointment at any of our 2,400+ NABH-accredited clinics and hospitals — the same verified doctors, the same digital prescription and follow-up, just in person.</p>
 </div>
 <Link href={`/${city}/hospitals`} className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline">
 <span>View all hospitals &amp; clinics</span>
@@ -432,7 +461,7 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 <span className="material-symbols-outlined text-[30px]" data-icon="smart_toy">smart_toy</span>
 </div>
 <div className="space-y-1">
-<h3 className="text-headline-h2 font-headline-h2 text-on-surface">Unsure which doctor to visit? Check symptoms in 60s</h3>
+<h2 className="text-headline-h2 font-headline-h2 text-on-surface">Unsure which doctor to visit? Check symptoms in 60s</h2>
 <p className="text-caption font-caption text-on-surface-variant max-w-xl">
                 Our clinical AI assistant follows ICMR guidelines to map your symptoms to the exact medical department, saving you unnecessary consultations.
               </p>
@@ -461,7 +490,7 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
             Your Complete Medical History in One Secure Place
           </h2>
 <p className="text-body-default font-body-default text-on-surface-variant">
-            Every prescription and report — from a video consult or an in-clinic visit — is stored under your 14-digit ABHA Health ID. Share your history with any doctor, at any clinic, with a single tap of consent.
+            Every prescription and report — from a video consult or an in-person clinic visit — is stored under your 14-digit ABHA Health ID. Share your history with any doctor, at any clinic, with one tap of consent.
           </p>
 <div className="space-y-3 pt-2">
 <div className="flex items-center space-x-3">
@@ -580,6 +609,7 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 </div>
 </section>
 </FadeIn>
+<FadeIn><TrustStrip /></FadeIn>
 {/* PATIENT STORIES SECTION */}
 <FadeIn>
 <section className="bg-surface-container-lowest py-16 border-b border-surface-variant">
@@ -662,7 +692,6 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 </div>
 </section>
 </FadeIn>
-<FadeIn><TrustStrip /></FadeIn>
 <FadeIn><FaqSection faqs={HOME_FAQS} intro="Booking, prescriptions, refunds and health records — the questions patients ask us most." /></FadeIn>
 {/* APP DOWNLOAD BAND */}
 <FadeIn>
