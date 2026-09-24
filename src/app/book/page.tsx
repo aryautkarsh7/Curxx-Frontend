@@ -141,7 +141,7 @@ function SelectSlot() {
               <div className="flex items-center gap-2 mt-1 text-caption font-caption text-[#78716C] flex-wrap">
                 <span className="flex items-center gap-1">
                   <span className="material-symbols-outlined text-[15px] text-[#78716C]">apartment</span>
-                  {doctor.clinicName}, {doctor.area}
+                  {doctor.clinicName.includes(doctor.area) ? doctor.clinicName : `${doctor.clinicName}, ${doctor.area}`}
                 </span>
                 <span className="text-[#E7E5E4]">•</span>
                 <span className="inline-flex items-center gap-1 font-caption-strong text-caption-strong text-[#047857]">
@@ -153,7 +153,7 @@ function SelectSlot() {
           </div>
           <div className="sm:text-right border-t sm:border-t-0 pt-3 sm:pt-0 border-[#E7E5E4] flex sm:flex-col justify-between sm:justify-center items-end">
             <span className="font-caption text-caption text-[#78716C]">{selected?.mode === 'video' ? 'Video consult' : 'Clinic visit'}</span>
-            <span className="font-display text-display text-[#1C1917]">{rupees(selected?.fee ?? doctor.fee)}</span>
+            <span className="font-display text-display text-[#1C1917]">{selected?.fee === 0 ? 'Free' : rupees(selected?.fee ?? doctor.fee)}</span>
           </div>
         </div>
 

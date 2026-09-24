@@ -77,7 +77,7 @@ function PatientDetails() {
           <div className="font-headline-h3 text-headline-h3 text-[#1C1917]">{draft.doctorName}</div>
           <div className="font-caption text-caption text-[#78716C] mt-0.5">{formatSlot(draft.startsAt)}</div>
         </div>
-        <div className="font-display text-display text-[#1C1917]">{rupees(draft.fee)}</div>
+        <div className="font-display text-display text-[#1C1917]">{draft.fee === 0 ? 'Free' : rupees(draft.fee)}</div>
       </div>
 
       <SlotCountdown />

@@ -8,10 +8,9 @@ type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-/** Thousands of doctors: render each profile on first request instead of at build time. */
-export async function generateStaticParams() {
-  return [];
-}
+// Rendered per request: the page reads ?slot= / ?mode= and shows live, bookable slots.
+// (Static params here made Next render it statically and fail with DYNAMIC_SERVER_USAGE.)
+export const dynamic = 'force-dynamic';
 
 async function load(slug: string) {
   try {

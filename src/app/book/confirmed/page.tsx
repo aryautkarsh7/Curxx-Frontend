@@ -73,7 +73,7 @@ function Confirmation() {
             ['Type', isVideo ? 'Video consultation' : 'In-clinic visit'],
             ['Where', isVideo ? 'Curxx video room (link opens 10 minutes before)' : `${appointment.doctor?.clinicName ?? ''}${appointment.doctor?.area ? `, ${appointment.doctor.area}` : ''}`],
             ['Patient', `${appointment.patient.name}${appointment.patient.age ? `, ${appointment.patient.age}` : ''}`],
-            ['Paid', rupees(appointment.amount)],
+            ['Paid', appointment.amount === 0 ? 'Free consultation' : rupees(appointment.amount)],
           ].map(([label, value]) => (
             <div key={label} className="flex items-start justify-between gap-4">
               <dt className="text-[#78716C]">{label}</dt>

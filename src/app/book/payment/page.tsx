@@ -36,6 +36,7 @@ function Payment() {
 
   const platformFee = 0;
   const total = draft.fee + platformFee;
+  const free = total === 0;
 
   async function pay() {
     const token = getToken();
@@ -85,7 +86,7 @@ function Payment() {
         <div className="border-t border-[#E7E5E4] pt-3 space-y-2">
           <div className="flex items-center justify-between font-body-default text-body-default text-[#78716C]">
             <span>Consultation fee</span>
-            <span>{rupees(draft.fee)}</span>
+            <span className={free ? 'text-[#047857]' : undefined}>{free ? 'Free consult' : rupees(draft.fee)}</span>
           </div>
           <div className="flex items-center justify-between font-body-default text-body-default text-[#78716C]">
             <span>Platform fee</span>
@@ -93,12 +94,17 @@ function Payment() {
           </div>
           <div className="flex items-center justify-between pt-2 border-t border-[#E7E5E4]">
             <span className="font-body-strong text-body-strong text-[#1C1917]">Total payable</span>
-            <span className="font-display text-display text-[#1C1917]">{rupees(total)}</span>
+            <span className="font-display text-display text-[#1C1917]">{free ? '₹0' : rupees(total)}</span>
           </div>
         </div>
       </section>
 
-      {/* PAYMENT METHOD */}
+      {/* PAYMENT METHOD — not needed for a free consult */}
+      {free ? (
+        <p className="px-4 py-3 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] font-caption text-caption text-[#047857] flex items-center gap-2">
+          <span className="material-symbols-outlined text-[18px]">redeem</span>This is a free consultation — nothing to pay. Confirm to book your slot.
+        </p>
+      ) : (
       <section className="bg-white border border-[#E7E5E4] rounded-2xl p-5 space-y-3 shadow-sm">
         <h2 className="font-headline-h3 text-headline-h3 text-[#1C1917]">Payment method</h2>
         {METHODS.filter((m) => m.id !== 'clinic' || draft.mode === 'clinic').map((option) => (
@@ -124,6 +130,7 @@ function Payment() {
           This is a prototype checkout — no card details are collected and no money moves. The appointment is created on Curxx immediately.
         </p>
       </section>
+      )}
 
       {error && (
         <p role="alert" className="px-4 py-3 rounded-lg bg-[#FFF1F2] border border-[#F9C6C9] font-caption text-caption text-[#8E0E17]">{error}</p>
@@ -135,7 +142,7 @@ function Payment() {
         disabled={busy}
         className="w-full h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] disabled:bg-[#A8A29E] text-white font-body-strong text-body-strong flex items-center justify-center gap-2 transition"
       >
-        {busy ? 'Confirming…' : `Confirm and pay ${rupees(total)}`}
+        {busy ? 'Confirming…' : free ? 'Confirm free consultation' : `Confirm and pay ${rupees(total)}`}
         <span className="material-symbols-outlined text-[18px]">lock</span>
       </button>
     </main>
