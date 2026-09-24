@@ -101,7 +101,7 @@ function SelectSlot() {
       <main className="w-full max-w-[900px] mx-auto px-4 py-16 text-center space-y-4">
         <h1 className="font-headline-h1 text-headline-h1 text-[#1C1917]">Pick a doctor first</h1>
         <p className="font-body-default text-body-default text-[#78716C]">Choose a doctor and a time slot, then come back here to confirm.</p>
-        <Link href="/bangalore/doctors" className="inline-flex items-center gap-1.5 h-12 px-6 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong transition">
+        <Link href="/doctors" className="inline-flex items-center gap-1.5 h-12 px-6 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong transition">
           Browse verified doctors
           <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
         </Link>
@@ -141,7 +141,7 @@ function SelectSlot() {
               <div className="flex items-center gap-2 mt-1 text-caption font-caption text-[#78716C] flex-wrap">
                 <span className="flex items-center gap-1">
                   <span className="material-symbols-outlined text-[15px] text-[#78716C]">apartment</span>
-                  {doctor.clinicName}, {doctor.area}, Bengaluru
+                  {doctor.clinicName}, {doctor.area}
                 </span>
                 <span className="text-[#E7E5E4]">•</span>
                 <span className="inline-flex items-center gap-1 font-caption-strong text-caption-strong text-[#047857]">
@@ -200,7 +200,7 @@ function SelectSlot() {
           {slots.length === 0 && (
             <p className="font-body-default text-body-default text-[#78716C]">
               This doctor has no open slots in the next 7 days.{' '}
-              <Link href={`/bangalore/${doctor.specialty}`} className="text-[#C1121F] hover:underline">See other {doctor.specialty.replace('-', ' ')}s</Link>.
+              <Link href={`/${doctor.city ?? 'bangalore'}/${doctor.specialty}`} className="text-[#C1121F] hover:underline">See other {doctor.specialty.replace('-', ' ')}s</Link>.
             </p>
           )}
         </div>

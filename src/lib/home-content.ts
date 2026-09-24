@@ -60,7 +60,7 @@ export const HOME_BANDS: Band[] = [
     heading: 'Curxx Plus: Unlimited Consultations for Your Whole Family',
     body: 'One family plan, unlimited online consultations for every member, plus priority booking on in-clinic appointments and discounted lab tests.',
     icon: 'family_restroom',
-    cta: { label: 'See Curxx Plus', href: '/account' },
+    cta: { label: 'See Curxx Plus', href: '/curxx-plus' },
     points: ['Unlimited online consults', 'Priority in-clinic booking', 'Discounted lab packages'],
   },
 ];

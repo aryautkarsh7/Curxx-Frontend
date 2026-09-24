@@ -30,7 +30,7 @@ export default function LabTestCard({ test, atLab }: { test: LabTest; atLab?: La
       <div>
         <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
           <span className="text-micro font-micro bg-surface-container px-2 py-0.5 rounded text-on-surface-variant border border-surface-variant">
-            {test.kind === 'package' ? `${test.testsIncluded} tests included` : `${test.testsIncluded} ${test.testsIncluded === 1 ? 'parameter' : 'parameters'} · ${test.sampleType}`}
+            {test.kind === 'package' ? `${test.testsIncluded} tests included` : test.homeCollection === false ? `${test.sampleType} · visit the centre` : `${test.testsIncluded} ${test.testsIncluded === 1 ? 'parameter' : 'parameters'} · ${test.sampleType}`}
           </span>
           <span className={`text-micro font-micro px-2 py-0.5 rounded-full flex items-center gap-1 border ${test.fastingHours ? 'bg-[#FFF1F2] text-[#C1121F] border-[#F9C6C9]' : 'bg-surface-container text-on-surface-variant border-surface-variant'}`}>
             <span className="material-symbols-outlined text-[12px]">{test.fastingHours ? 'schedule' : 'check_circle'}</span>

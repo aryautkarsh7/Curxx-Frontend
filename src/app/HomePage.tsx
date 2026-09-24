@@ -12,29 +12,58 @@ import { LabMiniCard } from '@/components/labs/LabCard';
 import type { Doctor, Facility, LabSummary, Near, Specialty } from '@/lib/api';
 import { HOME_BANDS, HOME_FAQS } from '@/lib/home-content';
 
-type HomeProps = { doctors: Doctor[]; specialties: Specialty[]; facilities: Facility[]; labs: { items: LabSummary[]; total: number; near: Near } | null };
+type Labs = { items: LabSummary[]; total: number; near: Near } | null;
+type HomeProps = { doctors: Doctor[]; specialties: Specialty[]; facilities: Facility[]; labs: Labs };
 import { useRouter } from 'next/navigation';
-import type { MouseEvent } from 'react';
+import { useCallback, useEffect, useState, type MouseEvent } from 'react';
+import CityPicker from '@/components/CityPicker';
 import { useEmergency } from '@/components/EmergencyModal';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import { useState } from 'react';
+import SearchSuggest, { searchHref } from '@/components/SearchSuggest';
+import { api } from '@/lib/api';
+import { DEFAULT_CITY } from '@/lib/cities';
+import { useCity } from '@/lib/city-store';
+import { SPECIALTIES, SPECIALTY_COUNT_LABEL, conditionHref } from '@/lib/specialties';
 
-export default function HomePage({ doctors, specialties, facilities, labs }: HomeProps) {
+/** Popular consultations, each with its own clean, indexable condition page. */
+const POPULAR_CHIPS = [
+  { label: 'Cough & Cold', condition: 'cough-and-cold' },
+  { label: 'Skin Acne', condition: 'acne' },
+  { label: 'Depression & Anxiety', condition: 'depression-and-anxiety' },
+  { label: 'Stomach Ache', condition: 'stomach-pain' },
+  { label: 'Women\'s Health', condition: 'womens-health' },
+];
+
+export default function HomePage({ doctors: initialDoctors, specialties, facilities: initialFacilities, labs: initialLabs }: HomeProps) {
   const router = useRouter();
   const emergency = useEmergency();
+  const { city, cityName, locality } = useCity();
   const [careQuery, setCareQuery] = useState('');
+  const [cityOpen, setCityOpen] = useState(false);
+  const [nearby, setNearby] = useState({ city: DEFAULT_CITY, doctors: initialDoctors, facilities: initialFacilities, labs: initialLabs });
+  const onQueryChange = useCallback((q: string) => setCareQuery(q), []);
+
+  // The page is rendered for Bengaluru; another chosen city refreshes the nearby sections.
+  useEffect(() => {
+    if (city === nearby.city) return;
+    let cancelled = false;
+    Promise.all([
+      api.doctors({ city, sort: 'rating', limit: 3 }).then((r) => r.doctors).catch(() => []),
+      api.facilities({ city, sort: 'rating', limit: 4 }).then((r) => r.items).catch(() => []),
+      api.labs({ city, limit: 4 }).then((r) => ({ items: r.items, total: r.total, near: r.near })).catch(() => null),
+    ]).then(([doctors, facilities, labs]) => !cancelled && setNearby({ city, doctors, facilities, labs }));
+    return () => {
+      cancelled = true;
+    };
+  }, [city, nearby.city]);
+  const { doctors, facilities, labs } = nearby;
+  const place = locality ? `${locality.name}, ${cityName}` : cityName;
+  // The grid shows the popular specialties first, from the live catalogue when available.
+  const grid = (specialties.length ? specialties : SPECIALTIES).filter((s) => SPECIALTIES.find((x) => x.slug === s.slug)?.popular).slice(0, 12);
 
   function findCare() {
-    const q = careQuery.trim();
-    if (!q) {
-      router.push('/bangalore/doctors');
-      return;
-    }
-    // "Dermatologist" jumps straight to that specialty; anything else is a name/clinic search.
-    const needle = q.toLowerCase();
-    const match = specialties.find((s) => s.name.toLowerCase().includes(needle) || s.plural.toLowerCase().includes(needle));
-    router.push(match ? `/bangalore/${match.slug}` : `/bangalore/doctors?q=${encodeURIComponent(q)}`);
+    router.push(searchHref(careQuery, city, locality?.slug));
   }
 
   // Whole-card click opens the doctor, but not when the click was on the card's own buttons/links.
@@ -68,24 +97,25 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 </div>
 {/* Subcopy */}
 <p className="text-body-default font-body-default text-on-surface-variant max-w-xl">
-            Connect with verified specialists across 45+ clinical disciplines. Instant video consultations, seamless electronic prescriptions, and doorstep lab diagnostics.
+            Connect with verified specialists across {SPECIALTY_COUNT_LABEL} clinical disciplines. Instant video consultations, seamless electronic prescriptions, and doorstep lab diagnostics.
           </p>
 {/* Dual-Field Search Bar Card */}
 <div className="p-2 bg-surface-container-lowest rounded-xl border border-surface-variant shadow-sm flex flex-col sm:flex-row gap-2">
 {/* Left Field: Location */}
-<div className="flex-1 flex items-center px-3 py-2 rounded-lg border border-surface-variant bg-surface-container-low/40">
+<button type="button" onClick={() => setCityOpen(true)} aria-label={`Location: ${place}. Change location`} className="flex-1 min-w-0 flex items-center px-3 py-2 rounded-lg border border-surface-variant bg-surface-container-low/40 hover:border-outline transition text-left">
 <span className="material-symbols-outlined text-outline text-[20px] mr-2" data-icon="my_location">my_location</span>
-<div className="flex flex-col w-full text-left">
+<span className="flex flex-col w-full min-w-0 text-left">
 <span className="text-micro font-micro text-on-surface-variant uppercase font-semibold">Location</span>
-<input className="bg-transparent border-none p-0 text-caption-strong font-caption-strong text-on-surface focus:ring-0 focus:outline-none w-full placeholder-on-surface-variant" type="text" defaultValue="Indiranagar, Bengaluru"/>
-</div>
-</div>
+<span className="text-caption-strong font-caption-strong text-on-surface truncate">{place}</span>
+</span>
+<span className="material-symbols-outlined text-[18px] text-on-surface-variant">expand_more</span>
+</button>
 {/* Right Field: Specialty/Symptom */}
 <div className="flex-[1.5] flex items-center px-3 py-2 rounded-lg border border-surface-variant bg-surface-container-low/40">
 <span className="material-symbols-outlined text-outline text-[20px] mr-2" data-icon="search">search</span>
 <div className="flex flex-col w-full text-left">
 <span className="text-micro font-micro text-on-surface-variant uppercase font-semibold">Specialty / Symptom</span>
-<input className="bg-transparent border-none p-0 text-caption font-caption text-on-surface focus:ring-0 focus:outline-none w-full placeholder-on-surface-variant" value={careQuery} onChange={(e) => setCareQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') findCare(); }} aria-label="Specialty or symptom" placeholder="Fever, Dermatologist, Cough" type="text"/>
+<SearchSuggest city={city} locality={locality?.slug} onQueryChange={onQueryChange} inputClassName="bg-transparent border-none p-0 text-caption font-caption text-on-surface focus:ring-0 focus:outline-none w-full placeholder-on-surface-variant" />
 </div>
 </div>
 {/* CTA Button */}
@@ -98,12 +128,10 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <div className="flex flex-col space-y-2 pt-1">
 <span className="text-micro font-micro text-on-surface-variant font-semibold tracking-wider uppercase">Popular Consultations:</span>
 <div className="flex flex-wrap gap-2">
-<Link href="/bangalore/general-physician?condition=cough-cold" className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Cough &amp; Cold</Link>
-<Link href="/bangalore/dermatologist?condition=acne" className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Skin Acne</Link>
-<Link href="/bangalore/psychiatrist?condition=anxiety" className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Depression &amp; Anxiety</Link>
-<Link href="/bangalore/gastroenterologist" className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Stomach Ache</Link>
-<Link href="/bangalore/gynecologist" className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Women&apos;s Health</Link>
-<button type="button" onClick={() => emergency.open({ continueTo: { href: '/bangalore/cardiologist', label: 'Not an emergency? See cardiologists' } })} className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Chest Pain</button>
+{POPULAR_CHIPS.map((chip) => (
+<Link key={chip.condition} href={conditionHref(city, chip.condition)} className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">{chip.label}</Link>
+))}
+<button type="button" onClick={() => emergency.open({ continueTo: { href: conditionHref(city, 'chest-pain'), label: 'Not an emergency? See cardiologists' } })} className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Chest Pain</button>
 </div>
 </div>
 {/* Trust Stats Row */}
@@ -182,7 +210,7 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Find &amp; Book Any Doctor — Online or In-Clinic</h2>
 </div>
 <p className="text-body-default font-body-default text-on-surface-variant max-w-md md:text-right">
-            Browse 10,000+ verified doctors across 45+ specialties. Filter by location, consultation fee, real-time availability and patient ratings — then choose Video Consult or Clinic Visit.
+            Browse 3,200+ verified doctors across {SPECIALTY_COUNT_LABEL} specialties in 24 cities. Filter by location, consultation fee, real-time availability and patient ratings — then choose Video Consult or Clinic Visit.
           </p>
 </div>
 {/* 4 Grid Cards */}
@@ -205,7 +233,7 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 </span>
 </Link>
 {/* Card 2 */}
-<Link href="/bangalore/clinics" className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
+<Link href={`/${city}/clinics`} className="p-6 bg-surface-container-lowest rounded-xl border border-surface-variant flex flex-col justify-between hover:border-outline transition duration-150 group">
 <div className="space-y-4">
 <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-surface-variant flex items-center justify-center text-primary-container">
 <span className="material-symbols-outlined text-[24px]" data-icon="local_hospital">local_hospital</span>
@@ -266,12 +294,12 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-8">
 <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
 <div>
-<span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Near Indiranagar, Bengaluru</span>
+<span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Near {place}</span>
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Prefer to See a Doctor In Person? Book a Clinic Visit Instantly</h2>
 <p className="text-caption font-caption text-on-surface-variant mt-1">Not every consultation needs to be virtual. Book a confirmed, zero-wait-time slot at 2,400+ NABH-accredited clinics and hospitals — same verified doctors, same digital prescription, same health record, just in person.</p>
 </div>
-<Link href="/bangalore/hospitals" className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline">
-<span>View All 45+ facilities</span>
+<Link href={`/${city}/hospitals`} className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline">
+<span>View all hospitals &amp; clinics</span>
 <span className="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
 </Link>
 </div>
@@ -283,7 +311,7 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <span className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
 <span className="material-symbols-outlined text-[22px]">local_hospital</span>
 </span>
-<span className="px-2 py-0.5 rounded-full border border-surface-variant bg-surface-container-low text-micro font-micro text-on-surface-variant">{facility.type === 'hospital' ? 'Hospital' : 'Clinic'}</span>
+<span className="px-2 py-0.5 rounded-full border border-surface-variant bg-surface-container-low text-micro font-micro text-on-surface-variant">{facility.category ?? (facility.type === 'hospital' ? 'Hospital' : 'Clinic')}</span>
 </div>
 <div>
 <h3 className="text-headline-h3 font-headline-h3 text-on-surface leading-tight">
@@ -292,7 +320,7 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <p className="text-caption font-caption text-on-surface-variant mt-1">{facility.tagline}</p>
 </div>
 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-micro font-micro text-on-surface-variant">
-<span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">location_on</span>{facility.area} · {facility.distanceKm} km</span>
+<span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">location_on</span>{facility.area}</span>
 <span className="flex items-center gap-1 text-tertiary"><span className="material-symbols-outlined text-[14px]">star</span>{facility.rating}</span>
 </div>
 {facility.emergency24x7 && (
@@ -325,7 +353,7 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Lab Tests at Home or a Walk-in Lab Near You</h2>
 <p className="text-caption font-caption text-on-surface-variant mt-1">Every partner lab is NABL accredited, with a pathologist signing each report. Book a phlebotomist to your door, or walk in at a booked slot and skip the queue — same price either way.</p>
 </div>
-<Link href="/bangalore/labs" className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline shrink-0">
+<Link href={`/${city}/labs`} className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline shrink-0">
 <span>View all {labs.total} labs</span>
 <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
 </Link>
@@ -337,7 +365,7 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <Link href="/lab-tests" className="h-11 px-5 inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary-container hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong transition">
 <span className="material-symbols-outlined text-[18px]">science</span>Book a lab test
 </Link>
-<Link href="/bangalore/labs" className="h-11 px-5 inline-flex items-center justify-center gap-1.5 rounded-lg border border-surface-variant bg-surface-container-lowest text-on-surface font-caption-strong text-caption-strong hover:border-outline transition">
+<Link href={`/${city}/labs`} className="h-11 px-5 inline-flex items-center justify-center gap-1.5 rounded-lg border border-surface-variant bg-surface-container-lowest text-on-surface font-caption-strong text-caption-strong hover:border-outline transition">
 <span className="material-symbols-outlined text-[18px]">location_on</span>Find a lab near you
 </Link>
 </div>
@@ -353,23 +381,26 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <div className="flex items-end justify-between">
 <div>
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Clinical Specialties</span>
-<h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Consult Top Doctors Across 45+ Specialties</h2>
+<h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Consult Top Doctors Across {SPECIALTY_COUNT_LABEL} Specialties</h2>
 </div>
-<Link href="/bangalore/specialties" className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline">
-<span>View All 45+ Specialties</span>
+<Link href={`/${city}/specialties`} className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline">
+<span>View All {SPECIALTY_COUNT_LABEL} Specialties</span>
 <span className="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
 </Link>
 </div>
 {/* 6x2 Specialties Grid */}
 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-{specialties.slice(0, 12).map((specialty) => (
-<Link key={specialty.slug} href={`/bangalore/${specialty.slug}`} className="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
+{grid.map((specialty) => (
+<Link key={specialty.slug} href={`/${city}/${specialty.slug}`} className="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest hover:border-outline text-center flex flex-col items-center justify-center transition cursor-pointer">
 <span className="material-symbols-outlined text-outline text-[28px] mb-2">{specialty.icon}</span>
-<div className="text-caption-strong font-caption-strong text-on-surface">{specialty.name}</div>
+<h3 className="text-caption-strong font-caption-strong text-on-surface">{specialty.name}</h3>
 <div className="text-micro font-micro text-on-surface-variant mt-1">From ₹{specialty.fromPrice}</div>
 </Link>
 ))}
 </div>
+<Link href={`/${city}/specialties`} className="sm:hidden flex items-center justify-center gap-1 h-11 rounded-lg border border-surface-variant text-caption-strong font-caption-strong text-primary-container">
+View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+</Link>
 </div>
 </section>
 </FadeIn>
@@ -383,7 +414,7 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Strict 4-Tier Verification</span>
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Top Verified Doctors for You</h2>
 </div>
-<Link className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline" href="/bangalore/doctors">
+<Link className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline" href={`/${city}/doctors`}>
 <span>View all verified doctors</span>
 <span className="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
 </Link>
@@ -492,7 +523,7 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <FadeIn><FeatureBand band={HOME_BANDS[1]!} flip /></FadeIn>
 <FadeIn><FeatureBand band={HOME_BANDS[2]!} /></FadeIn>
 <FadeIn><FeatureBand band={HOME_BANDS[3]!} flip /></FadeIn>
-<FadeIn><PartnerSections /></FadeIn>
+<FadeIn><PartnerSections sectionHeadings /></FadeIn>
 <FadeIn><PartnerCta /></FadeIn>
 {/* HOW IT WORKS SECTION */}
 <FadeIn>
@@ -677,7 +708,7 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-caption font-caption text-inverse-on-surface/90">
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-[20px] text-tertiary-fixed" data-icon="verified">verified</span>
-<span>10,000+ Verified Indian MDs</span>
+<span>3,200+ Verified Indian Doctors</span>
 </div>
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-[20px] text-tertiary-fixed" data-icon="encrypted">encrypted</span>
@@ -698,6 +729,7 @@ export default function HomePage({ doctors, specialties, facilities, labs }: Hom
 </FadeIn>
 </main>
 <Footer />
+<CityPicker open={cityOpen} onClose={() => setCityOpen(false)} />
 
     </>
   );

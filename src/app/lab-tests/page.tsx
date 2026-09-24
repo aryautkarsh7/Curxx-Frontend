@@ -3,8 +3,8 @@ import { api, type LabQuery } from '@/lib/api';
 import LabTestsHome from './LabTestsHome';
 
 export const metadata: Metadata = {
-  title: 'Lab Tests at Home, Reports in 24 Hours | Curxx',
-  description: 'Book NABL-accredited lab tests and full body checkups with free home sample collection across Bengaluru. Digital reports in 24 hours.',
+  title: 'Lab Tests at Home, Most Reports in 6 Hours | 250+ Tests & Scans | Curxx',
+  description: 'Book NABL-accredited lab tests and full body checkups with free home sample collection in 24 cities. Most reports in 6 hours.',
   alternates: { canonical: '/lab-tests' },
 };
 
@@ -18,7 +18,7 @@ export default async function LabTestsPage({ searchParams }: { searchParams: Sea
   const query: LabQuery = {
     category: one(params.category),
     q: one(params.q),
-    kind: kind === 'package' || kind === 'test' ? kind : undefined,
+    kind: kind === 'package' || kind === 'test' || kind === 'scan' || kind === 'procedure' ? kind : undefined,
     sort: sort === 'discount' || sort === 'price_asc' || sort === 'price_desc' ? sort : 'popular',
     page: Math.max(1, Number(one(params.page)) || 1),
     limit: 9,

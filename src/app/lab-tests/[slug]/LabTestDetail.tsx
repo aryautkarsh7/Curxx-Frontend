@@ -82,7 +82,7 @@ export default function LabTestDetail({ pkg, related, category, availability }: 
           </h1>
 <div className="flex items-center gap-2 text-caption font-caption text-on-surface-variant">
 <span className="font-caption-strong text-on-surface">Available at:</span>
-<Link href={`/bangalore/labs?test=${pkg.slug}`} className="text-primary-container hover:underline">{availability?.labCount ? `${availability.labCount} partner ${availability.labCount === 1 ? 'lab' : 'labs'} in Bengaluru` : 'NABL-accredited partner labs'}</Link>
+<Link href={`/labs?test=${pkg.slug}`} className="text-primary-container hover:underline">{availability?.labCount ? `${availability.labCount} partner ${availability.labCount === 1 ? 'lab' : 'labs'} near you` : 'NABL-accredited partner labs'}</Link>
 <span className="w-1 h-1 rounded-full bg-outline"></span>
 <span className="text-tertiary font-semibold">100% Barcode Traced</span>
 </div>
@@ -111,7 +111,7 @@ export default function LabTestDetail({ pkg, related, category, availability }: 
 <div className="flex-1">
 <h2 className="text-headline-h3 font-headline-h3 text-on-surface">No Fasting Required</h2>
 <p className="text-caption font-caption text-on-surface-variant mt-1">
-              You can eat and drink normally before sample collection. Book any slot that suits you.
+              {pkg.homeCollection === false ? 'This is done at the diagnostic centre — book a visit slot and walk in without queuing.' : 'You can eat and drink normally before sample collection. Book any slot that suits you.'}
             </p>
 </div>
 </div>
@@ -294,13 +294,13 @@ export default function LabTestDetail({ pkg, related, category, availability }: 
 </div>
 <Link href={`/lab/${nearest.slug}`} className="block font-caption-strong text-caption-strong text-on-surface hover:text-primary-container">{nearest.name}</Link>
 <p className="text-micro font-micro text-on-surface-variant flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">location_on</span>{nearest.area} · {nearest.distanceKm} km · Reports in {nearest.reportTat}</p>
-<p className="text-micro font-micro text-outline">We confirm the lab for your exact address at checkout. <Link href={`/bangalore/labs?test=${pkg.slug}`} className="text-primary-container hover:underline">All labs</Link></p>
+<p className="text-micro font-micro text-outline">We confirm the lab for your exact address at checkout. <Link href={`/labs?test=${pkg.slug}`} className="text-primary-container hover:underline">All labs</Link></p>
 </div>
 )}
 <CollectionSlotPicker value={slot} onChange={setSlot} fasting={Boolean(pkg.fastingHours)} lab={nearest?.slug} />
 <div className="pt-1 space-y-2">
 <button type="button" onClick={book} className="w-full h-12 bg-primary-container hover:bg-primary text-on-primary font-body-strong text-body-strong rounded-lg flex items-center justify-center gap-2 shadow-sm transition duration-150 active:scale-95">
-<span>{slot ? 'Continue to book' : 'Book home collection'} • {rupees(pkg.price)}</span>
+<span>{slot ? 'Continue to book' : pkg.homeCollection === false ? 'Book a centre visit' : 'Book home collection'} • {rupees(pkg.price)}</span>
 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
 </button>
 <button type="button" onClick={() => (inBooking ? removeFromCart(pkg.slug, 'lab') : addToCart(labCartItem(pkg), 1, 'lab'))} className="w-full h-10 rounded-lg border border-surface-variant text-caption-strong font-caption-strong text-on-surface hover:bg-surface-container-low">
@@ -334,7 +334,7 @@ export default function LabTestDetail({ pkg, related, category, availability }: 
 <p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">{rupees(pkg.price)}</p>
 </div>
 <button type="button" onClick={book} className="flex-1 h-12 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-body-strong text-body-strong flex items-center justify-center gap-1.5">
-<span>{slot ? 'Continue to book' : 'Book home collection'}</span>
+<span>{slot ? 'Continue to book' : pkg.homeCollection === false ? 'Book a centre visit' : 'Book home collection'}</span>
 </button>
 </div>
 <div className="h-20 lg:hidden" aria-hidden="true"></div>

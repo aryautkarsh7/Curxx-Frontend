@@ -48,7 +48,7 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
         {/* Middle Info */}
         <div className="flex-1 min-w-0 pr-2">
           <div className="flex items-center gap-1.5">
-            <h3 className="font-headline-h2 text-headline-h2 text-[#1C1917] truncate">{doctor.name}</h3>
+            <h3 className="font-headline-h2 text-headline-h2 text-[#1C1917] break-words">{doctor.name}</h3>
             {doctor.verified && (
               <span className="material-symbols-outlined text-[#047857] text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified_user</span>
             )}
@@ -66,6 +66,20 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
               <span key={language} className="px-2 py-0.5 bg-[#FAFAF9] border border-[#E7E5E4] rounded text-micro font-micro text-[#78716C]">{language}</span>
             ))}
           </div>
+          {(doctor.freeVideo || doctor.instant) && (
+            <div className="flex flex-wrap gap-1.5 mt-2.5">
+              {doctor.instant && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-micro font-micro text-[#047857]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#047857]"></span>Online 24x7
+                </span>
+              )}
+              {doctor.freeVideo && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-micro font-micro text-[#047857]">
+                  <span className="material-symbols-outlined text-[12px]">redeem</span>Free video consult
+                </span>
+              )}
+            </div>
+          )}
           <div className="flex items-center gap-1.5 mt-3 text-[#047857] font-caption-strong text-caption-strong">
             <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>thumb_up</span>
             <span>{doctor.recommendPercent}%</span>
@@ -81,17 +95,20 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
           </div>
           <div className="w-full max-w-[180px] sm:max-w-none space-y-2 sm:mt-3">
             {nextSlot && (
-              <div className="bg-[#FFF1F2] border border-[#F9C6C9] rounded px-2 py-1 flex items-center justify-center gap-1 text-micro font-micro text-[#8E0E17]">
-                <span className="material-symbols-outlined text-[14px]">schedule</span>
-                <span>{slotLabel(nextSlot.startsAt)}</span>
-              </div>
+              // The exact slot the chip names opens preselected on the profile, so the two always agree.
+              <Link href={`${href}?slot=${nextSlot.id}&mode=${nextSlot.mode}`} title="Book this slot" className="bg-[#FFF1F2] border border-[#F9C6C9] rounded px-2 py-1 flex items-center justify-center gap-1 text-micro font-micro text-[#8E0E17] hover:border-[#C1121F]">
+                <span className="material-symbols-outlined text-[14px]">{nextSlot.mode === 'video' ? 'videocam' : 'schedule'}</span>
+                <span>{nextSlot.free ? 'Free · ' : ''}{slotLabel(nextSlot.startsAt)}</span>
+              </Link>
             )}
             <Link href={`${href}?mode=clinic`} className="w-full h-10 bg-[#C1121F] hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong rounded-lg flex items-center justify-center transition active:scale-95 shadow-sm">
               Book Clinic Visit
             </Link>
-            <Link href={`${href}?mode=video`} className="w-full h-9 bg-[#FFFFFF] hover:bg-[#FAFAF9] border border-[#C1121F] text-[#C1121F] font-caption-strong text-caption-strong rounded-lg flex items-center justify-center transition active:scale-95">
-              Video {rupees(doctor.videoFee)}
-            </Link>
+            {doctor.offersVideo !== false && (
+              <Link href={`${href}?mode=video`} className="w-full h-9 bg-[#FFFFFF] hover:bg-[#FAFAF9] border border-[#C1121F] text-[#C1121F] font-caption-strong text-caption-strong rounded-lg flex items-center justify-center transition active:scale-95">
+                {doctor.freeVideo ? 'Video · Free first' : `Video ${rupees(doctor.videoFee)}`}
+              </Link>
+            )}
           </div>
         </div>
       </div>

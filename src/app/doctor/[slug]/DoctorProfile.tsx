@@ -1,6 +1,9 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import FaqAccordion from '@/components/seo/FaqAccordion';
+import { JsonLd } from '@/lib/seo';
 import BookingWidget from '@/components/BookingWidget';
 import DoctorReviews from '@/components/DoctorReviews';
 import Footer from '@/components/Footer';
@@ -17,16 +20,26 @@ type Props = {
   similar: Doctor[];
   slots: Slot[];
   mode?: 'clinic' | 'video';
-  specialtyPlural: string;
+  /** Slot chosen on a listing card, preselected in the widget. */
+  slotId?: string;
 };
 
 const mapsUrl = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 
-export default function DoctorProfile({ doctor, facility, similar, slots, mode = 'clinic', specialtyPlural }: Props) {
+export default function DoctorProfile({ doctor, facility, similar, slots, mode = 'clinic', slotId }: Props) {
+  const router = useRouter();
   const [toast, showToast] = useToast();
-  const [widgetMode, setWidgetMode] = useState(mode);
-  const reviewTotal = doctor.reviewSummary.total || doctor.reviewCount;
+  const preselected = slotId ? slots.find((s) => s.id === slotId) : undefined;
+  const [widgetMode, setWidgetMode] = useState(preselected?.mode ?? mode);
+  const [initialSlot, setInitialSlot] = useState(slotId);
+  const [picked, setPicked] = useState<Slot | null>(preselected ?? null);
+  const onSelect = useCallback((slot: Slot | null) => setPicked(slot), []);
+  // One number everywhere: the count of reviews actually on the profile.
+  const reviewTotal = doctor.reviewSummary.total;
   const nextVideo = slots.find((s) => s.mode === 'video');
+  const city = doctor.city;
+  const cityName = doctor.cityName ?? 'Bengaluru';
+  const specialtyPlural = doctor.specialtyPlural ?? 'Doctors';
   const firstName = doctor.name.replace(/^Dr\.\s*/, '').split(' ')[0];
 
   async function share() {
@@ -43,36 +56,56 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
   }
 
   const goToBooking = (m?: 'clinic' | 'video') => {
-    if (m) setWidgetMode(m);
+    if (m && m !== widgetMode) {
+      setWidgetMode(m);
+      setInitialSlot(undefined);
+    }
     document.getElementById('book')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const time = (startsAt: string) => slotLabel(startsAt);
+
   const faqs = [
-    { q: `What is ${doctor.name}’s consultation fee?`, a: `${rupees(doctor.fee)} for an in-clinic visit at ${doctor.clinicName}, and ${rupees(doctor.videoFee)} for a video consultation. Both include a 7-day chat follow-up.` },
-    { q: `Does ${doctor.name} offer online consultations?`, a: nextVideo ? `Yes. The next video slot is ${slotLabel(nextVideo.startsAt).toLowerCase()}. You get a digitally signed e-prescription after the call.` : `Video consultations are offered, but there are no open video slots this week. Book a clinic visit or check back tomorrow.` },
-    { q: `Where does ${doctor.name} practise?`, a: `${doctor.clinicName}, ${doctor.area}, Bengaluru.${facility ? ` ${facility.openHours}.` : ''}` },
-    { q: `Which languages does ${doctor.name} speak?`, a: `${doctor.languages.join(', ')}.` },
-    { q: 'Can I cancel or reschedule?', a: 'Yes — from My Appointments, free of charge up to 2 hours before the slot. Any payment is refunded to the original method within 5–7 working days.' },
+    { question: `What is ${doctor.name}’s consultation fee?`, answer: `${rupees(doctor.fee)} for an in-clinic visit at ${doctor.clinicName}${doctor.offersVideo !== false ? `, and ${rupees(doctor.videoFee)} for a video consultation${doctor.freeVideo ? ' (the first video consult is free on selected slots)' : ''}` : ''}. Every booking includes a 7-day chat follow-up.` },
+    doctor.offersVideo !== false
+      ? { question: `Does ${doctor.name} offer online consultations?`, answer: nextVideo ? `Yes. The next video slot is ${slotLabel(nextVideo.startsAt).toLowerCase()}. You get a digitally signed e-prescription after the call.` : `Video consultations are offered, but there are no open video slots this week. Book a clinic visit or check back tomorrow.` }
+      : { question: `Does ${doctor.name} offer online consultations?`, answer: `${doctor.name} sees patients in person at ${doctor.clinicName}. Book a clinic visit at a time that suits you.` },
+    { question: `When is ${doctor.name} available?`, answer: `${doctor.consultHours ? `${doctor.name} consults ${doctor.consultHours}.` : ''} Open slots for the next seven days are shown in the booking panel${facility?.openHours ? `; ${facility.name} is open ${facility.openHours}` : ''}.` },
+    { question: `Where does ${doctor.name} practise?`, answer: `${doctor.clinicName}, ${doctor.area}, ${cityName}.${facility?.address ? ` ${facility.address}.` : ''}` },
+    { question: `Which languages does ${doctor.name} speak?`, answer: `${doctor.languages.join(', ')}.` },
+    { question: 'Can I cancel or reschedule?', answer: 'Yes — from My Appointments, free of charge up to 2 hours before the slot. Any payment is refunded to the original method within 5–7 working days.' },
   ];
+
+  const physician = {
+    '@context': 'https://schema.org',
+    '@type': 'Physician',
+    name: doctor.name,
+    medicalSpecialty: doctor.specialtyName,
+    image: doctor.photoUrl ? `${doctor.photoUrl}=w400` : undefined,
+    address: { '@type': 'PostalAddress', streetAddress: facility?.address ?? doctor.area, addressLocality: cityName, addressCountry: 'IN' },
+    priceRange: `₹${Math.min(doctor.fee, doctor.videoFee)}–₹${Math.max(doctor.fee, doctor.videoFee)}`,
+    ...(reviewTotal > 0 ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: doctor.reviewSummary.average, reviewCount: reviewTotal, bestRating: 5 } } : {}),
+  };
 
   return (
     <>
       <Header />
+      <JsonLd data={physician} />
       <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop pt-4 pb-2">
         <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-1.5 font-caption text-caption text-[#78716C]">
           <Link href="/" className="hover:text-[#1C1917]">Home</Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <Link href="/bangalore/specialties" className="hover:text-[#1C1917]">Bangalore</Link>
+          <Link href={`/${city}/specialties`} className="hover:text-[#1C1917]">{cityName}</Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <Link href={`/bangalore/${doctor.specialty}`} className="hover:text-[#1C1917]">{specialtyPlural}</Link>
+          <Link href={`/${city}/${doctor.specialty}`} className="hover:text-[#1C1917]">{specialtyPlural}</Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
           <span className="text-[#C1121F] font-caption-strong text-caption-strong">{doctor.name}</span>
         </nav>
       </div>
 
       <main className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-4 pb-28 lg:pb-16">
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          <section className="flex-1 min-w-0 space-y-6 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-6 lg:gap-x-8 items-start">
+          <div className="min-w-0 w-full lg:col-start-1 lg:row-start-1">
             {/* HERO */}
             <article className="bg-white border border-[#E7E5E4] rounded-2xl p-5 sm:p-8 relative">
               <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2">
@@ -100,7 +133,7 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
                     )}
                   </div>
                   <p className="font-body-default text-body-default text-[#78716C]">{doctor.qualification}</p>
-                  <p className="font-body-strong text-body-strong text-[#1C1917]">{doctor.title} · {doctor.specialtyName}</p>
+                  <p className="font-body-strong text-body-strong text-[#1C1917]">{doctor.title}{doctor.title !== doctor.specialtyName ? ` · ${doctor.specialtyName}` : ''}</p>
                   {doctor.registration && (
                     <p className="flex items-center gap-1.5 pt-1 text-[#78716C] font-caption text-caption">
                       <span className="material-symbols-outlined text-[16px] text-[#047857]">shield</span>Reg. No: {doctor.registration} · credentials verified by Curxx
@@ -126,7 +159,27 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
                 <span className="font-caption-strong text-caption-strong text-[#78716C] mr-1">Speaks:</span>
                 {doctor.languages.map((l) => <span key={l} className="px-3 py-1 bg-[#F5F5F4] border border-[#E7E5E4] rounded-full font-caption text-caption text-[#1C1917]">{l}</span>)}
               </div>
+              {(doctor.freeVideo || doctor.instant || doctor.consultHours) && (
+                <div className="mt-4 flex items-center gap-2 flex-wrap font-caption text-caption">
+                  {doctor.instant && <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857]"><span className="w-1.5 h-1.5 rounded-full bg-[#047857]"></span>Online 24x7</span>}
+                  {doctor.freeVideo && <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857]"><span className="material-symbols-outlined text-[14px]">redeem</span>Free first video consult</span>}
+                  {doctor.consultHours && <span className="inline-flex items-center gap-1 text-[#78716C]"><span className="material-symbols-outlined text-[16px]">schedule</span>{doctor.consultHours}</span>}
+                </div>
+              )}
             </article>
+          </div>
+
+          <aside id="book" aria-label="Book an appointment" className="w-full lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto no-scrollbar space-y-3 scroll-mt-20 rounded-2xl">
+            <BookingWidget key={widgetMode} doctor={doctor} slots={slots} initialMode={widgetMode} initialSlotId={initialSlot} onSelect={onSelect} />
+            {nextVideo && widgetMode === 'clinic' && doctor.offersVideo !== false && (
+              <div className="bg-[#FFF1F2] border border-[#F9C6C9] rounded-xl p-3 flex items-center justify-between gap-2 text-caption font-caption text-[#8E0E17]">
+                <span>Next video slot: <strong>{slotLabel(nextVideo.startsAt)}</strong>{nextVideo.free ? ' · Free' : ''}</span>
+                <button type="button" onClick={() => { setWidgetMode('video'); setInitialSlot(undefined); }} className="font-caption-strong text-caption-strong text-[#C1121F] hover:underline shrink-0">Switch to video</button>
+              </div>
+            )}
+          </aside>
+
+          <section className="min-w-0 space-y-6 w-full lg:col-start-1 lg:row-start-2">
 
             <nav aria-label="Profile sections" className="overflow-x-auto no-scrollbar sticky top-16 z-30 bg-white border-b border-[#E7E5E4] px-2 flex items-center gap-6 sm:gap-8">
               {[['overview', 'Overview'], ['services', 'Services'], ['reviews', `Reviews (${reviewTotal})`], ['clinic', 'Clinic'], ['faqs', 'FAQs']].map(([id, label]) => (
@@ -193,9 +246,10 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
                   <h3 className="font-body-strong text-body-strong text-[#1C1917]">
                     {facility ? <Link href={`/clinic/${facility.slug}`} className="hover:text-[#C1121F]">{facility.name}</Link> : doctor.clinicName}
                   </h3>
-                  <p className="font-caption text-caption text-[#78716C]">{facility?.address ?? `${doctor.area}, Bengaluru`}</p>
-                  {facility && <p className="font-caption text-caption text-[#78716C]">{facility.openHours}{facility.emergency24x7 ? ' · 24x7 emergency' : ''}</p>}
-                  <p className="font-caption text-caption text-[#1C1917]">Consultation fee: <strong className="font-body-strong">{rupees(doctor.fee)}</strong> · Video {rupees(doctor.videoFee)}</p>
+                  <p className="font-caption text-caption text-[#78716C]">{facility?.address ?? `${doctor.area}, ${cityName}`}</p>
+                  {facility && <p className="font-caption text-caption text-[#78716C]">{facility.category ? `${facility.category} · ` : ''}Open {facility.openHours}{facility.emergency24x7 ? ' · 24x7 emergency' : ''}</p>}
+                  {doctor.consultHours && <p className="font-caption text-caption text-[#78716C]">{firstName} consults here {doctor.consultHours}</p>}
+                  <p className="font-caption text-caption text-[#1C1917]">Consultation fee: <strong className="font-body-strong">{rupees(doctor.fee)}</strong>{doctor.offersVideo !== false ? ` · Video ${rupees(doctor.videoFee)}` : ''}</p>
                   <div className="flex flex-wrap gap-2 pt-2">
                     <a href={mapsUrl(`${doctor.clinicName} ${facility?.address ?? doctor.area}`)} target="_blank" rel="noopener noreferrer" className="h-9 px-3 rounded-lg border border-[#E7E5E4] font-caption-strong text-caption inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">directions</span>Directions</a>
                     {facility?.phone && <a href={`tel:${facility.phone.replace(/\s/g, '')}`} className="h-9 px-3 rounded-lg border border-[#E7E5E4] font-caption-strong text-caption inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">call</span>Call clinic</a>}
@@ -205,33 +259,23 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
               </div>
             </section>
           </section>
-
-          <aside id="book" className="w-full lg:w-[360px] lg:shrink-0 lg:sticky lg:top-24 space-y-3 scroll-mt-24">
-            <BookingWidget key={widgetMode} doctor={doctor} slots={slots} initialMode={widgetMode} />
-            {nextVideo && widgetMode === 'clinic' && (
-              <div className="bg-[#FFF1F2] border border-[#F9C6C9] rounded-xl p-3 flex items-center justify-between gap-2 text-caption font-caption text-[#8E0E17]">
-                <span>Next video slot: <strong>{slotLabel(nextVideo.startsAt)}</strong></span>
-                <button type="button" onClick={() => setWidgetMode('video')} className="font-caption-strong text-caption-strong text-[#C1121F] hover:underline shrink-0">Switch to video</button>
-              </div>
-            )}
-          </aside>
         </div>
 
         {similar.length > 0 && (
           <section className="mt-16 pt-8 border-t border-[#E7E5E4] space-y-6">
             <div className="flex items-end justify-between gap-3 flex-wrap">
               <div>
-                <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Similar {specialtyPlural.toLowerCase()} in Bangalore</h2>
+                <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Similar {specialtyPlural.toLowerCase()} in {cityName}</h2>
                 <p className="font-caption text-caption text-[#78716C]">Verified specialists you can book today</p>
               </div>
-              <Link className="font-body-strong text-body-strong text-[#C1121F] hover:underline flex items-center gap-1" href={`/bangalore/${doctor.specialty}`}>View all<span className="material-symbols-outlined text-[18px]">arrow_forward</span></Link>
+              <Link className="font-body-strong text-body-strong text-[#C1121F] hover:underline flex items-center gap-1" href={`/${city}/${doctor.specialty}`}>View all<span className="material-symbols-outlined text-[18px]">arrow_forward</span></Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {similar.map((d) => (
                 <Link key={d.slug} href={`/doctor/${d.slug}`} className="p-4 rounded-xl border border-[#E7E5E4] bg-white hover:border-[#A8A29E] flex items-center gap-3">
                   <img src={photo(d.photoUrl, 112)} alt={d.name} loading="lazy" className="w-14 h-14 rounded-full object-cover" />
                   <span className="min-w-0">
-                    <span className="block font-body-strong text-body-strong text-[#1C1917] truncate">{d.name}</span>
+                    <h3 className="block font-body-strong text-body-strong text-[#1C1917] truncate">{d.name}</h3>
                     <span className="block font-caption text-caption text-[#78716C] truncate">{d.title} · {d.experienceYears} yrs</span>
                     <span className="block font-caption-strong text-caption text-[#1C1917]">{rupees(d.fee)} · {d.area}</span>
                   </span>
@@ -241,30 +285,26 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
           </section>
         )}
 
-        <section id="faqs" className="mt-12 space-y-4 scroll-mt-24">
-          <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Frequently asked questions</h2>
-          <div className="space-y-2">
-            {faqs.map((f) => (
-              <details key={f.q} className="group rounded-xl border border-[#E7E5E4] bg-white p-4">
-                <summary className="flex items-center justify-between gap-3 cursor-pointer list-none">
-                  <h3 className="font-body-strong text-body-strong text-[#1C1917]">{f.q}</h3>
-                  <span className="material-symbols-outlined text-[20px] text-[#78716C] group-open:rotate-180 transition-transform" aria-hidden="true">expand_more</span>
-                </summary>
-                <p className="mt-2 font-body-default text-body-default text-[#78716C]">{f.a}</p>
-              </details>
-            ))}
-          </div>
+        <section id="faqs" className="mt-12 scroll-mt-24">
+          <FaqAccordion faqs={faqs} heading={`Frequently Asked Questions About ${doctor.name}`} />
         </section>
       </main>
 
+      {/* Phones: the bar follows the widget — once a time is picked it books it directly. */}
       <div className="lg:hidden fixed bottom-16 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#E7E5E4] px-margin py-3 flex items-center gap-3">
         <div className="min-w-0">
-          <p className="font-micro text-micro text-[#78716C]">{widgetMode === 'video' ? 'Video consult' : 'Clinic visit'}</p>
-          <p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">{rupees(widgetMode === 'video' ? doctor.videoFee : doctor.fee)}</p>
+          <p className="font-micro text-micro text-[#78716C] truncate">{picked ? `${picked.mode === 'video' ? 'Video' : 'Clinic'} · ${time(picked.startsAt)}` : widgetMode === 'video' ? 'Video consult' : 'Clinic visit'}</p>
+          <p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">{picked ? (picked.fee === 0 ? 'Free' : rupees(picked.fee)) : rupees(widgetMode === 'video' ? doctor.videoFee : doctor.fee)}</p>
         </div>
-        <button type="button" onClick={() => goToBooking()} className="flex-1 h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-1.5">
-          <span className="material-symbols-outlined text-[18px]">event_available</span>Choose a time
-        </button>
+        {picked ? (
+          <button type="button" onClick={() => router.push(`/book?slot=${picked.id}&doctor=${doctor.slug}`)} className="flex-1 h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-1.5">
+            Book this slot<span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+        ) : (
+          <button type="button" onClick={() => goToBooking()} className="flex-1 h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-1.5">
+            <span className="material-symbols-outlined text-[18px]">event_available</span>Choose a time
+          </button>
+        )}
       </div>
       <Toast message={toast} />
       <Footer />

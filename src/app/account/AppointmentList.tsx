@@ -84,7 +84,7 @@ export default function AppointmentList() {
       <div className="p-6 rounded-xl border border-[#E7E5E4] bg-white text-center space-y-3">
         <span className="material-symbols-outlined text-[32px] text-[#78716C]">event_available</span>
         <p className="font-body-default text-body-default text-on-surface-variant">You have no appointments yet.</p>
-        <Link href="/bangalore/doctors" className="h-11 px-6 inline-flex items-center rounded-lg bg-primary-container hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong">
+        <Link href="/doctors" className="h-11 px-6 inline-flex items-center rounded-lg bg-primary-container hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong">
           Find a doctor
         </Link>
       </div>

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 async function loadSpecialties() {
   try {
-    const { specialties } = await api.specialties('video');
+    const { specialties } = await api.specialties('video', 'all');
     return specialties;
   } catch {
     return [];
@@ -46,7 +46,7 @@ export default async function ConsultSpecialtyPage() {
           {specialties.length === 0 ? (
             <div className="p-8 rounded-xl border border-surface-variant bg-surface-container-low text-center space-y-3">
               <p className="text-body-default font-body-default text-on-surface">We could not load the specialty list just now.</p>
-              <Link href="/bangalore/doctors" className="inline-flex items-center gap-1.5 h-11 px-5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong transition">
+              <Link href="/doctors" className="inline-flex items-center gap-1.5 h-11 px-5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong transition">
                 Browse all verified doctors
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </Link>
@@ -86,7 +86,7 @@ export default async function ConsultSpecialtyPage() {
                 {byAppointment.map((specialty) => (
                   <Link
                     key={specialty.slug}
-                    href={`/bangalore/${specialty.slug}`}
+                    href={`/consult/video/${specialty.slug}`}
                     className="px-3 py-1.5 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline transition"
                   >
                     {specialty.plural}

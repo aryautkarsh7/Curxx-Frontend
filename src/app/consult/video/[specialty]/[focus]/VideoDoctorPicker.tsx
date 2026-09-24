@@ -9,22 +9,25 @@ import Header from '@/components/Header';
 import ListingFilterGroups, { toChips } from '@/components/ListingFilterGroups';
 import MobileFilterSheet from '@/components/MobileFilterSheet';
 import { photo, rupees, type Doctor, type DoctorList, type Specialty, type SubSpecialty } from '@/lib/api';
+import { getCity } from '@/lib/cities';
 
-type Props = DoctorList & { specialty: Specialty; focus: SubSpecialty | null; when: 'now' | 'later' };
+type When = 'now' | 'free' | 'later';
+type Props = DoctorList & { specialty: Specialty; focus: SubSpecialty | null; when: When };
 
 const WHEN_OPTIONS = [
-  { value: 'now', label: 'Consult now', hint: 'Doctors with a free video slot today' },
-  { value: 'later', label: 'Book a time', hint: 'Pick a video slot in the next 7 days' },
+  { value: 'now', label: 'Consult now', hint: 'Online in the next hour — opens with the slot ready', icon: 'bolt' },
+  { value: 'free', label: 'Free consult', hint: 'Doctors offering a free first video consult', icon: 'redeem' },
+  { value: 'later', label: 'Book a time', hint: 'Pick any video slot in the next 7 days', icon: 'calendar_month' },
 ] as const;
 
-export default function VideoDoctorPicker({ specialty, focus, when, doctors, total, pages }: Props) {
+export default function VideoDoctorPicker({ specialty, focus, when, doctors, total, pages, facets }: Props) {
   const { page, sort, filters, setParam, setAvailability, goToPage } = useListingControls();
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
 
-  const instant = when === 'now';
-  const activeChips = toChips({ ...filters, mode: undefined, availability: instant ? undefined : filters.availability });
+  const instant = when !== 'later';
+  const activeChips = toChips({ ...filters, mode: undefined, free: undefined, availability: instant ? undefined : filters.availability });
   const pageNumbers = Array.from({ length: Math.min(pages, 5) }, (_, i) => i + 1).filter((n) => n <= pages);
 
   function replaceParams(mutate: (p: URLSearchParams) => void) {
@@ -35,14 +38,12 @@ export default function VideoDoctorPicker({ specialty, focus, when, doctors, tot
   }
 
   /** The consultation option itself, kept out of the filter rail because it drives the CTA too. */
-  const chooseWhen = (value: 'now' | 'later') =>
+  const chooseWhen = (value: When) =>
     replaceParams((p) => {
-      if (value === 'now') {
-        p.delete('when');
-        p.delete('availability');
-      } else {
-        p.set('when', 'later');
-      }
+      if (value === 'now') p.delete('when');
+      else p.set('when', value);
+      p.delete('availability');
+      p.delete('sort');
       p.delete('page');
     });
 
@@ -72,7 +73,7 @@ export default function VideoDoctorPicker({ specialty, focus, when, doctors, tot
               </h1>
               <p className="text-caption font-caption text-on-surface-variant mt-1">
                 {total.toLocaleString('en-IN')} verified {total === 1 ? specialty.name.toLowerCase() : specialty.plural.toLowerCase()}
-                {focus ? ` treating ${focus.name.toLowerCase()}` : ''} · {instant ? 'available today' : 'bookable this week'}
+                {focus ? ` treating ${focus.name.toLowerCase()}` : ''} · {when === 'now' ? 'online in the next hour' : when === 'free' ? 'with a free first consult' : 'bookable this week'}
               </p>
             </div>
             <Link href={`/consult/video/${specialty.slug}`} className="inline-flex items-center gap-1.5 text-caption-strong font-caption-strong text-primary-container hover:underline">
@@ -82,7 +83,7 @@ export default function VideoDoctorPicker({ specialty, focus, when, doctors, tot
           </div>
 
           {/* Consultation option */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl" role="group" aria-label="Consultation option">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 max-w-3xl" role="group" aria-label="Consultation option">
             {WHEN_OPTIONS.map((option) => {
               const active = when === option.value;
               return (
@@ -98,7 +99,7 @@ export default function VideoDoctorPicker({ specialty, focus, when, doctors, tot
                   }
                 >
                   <span className={active ? 'flex items-center gap-1.5 text-caption-strong font-caption-strong text-primary-container' : 'flex items-center gap-1.5 text-caption-strong font-caption-strong text-on-surface'}>
-                    <span className="material-symbols-outlined text-[18px]">{option.value === 'now' ? 'bolt' : 'calendar_month'}</span>
+                    <span className="material-symbols-outlined text-[18px]">{option.icon}</span>
                     {option.label}
                   </span>
                   <span className="block text-micro font-micro text-on-surface-variant mt-0.5">{option.hint}</span>
@@ -128,14 +129,16 @@ export default function VideoDoctorPicker({ specialty, focus, when, doctors, tot
               activeChips={activeChips}
               setParam={setParam}
               setAvailability={setAvailability}
-              hide={instant ? ['mode', 'availability'] : ['mode']}
+              hide={instant ? ['mode', 'availability', 'free'] : ['mode', 'free']}
+              areas={facets?.areas}
+              languages={facets?.languages}
             />
           </aside>
 
           <section className="space-y-4" aria-labelledby="results-heading">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <h2 id="results-heading" className="font-headline-h3 text-headline-h3 text-on-surface">
-                {instant ? 'Available for a video call today' : 'Video slots in the next 7 days'}
+                {when === 'now' ? 'Online now — join within the hour' : when === 'free' ? 'Free first video consultation' : 'Video slots in the next 7 days'}
               </h2>
               <div className="flex items-center gap-2">
                 <span className="font-caption text-caption text-on-surface-variant">Sort by:</span>
@@ -146,6 +149,7 @@ export default function VideoDoctorPicker({ specialty, focus, when, doctors, tot
                   className="appearance-none bg-surface-container-lowest border border-surface-variant rounded-lg pl-3 pr-8 py-1.5 font-caption-strong text-caption-strong text-on-surface focus:outline-none focus:border-primary-container cursor-pointer"
                 >
                   <option value="relevance">Relevance</option>
+                  <option value="soonest">Earliest available</option>
                   <option value="fee_asc">Fee: Low to High</option>
                   <option value="fee_desc">Fee: High to Low</option>
                   <option value="experience">Experience</option>
@@ -160,7 +164,7 @@ export default function VideoDoctorPicker({ specialty, focus, when, doctors, tot
                   <span className="material-symbols-outlined text-[28px]">search_off</span>
                 </span>
                 <p className="font-headline-h3 text-headline-h3 text-on-surface">
-                  No {specialty.plural.toLowerCase()} {instant ? 'are on video right now' : 'match these filters'}
+                  No {specialty.plural.toLowerCase()} {when === 'now' ? 'are online in the next hour' : when === 'free' ? 'offer a free consult right now' : 'match these filters'}
                 </p>
                 <p className="font-body-default text-body-default text-on-surface-variant max-w-md">
                   {instant
@@ -186,7 +190,7 @@ export default function VideoDoctorPicker({ specialty, focus, when, doctors, tot
               </div>
             ) : (
               doctors.map((doctor) => (
-                <ConsultDoctorCard key={doctor.id} doctor={doctor} focus={focus} instant={instant} />
+                <ConsultDoctorCard key={doctor.id} doctor={doctor} focus={focus} when={when} />
               ))
             )}
 
@@ -223,15 +227,20 @@ export default function VideoDoctorPicker({ specialty, focus, when, doctors, tot
         setParam={setParam}
         setAvailability={setAvailability}
         clearFilters={clearFilters}
-        hide={instant ? ['mode', 'availability'] : ['mode']}
+        hide={instant ? ['mode', 'availability', 'free'] : ['mode', 'free']}
+        areas={facets?.areas}
+        languages={facets?.languages}
       />
       <Footer />
     </>
   );
 }
 
-function ConsultDoctorCard({ doctor, focus, instant }: { doctor: Doctor; focus: SubSpecialty | null; instant: boolean }) {
-  const joinHref = `/book?doctor=${doctor.slug}&mode=video${focus ? `&focus=${focus.slug}` : ''}`;
+function ConsultDoctorCard({ doctor, focus, when }: { doctor: Doctor; focus: SubSpecialty | null; when: When }) {
+  const slot = doctor.nextSlot;
+  // Consult now / free: open the profile with that exact slot already selected.
+  const joinHref = slot ? `/doctor/${doctor.slug}?slot=${slot.id}&mode=video` : `/doctor/${doctor.slug}?mode=video`;
+  const instant = when !== 'later';
   const treats = (doctor.focusAreas ?? []).slice(0, 4);
 
   return (
@@ -277,7 +286,8 @@ function ConsultDoctorCard({ doctor, focus, instant }: { doctor: Doctor; focus: 
               <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>thumb_up</span>
               {doctor.recommendPercent}%
             </span>
-            <span>({doctor.reviewCount.toLocaleString('en-IN')} consults)</span>
+            <span>({doctor.reviewCount.toLocaleString('en-IN')} reviews)</span>
+            {doctor.city && <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">location_on</span>{doctor.area}, {getCity(doctor.city)?.name ?? doctor.city}</span>}
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-[16px]">translate</span>
               {doctor.languages.slice(0, 3).join(', ')}
@@ -288,13 +298,14 @@ function ConsultDoctorCard({ doctor, focus, instant }: { doctor: Doctor; focus: 
         <div className="w-full sm:w-44 flex flex-row sm:flex-col justify-between items-end sm:border-l border-surface-variant sm:pl-4 pt-3 sm:pt-0 border-t sm:border-t-0 gap-3">
           <div className="text-left sm:text-right">
             <span className="font-caption text-caption text-on-surface-variant block">Video consult</span>
-            <div className="font-headline-h2 text-headline-h2 text-on-surface font-bold">{rupees(doctor.videoFee)}</div>
+            <div className="font-headline-h2 text-headline-h2 text-on-surface font-bold">{slot?.free ? 'Free' : rupees(slot?.fee ?? doctor.videoFee)}</div>
+            {slot?.free && <div className="font-micro text-micro text-on-surface-variant line-through">{rupees(doctor.videoFee)}</div>}
           </div>
           <div className="w-full max-w-[200px] sm:max-w-none space-y-2">
-            {doctor.nextSlotAt && (
+            {slot && (
               <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded px-2 py-1 flex items-center justify-center gap-1 text-micro font-micro text-[#047857]">
                 <span className="material-symbols-outlined text-[14px]">schedule</span>
-                <span>Next: {slotLabel(doctor.nextSlotAt)}</span>
+                <span>{when === 'now' ? 'Starts' : 'Next'}: {slotLabel(slot.startsAt)}</span>
               </div>
             )}
             <Link
@@ -302,7 +313,7 @@ function ConsultDoctorCard({ doctor, focus, instant }: { doctor: Doctor; focus: 
               className="w-full h-10 bg-primary-container hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong rounded-lg flex items-center justify-center gap-1.5 transition active:scale-95"
             >
               <span className="material-symbols-outlined text-[18px]">{instant ? 'videocam' : 'calendar_month'}</span>
-              {instant ? 'Join video consult' : 'See video slots'}
+              {when === 'now' ? 'Consult now' : when === 'free' ? 'Book free consult' : 'See video slots'}
             </Link>
             <Link href={`/doctor/${doctor.slug}`} className="w-full h-9 bg-surface-container-lowest hover:bg-surface-container-low border border-surface-variant text-on-surface font-caption-strong text-caption-strong rounded-lg flex items-center justify-center transition">
               View profile

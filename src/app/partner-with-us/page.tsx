@@ -50,7 +50,7 @@ export default function PartnerWithUsPage() {
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
             </a>
             <Link
-              href="/bangalore/doctors"
+              href="/doctors"
               className="inline-flex items-center gap-1.5 h-12 px-6 rounded-lg border border-surface-variant bg-surface-container-lowest hover:bg-surface-container text-on-surface font-body-strong text-body-strong transition"
             >
               See how profiles look

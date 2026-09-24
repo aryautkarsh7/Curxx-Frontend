@@ -131,7 +131,7 @@ function Results() {
               ))}
             </div>
             <p className="font-caption text-caption text-[#78716C]">
-              A flagged value isn&apos;t a diagnosis. <Link href="/bangalore/general-physician" className="text-primary-container underline">Review it with a doctor</Link> — Curxx physicians can see this report once you share it.
+              A flagged value isn&apos;t a diagnosis. <Link href="/doctors" className="text-primary-container underline">Review it with a doctor</Link> — Curxx physicians can see this report once you share it.
             </p>
           </div>
         )}

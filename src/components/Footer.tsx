@@ -1,24 +1,31 @@
+'use client';
 import Link from 'next/link';
+import { POPULAR_CITIES, getCity } from '@/lib/cities';
+import { useCity } from '@/lib/city-store';
 
-const SPECIALTY_LINKS = [
-  { label: 'General Medicine', href: '/bangalore/general-physician' },
-  { label: 'Dermatology & Cosmetology', href: '/bangalore/dermatologist' },
-  { label: 'Pediatrics & Neonatology', href: '/bangalore/pediatrician' },
-  { label: 'Obstetrics & Gynecology', href: '/bangalore/gynecologist' },
-  { label: 'Orthopedics & Joint Care', href: '/bangalore/orthopedist' },
-  { label: 'Cardiology & Vascular', href: '/bangalore/cardiologist' },
+const specialtyLinks = (city: string) => [
+  { label: 'General Medicine', href: `/${city}/general-physician` },
+  { label: 'Dermatology & Cosmetology', href: `/${city}/dermatologist` },
+  { label: 'Pediatrics & Neonatology', href: `/${city}/pediatrician` },
+  { label: 'Obstetrics & Gynecology', href: `/${city}/gynecologist` },
+  { label: 'Orthopedics & Joint Care', href: `/${city}/orthopedist` },
+  { label: 'Cardiology & Vascular', href: `/${city}/cardiologist` },
+  { label: 'All 55+ Specialties', href: `/${city}/specialties` },
 ];
 
-const NETWORK_LINKS = [
+const networkLinks = (city: string) => [
   { label: 'Emergency Care (108)', href: 'tel:108' },
-  { label: 'Clinical Specialties', href: '/bangalore/dermatologist' },
-  { label: 'Verified Doctors', href: '/bangalore/doctors' },
+  { label: 'Clinical Specialties', href: `/${city}/specialties` },
+  { label: 'Verified Doctors', href: `/${city}/doctors` },
+  { label: 'Surgeries', href: `/${city}/surgeries` },
+  { label: 'Hospital Network', href: `/${city}/hospitals` },
+  { label: 'Clinics Near You', href: `/${city}/clinics` },
+  { label: 'Diagnostic Labs', href: `/${city}/labs` },
+  { label: 'Home Lab Tests', href: '/lab-tests' },
+  { label: 'Health Blog', href: '/blog' },
+  { label: 'Curxx Plus', href: '/curxx-plus' },
   { label: 'ABHA Integration', href: '/records' },
   { label: 'Teleconsultation Policy', href: '/teleconsultation-policy' },
-  { label: 'Hospital Network', href: '/bangalore/hospitals' },
-  { label: 'Clinics Near You', href: '/bangalore/clinics' },
-  { label: 'Diagnostic Labs', href: '/bangalore/labs' },
-  { label: 'Home Lab Tests', href: '/lab-tests' },
 ];
 
 const LEGAL_LINKS = [
@@ -39,6 +46,9 @@ function FooterLink({ label, href }: { label: string; href: string }) {
 }
 
 export default function Footer() {
+  const { city } = useCity();
+  const SPECIALTY_LINKS = specialtyLinks(city);
+  const NETWORK_LINKS = networkLinks(city);
   return (
     <footer className="w-full bg-surface-container-highest border-t border-surface-variant">
       <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-2xl space-y-12">
@@ -60,6 +70,7 @@ export default function Footer() {
               <span className="px-2.5 py-1 rounded bg-surface-container-lowest border border-surface-variant text-micro font-micro text-on-surface-variant">NABH Partner Network</span>
               <span className="px-2.5 py-1 rounded bg-surface-container-lowest border border-surface-variant text-micro font-micro text-on-surface-variant">ISO 27001 Certified</span>
               <span className="px-2.5 py-1 rounded bg-surface-container-lowest border border-surface-variant text-micro font-micro text-on-surface-variant">HIPAA Compliant</span>
+              <span className="px-2.5 py-1 rounded bg-surface-container-lowest border border-surface-variant text-micro font-micro text-on-surface-variant">ABDM Certified</span>
             </div>
           </div>
           {/* Links Column 1: Clinical Specialties */}
@@ -86,6 +97,17 @@ export default function Footer() {
               </p>
             </div>
           </div>
+        </div>
+        {/* Cities */}
+        <div className="space-y-3">
+          <div className="text-caption-strong font-caption-strong text-on-surface uppercase tracking-wider">Find Doctors in Your City</div>
+          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-caption font-caption text-on-surface-variant">
+            {POPULAR_CITIES.map((slug) => (
+              <li key={slug}>
+                <FooterLink label={`Doctors in ${getCity(slug)!.name}`} href={`/${slug}/doctors`} />
+              </li>
+            ))}
+          </ul>
         </div>
         {/* Bottom Bar: Exact Copyright & Legal */}
         <div className="pt-8 border-t border-surface-variant flex flex-col sm:flex-row items-center justify-between text-caption font-caption text-on-surface-variant gap-4">

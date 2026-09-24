@@ -55,7 +55,7 @@ export default function LabProfile({ lab, tests, nearby }: { lab: Lab; tests: La
     try {
       const match = await api.labMatch({ pincode, tests: [], mode: 'home' });
       const here = match.labs.find((l) => l.slug === lab.slug);
-      if (!match.place) setCoverage({ ok: false, text: match.reason ?? 'Home collection is available in Bengaluru only for now.' });
+      if (!match.place) setCoverage({ ok: false, text: match.reason ?? 'Home collection isn’t available at this pincode yet.' });
       else if (here?.canCollect) setCoverage({ ok: true, text: `Yes — ${lab.shortName} collects at ${match.place.area} (${here.distanceKm} km away).` });
       else {
         const other = match.labs.find((l) => l.canCollect);
@@ -119,7 +119,7 @@ export default function LabProfile({ lab, tests, nearby }: { lab: Lab; tests: La
           </ul>
           {notHere.length > 0 && (
             <p role="alert" className="px-3 py-2 rounded-lg bg-[#FFFBEB] border border-[#FDE68A] font-caption text-caption text-[#92400E]">
-              {lab.shortName} doesn&apos;t run {notHere.map((i) => i.name).join(', ')}. Remove {notHere.length > 1 ? 'them' : 'it'} at checkout or pick a <Link href={`/bangalore/labs?test=${notHere[0]!.slug}`} className="underline">lab that does</Link>.
+              {lab.shortName} doesn&apos;t run {notHere.map((i) => i.name).join(', ')}. Remove {notHere.length > 1 ? 'them' : 'it'} at checkout or pick a <Link href={`/${lab.city ?? 'bangalore'}/labs?test=${notHere[0]!.slug}`} className="underline">lab that does</Link>.
             </p>
           )}
         </div>
@@ -140,7 +140,7 @@ export default function LabProfile({ lab, tests, nearby }: { lab: Lab; tests: La
         <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-2 text-caption font-caption text-outline mb-space-base">
           <Link href="/" className="hover:text-primary">Home</Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <Link href="/bangalore/labs" className="hover:text-primary">Labs</Link>
+          <Link href={`/${lab.city ?? 'bangalore'}/labs`} className="hover:text-primary">Labs</Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
           <span className="text-on-surface font-caption-strong text-caption-strong truncate">{lab.name}</span>
         </nav>
@@ -224,7 +224,7 @@ export default function LabProfile({ lab, tests, nearby }: { lab: Lab; tests: La
                   {coverage && <p role="status" className={`font-caption text-caption ${coverage.ok ? 'text-[#047857]' : 'text-[#92400E]'}`}>{coverage.text}</p>}
                 </>
               ) : (
-                <p className="font-caption text-caption text-on-surface-variant">This is a walk-in collection point — book a visit and skip the queue. For a home visit, <Link href="/bangalore/labs?homeCollection=true" className="text-primary-container hover:underline">see labs that collect at home</Link>.</p>
+                <p className="font-caption text-caption text-on-surface-variant">This is a walk-in collection point — book a visit and skip the queue. For a home visit, <Link href={`/${lab.city ?? 'bangalore'}/labs?homeCollection=true`} className="text-primary-container hover:underline">see labs that collect at home</Link>.</p>
               )}
             </section>
 
@@ -284,7 +284,7 @@ export default function LabProfile({ lab, tests, nearby }: { lab: Lab; tests: La
               <section className="space-y-3">
                 <div className="flex items-end justify-between gap-3">
                   <h2 className="font-headline-h2 text-headline-h2 text-on-surface">Other labs nearby</h2>
-                  <Link href="/bangalore/labs" className="font-caption-strong text-caption-strong text-primary-container hover:underline">All labs</Link>
+                  <Link href={`/${lab.city ?? 'bangalore'}/labs`} className="font-caption-strong text-caption-strong text-primary-container hover:underline">All labs</Link>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">{nearby.map((l) => <LabMiniCard key={l.slug} lab={l} />)}</div>
               </section>

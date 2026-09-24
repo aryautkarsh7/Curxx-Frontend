@@ -8,14 +8,9 @@ type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-/** Pre-render every doctor the API knows about; new ones render on first request. */
+/** Thousands of doctors: render each profile on first request instead of at build time. */
 export async function generateStaticParams() {
-  try {
-    const { doctors } = await api.doctors({ limit: 50 });
-    return doctors.map((d) => ({ slug: d.slug }));
-  } catch {
-    return [];
-  }
+  return [];
 }
 
 async function load(slug: string) {
@@ -31,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await load((await params).slug);
   if (!data) return {};
   const { doctor } = data;
-  const title = `${doctor.name} — ${doctor.title}, ${doctor.area} | Curxx`;
+  const title = `${doctor.name} — ${doctor.title} in ${doctor.area}, ${doctor.cityName ?? 'Bengaluru'} | Curxx`;
   const description = `Book ${doctor.name}, ${doctor.title.toLowerCase()} at ${doctor.clinicName}, ${doctor.area}. ${doctor.experienceYears} years of experience, consultations from ₹${doctor.videoFee}. Video consult or in-clinic visit on Curxx.`;
   return {
     title,
@@ -46,13 +41,10 @@ export default async function DoctorPage({ params, searchParams }: Props) {
   const data = await load(slug);
   if (!data) notFound();
 
-  const requested = (await searchParams).mode;
-  const mode = (Array.isArray(requested) ? requested[0] : requested) === 'video' ? 'video' : 'clinic';
-  const [{ slots }, specialties] = await Promise.all([
-    api.slots(slug).catch(() => ({ slots: [] })),
-    api.specialties().then((r) => r.specialties).catch(() => []),
-  ]);
-  const plural = specialties.find((s) => s.slug === data.doctor.specialty)?.plural ?? 'Doctors';
+  const query = await searchParams;
+  const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+  const mode = first(query.mode) === 'video' ? 'video' : 'clinic';
+  const { slots } = await api.slots(slug).catch(() => ({ slots: [] }));
 
-  return <DoctorProfile doctor={data.doctor} facility={data.facility} similar={data.similar} slots={slots} mode={mode} specialtyPlural={plural} />;
+  return <DoctorProfile doctor={data.doctor} facility={data.facility} similar={data.similar} slots={slots} mode={mode} slotId={first(query.slot)} />;
 }

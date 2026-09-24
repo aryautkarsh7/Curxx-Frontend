@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { test } = data;
   return {
     title: `${test.name} at Home — ₹${test.price}, ${test.reportTime} | Curxx`,
-    description: `${test.kind === 'package' ? `${test.testsIncluded} tests. ` : ''}Covers ${test.covers}. Free home sample collection in Bengaluru.`,
+    description: `${test.kind === 'package' ? `${test.testsIncluded} tests. ` : ''}Covers ${test.covers}. Free home sample collection in 24 cities.`,
     alternates: { canonical: `/lab-tests/${test.slug}` },
   };
 }

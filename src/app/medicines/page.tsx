@@ -4,7 +4,7 @@ import MedicineStore from './MedicineStore';
 
 export const metadata: Metadata = {
   title: 'Order Medicines Online, Delivered in 2 Hours | Curxx',
-  description: 'Genuine prescription medicines, devices and wellness essentials from licensed pharmacies across Bengaluru. Upload a prescription or shop by category.',
+  description: 'Genuine prescription medicines, devices and wellness essentials from licensed pharmacies across India. Upload a prescription or shop by category.',
   alternates: { canonical: '/medicines' },
 };
 

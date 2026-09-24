@@ -28,6 +28,7 @@ export function toChips(filters: Filters): Chip[] {
   return [
     filters.availability && { key: 'availability', label: AVAILABILITY.find((a) => a.value === filters.availability)?.label ?? filters.availability },
     filters.mode && { key: 'mode', label: MODES.find((m) => m.value === filters.mode)?.label ?? filters.mode },
+    filters.free && { key: 'free', label: 'Free video consult' },
     filters.area && { key: 'area', label: filters.area },
     filters.language && { key: 'language', label: filters.language },
     filters.maxFee && { key: 'maxFee', label: `Under ₹${filters.maxFee.toLocaleString('en-IN')}` },
@@ -40,12 +41,17 @@ type Props = {
   activeChips: Chip[];
   setParam: (key: string, value: string | number | undefined) => void;
   setAvailability: (value: string) => void;
-  /** Groups the instant video flow already decides for the patient, e.g. mode and availability. */
-  hide?: ('mode' | 'availability')[];
+  /** Groups the page already decides for the patient, e.g. mode and availability, or area on a locality page. */
+  hide?: ('mode' | 'availability' | 'area' | 'free')[];
+  /** Localities and languages from the listing's facets, with counts. */
+  areas?: { value: string; count: number }[];
+  languages?: { value: string; count: number }[];
 };
 
 /** Filter controls for the doctor listing — rendered in the desktop rail and in the mobile sheet. */
-export default function ListingFilterGroups({ filters, activeChips, setParam, setAvailability, hide = [] }: Props) {
+export default function ListingFilterGroups({ filters, activeChips, setParam, setAvailability, hide = [], areas, languages }: Props) {
+  const areaOptions = areas?.length ? areas : AREAS.map((value) => ({ value, count: 0 }));
+  const languageOptions = languages?.length ? languages.slice(0, 8) : LANGUAGES.map((value) => ({ value, count: 0 }));
   return (
     <div className="space-y-5">
 
@@ -88,6 +94,17 @@ export default function ListingFilterGroups({ filters, activeChips, setParam, se
 </div>
 )}
 
+{/* Free consults */}
+{!hide.includes('free') && (
+<div className="pt-2 border-t border-[#E7E5E4]">
+<label className="flex items-center gap-2.5 cursor-pointer text-caption font-caption text-[#1C1917]">
+<input type="checkbox" checked={Boolean(filters.free)} onChange={() => setParam('free', filters.free ? undefined : 'true')} className="w-[18px] h-[18px] rounded text-[#C1121F] focus:ring-[#C1121F] border-[#78716C]" />
+<span className="flex-1">Free video consult</span>
+<span className="px-1.5 py-0.5 rounded bg-[#ECFDF5] border border-[#A7F3D0] text-micro font-micro text-[#047857]">₹0</span>
+</label>
+</div>
+)}
+
 {/* Fee Range */}
 <div className="space-y-2.5 pt-2 border-t border-[#E7E5E4]">
 <div className="flex justify-between items-center">
@@ -125,23 +142,26 @@ export default function ListingFilterGroups({ filters, activeChips, setParam, se
 </div>
 
 {/* Locality */}
+{!hide.includes('area') && (
 <div className="space-y-2 pt-2 border-t border-[#E7E5E4]">
-<label className="font-caption-strong text-caption-strong text-[#1C1917] block">Locality</label>
+<p className="font-caption-strong text-caption-strong text-[#1C1917]">Locality</p>
 <div className="max-h-40 overflow-y-auto space-y-1.5 text-caption font-caption text-[#1C1917] pr-1">
-{AREAS.map((area) => (
+{areaOptions.map(({ value: area, count }) => (
 <label key={area} className="flex items-center gap-2 cursor-pointer">
 <input type="checkbox" checked={filters.area === area} onChange={() => setParam('area', area)} className="w-4 h-4 rounded text-[#C1121F] border-[#78716C]" />
-{area}
+<span className="flex-1">{area}</span>
+{count > 0 && <span className="text-micro font-micro text-[#78716C] tabular-nums">{count}</span>}
 </label>
 ))}
 </div>
 </div>
+)}
 
 {/* Spoken Languages */}
 <div className="space-y-2 pt-2 border-t border-[#E7E5E4]">
-<label className="font-caption-strong text-caption-strong text-[#1C1917] block">Spoken Languages</label>
+<p className="font-caption-strong text-caption-strong text-[#1C1917]">Spoken Languages</p>
 <div className="grid grid-cols-2 gap-2 text-caption font-caption text-[#1C1917]">
-{LANGUAGES.map((language) => (
+{languageOptions.map(({ value: language }) => (
 <label key={language} className="flex items-center gap-2 cursor-pointer">
 <input type="checkbox" checked={filters.language === language} onChange={() => setParam('language', language)} className="w-4 h-4 rounded text-[#C1121F] border-[#78716C]" />
 {language}

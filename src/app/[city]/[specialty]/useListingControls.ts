@@ -9,6 +9,7 @@ export type ListingFilters = {
   availability?: 'today' | 'tomorrow' | 'next-7-days';
   maxFee?: number;
   minExperience?: number;
+  free?: boolean;
 };
 
 /** URL-driven filters, sort, pagination and card navigation for the doctor listing. */
@@ -27,6 +28,7 @@ export function useListingControls() {
     availability: (params.get('availability') as ListingFilters['availability']) ?? undefined,
     maxFee: Number(params.get('maxFee')) || undefined,
     minExperience: Number(params.get('minExperience')) || undefined,
+    free: params.get('free') === 'true' || undefined,
   };
 
   function navigate(mutate: (p: URLSearchParams) => void, { keepScroll = true } = {}) {
@@ -53,7 +55,8 @@ export function useListingControls() {
     setParam,
     setSort: (value: string) => navigate((p) => { value === 'relevance' ? p.delete('sort') : p.set('sort', value); p.delete('page'); }),
     setAvailability: (value: string) => setParam('availability', value),
-    clearFilters: () => router.replace(pathname, { scroll: false }),
+    // Keeps a search query (?q=fever) — it defines the page rather than filtering it.
+    clearFilters: () => router.replace(params.get('q') ? `${pathname}?q=${encodeURIComponent(params.get('q')!)}` : pathname, { scroll: false }),
     goToPage: (n: number) => navigate((p) => (n <= 1 ? p.delete('page') : p.set('page', String(n))), { keepScroll: false }),
 
     /** Card-level navigation that ignores clicks on the card's own links and buttons. */

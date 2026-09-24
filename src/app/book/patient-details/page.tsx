@@ -34,7 +34,7 @@ function PatientDetails() {
   useEffect(() => {
     const current = getDraft();
     if (!current) {
-      router.replace('/bangalore/doctors');
+      router.replace('/doctors');
       return;
     }
     const user = getUser();

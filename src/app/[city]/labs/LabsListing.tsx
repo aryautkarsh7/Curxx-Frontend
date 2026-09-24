@@ -21,6 +21,8 @@ const ACCREDITATION_HINT: Record<string, string> = {
 };
 
 type Props = {
+  city: string;
+  cityName: string;
   items: LabSummary[];
   total: number;
   near: Near;
@@ -31,7 +33,7 @@ type Props = {
   failed: boolean;
 };
 
-export default function LabsListing({ items, total, near, areas, accreditations, tests, query, failed }: Props) {
+export default function LabsListing({ city, cityName, items, total, near, areas, accreditations, tests, query, failed }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -53,7 +55,9 @@ export default function LabsListing({ items, total, near, areas, accreditations,
   function changeLocation(e: React.FormEvent) {
     e.preventDefault();
     if (!/^[1-9]\d{5}$/.test(pincode)) return setPincodeError('Enter a 6-digit pincode');
-    if (!pincode.startsWith('560')) return setPincodeError('We list labs in Bengaluru (560xxx) for now');
+    const prefixes: Record<string, string[]> = { bangalore: ['56'], mumbai: ['40'], delhi: ['11'], gurgaon: ['12'], noida: ['20'] };
+    const expected = prefixes[city];
+    if (expected && !expected.some((p) => pincode.startsWith(p))) return setPincodeError(`That pincode isn’t in ${cityName}. Change the city from the location menu.`);
     setPincodeError('');
     update((p) => p.set('pincode', pincode));
   }
@@ -139,7 +143,7 @@ export default function LabsListing({ items, total, near, areas, accreditations,
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
             <Link href="/lab-tests" className="hover:text-primary">Lab tests</Link>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <span className="font-caption-strong text-caption-strong text-on-surface">Labs in Bangalore</span>
+            <span className="font-caption-strong text-caption-strong text-on-surface">Labs in {cityName}</span>
           </nav>
           <div className="hidden sm:flex items-center gap-2 text-micro font-micro text-tertiary bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-1 rounded-full">
             <span className="material-symbols-outlined text-[14px]">verified</span><span>Every lab NABL accredited · pathologist-signed reports</span>
@@ -149,7 +153,7 @@ export default function LabsListing({ items, total, near, areas, accreditations,
       <main className="flex-1 w-full max-w-[1440px] mx-auto px-margin sm:px-margin-desktop py-space-base pb-28 lg:pb-space-base">
         <div className="flex flex-col md:flex-row md:items-end justify-between pb-6 gap-4 border-b border-[#E7E5E4]">
           <div className="min-w-0">
-            <h1 className="text-headline-h1 font-headline-h1 text-on-surface tracking-tight">{testName ? `Labs for ${testName}` : 'Diagnostic labs in Bangalore'}</h1>
+            <h1 className="text-headline-h1 font-headline-h1 text-on-surface tracking-tight">{testName ? `Labs for ${testName} in ${cityName}` : `Diagnostic labs in ${cityName}`}</h1>
             <p className="text-caption font-caption text-on-surface-variant mt-1">
               {total} partner {total === 1 ? 'lab' : 'labs'} near <span className="font-caption-strong text-on-surface">{near.area} ({near.pincode})</span> · {SORTS.find((s) => s.value === (query.sort ?? 'distance'))!.label.toLowerCase()}
             </p>

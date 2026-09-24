@@ -1,30 +1,28 @@
-// URL-slug catalogue used for routing and metadata. Listings and the homepage grid
-// read the live catalogue from the API; this stays the source of valid /bangalore/{slug} routes.
-export type Specialty = { slug: string; name: string; plural: string; icon: string; fromPrice: number };
+// URL-slug catalogue used for routing, menus and metadata (generated from the backend catalogue).
+// Listings read live counts and content from the API.
+import { CONDITION_LIST, SPECIALTY_ALIASES, SPECIALTY_CATEGORIES, SPECIALTY_LIST, type SpecialtyInfo } from './catalogue-data';
 
-export const SPECIALTIES: Specialty[] = [
-  { slug: 'general-physician', name: 'General Physician', plural: 'General Physicians', icon: 'stethoscope', fromPrice: 399 },
-  { slug: 'cardiologist', name: 'Cardiologist', plural: 'Cardiologists', icon: 'cardiology', fromPrice: 799 },
-  { slug: 'dermatologist', name: 'Dermatologist', plural: 'Dermatologists', icon: 'dermatology', fromPrice: 599 },
-  { slug: 'pediatrician', name: 'Pediatrician', plural: 'Pediatricians', icon: 'child_care', fromPrice: 499 },
-  { slug: 'gynecologist', name: 'Gynecologist', plural: 'Gynecologists', icon: 'female', fromPrice: 649 },
-  { slug: 'orthopedist', name: 'Orthopedist', plural: 'Orthopedists', icon: 'accessibility_new', fromPrice: 699 },
-  { slug: 'psychiatrist', name: 'Psychiatrist', plural: 'Psychiatrists', icon: 'psychiatry', fromPrice: 899 },
-  { slug: 'ent-specialist', name: 'ENT Specialist', plural: 'ENT Specialists', icon: 'hearing', fromPrice: 499 },
-  { slug: 'gastroenterologist', name: 'Gastroenterologist', plural: 'Gastroenterologists', icon: 'gastroenterology', fromPrice: 749 },
-  { slug: 'neurologist', name: 'Neurologist', plural: 'Neurologists', icon: 'neurology', fromPrice: 999 },
-  { slug: 'ophthalmologist', name: 'Ophthalmologist', plural: 'Ophthalmologists', icon: 'visibility', fromPrice: 499 },
-  { slug: 'dentist', name: 'Dentist', plural: 'Dentists', icon: 'dentistry', fromPrice: 349 },
-  { slug: 'trichologist', name: 'Trichologist', plural: 'Trichologists', icon: 'face', fromPrice: 599 },
-  { slug: 'cosmetic-surgeon', name: 'Cosmetic Surgeon', plural: 'Cosmetic Surgeons', icon: 'face_retouching_natural', fromPrice: 999 },
-  { slug: 'venereologist', name: 'Venereologist', plural: 'Venereologists', icon: 'vaccines', fromPrice: 599 },
-  { slug: 'pediatric-dermatologist', name: 'Pediatric Dermatologist', plural: 'Pediatric Dermatologists', icon: 'child_care', fromPrice: 699 },
-  { slug: 'allergist', name: 'Allergist & Immunologist', plural: 'Allergists & Immunologists', icon: 'coronavirus', fromPrice: 699 },
-];
+export type Specialty = SpecialtyInfo;
+export const SPECIALTIES = SPECIALTY_LIST;
+export { SPECIALTY_CATEGORIES };
 
-/** `/bangalore/doctors` lists every specialty. */
-export const ALL_DOCTORS = { slug: 'doctors', name: 'Doctor', plural: 'Doctors' } as const;
+/** `/{city}/doctors` lists every specialty. */
+export const ALL_DOCTORS = { slug: 'doctors', name: 'Doctor', plural: 'Doctors', icon: 'stethoscope', category: '', fromPrice: 0, videoFrom: 0, video: true, popular: false, description: 'Verified doctors across every specialty' } as const;
+
+const BY_SLUG = new Map(SPECIALTY_LIST.map((s) => [s.slug, s]));
 
 export function getSpecialty(slug: string) {
-  return SPECIALTIES.find((s) => s.slug === slug);
+  return BY_SLUG.get(slug);
 }
+
+/** A specialty URL that should permanently redirect elsewhere (trichologist → dermatologist). */
+export const specialtyAlias = (slug: string) => SPECIALTY_ALIASES[slug];
+
+/** `treatment-for-{condition}` URLs are condition pages. */
+export const CONDITION_PREFIX = 'treatment-for-';
+export const conditionFromSegment = (segment: string) =>
+  segment.startsWith(CONDITION_PREFIX) ? CONDITION_LIST.find((c) => c.slug === segment.slice(CONDITION_PREFIX.length)) : undefined;
+export const conditionHref = (city: string, slug: string) => `/${city}/${CONDITION_PREFIX}${slug}`;
+
+/** The total we advertise ("55+ specialties") — the catalogue minus General Surgeon, which lives under surgeries. */
+export const SPECIALTY_COUNT_LABEL = `${Math.floor((SPECIALTY_LIST.length - 1) / 5) * 5}+`;

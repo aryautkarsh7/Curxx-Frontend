@@ -10,7 +10,7 @@ type Props = { params: Promise<{ specialty: string }> };
 
 async function loadSpecialty(slug: string): Promise<Specialty | null> {
   try {
-    const { specialties } = await api.specialties('video');
+    const { specialties } = await api.specialties('video', 'all');
     return specialties.find((s) => s.slug === slug) ?? null;
   } catch {
     return null;
@@ -20,7 +20,7 @@ async function loadSpecialty(slug: string): Promise<Specialty | null> {
 /** Every video-available doctor in the specialty, used to count doctors per focus area. */
 async function loadDoctors(slug: string): Promise<Doctor[]> {
   try {
-    const { doctors } = await api.doctors({ specialty: slug, mode: 'video', limit: 50 });
+    const { doctors } = await api.doctors({ city: 'all', specialty: slug, mode: 'video', limit: 50 });
     return doctors;
   } catch {
     return [];

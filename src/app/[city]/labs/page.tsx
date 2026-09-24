@@ -1,16 +1,21 @@
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { api, type LabDirectoryQuery } from '@/lib/api';
-import { canonicalCity } from '@/lib/cities';
+import { canonicalCity, getCity } from '@/lib/cities';
 import LabsListing from './LabsListing';
 
-export const metadata: Metadata = {
-  title: 'Diagnostic Labs in Bangalore — NABL Accredited, Home Collection | Curxx',
-  description: 'NABL and CAP accredited diagnostic labs across Bangalore with timings, tests offered, home sample collection areas and walk-in counters.',
-  alternates: { canonical: '/bangalore/labs' },
-};
-
 type Props = { params: Promise<{ city: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const canonical = canonicalCity((await params).city);
+  if (!canonical) return {};
+  const name = getCity(canonical)!.name;
+  return {
+    title: { absolute: `Diagnostic Labs in ${name} — NABL Accredited, Home Collection | Curxx` },
+    description: `NABL and CAP accredited diagnostic labs and imaging centres in ${name} with timings, tests offered, home sample collection areas and walk-in counters.`,
+    alternates: { canonical: `/${canonical}/labs` },
+  };
+}
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;
 const ACCREDITATIONS = ['NABL', 'CAP', 'ISO 15189'] as const;
 
@@ -25,6 +30,7 @@ export default async function CityLabsPage({ params, searchParams }: Props) {
   const accreditation = one(sp.accreditation);
   const pincode = one(sp.pincode);
   const query: LabDirectoryQuery = {
+    city: canonical,
     pincode: pincode && /^\d{6}$/.test(pincode) ? pincode : undefined,
     area: one(sp.area),
     q: one(sp.q),
@@ -42,7 +48,9 @@ export default async function CityLabsPage({ params, searchParams }: Props) {
     <LabsListing
       items={data?.items ?? []}
       total={data?.total ?? 0}
-      near={data?.near ?? { pincode: '560038', area: 'Indiranagar' }}
+      city={canonical}
+      cityName={getCity(canonical)!.name}
+      near={data?.near ?? { pincode: getCity(canonical)!.localities[0]!.pincode, area: getCity(canonical)!.localities[0]!.name }}
       areas={data?.facets.areas ?? []}
       accreditations={data?.facets.accreditations ?? []}
       tests={tests}

@@ -57,11 +57,24 @@ export type Doctor = {
   focusAreas?: string[];
   /** Earliest open slot, computed by the listing query. */
   nextSlotAt?: string | null;
+  /** That slot itself, so a card can deep-link straight to it. */
+  nextSlot?: Slot | null;
+  /** Offers a couple of free video consults every day. */
+  freeVideo?: boolean;
+  /** Online round the clock. */
+  instant?: boolean;
+  /** False for doctors who only see patients in person. */
+  offersVideo?: boolean;
+  /** Human summary of the weekly schedule, e.g. "Mon–Sat · 10:00 AM – 1:30 PM". */
+  consultHours?: string;
 };
 
 export type DoctorDetail = Doctor & {
   focusAreaNames: string[];
   specialtyName: string;
+  specialtyPlural: string;
+  cityName: string;
+  services: (SubSpecialty & { focus: boolean })[];
   reviewSummary: { average: number; total: number };
 };
 
@@ -74,11 +87,80 @@ export type Specialty = {
   icon: string;
   fromPrice: number;
   subSpecialties: SubSpecialty[];
-  /** Doctors with an open slot this week, returned only when the catalogue is asked for a mode. */
+  category?: string;
+  description?: string;
+  videoFrom?: number;
+  video?: boolean;
+  popular?: boolean;
+  conditions?: string[];
+  whenToSee?: string[];
+  related?: string[];
+  /** Doctors in the requested city. */
+  doctorCount?: number;
+  /** Doctors offering the requested mode. */
   availableDoctors?: number;
 };
 
-export type Slot = { id: string; startsAt: string; mode: 'clinic' | 'video'; fee: number };
+export type Slot = { id: string; startsAt: string; mode: 'clinic' | 'video'; fee: number; free?: boolean };
+
+export type Faq = { question: string; answer: string };
+export type LinkCount = { slug: string; name: string; count: number };
+
+/** SEO content for a specialty listing, specific to specialty × city × locality. */
+export type SpecialtyContent = {
+  specialty: { slug: string; name: string; plural: string; icon: string; category: string; description: string; video: boolean; subSpecialties: SubSpecialty[] };
+  city: { slug: string; name: string; state: string };
+  locality: { slug: string; name: string; pincode: string } | null;
+  place: string;
+  stats: { doctors: number; minFee: number; maxFee: number; minVideoFee: number | null; video: number; free: number; female: number; rating: number | null; experience: number | null; reviews: number };
+  intro: string;
+  about: string[];
+  conditions: string[];
+  whenToSee: string[];
+  faqs: Faq[];
+  topDoctors: { slug: string; name: string; experienceYears: number; rating: number; reviewCount: number; area: string; fee: number }[];
+  facilities: { slug: string; name: string; area: string; type: 'hospital' | 'clinic' }[];
+  localities: LinkCount[];
+  otherCities: LinkCount[];
+  related: { slug: string; name: string; plural: string; icon: string }[];
+  relatedConditions: { slug: string; name: string }[];
+  surgeries: { slug: string; name: string }[];
+};
+
+export type ConditionDetail = {
+  condition: { slug: string; name: string; specialty: string; focus: string; summary: string; symptoms: string[]; causes: string[]; treatments: string[]; selfCare: string[]; whenToSee: string[]; popular?: string };
+  city: { slug: string; name: string };
+  specialty: { slug: string; name: string; plural: string; icon: string; video: boolean } | null;
+  focus: SubSpecialty | null;
+  doctorCount: number;
+  article: { id: string; slug: string; title: string; excerpt: string; readMinutes: number } | null;
+  related: { slug: string; name: string; specialty: string; summary: string }[];
+  otherCities: { slug: string; name: string }[];
+  faqs: Faq[];
+};
+
+export type SurgerySummary = { slug: string; name: string; category: string; specialty: string; icon: string; popular: boolean; description: string; stay: string; recovery: string; cost: [number, number]; insurance: boolean };
+export type SurgeryDetail = {
+  surgery: SurgerySummary & { treats: string[]; techniques: string[]; durationMinutes: [number, number]; anaesthesia: string; steps: string[]; benefits: string[]; risks: string[]; departments: string[] };
+  city: { slug: string; name: string };
+  specialty: { slug: string; name: string; plural: string } | null;
+  hospitals: { id: string; slug: string; name: string; area: string; category: string; rating: number; reviewCount: number; nabh: boolean; beds: number; insurers: string[]; emergency24x7: boolean }[];
+  surgeons: Pick<Doctor, 'id' | 'slug' | 'name' | 'title' | 'experienceYears' | 'rating' | 'reviewCount' | 'area' | 'clinicName' | 'photoUrl' | 'qualification' | 'fee'>[];
+  related: SurgerySummary[];
+  otherCities: { slug: string; name: string }[];
+  faqs: Faq[];
+};
+
+export type Suggestions = {
+  q: string;
+  city: string;
+  specialties: { slug: string; name: string; plural: string; icon: string }[];
+  conditions: { slug: string; name: string; specialty: string }[];
+  doctors: { slug: string; name: string; specialty: string; area: string; photoUrl: string }[];
+  facilities: { slug: string; name: string; area: string; category: string }[];
+  surgeries: { slug: string; name: string; category: string }[];
+  tests: { slug: string; name: string; kind: string; price: number }[];
+};
 
 export type SessionUser = {
   id: string;
@@ -130,6 +212,12 @@ export type Facility = {
   name: string;
   shortName: string;
   type: 'hospital' | 'clinic';
+  /** One of the 19 facility types, e.g. "Eye Hospital". */
+  category?: string;
+  categoryInfo?: { name: string; slug: string; icon: string; description: string } | null;
+  opdHours?: string;
+  pincode?: string;
+  specialties?: string[];
   city: string;
   area: string;
   address: string;
@@ -185,7 +273,10 @@ export type LabTest = {
   id: string;
   slug: string;
   name: string;
-  kind: 'package' | 'test';
+  kind: 'package' | 'test' | 'scan' | 'procedure';
+  /** False for scans and procedures that need a visit to the centre. */
+  homeCollection?: boolean;
+  department?: string;
   testsIncluded: number;
   fastingHours: string | null;
   fastingLabel: string;
@@ -200,7 +291,7 @@ export type LabTest = {
   categories: string[];
   parameterGroups: LabParameterGroup[];
 };
-export type LabCategory = { id: string; slug: string; name: string; icon: string; packages: number; tests: number };
+export type LabCategory = { id: string; slug: string; name: string; icon: string; packages: number; tests: number; group?: 'concern' | 'department' };
 export type CollectionDay = { date: string; closed?: boolean; windows: { window: string; remaining: number; available: boolean }[] };
 export type CollectionMode = 'home' | 'lab';
 
@@ -210,7 +301,8 @@ export type LabSummary = {
   slug: string;
   name: string;
   shortName: string;
-  type: 'reference' | 'centre';
+  type: 'reference' | 'centre' | 'imaging';
+  city?: string;
   area: string;
   address: string;
   pincode: string;
@@ -242,13 +334,15 @@ export type Lab = LabSummary & {
   amenities: string[];
 };
 export type LabMatch = {
-  place: { pincode: string; area: string; approximate: boolean } | null;
+  place: { pincode: string; area: string; approximate: boolean; city?: string } | null;
   serviceable: boolean;
+  /** Tests in the booking that need a visit to the centre. */
+  visitOnly?: string[];
   reason: string | null;
   recommended: string | null;
   labs: (LabSummary & { offersAll: boolean; missingTests: string[]; canVisit: boolean; eligible: boolean })[];
 };
-export type Near = { pincode: string; area: string; approximate?: boolean };
+export type Near = { pincode: string; area: string; approximate?: boolean; city?: string };
 
 export type Address = { id?: string; label: string; name?: string; line1: string; line2?: string; area?: string; city?: string; pincode: string; phone: string; isDefault?: boolean };
 
@@ -336,6 +430,8 @@ export type TriageResult = {
 
 export type SearchResults = {
   q: string;
+  city?: string;
+  conditions?: { slug: string; name: string; specialty: string; summary: string }[];
   specialties: Pick<Specialty, 'slug' | 'name' | 'plural' | 'icon' | 'fromPrice'>[];
   doctors: Doctor[];
   medicines: Pick<Medicine, 'id' | 'slug' | 'name' | 'subtitle' | 'price' | 'mrp' | 'icon' | 'imageUrl' | 'rxRequired'>[];
@@ -343,6 +439,8 @@ export type SearchResults = {
   facilities: Pick<Facility, 'id' | 'slug' | 'name' | 'type' | 'area' | 'rating'>[];
   articles: Pick<Article, 'id' | 'slug' | 'title' | 'category' | 'readMinutes'>[];
 };
+
+export type Registration = { name: string; email?: string; gender?: 'female' | 'male' | 'other' | ''; dob?: string };
 
 // ---------------------------------------------------------------- Transport
 
@@ -393,27 +491,36 @@ export type DoctorQuery = {
   mode?: 'clinic' | 'video';
   area?: string;
   language?: string;
-  availability?: 'today' | 'tomorrow' | 'next-7-days';
+  availability?: 'now' | 'today' | 'tomorrow' | 'next-7-days';
+  /** Only doctors with a free video consult. */
+  free?: boolean;
   maxFee?: number;
   minExperience?: number;
-  sort?: 'relevance' | 'fee_asc' | 'fee_desc' | 'experience' | 'rating';
+  sort?: 'relevance' | 'fee_asc' | 'fee_desc' | 'experience' | 'rating' | 'soonest';
   page?: number;
   limit?: number;
 };
 
-export type DoctorList = { doctors: Doctor[]; page: number; limit: number; total: number; pages: number; facets?: { areas: Facet[]; languages: Facet[] } };
+export type DoctorList = { doctors: Doctor[]; page: number; limit: number; total: number; pages: number; facets?: { areas: Facet[]; languages: Facet[] }; matchedSpecialties?: string[] };
 
-export type FacilityQuery = { type?: 'hospital' | 'clinic'; area?: string; department?: string; emergency?: boolean; q?: string; sort?: 'distance' | 'rating' | 'reviews'; page?: number; limit?: number };
+export type FacilityQuery = { city?: string; type?: 'hospital' | 'clinic'; category?: string; specialty?: string; area?: string; department?: string; emergency?: boolean; q?: string; sort?: 'distance' | 'rating' | 'reviews'; page?: number; limit?: number };
 export type MedicineQuery = { category?: string; q?: string; rx?: 'required' | 'otc'; sort?: 'popular' | 'price_asc' | 'price_desc' | 'discount' | 'rating'; page?: number; limit?: number };
-export type LabQuery = { category?: string; kind?: 'package' | 'test'; q?: string; sort?: 'popular' | 'price_asc' | 'price_desc' | 'discount'; page?: number; limit?: number };
+export type LabQuery = { category?: string; kind?: LabTest['kind']; department?: string; homeCollection?: boolean; q?: string; sort?: 'popular' | 'price_asc' | 'price_desc' | 'discount'; page?: number; limit?: number };
 
 export type PharmacyOrderInput = { kind: 'pharmacy'; items: { slug: string; qty: number }[]; address: Address; prescriptionId?: string; paymentMethod: 'upi' | 'card' | 'cod' };
-export type LabDirectoryQuery = { pincode?: string; area?: string; q?: string; test?: string; accreditation?: 'NABL' | 'CAP' | 'ISO 15189'; homeCollection?: boolean; walkIn?: boolean; sort?: 'distance' | 'rating' | 'reviews'; page?: number; limit?: number };
+export type LabDirectoryQuery = { city?: string; pincode?: string; area?: string; q?: string; test?: string; accreditation?: 'NABL' | 'CAP' | 'ISO 15189'; homeCollection?: boolean; walkIn?: boolean; sort?: 'distance' | 'rating' | 'reviews'; page?: number; limit?: number };
 export type LabOrderInput = { kind: 'lab'; items: { slug: string }[]; collectionMode: CollectionMode; labSlug: string; address?: Address; patient: { name: string; age?: number; gender?: string; phone: string }; pickup: { date: string; window: string }; paymentMethod: 'upi' | 'card' | 'cod' };
 
 export const api = {
   // Catalogue — doctors
-  specialties: (mode?: 'clinic' | 'video') => request<{ specialties: Specialty[] }>(`/specialties${qs({ mode })}`, cached(mode ? 60 : 300)),
+  specialties: (mode?: 'clinic' | 'video', city?: string) => request<{ specialties: Specialty[]; categories?: string[] }>(`/specialties${qs({ mode, city })}`, cached(mode ? 60 : 300)),
+  specialtyContent: (slug: string, city: string, area?: string) => request<SpecialtyContent>(`/specialties/${slug}${qs({ city, area })}`, cached(300)),
+  cities: () => request<{ cities: { slug: string; name: string; state: string; tier: number; doctorCount: number; localities: { slug: string; name: string; pincode: string }[] }[] }>('/cities', cached(600)),
+  conditions: () => request<{ conditions: { slug: string; name: string; specialty: string; summary: string; popular: string | null }[] }>('/conditions', cached(600)),
+  condition: (slug: string, city: string) => request<ConditionDetail>(`/conditions/${slug}${qs({ city })}`, cached(300)),
+  surgeries: (city: string) => request<{ categories: string[]; city: { slug: string; name: string }; surgeries: SurgerySummary[] }>(`/surgeries${qs({ city })}`, cached(300)),
+  surgery: (slug: string, city: string) => request<SurgeryDetail>(`/surgeries/${slug}${qs({ city })}`, cached(300)),
+  suggest: (q: string, city: string) => request<Suggestions>(`/search/suggest${qs({ q, city })}`, cached(60)),
   doctors: (query: DoctorQuery = {}) => request<DoctorList>(`/doctors${qs({ city: 'bangalore', ...query })}`, cached(60)),
   doctor: (slug: string) => request<{ doctor: DoctorDetail; facility: Facility | null; similar: Doctor[] }>(`/doctors/${slug}`, cached(60)),
   slots: (slug: string, mode?: 'clinic' | 'video') => request<{ slots: Slot[] }>(`/doctors/${slug}/slots${qs({ mode })}`, fresh),
@@ -424,8 +531,9 @@ export const api = {
   markHelpful: (reviewId: string, token: string) => request<{ helpful: number; counted: boolean }>(`/reviews/${reviewId}/helpful`, send('POST', {}, token)),
 
   // Catalogue — facilities
-  facilities: (query: FacilityQuery = {}) => request<Paged<Facility> & { facets: { areas: Facet[] } }>(`/facilities${qs(query)}`, cached(60)),
-  facility: (slug: string) => request<{ facility: Facility; doctors: Doctor[] }>(`/facilities/${slug}`, cached(60)),
+  facilities: (query: FacilityQuery = {}) =>
+    request<Paged<Facility> & { city?: string; facets: { areas: Facet[]; categories?: { value: string; label: string; group: string; icon: string; count: number }[] } }>(`/facilities${qs(query)}`, cached(60)),
+  facility: (slug: string) => request<{ facility: Facility; doctors: Doctor[]; similar?: Facility[] }>(`/facilities/${slug}`, cached(60)),
 
   // Catalogue — pharmacy & labs
   medicineCategories: () => request<{ categories: MedicineCategory[] }>('/medicine-categories', cached(300)),
@@ -433,26 +541,28 @@ export const api = {
   medicine: (slug: string) => request<{ medicine: Medicine; substitutes: Medicine[]; similar: Medicine[] }>(`/medicines/${slug}`, cached(60)),
   labCategories: () => request<{ categories: LabCategory[] }>('/lab-categories', cached(300)),
   labTests: (query: LabQuery = {}) => request<Paged<LabTest>>(`/lab-tests${qs(query)}`, cached(60)),
-  labTest: (slug: string, pincode?: string) =>
-    request<{ test: LabTest; related: LabTest[]; availability: { labCount: number; near: Near; nearest: (LabSummary & { canCollect: boolean }) | null } }>(`/lab-tests/${slug}${qs({ pincode })}`, cached(60)),
+  labTest: (slug: string, pincode?: string, city?: string) =>
+    request<{ test: LabTest; related: LabTest[]; availability: { labCount: number; near: Near; nearest: (LabSummary & { canCollect: boolean }) | null } }>(`/lab-tests/${slug}${qs({ pincode, city })}`, cached(60)),
   collectionSlots: (lab?: string, mode: CollectionMode = 'home') => request<{ lab: string; mode: CollectionMode; days: CollectionDay[] }>(`/lab-collection-slots${qs({ lab, mode })}`, fresh),
   labs: (query: LabDirectoryQuery = {}) => request<Paged<LabSummary> & { near: Near; facets: { areas: Facet[]; accreditations: Facet[] } }>(`/labs${qs(query)}`, cached(60)),
   lab: (slug: string, pincode?: string) => request<{ lab: Lab; near: Near; tests: LabTest[]; nearby: LabSummary[] }>(`/labs/${slug}${qs({ pincode })}`, cached(60)),
-  labMatch: (query: { pincode?: string; tests: string[]; mode: CollectionMode }) => request<LabMatch>(`/labs/match${qs({ ...query, tests: query.tests.join(',') })}`, fresh),
+  labMatch: (query: { pincode?: string; city?: string; tests: string[]; mode: CollectionMode }) => request<LabMatch>(`/labs/match${qs({ ...query, tests: query.tests.join(',') })}`, fresh),
 
   // Content
   articles: (query: { category?: string; featured?: boolean; page?: number; limit?: number } = {}) =>
     request<Paged<Article> & { categories: Facet[] }>(`/articles${qs(query)}`, cached(120)),
   article: (slug: string) => request<{ article: Article; author: Doctor | null; related: Article[] }>(`/articles/${slug}`, cached(120)),
-  search: (q: string) => request<SearchResults>(`/search${qs({ q })}`, fresh),
-  triage: (body: { symptoms: string; age?: number; durationDays?: number; severity?: 'mild' | 'moderate' | 'severe'; forWhom?: 'self' | 'child' | 'parent' | 'other' }) =>
+  search: (q: string, city?: string) => request<SearchResults>(`/search${qs({ q, city })}`, fresh),
+  triage: (body: { symptoms: string; age?: number; durationDays?: number; severity?: 'mild' | 'moderate' | 'severe'; forWhom?: 'self' | 'child' | 'parent' | 'other'; city?: string }) =>
     request<TriageResult>('/triage', send('POST', body)),
-  lead: (body: { kind: 'provider' | 'hospital' | 'corporate' | 'callback' | 'newsletter'; name?: string; phone?: string; email?: string; organisation?: string; city?: string; specialty?: string; message?: string; source?: string }) =>
+  lead: (body: { kind: 'provider' | 'hospital' | 'corporate' | 'callback' | 'newsletter' | 'surgery' | 'plus'; surgery?: string; name?: string; phone?: string; email?: string; organisation?: string; city?: string; specialty?: string; message?: string; source?: string }) =>
     request<{ lead: { id: string; kind: string } }>('/leads', send('POST', body)),
 
   // Auth & profile
-  requestOtp: (phone: string) => request<{ phone: string; expiresInSeconds: number; devCode?: string }>('/auth/otp/request', send('POST', { phone })),
-  verifyOtp: (phone: string, code: string) => request<{ token: string; user: SessionUser }>('/auth/otp/verify', send('POST', { phone, code })),
+  requestOtp: (phone: string, intent: 'login' | 'register' | 'any' = 'any') =>
+    request<{ phone: string; registered?: boolean; expiresInSeconds: number; devCode?: string }>('/auth/otp/request', send('POST', { phone, intent })),
+  verifyOtp: (phone: string, code: string, registration?: Registration) =>
+    request<{ token: string; user: SessionUser }>('/auth/otp/verify', send('POST', { phone, code, registration })),
   me: (token: string) => request<{ user: SessionUser }>('/auth/me', { token, ...fresh }),
   updateProfile: (patch: Partial<Omit<SessionUser, 'id' | 'phone'>>, token: string) => request<{ user: SessionUser }>('/auth/me', send('PATCH', patch, token)),
 

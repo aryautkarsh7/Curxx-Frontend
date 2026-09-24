@@ -28,8 +28,8 @@ export default function SavedItems() {
         <span className="material-symbols-outlined text-[32px] text-[#78716C]">bookmark</span>
         <p className="font-body-default text-body-default text-on-surface-variant">Nothing saved yet. Tap the bookmark on a doctor or article to keep it here.</p>
         <div className="flex justify-center gap-3 pt-1">
-          <Link href="/bangalore/doctors" className="font-caption-strong text-caption-strong text-primary-container hover:underline">Find doctors</Link>
-          <Link href="/health-feed" className="font-caption-strong text-caption-strong text-primary-container hover:underline">Read articles</Link>
+          <Link href="/doctors" className="font-caption-strong text-caption-strong text-primary-container hover:underline">Find doctors</Link>
+          <Link href="/blog" className="font-caption-strong text-caption-strong text-primary-container hover:underline">Read articles</Link>
         </div>
       </div>
     );
@@ -59,7 +59,7 @@ export default function SavedItems() {
           <ul className="space-y-2">
             {data.articles.map((a) => (
               <li key={a.slug} className="p-4 rounded-xl border border-[#E7E5E4] bg-white flex items-center gap-3">
-                <Link href={`/article/${a.slug}`} className="flex-1 min-w-0">
+                <Link href={`/blog/${a.slug}`} className="flex-1 min-w-0">
                   <span className="block font-body-strong text-body-strong text-on-surface">{a.title}</span>
                   <span className="block font-caption text-caption text-on-surface-variant">{a.readMinutes} min read · {a.author?.name}</span>
                 </Link>

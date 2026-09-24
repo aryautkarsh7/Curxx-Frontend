@@ -73,7 +73,7 @@ export default function ClinicProfile({ facility: f, doctors }: { facility: Faci
         <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-2 text-caption font-caption text-outline mb-space-base">
           <Link href="/" className="hover:text-primary">Home</Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <Link href={f.type === 'hospital' ? '/bangalore/hospitals' : '/bangalore/clinics'} className="hover:text-primary">{f.type === 'hospital' ? 'Hospitals' : 'Clinics'}</Link>
+          <Link href={`/${f.city}/${f.type === 'hospital' ? 'hospitals' : 'clinics'}`} className="hover:text-primary">{f.type === 'hospital' ? 'Hospitals' : 'Clinics'}</Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
           <span className="text-on-surface font-caption-strong text-caption-strong truncate">{f.name}</span>
         </nav>
@@ -199,7 +199,7 @@ export default function ClinicProfile({ facility: f, doctors }: { facility: Faci
                   </li>
                 ))}
               </ul>
-              {!open24 && f.emergency24x7 === false && <p className="font-caption text-caption text-on-surface-variant">Outpatient centre — no overnight emergency care. <Link href="/bangalore/hospitals?emergency=true" className="text-primary-container underline">Find a 24x7 hospital</Link>.</p>}
+              {!open24 && f.emergency24x7 === false && <p className="font-caption text-caption text-on-surface-variant">Outpatient centre — no overnight emergency care. <Link href={`/${f.city}/hospitals?emergency=true`} className="text-primary-container underline">Find a 24x7 hospital</Link>.</p>}
             </section>
 
             <section id="departments" className="scroll-mt-32 space-y-3">

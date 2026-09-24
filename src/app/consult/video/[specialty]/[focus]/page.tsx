@@ -16,7 +16,7 @@ const num = (value: string | string[] | undefined) => {
 
 async function loadSpecialty(slug: string): Promise<Specialty | null> {
   try {
-    const { specialties } = await api.specialties('video');
+    const { specialties } = await api.specialties('video', 'all');
     return specialties.find((s) => s.slug === slug) ?? null;
   } catch {
     return null;
@@ -60,19 +60,23 @@ export default async function ConsultDoctorPickerPage({ params, searchParams }: 
   if (focus === undefined) notFound();
 
   const query = await searchParams;
-  // "Consult now" is the default: only doctors with an open video slot today.
-  const when = one(query.when) === 'later' ? 'later' : 'now';
+  // "Consult now" (default): a video slot starting within the hour. "Free": doctors offering a free
+  // first consult. "Book a time": any video slot this week. Video works from anywhere, so every city counts.
+  const requested = one(query.when);
+  const when = requested === 'later' ? 'later' : requested === 'free' ? 'free' : 'now';
 
   const listing = await loadDoctors({
+    city: 'all',
     specialty: specialtySlug,
     focus: focus?.slug,
     mode: 'video',
-    availability: when === 'now' ? 'today' : (one(query.availability) as DoctorQuery['availability']),
+    free: when === 'free' || undefined,
+    availability: when === 'now' ? 'now' : (one(query.availability) as DoctorQuery['availability']) ?? 'next-7-days',
     area: one(query.area),
     language: one(query.language),
     maxFee: num(query.maxFee),
     minExperience: num(query.minExperience),
-    sort: (one(query.sort) as DoctorQuery['sort']) ?? 'relevance',
+    sort: (one(query.sort) as DoctorQuery['sort']) ?? (when === 'later' ? 'relevance' : 'soonest'),
     page: num(query.page) ?? 1,
     limit: 10,
   });

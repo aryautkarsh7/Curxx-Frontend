@@ -89,12 +89,12 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
 <Link href="/account?tab=addresses" className="text-caption-strong font-caption-strong text-primary hover:underline ml-1 shrink-0">{address ? 'Change' : 'Add address'}</Link>
 </div>
 <div className="flex items-center gap-2 sm:gap-4">
-<Link href="/bangalore/labs" className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface hover:text-primary transition-colors">
+<Link href="/labs" className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface hover:text-primary transition-colors">
 <span className="material-symbols-outlined text-[18px] text-primary">location_on</span>Labs near you
 </Link>
 <span className="text-micro font-micro text-[#047857] bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 rounded-full hidden md:flex items-center gap-1">
 <span className="material-symbols-outlined text-[14px]">timer</span>
-<span>Free home collection · reports in 24h</span>
+<span>Free home collection · most reports in 6h</span>
 </span>
 <Link href="/lab-tests/book" className="flex items-center gap-1.5 text-on-surface hover:text-primary transition-colors py-1 px-2.5 rounded-lg border border-surface-variant bg-surface-container-lowest">
 <span className="material-symbols-outlined text-[18px]">shopping_bag</span>
@@ -114,10 +114,10 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
 <span className="text-micro font-micro text-[#047857] tracking-wider uppercase">NABL &amp; CAP ACCREDITED NETWORK</span>
 </div>
 <h1 className="text-display font-display text-on-surface tracking-tight leading-tight">
-          Lab tests at home, reports in <span className="text-primary">24 hours</span>
+          Lab tests at home, reports in <span className="text-primary">6 hours</span>
 </h1>
 <p className="text-body-default font-body-default text-on-surface-variant max-w-xl">
-          Certified phlebotomists, temperature-controlled sample logistics, and digital smart reports reviewed by MD Pathologists with complete clinical transparency.
+          Most routine tests are reported in 6 hours and full-body packages within 24 hours. Certified phlebotomists, temperature-controlled sample logistics, and digital reports signed by MD pathologists.
         </p>
 {/* Search Input Bar */}
 <div className="pt-2">
@@ -221,13 +221,13 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
 <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
 <div>
-<span className="text-micro font-micro text-primary uppercase tracking-wider font-semibold">{query.kind === 'test' ? 'INDIVIDUAL TESTS' : query.kind === 'package' ? 'PREVENTIVE CARE' : 'ALL DIAGNOSTICS'}</span>
-<h2 className="text-headline-1 font-headline-h1 text-on-surface mt-1">{filterLabel ? `Tests for ${filterLabel}` : query.kind === 'test' ? 'Individual Lab Tests' : query.kind === 'package' ? 'Full Body & Health Packages' : 'Health Packages & Lab Tests'}</h2>
+<span className="text-micro font-micro text-primary uppercase tracking-wider font-semibold">{query.kind === 'test' ? 'INDIVIDUAL TESTS' : query.kind === 'package' ? 'PREVENTIVE CARE' : query.kind === 'scan' ? 'IMAGING · VISIT A CENTRE' : 'ALL DIAGNOSTICS'}</span>
+<h2 className="text-headline-1 font-headline-h1 text-on-surface mt-1">{filterLabel ? `Tests for ${filterLabel}` : query.kind === 'test' ? 'Individual Lab Tests' : query.kind === 'package' ? 'Full Body & Health Packages' : query.kind === 'scan' ? 'Scans & Imaging' : 'Health Packages & Lab Tests'}</h2>
 <p className="text-caption font-caption text-on-surface-variant mt-1">{results.total} {results.total === 1 ? 'result' : 'results'}</p>
 </div>
 <div className="flex items-center gap-2 flex-wrap">
 <div className="flex p-1 bg-surface-container-low rounded-full border border-surface-variant" role="tablist" aria-label="Test type">
-{([['', 'All'], ['package', 'Packages'], ['test', 'Single tests']] as const).map(([value, label]) => (
+{([['', 'All'], ['package', 'Packages'], ['test', 'Single tests'], ['scan', 'Scans']] as const).map(([value, label]) => (
 <button key={value || 'all'} type="button" role="tab" aria-selected={(query.kind ?? '') === value} onClick={() => update((p) => (value ? p.set('kind', value) : p.delete('kind')))} className={(query.kind ?? '') === value ? 'h-8 px-3.5 rounded-full bg-surface-container-lowest shadow-sm text-caption-strong font-caption-strong text-primary' : 'h-8 px-3.5 rounded-full text-caption font-caption text-on-surface-variant hover:text-on-surface'}>{label}</button>
 ))}
 </div>
@@ -276,7 +276,7 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
 <h2 className="text-headline-1 font-headline-h1 text-on-surface mt-1">Explore by Clinical Category</h2>
 </div>
 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-{categories.map((c) => {
+{categories.filter((c) => c.group !== 'department').map((c) => {
   const active = c.slug === activeCategory?.slug;
   return (
 <Link key={c.slug} aria-current={active ? 'true' : undefined} className={`p-4 rounded-xl border ${active ? 'border-[#F9C6C9] bg-[#FFF1F2]' : 'border-surface-variant bg-surface'} hover:border-outline transition duration-150 flex flex-col items-center text-center group`} href={active ? '/lab-tests#packages' : categoryHref(c.slug)}>
@@ -291,6 +291,35 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
 </div>
 </div>
 </section>
+{/* DIAGNOSTIC TEST DIRECTORY BY DEPARTMENT */}
+{categories.some((c) => c.group === 'department') && (
+<section id="directory" className="py-space-2xl bg-surface scroll-mt-16">
+<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
+<div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-3">
+<div>
+<span className="text-micro font-micro text-primary uppercase tracking-wider font-semibold">DIAGNOSTIC CENTRE TEST DIRECTORY</span>
+<h2 className="text-headline-1 font-headline-h1 text-on-surface mt-1">250+ Tests &amp; Scans by Department</h2>
+<p className="text-caption font-caption text-on-surface-variant mt-1 max-w-2xl">Everything a full diagnostic centre offers — pathology, imaging, cardiac, neuro, pulmonary and more. Blood and urine tests can be collected at home; scans and procedures are done at the centre.</p>
+</div>
+</div>
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+{categories.filter((c) => c.group === 'department').map((c) => {
+  const active = c.slug === activeCategory?.slug;
+  return (
+<Link key={c.slug} aria-current={active ? 'true' : undefined} href={active ? '/lab-tests#packages' : categoryHref(c.slug)} className={`p-4 rounded-xl border flex items-center gap-3 transition ${active ? 'border-[#F9C6C9] bg-[#FFF1F2]' : 'border-surface-variant bg-surface-container-lowest hover:border-outline'}`}>
+<span className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center shrink-0"><span className="material-symbols-outlined text-[22px] text-primary-container">{c.icon}</span></span>
+<span className="min-w-0">
+<h3 className="text-caption-strong font-caption-strong text-on-surface">{c.name}</h3>
+<span className="block text-micro font-micro text-on-surface-variant">{c.tests + c.packages} {c.tests + c.packages === 1 ? 'test' : 'tests'}</span>
+</span>
+<span className="material-symbols-outlined text-[18px] text-outline ml-auto">chevron_right</span>
+</Link>
+  );
+})}
+</div>
+</div>
+</section>
+)}
 {/* BOOK BY SYMPTOM OR CONDITION CHIPS */}
 <section className="py-space-xl bg-surface">
 <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
@@ -329,7 +358,7 @@ export default function LabTestsHome({ categories, results, query, labs }: Props
 <h2 className="text-headline-h2 font-headline-h2 text-on-surface mt-1">Partner labs that process your sample</h2>
 <p className="text-caption font-caption text-on-surface-variant mt-1">We assign the nearest lab that collects at your pincode — or walk in to one at a booked slot.</p>
 </div>
-<Link href="/bangalore/labs" className="inline-flex items-center gap-1 text-caption-strong font-caption-strong text-primary-container hover:underline shrink-0">View all {labs.total} labs<span className="material-symbols-outlined text-[16px]">arrow_forward</span></Link>
+<Link href="/labs" className="inline-flex items-center gap-1 text-caption-strong font-caption-strong text-primary-container hover:underline shrink-0">View all {labs.total} labs<span className="material-symbols-outlined text-[16px]">arrow_forward</span></Link>
 </div>
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 {labs.items.map((lab) => <LabMiniCard key={lab.slug} lab={lab} />)}

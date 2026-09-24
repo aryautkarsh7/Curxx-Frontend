@@ -11,6 +11,7 @@ import RequireSignIn from '@/components/RequireSignIn';
 import { ApiError, api, errorMessage, rupees, type Address, type CollectionMode, type LabMatch } from '@/lib/api';
 import { clearCart, removeFromCart, useCart } from '@/lib/cart';
 import { clearLabChoice, clearLabSlot, readLabChoice, readLabSlot, type LabChoice } from '@/lib/lab-booking';
+import { useCity } from '@/lib/city-store';
 import { getToken, getUser, setSession, useSession } from '@/lib/session';
 
 const FIELD = 'w-full h-11 px-3 bg-white border border-[#E7E5E4] rounded-lg font-body-default text-body-default text-[#1C1917] placeholder-[#A8A29E] outline-none focus:border-primary-container focus:ring-2 focus:ring-[rgba(193,18,31,0.15)]';
@@ -66,6 +67,9 @@ export default function LabBooking() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fastingTests, setFastingTests] = useState<string[]>([]);
+  /** Scans and procedures in the cart — they need a visit to the centre. */
+  const [visitOnly, setVisitOnly] = useState<string[]>([]);
+  const { city } = useCity();
 
   const testSlugs = cart.items.map((i) => i.slug).join(',');
   const testName = (slug: string) => cart.items.find((i) => i.slug === slug)?.name ?? slug;
@@ -95,8 +99,14 @@ export default function LabBooking() {
   // Fasting advice depends on which tests are booked.
   useEffect(() => {
     let live = true;
-    Promise.all(cart.items.map((i) => api.labTest(i.slug).then((r) => (r.test.fastingHours ? `${r.test.name} (${r.test.fastingHours} hrs)` : null)).catch(() => null)))
-      .then((list) => live && setFastingTests(list.filter((x): x is string => x !== null)));
+    Promise.all(cart.items.map((i) => api.labTest(i.slug).then((r) => r.test).catch(() => null))).then((tests) => {
+      if (!live) return;
+      setFastingTests(tests.flatMap((t) => (t?.fastingHours ? [`${t.name} (${t.fastingHours} hrs)`] : [])));
+      const atCentre = tests.flatMap((t) => (t && t.homeCollection === false ? [t.name] : []));
+      setVisitOnly(atCentre);
+      // A scan can't be done at home: switch the booking to a lab visit.
+      if (atCentre.length) setMode('lab');
+    });
     return () => {
       live = false;
     };
@@ -112,7 +122,7 @@ export default function LabBooking() {
     }
     let live = true;
     setMatchError(null);
-    api.labMatch({ pincode: address?.pincode ?? homePincode, tests: testSlugs.split(','), mode })
+    api.labMatch({ pincode: mode === 'home' ? address?.pincode : homePincode, city, tests: testSlugs.split(','), mode })
       .then((m) => {
         if (!live) return;
         setMatch(m);
@@ -132,7 +142,7 @@ export default function LabBooking() {
     return () => {
       live = false;
     };
-  }, [cart.hydrated, cart.count, mode, address?.pincode, homePincode, testSlugs]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cart.hydrated, cart.count, mode, address?.pincode, homePincode, testSlugs, city]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const lab = match?.labs.find((l) => l.slug === labSlug && l.eligible) ?? null;
   const eligibleLabs = match?.labs.filter((l) => l.eligible) ?? [];
@@ -232,7 +242,7 @@ export default function LabBooking() {
             <p className="font-body-strong text-body-strong text-on-surface">No tests in your booking yet</p>
             <div className="flex flex-wrap justify-center gap-2">
               <Link href="/lab-tests" className="h-11 px-5 inline-flex items-center rounded-lg bg-primary-container text-white font-caption-strong text-caption-strong">Browse lab tests</Link>
-              <Link href="/bangalore/labs" className="h-11 px-5 inline-flex items-center rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong">Find a lab near you</Link>
+              <Link href="/labs" className="h-11 px-5 inline-flex items-center rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong">Find a lab near you</Link>
             </div>
           </div>
         ) : (
@@ -297,13 +307,18 @@ export default function LabBooking() {
                         { id: 'home', label: 'Home collection', note: 'Free · phlebotomist visits you', icon: 'home_health' },
                         { id: 'lab', label: 'Visit a lab', note: 'Walk in at your slot', icon: 'directions_walk' },
                       ] as const).map((o) => (
-                        <button key={o.id} type="button" role="radio" aria-checked={mode === o.id} onClick={() => switchMode(o.id)} className={`p-3 rounded-xl border text-left transition ${mode === o.id ? 'border-2 border-primary-container bg-[#FFF1F2]' : 'border-[#E7E5E4] bg-white hover:border-outline'}`}>
+                        <button key={o.id} type="button" role="radio" aria-checked={mode === o.id} disabled={o.id === 'home' && visitOnly.length > 0} onClick={() => switchMode(o.id)} className={`p-3 rounded-xl border text-left transition disabled:opacity-50 disabled:cursor-not-allowed ${mode === o.id ? 'border-2 border-primary-container bg-[#FFF1F2]' : 'border-[#E7E5E4] bg-white hover:border-outline'}`}>
                           <span className="material-symbols-outlined text-[20px] text-primary-container">{o.icon}</span>
                           <span className="block font-caption-strong text-caption-strong text-on-surface mt-1">{o.label}</span>
-                          <span className="block font-micro text-micro text-outline">{o.note}</span>
+                          <span className="block font-micro text-micro text-outline">{o.id === 'home' && visitOnly.length > 0 ? 'Not available for scans' : o.note}</span>
                         </button>
                       ))}
                     </div>
+                    {visitOnly.length > 0 && (
+                      <p role="status" className="px-3 py-2 rounded-lg bg-[#FFF7ED] border border-[#FED7AA] font-caption text-caption text-[#9A3412]">
+                        {visitOnly.join(', ')} {visitOnly.length > 1 ? 'need' : 'needs'} a visit to the centre, so this booking is a lab visit. Blood tests in the same booking are collected there too.
+                      </p>
+                    )}
 
                     {mode === 'home' && (
                       <div className="space-y-2">

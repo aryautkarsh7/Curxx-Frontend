@@ -25,7 +25,7 @@ function Payment() {
   useEffect(() => {
     const current = getDraft();
     if (!current?.patient) {
-      router.replace('/bangalore/doctors');
+      router.replace('/doctors');
       return;
     }
     setDraft(current);
@@ -40,7 +40,7 @@ function Payment() {
   async function pay() {
     const token = getToken();
     if (!draft?.patient || !token) {
-      router.replace('/bangalore/doctors');
+      router.replace('/doctors');
       return;
     }
     setBusy(true);
