@@ -96,6 +96,7 @@ export default function ClinicProfile({ facility: f, doctors }: { facility: Faci
         <section className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 sm:p-6 shadow-sm mb-space-lg flex flex-col lg:flex-row lg:items-start justify-between gap-5">
           <div className="space-y-2 min-w-0">
             <div className="flex flex-wrap gap-2">
+              {f.category && <span className="inline-flex items-center gap-1 bg-[#FFF1F2] border border-[#F9C6C9] text-[#8E0E17] text-micro font-micro px-2 py-0.5 rounded-full"><span className="material-symbols-outlined text-[13px]">{f.categoryInfo?.icon ?? 'local_hospital'}</span>{f.category}</span>}
               {f.nabh && <span className="inline-flex items-center gap-1 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-2 py-0.5 rounded-full"><span className="material-symbols-outlined text-[13px]">shield</span>NABH accredited</span>}
               {f.emergency24x7 && <span className="inline-flex items-center gap-1 bg-[#EE1C25] text-white text-micro font-micro px-2 py-0.5 rounded-full"><span className="material-symbols-outlined text-[13px]">emergency</span>24x7 emergency</span>}
               <span className="inline-flex items-center gap-1 bg-surface-container border border-[#E7E5E4] text-on-surface-variant text-micro font-micro px-2 py-0.5 rounded-full capitalize">{f.type}</span>
@@ -177,6 +178,7 @@ export default function ClinicProfile({ facility: f, doctors }: { facility: Faci
                           <Link href={`/doctor/${d.slug}`} className="block font-body-strong text-body-strong text-on-surface hover:text-primary truncate">{d.name}</Link>
                           <p className="font-caption text-caption text-on-surface-variant truncate">{d.title}</p>
                           <p className="font-micro text-micro text-outline">{d.experienceYears} yrs · {d.recommendPercent}% recommend</p>
+                          {d.consultHours && <p className="font-micro text-micro text-on-surface-variant">Consults {d.consultHours}</p>}
                         </div>
                       </div>
                       {d.nextSlotAt && <p className="font-micro text-micro text-[#8E0E17] bg-[#FFF1F2] border border-[#F9C6C9] rounded px-2 py-1 text-center">Next: {slotLabel(d.nextSlotAt)}</p>}
@@ -199,6 +201,11 @@ export default function ClinicProfile({ facility: f, doctors }: { facility: Faci
                   </li>
                 ))}
               </ul>
+              {f.opdHours && f.opdHours !== f.openHours && (
+                <p className="font-caption text-caption text-on-surface-variant">
+                  <span className="font-caption-strong text-on-surface">OPD (doctor consultations):</span> {f.opdHours}. Each doctor’s own consulting hours are shown on their card; bookable slots fall within them.
+                </p>
+              )}
               {!open24 && f.emergency24x7 === false && <p className="font-caption text-caption text-on-surface-variant">Outpatient centre — no overnight emergency care. <Link href={`/${f.city}/hospitals?emergency=true`} className="text-primary-container underline">Find a 24x7 hospital</Link>.</p>}
             </section>
 

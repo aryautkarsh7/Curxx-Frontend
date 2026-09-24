@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { CITY_LIST, SPECIALTY_ALIASES } from "./src/lib/catalogue-data";
 
 // Old Stitch-export URLs → the canonical routes. Temporary (307) while routes are still settling.
 const LEGACY_REDIRECTS = [
@@ -28,10 +29,16 @@ const SHORTCUTS = SECTIONS.flatMap((section) => [
   { source: `/${section}`, destination: `/bangalore/${section}` },
 ]);
 
+// Alternative names redirect with a real 308 (a redirect thrown while rendering would stream a 200 first).
+const CITY_ALIAS_REDIRECTS = CITY_LIST.flatMap((c) => c.aliases.map((alias) => ({ source: `/${alias}/:path*`, destination: `/${c.slug}/:path*` })));
+const SPECIALTY_ALIAS_REDIRECTS = Object.entries(SPECIALTY_ALIASES).map(([alias, slug]) => ({ source: `/:city/${alias}/:rest*`, destination: `/:city/${slug}/:rest*` }));
+
 const nextConfig: NextConfig = {
   async redirects() {
     return [
       ...MOVED.map((r) => ({ ...r, permanent: true })),
+      ...CITY_ALIAS_REDIRECTS.map((r) => ({ ...r, permanent: true })),
+      ...SPECIALTY_ALIAS_REDIRECTS.map((r) => ({ ...r, permanent: true })),
       ...[...LEGACY_REDIRECTS, ...SHORTCUTS].map((r) => ({ ...r, permanent: false })),
     ];
   },
