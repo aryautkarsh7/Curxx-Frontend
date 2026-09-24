@@ -30,8 +30,16 @@ const SHORTCUTS = SECTIONS.flatMap((section) => [
 ]);
 
 // Alternative names redirect with a real 308 (a redirect thrown while rendering would stream a 200 first).
-const CITY_ALIAS_REDIRECTS = CITY_LIST.flatMap((c) => c.aliases.map((alias) => ({ source: `/${alias}/:path*`, destination: `/${c.slug}/:path*` })));
-const SPECIALTY_ALIAS_REDIRECTS = Object.entries(SPECIALTY_ALIASES).map(([alias, slug]) => ({ source: `/:city/${alias}/:rest*`, destination: `/:city/${slug}/:rest*` }));
+const CITY_ALIAS_REDIRECTS = CITY_LIST.flatMap((c) =>
+  c.aliases.flatMap((alias) => [
+    { source: `/${alias}`, destination: `/${c.slug}/doctors` },
+    { source: `/${alias}/:path+`, destination: `/${c.slug}/:path+` },
+  ]),
+);
+const SPECIALTY_ALIAS_REDIRECTS = Object.entries(SPECIALTY_ALIASES).flatMap(([alias, slug]) => [
+  { source: `/:city/${alias}`, destination: `/:city/${slug}` },
+  { source: `/:city/${alias}/:rest+`, destination: `/:city/${slug}/:rest+` },
+]);
 
 const nextConfig: NextConfig = {
   async redirects() {
