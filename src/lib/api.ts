@@ -69,6 +69,9 @@ export type Doctor = {
   offersVideo?: boolean;
   /** Human summary of the weekly schedule, e.g. "Mon–Sat · 10:00 AM – 1:30 PM". */
   consultHours?: string;
+  /** Direct numbers for the Call / WhatsApp buttons (empty = the clinic's, then Curxx's). */
+  phone?: string;
+  whatsapp?: string;
 };
 
 export type DoctorDetail = Doctor & {
@@ -175,12 +178,15 @@ export type SessionUser = {
   abhaId: string;
 };
 
+/** How a consultation happens. `audio` is a phone teleconsultation on a video slot: the doctor calls the patient. */
+export type ConsultMode = 'clinic' | 'video' | 'audio';
+
 export type Appointment = {
   id: string;
   reference: string;
   doctorSlug: string;
   startsAt: string;
-  mode: 'clinic' | 'video';
+  mode: ConsultMode;
   amount: number;
   status: 'confirmed' | 'cancelled' | 'completed';
   focus?: string;
@@ -242,6 +248,7 @@ export type Facility = {
   /** Extra photos (interior, equipment) beside the main one. */
   gallery?: string[];
   doctorCount?: number;
+  whatsapp?: string;
 };
 
 export type Medicine = {
@@ -326,6 +333,7 @@ export type LabSummary = {
   photoUrl: string;
   distanceKm: number;
   canCollect: boolean;
+  whatsapp?: string;
 };
 export type Lab = LabSummary & {
   about: string;
@@ -538,6 +546,23 @@ async function request<T>(path: string, options: Options = {}): Promise<T> {
   return payload as T;
 }
 
+/** What a Call / WhatsApp tap or a wrong-info report is about. */
+export type ProfileType = 'doctor' | 'facility' | 'lab' | 'lab-test' | 'medicine' | 'site';
+
+/** A reel or video added in the admin panel; `embedUrl` is ready for an iframe (or a <video> for files). */
+export type Video = {
+  id: string;
+  slug: string;
+  title: string;
+  kind: 'reel' | 'video';
+  url: string;
+  thumbnailUrl?: string;
+  description?: string;
+  doctorSlug?: string;
+  provider: 'youtube' | 'instagram' | 'file' | 'link';
+  embedUrl: string;
+};
+
 /** Catalogue reads are safe to cache briefly; everything else must be fresh. */
 const cached = (seconds: number): RequestInit => ({ next: { revalidate: seconds } } as RequestInit);
 const fresh: RequestInit = { cache: 'no-store' };
@@ -639,6 +664,15 @@ export const api = {
   labMatch: (query: { pincode?: string; city?: string; tests: string[]; mode: CollectionMode }) => request<LabMatch>(`/labs/match${qs({ ...query, tests: query.tests.join(',') })}`, fresh),
 
   // Editable website data (admin panel → Website)
+  // Engagement
+  track: (body: { kind: 'call' | 'whatsapp'; targetType: ProfileType; targetSlug: string; number: string; page: string }, token?: string | null) =>
+    // keepalive: the tap usually navigates away (tel:, wa.me) — let the request finish anyway.
+    request<{ ok: true }>('/track', { ...send('POST', body, token), keepalive: true }),
+  report: (body: { targetType: ProfileType; targetSlug: string; issues: string[]; details: string; contact: string; page: string }, token?: string | null) =>
+    request<{ report: { id: string } }>('/reports', send('POST', body, token)),
+  videos: (query: { doctor?: string; specialty?: string; city?: string; featured?: boolean; limit?: number }) =>
+    request<{ videos: Video[] }>(`/videos${qs({ ...query, featured: query.featured ? 'true' : undefined })}`, cached(120)),
+
   siteSettings: () => request<{ settings: SiteSettings }>('/site/settings', cached(300)),
   siteStats: () => request<{ stats: SiteStats }>('/site/stats', cached(300)),
   /** Sections of one or more pages, keyed "page/section". */
@@ -667,7 +701,7 @@ export const api = {
 
   // Booking & consults
   holdSlot: (slotId: string, token: string) => request<{ slotId: string; expiresAt: string; holdSeconds: number }>(`/slots/${slotId}/hold`, send('POST', {}, token)),
-  book: (body: { slotId: string; patient: Appointment['patient']; focus?: string; notes?: string }, token: string) =>
+  book: (body: { slotId: string; patient: Appointment['patient']; focus?: string; notes?: string; mode?: ConsultMode }, token: string) =>
     request<{ appointment: Appointment }>('/appointments', send('POST', body, token)),
   appointments: (token: string) => request<{ appointments: Appointment[] }>('/appointments', { token, ...fresh }),
   appointment: (idOrRef: string, token: string) => request<{ appointment: Appointment }>(`/appointments/${idOrRef}`, { token, ...fresh }),

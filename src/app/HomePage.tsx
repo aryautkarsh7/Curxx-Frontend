@@ -8,8 +8,9 @@ import FeatureBand from '@/components/FeatureBand';
 import PartnerCta from '@/components/PartnerCta';
 import PartnerSections from '@/components/PartnerSections';
 import TrustStrip from '@/components/TrustStrip';
+import VideoGallery from '@/components/profile/VideoGallery';
 import { LabMiniCard } from '@/components/labs/LabCard';
-import type { Doctor, Facility, LabSummary, Near, Testimonial } from '@/lib/api';
+import type { Doctor, Facility, LabSummary, Near, Testimonial, Video } from '@/lib/api';
 import type { Band, Faq, PartnerSection, ServiceCard, Step } from '@/lib/content-types';
 import { countLabel, fill, image, items, type SiteData } from '@/lib/site';
 
@@ -28,6 +29,8 @@ type HomeProps = {
   tiles: Tile[];
   chips: { label: string; condition: string }[];
   specialtyCount: number;
+  /** Reels & videos marked "Show on homepage" in the admin panel. */
+  videos?: Video[];
 };
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState, type MouseEvent } from 'react';
@@ -54,7 +57,7 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-export default function HomePage({ doctors: initialDoctors, facilities: initialFacilities, labs: initialLabs, site, testimonials, gp: initialGp, tiles, chips, specialtyCount }: HomeProps) {
+export default function HomePage({ doctors: initialDoctors, facilities: initialFacilities, labs: initialLabs, site, testimonials, gp: initialGp, tiles, chips, specialtyCount, videos = [] }: HomeProps) {
   const router = useRouter();
   const emergency = useEmergency();
   const { city, cityName, locality } = useCity();
@@ -403,6 +406,7 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 <HomeDoctorCard key={doctor.id} doctor={doctor} onOpen={openCard(`/doctor/${doctor.slug}`)} />
 ))}
 </div>
+{videos.length > 0 && <VideoGallery id="videos" videos={videos} heading="Watch: doctors answer your questions" subheading="Short health tips and explainers from verified Curxx doctors" />}
 {/* AI TRIAGE BAND */}
 <div className="p-6 md:p-8 bg-surface-container-low rounded-2xl border border-outline-variant/70 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
 <div className="flex items-center space-x-5">

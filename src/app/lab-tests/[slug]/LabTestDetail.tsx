@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Footer from '@/components/Footer';
+import ReportIssue from '@/components/profile/ReportIssue';
 import Header from '@/components/Header';
 import CollectionSlotPicker, { type CollectionChoice } from '@/components/labs/CollectionSlotPicker';
 import LabTestCard, { labCartItem } from '@/components/labs/LabTestCard';
@@ -86,6 +87,7 @@ export default function LabTestDetail({ pkg, related, category, availability }: 
 <span className="w-1 h-1 rounded-full bg-outline"></span>
 <span className="text-tertiary font-semibold">100% Barcode Traced</span>
 </div>
+<ReportIssue targetType="lab-test" slug={pkg.slug} name={pkg.name} className="mt-2" />
 </div>
 {/* Fasting Requirement Callout Card (Design System strict tinted palette) */}
 {pkg.fastingHours ? (

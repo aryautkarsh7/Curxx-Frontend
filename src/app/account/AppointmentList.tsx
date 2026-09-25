@@ -105,7 +105,7 @@ export default function AppointmentList() {
                 </span>
                 <h2 className="text-headline-h3 font-headline-h3 text-on-surface">{a.doctor?.name ?? a.doctorSlug}</h2>
                 <p className="text-caption font-caption text-on-surface-variant">
-                  {a.mode === 'video' ? 'Video consult' : `Clinic visit · ${a.doctor?.clinicName ?? ''}${a.doctor?.area ? `, ${a.doctor.area}` : ''}`}
+                  {a.mode === 'clinic' ? `Clinic visit · ${a.doctor?.clinicName ?? ''}${a.doctor?.area ? `, ${a.doctor.area}` : ''}` : a.mode === 'audio' ? `Phone consult · doctor calls +91 ${a.patient.phone}` : 'Video consult'}
                   {' · '}
                   {rupees(a.amount)} · Ref {a.reference}
                 </p>

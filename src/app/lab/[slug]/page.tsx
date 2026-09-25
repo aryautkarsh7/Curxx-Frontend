@@ -35,7 +35,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function LabPage({ params }: Props) {
-  const data = await load((await params).slug);
+  const [data, settings] = await Promise.all([load((await params).slug), api.siteSettings().then((r) => r.settings).catch(() => ({}) as Record<string, string>)]);
   if (!data) notFound();
-  return <LabProfile lab={data.lab} tests={data.tests} nearby={data.nearby} />;
+  const contact = { phone: settings['contact-phone'] ?? '', whatsapp: settings['contact-whatsapp'] ?? '' };
+  return <LabProfile lab={data.lab} tests={data.tests} nearby={data.nearby} contact={contact} />;
 }

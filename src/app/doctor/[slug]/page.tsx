@@ -42,8 +42,14 @@ export default async function DoctorPage({ params, searchParams }: Props) {
 
   const query = await searchParams;
   const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
-  const mode = first(query.mode) === 'video' ? 'video' : 'clinic';
-  const { slots } = await api.slots(slug).catch(() => ({ slots: [] }));
+  const wanted = first(query.mode);
+  const mode = wanted === 'video' || wanted === 'audio' ? wanted : 'clinic';
+  const [{ slots }, { videos }, { settings }] = await Promise.all([
+    api.slots(slug).catch(() => ({ slots: [] })),
+    api.videos({ doctor: slug, limit: 12 }).catch(() => ({ videos: [] })),
+    api.siteSettings().catch(() => ({ settings: {} as Record<string, string> })),
+  ]);
+  const contact = { phone: settings['contact-phone'] ?? '', whatsapp: settings['contact-whatsapp'] ?? '' };
 
-  return <DoctorProfile doctor={data.doctor} facility={data.facility} similar={data.similar} slots={slots} mode={mode} slotId={first(query.slot)} />;
+  return <DoctorProfile doctor={data.doctor} facility={data.facility} similar={data.similar} slots={slots} mode={mode} slotId={first(query.slot)} videos={videos} contact={contact} />;
 }

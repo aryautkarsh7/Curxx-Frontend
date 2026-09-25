@@ -1,5 +1,5 @@
 'use client';
-import type { Appointment } from './api';
+import type { Appointment, ConsultMode } from './api';
 
 const KEY = 'curxx_booking';
 
@@ -8,7 +8,7 @@ export type BookingDraft = {
   doctorSlug: string;
   doctorName: string;
   startsAt: string;
-  mode: 'clinic' | 'video';
+  mode: ConsultMode;
   fee: number;
   /** Why the patient is consulting (sub-specialty slug), from the video-consult flow. */
   focus?: string;
@@ -39,6 +39,13 @@ export function clearDraft() {
   } catch {
     // nothing to clear
   }
+}
+
+/** "Video consultation" / "Phone consultation" / "In-clinic visit". */
+export function modeLabel(mode: ConsultMode, short = false) {
+  if (mode === 'audio') return short ? 'Phone consult' : 'Phone consultation';
+  if (mode === 'video') return short ? 'Video consult' : 'Video consultation';
+  return short ? 'Clinic visit' : 'In-clinic visit';
 }
 
 /** "Sat, 20 Sep · 05:45 PM" — the format used across the booking steps. */

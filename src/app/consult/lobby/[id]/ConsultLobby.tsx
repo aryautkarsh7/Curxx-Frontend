@@ -47,6 +47,19 @@ function Lobby({ id }: { id: string }) {
       </div>
     );
   }
+  if (appointment.mode === 'audio') {
+    return (
+      <div className="max-w-lg mx-auto p-8 rounded-2xl border border-[#E7E5E4] bg-white text-center space-y-3">
+        <span className="material-symbols-outlined text-[40px] text-[#6D28D9]">phone_in_talk</span>
+        <h1 className="font-headline-h2 text-headline-h2 text-[#1C1917]">This is a phone consultation</h1>
+        <p className="font-body-default text-body-default text-[#78716C]">{appointment.doctor?.name} will call you on +91 {appointment.patient.phone} at {formatSlot(appointment.startsAt)}. Keep your phone nearby — no video or internet needed.</p>
+        <div className="flex flex-wrap justify-center gap-3">
+          <Link href={`/consult/room/${appointment.id}?panel=chat`} className="inline-flex h-11 px-5 items-center rounded-lg bg-primary-container text-white font-caption-strong text-caption-strong">Message the doctor</Link>
+          <Link href="/account" className="inline-flex h-11 px-5 items-center rounded-lg border border-[#E7E5E4] font-caption-strong text-caption-strong">My appointments</Link>
+        </div>
+      </div>
+    );
+  }
   if (appointment.mode !== 'video') {
     return (
       <div className="max-w-lg mx-auto p-8 rounded-2xl border border-[#E7E5E4] bg-white text-center space-y-3">

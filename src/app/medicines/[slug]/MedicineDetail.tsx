@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Footer from '@/components/Footer';
+import ReportIssue from '@/components/profile/ReportIssue';
 import Header from '@/components/Header';
 import MedicineCard from '@/components/pharmacy/MedicineCard';
 import Toast, { useToast } from '@/components/Toast';
@@ -113,6 +114,7 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
                   <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>{m.rating}
                 </span>
                 <span>({m.reviewCount.toLocaleString('en-IN')} ratings)</span>
+                <ReportIssue targetType="medicine" slug={m.slug} name={m.name} className="ml-2" />
               </div>
             </div>
 

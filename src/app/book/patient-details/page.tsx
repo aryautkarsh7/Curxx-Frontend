@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import SlotCountdown from '@/components/SlotCountdown';
 import { api, rupees } from '@/lib/api';
-import { formatSlot, getDraft, saveDraft, type BookingDraft } from '@/lib/booking';
+import { formatSlot, getDraft, modeLabel, saveDraft, type BookingDraft } from '@/lib/booking';
 import { getToken, getUser, setSession } from '@/lib/session';
 
 async function refreshProfile(token: string, name: string) {
@@ -73,7 +73,7 @@ function PatientDetails() {
     <main className="w-full max-w-[760px] mx-auto px-4 py-8 space-y-5 pb-24">
       <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5 flex items-center justify-between gap-4 shadow-sm flex-wrap">
         <div>
-          <div className="font-caption text-caption text-[#78716C]">{draft.mode === 'video' ? 'Video consultation' : 'Clinic visit'} with</div>
+          <div className="font-caption text-caption text-[#78716C]">{draft.mode === 'clinic' ? 'Clinic visit' : modeLabel(draft.mode)} with</div>
           <div className="font-headline-h3 text-headline-h3 text-[#1C1917]">{draft.doctorName}</div>
           <div className="font-caption text-caption text-[#78716C] mt-0.5">{formatSlot(draft.startsAt)}</div>
         </div>

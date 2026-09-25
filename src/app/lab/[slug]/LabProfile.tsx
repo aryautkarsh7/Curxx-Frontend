@@ -6,6 +6,8 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { AccreditationBadges, LabMap, LabMiniCard, directionsUrl, labTypeLabel } from '@/components/labs/LabCard';
 import LabTestCard from '@/components/labs/LabTestCard';
+import ContactButtons from '@/components/profile/ContactButtons';
+import ReportIssue from '@/components/profile/ReportIssue';
 import Toast, { useToast } from '@/components/Toast';
 import { api, errorMessage, rupees, type Lab, type LabSummary, type LabTest } from '@/lib/api';
 import { useCart } from '@/lib/cart';
@@ -33,7 +35,7 @@ function openNow(lab: Pick<Lab, 'openHours' | 'sundayHours'>) {
   return minutes >= range[0] && minutes < range[1];
 }
 
-export default function LabProfile({ lab, tests, nearby }: { lab: Lab; tests: LabTest[]; nearby: LabSummary[] }) {
+export default function LabProfile({ lab, tests, nearby, contact }: { lab: Lab; tests: LabTest[]; nearby: LabSummary[]; contact?: { phone: string; whatsapp: string } }) {
   const router = useRouter();
   const cart = useCart('lab');
   const [toast, showToast] = useToast();
@@ -177,14 +179,11 @@ export default function LabProfile({ lab, tests, nearby }: { lab: Lab; tests: La
                 <a href={directionsUrl(lab)} target="_blank" rel="noopener noreferrer" className="h-10 px-4 rounded-lg bg-primary-container hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong inline-flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-[18px]">directions</span>Directions
                 </a>
-                {lab.phone && (
-                  <a href={`tel:${lab.phone.replace(/\s/g, '')}`} className="h-10 px-4 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong inline-flex items-center gap-1.5 hover:border-outline">
-                    <span className="material-symbols-outlined text-[18px]">call</span>{lab.phone}
-                  </a>
-                )}
+                <ContactButtons size="sm" showNumber={Boolean(lab.phone)} targetType="lab" slug={lab.slug} name={lab.name} phones={[lab.phone, contact?.phone]} whatsapps={[lab.whatsapp, contact?.whatsapp]} message={`Hi, I'd like to book a test at ${lab.name} (found on Curxx).`} />
                 <button type="button" onClick={share} className="h-10 px-4 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong inline-flex items-center gap-1.5 hover:border-outline">
                   <span className="material-symbols-outlined text-[18px]">share</span>Share
                 </button>
+                <ReportIssue targetType="lab" slug={lab.slug} name={lab.name} className="px-1" />
               </div>
             </section>
 

@@ -28,7 +28,7 @@ const nextAvailableGp = (city: string): Promise<Doctor | null> =>
 export default async function Page() {
   // Everything here comes from the API: doctors, centres and labs, plus the editable copy, claims and
   // counts. An outage hides the affected sections rather than taking the homepage down.
-  const [doctors, specialties, facilities, labs, site, testimonials, gp, catalogue] = await Promise.all([
+  const [doctors, specialties, facilities, labs, site, testimonials, gp, catalogue, videos] = await Promise.all([
     api.doctors({ sort: 'rating', limit: 3 }).then((r) => r.doctors).catch(() => []),
     api.specialties().then((r) => r.specialties).catch(() => []),
     api.facilities({ sort: 'distance', limit: 4 }).then((r) => r.items).catch(() => []),
@@ -37,6 +37,7 @@ export default async function Page() {
     api.testimonials('patient').then((r) => r.testimonials).catch(() => []),
     nextAvailableGp(DEFAULT_CITY),
     liveCatalogue(),
+    api.videos({ featured: true, limit: 12 }).then((r) => r.videos).catch(() => []),
   ]);
 
   // Specialty tiles and consultation chips are ordered in the admin panel (homepage order / chip order).
@@ -61,6 +62,7 @@ export default async function Page() {
         tiles={tiles}
         chips={chips}
         specialtyCount={catalogue.specialties.length}
+        videos={videos}
       />
     </>
   );

@@ -6,7 +6,7 @@ import BookingProgress from '@/components/BookingProgress';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { api, rupees, type Appointment } from '@/lib/api';
-import { formatSlot } from '@/lib/booking';
+import { formatSlot, modeLabel } from '@/lib/booking';
 import { getToken } from '@/lib/session';
 
 function Confirmation() {
@@ -50,6 +50,7 @@ function Confirmation() {
   }
 
   const isVideo = appointment.mode === 'video';
+  const isPhone = appointment.mode === 'audio';
 
   return (
     <main className="w-full max-w-[680px] mx-auto px-4 py-8 space-y-5 pb-24">
@@ -70,8 +71,8 @@ function Confirmation() {
           {[
             ['Doctor', appointment.doctor?.name ?? appointment.doctorSlug],
             ['When', formatSlot(appointment.startsAt)],
-            ['Type', isVideo ? 'Video consultation' : 'In-clinic visit'],
-            ['Where', isVideo ? 'Curxx video room (link opens 10 minutes before)' : `${appointment.doctor?.clinicName ?? ''}${appointment.doctor?.area ? `, ${appointment.doctor.area}` : ''}`],
+            ['Type', modeLabel(appointment.mode)],
+            ['Where', isPhone ? `The doctor calls you on +91 ${appointment.patient.phone}` : isVideo ? 'Curxx video room (link opens 10 minutes before)' : `${appointment.doctor?.clinicName ?? ''}${appointment.doctor?.area ? `, ${appointment.doctor.area}` : ''}`],
             ['Patient', `${appointment.patient.name}${appointment.patient.age ? `, ${appointment.patient.age}` : ''}`],
             ['Paid', appointment.amount === 0 ? 'Free consultation' : rupees(appointment.amount)],
           ].map(([label, value]) => (
@@ -84,7 +85,12 @@ function Confirmation() {
       </section>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        {isVideo ? (
+        {isPhone ? (
+          <Link href={`/consult/room/${appointment.id}?panel=chat`} className="flex-1 h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-2 transition">
+            <span className="material-symbols-outlined text-[18px]">chat</span>
+            Message the doctor
+          </Link>
+        ) : isVideo ? (
           <Link href={`/consult/lobby/${appointment.id}`} className="flex-1 h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-2 transition">
             <span className="material-symbols-outlined text-[18px]">videocam</span>
             Open video lobby

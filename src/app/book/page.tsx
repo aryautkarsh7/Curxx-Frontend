@@ -18,7 +18,10 @@ function SelectSlot() {
   const slotId = params.get('slot');
   const doctorSlug = params.get('doctor');
   // "Consult now" arrives with a mode instead of a slot: take that doctor's earliest one.
-  const wantedMode = params.get('mode') === 'video' ? 'video' : params.get('mode') === 'clinic' ? 'clinic' : null;
+  const modeParam = params.get('mode');
+  const wantedMode = modeParam === 'video' || modeParam === 'audio' ? 'video' : modeParam === 'clinic' ? 'clinic' : null;
+  /** Phone teleconsultation: booked on a video slot, the doctor calls the patient. */
+  const byPhone = modeParam === 'audio';
   const focus = params.get('focus') ?? '';
 
   const [doctor, setDoctor] = useState<Doctor | null>(null);
@@ -73,7 +76,7 @@ function SelectSlot() {
         doctorSlug: doctor.slug,
         doctorName: doctor.name,
         startsAt: selected.startsAt,
-        mode: selected.mode,
+        mode: byPhone && selected.mode === 'video' ? 'audio' : selected.mode,
         fee: selected.fee,
         focus,
       });
@@ -152,7 +155,7 @@ function SelectSlot() {
             </div>
           </div>
           <div className="sm:text-right border-t sm:border-t-0 pt-3 sm:pt-0 border-[#E7E5E4] flex sm:flex-col justify-between sm:justify-center items-end">
-            <span className="font-caption text-caption text-[#78716C]">{selected?.mode === 'video' ? 'Video consult' : 'Clinic visit'}</span>
+            <span className="font-caption text-caption text-[#78716C]">{selected?.mode === 'video' ? (byPhone ? 'Phone consult' : 'Video consult') : 'Clinic visit'}</span>
             <span className="font-display text-display text-[#1C1917]">{selected?.fee === 0 ? 'Free' : rupees(selected?.fee ?? doctor.fee)}</span>
           </div>
         </div>

@@ -3,7 +3,9 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { rupees, type Doctor, type Slot } from '@/lib/api';
 
-type Mode = 'clinic' | 'video';
+/** audio = phone teleconsultation, booked on the doctor's video slots. */
+type Mode = 'clinic' | 'video' | 'audio';
+const slotMode = (m: Mode) => (m === 'audio' ? 'video' : m);
 
 const dayKey = (value: string | Date) => new Date(value).toDateString();
 
@@ -36,7 +38,8 @@ export default function BookingWidget({ doctor, slots, initialMode = 'clinic', i
   const offersVideo = doctor.offersVideo !== false && slots.some((s) => s.mode === 'video');
   const offersClinic = slots.some((s) => s.mode === 'clinic') || !offersVideo;
   const preselected = initialSlotId ? slots.find((s) => s.id === initialSlotId) ?? null : null;
-  const startMode: Mode = preselected?.mode ?? (initialMode === 'video' && offersVideo ? 'video' : offersClinic ? 'clinic' : 'video');
+  const startMode: Mode =
+    preselected?.mode === 'video' && initialMode === 'audio' ? 'audio' : preselected?.mode ?? ((initialMode === 'video' || initialMode === 'audio') && offersVideo ? initialMode : offersClinic ? 'clinic' : 'video');
 
   const [mode, setMode] = useState<Mode>(startMode);
   const [selected, setSelected] = useState<Slot | null>(preselected);
@@ -45,7 +48,7 @@ export default function BookingWidget({ doctor, slots, initialMode = 'clinic', i
   const ctaRef = useRef<HTMLDivElement>(null);
   const missedSlot = Boolean(initialSlotId && !preselected);
 
-  const modeSlots = useMemo(() => slots.filter((s) => s.mode === mode), [slots, mode]);
+  const modeSlots = useMemo(() => slots.filter((s) => s.mode === slotMode(mode)), [slots, mode]);
 
   // Seven days from today, marked with whether this doctor has anything open.
   const days = useMemo(() => {
@@ -60,7 +63,7 @@ export default function BookingWidget({ doctor, slots, initialMode = 'clinic', i
   const day = activeDay ?? days.find((d) => d.hasSlots)?.key ?? days[0]!.key;
   const daySlots = useMemo(() => modeSlots.filter((s) => dayKey(s.startsAt) === day), [modeSlots, day]);
   const freeToday = daySlots.some((s) => s.free);
-  const fee = selected ? selected.fee : mode === 'video' ? doctor.videoFee : doctor.fee;
+  const fee = selected ? selected.fee : mode === 'clinic' ? doctor.fee : doctor.videoFee;
   const time = (slot: Slot) => new Date(slot.startsAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase();
 
   useEffect(() => {
@@ -94,15 +97,15 @@ export default function BookingWidget({ doctor, slots, initialMode = 'clinic', i
 
   function book() {
     if (!selected) return;
-    router.push(`/book?slot=${selected.id}&doctor=${doctor.slug}`);
+    router.push(`/book?slot=${selected.id}&doctor=${doctor.slug}${mode === 'audio' ? '&mode=audio' : ''}`);
   }
 
   return (
     <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-sm space-y-5">
       {/* Mode Segmented Switcher */}
-      {offersVideo && offersClinic ? (
-        <div className="bg-[#FAFAF9] p-1 border border-[#E7E5E4] rounded-xl grid grid-cols-2 gap-1 text-center font-caption-strong text-caption-strong" role="tablist" aria-label="Consultation type">
-          {(['video', 'clinic'] as const).map((value) => (
+      {offersVideo ? (
+        <div className={`bg-[#FAFAF9] p-1 border border-[#E7E5E4] rounded-xl grid ${offersClinic ? 'grid-cols-3' : 'grid-cols-2'} gap-1 text-center font-caption-strong text-caption-strong`} role="tablist" aria-label="Consultation type">
+          {(offersClinic ? (['video', 'audio', 'clinic'] as const) : (['video', 'audio'] as const)).map((value) => (
             <button
               key={value}
               type="button"
@@ -111,14 +114,20 @@ export default function BookingWidget({ doctor, slots, initialMode = 'clinic', i
               onClick={() => switchMode(value)}
               className={mode === value ? 'py-2 rounded-lg bg-white border border-[#E7E5E4] text-[#1C1917] shadow-xs' : 'py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] transition duration-150'}
             >
-              {value === 'video' ? `Video (${doctor.freeVideo ? 'Free first' : rupees(doctor.videoFee)})` : `Clinic Visit (${rupees(doctor.fee)})`}
+              <span className="flex flex-col items-center leading-tight">
+                <span className="inline-flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[16px]">{value === 'video' ? 'videocam' : value === 'audio' ? 'call' : 'local_hospital'}</span>
+                  {value === 'video' ? 'Video' : value === 'audio' ? 'Phone' : 'Clinic'}
+                </span>
+                <span className="font-micro text-micro text-[#78716C]">{value === 'clinic' ? rupees(doctor.fee) : doctor.freeVideo ? 'Free first' : rupees(doctor.videoFee)}</span>
+              </span>
             </button>
           ))}
         </div>
       ) : (
         <p className="px-3 py-2 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] font-caption-strong text-caption-strong text-[#1C1917] flex items-center gap-1.5">
-          <span className="material-symbols-outlined text-[18px] text-[#C1121F]">{offersVideo ? 'videocam' : 'local_hospital'}</span>
-          {offersVideo ? 'Video consultation' : 'In-clinic visits only'}
+          <span className="material-symbols-outlined text-[18px] text-[#C1121F]">local_hospital</span>
+          In-clinic visits only
         </p>
       )}
 
@@ -178,10 +187,16 @@ export default function BookingWidget({ doctor, slots, initialMode = 'clinic', i
 
       {/* Time Slot Matrix */}
       <div ref={timesRef} className="space-y-4 pt-1 scroll-mt-28">
-        {daySlots.length === 0 && <p className="font-caption text-caption text-[#78716C]">No {mode === 'video' ? 'video' : 'in-clinic'} slots left on this day. Try another date.</p>}
+        {mode === 'audio' && (
+          <p className="font-caption text-caption text-[#1C1917] flex items-start gap-1.5 px-3 py-2 rounded-lg bg-[#F5F3FF] border border-[#DDD6FE]">
+            <span className="material-symbols-outlined text-[16px] text-[#6D28D9]">call</span>
+            <span>Phone teleconsultation — the doctor calls your mobile at the chosen time. No internet or video needed.</span>
+          </p>
+        )}
+        {daySlots.length === 0 && <p className="font-caption text-caption text-[#78716C]">No {mode === 'clinic' ? 'in-clinic' : mode === 'audio' ? 'phone' : 'video'} slots left on this day. Try another date.</p>}
         {freeToday && (
           <p className="font-caption text-caption text-[#047857] flex items-center gap-1">
-            <span className="material-symbols-outlined text-[16px]">redeem</span>Slots marked Free cost nothing — a free first video consult.
+            <span className="material-symbols-outlined text-[16px]">redeem</span>Slots marked Free cost nothing — a free first {mode === 'audio' ? 'phone' : 'video'} consult.
           </p>
         )}
         {BANDS.map((band, index) => {
@@ -226,7 +241,7 @@ export default function BookingWidget({ doctor, slots, initialMode = 'clinic', i
           <div className="bg-[#FAFAF9] border border-[#E7E5E4] rounded-lg p-2.5 flex items-center gap-2">
             <span className="material-symbols-outlined text-[#C1121F] text-[18px]">alarm</span>
             <span className="font-caption text-caption text-[#1C1917]">
-              Selected: <strong>{new Date(selected.startsAt).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}, {time(selected)}</strong> · {selected.mode === 'video' ? 'Video' : 'Clinic'} — held for 8 minutes once you continue
+              Selected: <strong>{new Date(selected.startsAt).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}, {time(selected)}</strong> · {mode === 'audio' ? 'Phone' : selected.mode === 'video' ? 'Video' : 'Clinic'} — held for 8 minutes once you continue
             </span>
           </div>
         )}

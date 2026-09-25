@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { slotLabel } from '@/components/DoctorCard';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import ContactButtons from '@/components/profile/ContactButtons';
+import ReportIssue from '@/components/profile/ReportIssue';
 import Toast, { useToast } from '@/components/Toast';
 import { api, photo, rupees, type Doctor, type Facility, type Slot } from '@/lib/api';
 
@@ -17,7 +19,7 @@ const mapsUrl = (q: string) => `https://www.google.com/maps/search/?api=1&query=
 const specialtyLabel = (slug: string) => slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
 /** `interior`: the site-wide default photo beside the clinic's own, used when it has no gallery. */
-export default function ClinicProfile({ facility: f, doctors, interior }: { facility: Facility; doctors: Doctor[]; interior: string }) {
+export default function ClinicProfile({ facility: f, doctors, interior, contact }: { facility: Facility; doctors: Doctor[]; interior: string; contact?: { phone: string; whatsapp: string } }) {
   const router = useRouter();
   const [toast, showToast] = useToast();
   const [dept, setDept] = useState<string | null>(null);
@@ -109,9 +111,10 @@ export default function ClinicProfile({ facility: f, doctors, interior }: { faci
             </div>
           </div>
           <div className="flex flex-wrap lg:flex-col gap-2 shrink-0">
-            {f.phone && <a href={`tel:${f.phone.replace(/\s/g, '')}`} className="h-11 px-4 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong flex items-center gap-1.5 hover:bg-[#FAFAF9]"><span className="material-symbols-outlined text-[18px]">call</span>{f.phone}</a>}
+            <ContactButtons className="lg:flex-col" showNumber={Boolean(f.phone)} targetType="facility" slug={f.slug} name={f.name} phones={[f.phone, contact?.phone]} whatsapps={[f.whatsapp, contact?.whatsapp]} message={`Hi, I'd like to know more about ${f.name} (found on Curxx).`} />
             <a href={mapsUrl(`${f.name} ${f.address}`)} target="_blank" rel="noopener noreferrer" className="h-11 px-4 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong flex items-center gap-1.5 hover:bg-[#FAFAF9]"><span className="material-symbols-outlined text-[18px]">directions</span>Directions</a>
             <button type="button" onClick={share} className="h-11 px-4 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong flex items-center gap-1.5 hover:bg-[#FAFAF9]"><span className="material-symbols-outlined text-[18px]">share</span>Share</button>
+            <ReportIssue targetType="facility" slug={f.slug} name={f.name} className="px-1 py-1" />
           </div>
         </section>
 

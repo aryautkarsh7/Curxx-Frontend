@@ -9,7 +9,7 @@ import ShareRecordModal from '@/components/ShareRecordModal';
 import { DetailSkeleton } from '@/components/skeletons';
 import Toast, { useToast } from '@/components/Toast';
 import { api, errorMessage, photo, type AccessGrant, type Appointment, type Message } from '@/lib/api';
-import { formatSlot } from '@/lib/booking';
+import { formatSlot, modeLabel } from '@/lib/booking';
 import { useLocalMedia } from '@/lib/media';
 import { getToken, useSession } from '@/lib/session';
 
@@ -158,7 +158,7 @@ function ChatPage({ appointment: a }: { appointment: Appointment }) {
           {a.doctor?.photoUrl && <img src={photo(a.doctor.photoUrl, 80)} alt="" className="w-10 h-10 rounded-full object-cover" />}
           <div className="min-w-0 flex-1">
             <p className="font-body-strong text-body-strong text-[#1C1917] truncate">{a.doctor?.name}</p>
-            <p className="font-micro text-micro text-[#78716C]">{a.mode === 'video' ? 'Video consult' : 'Clinic visit'} · {formatSlot(a.startsAt)} · {a.reference}</p>
+            <p className="font-micro text-micro text-[#78716C]">{modeLabel(a.mode, true)} · {formatSlot(a.startsAt)} · {a.reference}</p>
           </div>
           {a.room.canJoin && <Link href={`/consult/lobby/${a.id}`} className="h-9 px-3 rounded-lg bg-[#C1121F] text-white font-caption-strong text-caption inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">videocam</span>Join</Link>}
         </div>

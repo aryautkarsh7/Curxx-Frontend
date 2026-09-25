@@ -10,7 +10,10 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import SaveButton from '@/components/SaveButton';
 import Toast, { useToast } from '@/components/Toast';
-import { photo, rupees, type Doctor, type DoctorDetail, type Facility, type Slot } from '@/lib/api';
+import ContactButtons from '@/components/profile/ContactButtons';
+import ReportIssue from '@/components/profile/ReportIssue';
+import VideoGallery from '@/components/profile/VideoGallery';
+import { photo, rupees, type ConsultMode, type Doctor, type DoctorDetail, type Facility, type Slot, type Video } from '@/lib/api';
 import { slotLabel } from '@/components/DoctorCard';
 
 type Service = { slug: string; name: string; description: string; icon: string; focus: boolean };
@@ -19,21 +22,29 @@ type Props = {
   facility: Facility | null;
   similar: Doctor[];
   slots: Slot[];
-  mode?: 'clinic' | 'video';
+  mode?: ConsultMode;
   /** Slot chosen on a listing card, preselected in the widget. */
   slotId?: string;
+  /** Reels and videos linked to this doctor in the admin panel. */
+  videos?: Video[];
+  /** Curxx's own numbers, used when neither the doctor nor the clinic has one. */
+  contact?: { phone: string; whatsapp: string };
 };
 
 const mapsUrl = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 
-export default function DoctorProfile({ doctor, facility, similar, slots, mode = 'clinic', slotId }: Props) {
+export default function DoctorProfile({ doctor, facility, similar, slots, mode = 'clinic', slotId, videos = [], contact }: Props) {
   const router = useRouter();
   const [toast, showToast] = useToast();
   const preselected = slotId ? slots.find((s) => s.id === slotId) : undefined;
-  const [widgetMode, setWidgetMode] = useState(preselected?.mode ?? mode);
+  const [widgetMode, setWidgetMode] = useState<ConsultMode>(preselected?.mode === 'video' && mode === 'audio' ? 'audio' : preselected?.mode ?? mode);
   const [initialSlot, setInitialSlot] = useState(slotId);
   const [picked, setPicked] = useState<Slot | null>(preselected ?? null);
-  const onSelect = useCallback((slot: Slot | null) => setPicked(slot), []);
+  const [pickedMode, setPickedMode] = useState<ConsultMode>(widgetMode);
+  const onSelect = useCallback((slot: Slot | null, m: ConsultMode) => {
+    setPicked(slot);
+    setPickedMode(m);
+  }, []);
   // One number everywhere: the count of reviews actually on the profile.
   const reviewTotal = doctor.reviewSummary.total;
   const nextVideo = slots.find((s) => s.mode === 'video');
@@ -55,7 +66,7 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
     }
   }
 
-  const goToBooking = (m?: 'clinic' | 'video') => {
+  const goToBooking = (m?: ConsultMode) => {
     if (m && m !== widgetMode) {
       setWidgetMode(m);
       setInitialSlot(undefined);
@@ -166,6 +177,17 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
                   {doctor.consultHours && <span className="inline-flex items-center gap-1 text-[#78716C]"><span className="material-symbols-outlined text-[16px]">schedule</span>{doctor.consultHours}</span>}
                 </div>
               )}
+              <div className="mt-5 pt-4 border-t border-[#E7E5E4] flex items-center justify-between gap-3 flex-wrap">
+                <ContactButtons
+                  targetType="doctor"
+                  slug={doctor.slug}
+                  name={doctor.name}
+                  phones={[doctor.phone, facility?.phone, contact?.phone]}
+                  whatsapps={[doctor.whatsapp, facility?.whatsapp, contact?.whatsapp]}
+                  message={`Hi, I'd like to book a consultation with ${doctor.name} (found on Curxx).`}
+                />
+                <ReportIssue targetType="doctor" slug={doctor.slug} name={doctor.name} />
+              </div>
             </article>
           </div>
 
@@ -182,7 +204,7 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
           <section className="min-w-0 space-y-6 w-full lg:col-start-1 lg:row-start-2">
 
             <nav aria-label="Profile sections" className="overflow-x-auto no-scrollbar sticky top-16 z-30 bg-white border-b border-[#E7E5E4] px-2 flex items-center gap-6 sm:gap-8">
-              {[['overview', 'Overview'], ['services', 'Services'], ['reviews', `Reviews (${reviewTotal})`], ['clinic', 'Clinic'], ['faqs', 'FAQs']].map(([id, label]) => (
+              {[['overview', 'Overview'], ['services', 'Services'], ...(videos.length ? [['videos', 'Videos']] : []), ['reviews', `Reviews (${reviewTotal})`], ['clinic', 'Clinic'], ['faqs', 'FAQs']].map(([id, label]) => (
                 <a key={id} href={`#${id}`} className="py-3 font-body-default text-body-default text-[#78716C] hover:text-[#1C1917] whitespace-nowrap">{label}</a>
               ))}
             </nav>
@@ -233,6 +255,12 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
               </section>
             )}
 
+            {videos.length > 0 && (
+              <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5 sm:p-8">
+                <VideoGallery id="videos" videos={videos} heading={`Videos from ${doctor.name}`} subheading="Health tips and answers to common questions" />
+              </div>
+            )}
+
             <section id="reviews" className="bg-white border border-[#E7E5E4] rounded-2xl p-5 sm:p-8 space-y-4 scroll-mt-32">
               <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Patient stories</h2>
               <DoctorReviews slug={doctor.slug} doctorName={doctor.name} />
@@ -252,7 +280,9 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
                   <p className="font-caption text-caption text-[#1C1917]">Consultation fee: <strong className="font-body-strong">{rupees(doctor.fee)}</strong>{doctor.offersVideo !== false ? ` · Video ${rupees(doctor.videoFee)}` : ''}</p>
                   <div className="flex flex-wrap gap-2 pt-2">
                     <a href={mapsUrl(`${doctor.clinicName} ${facility?.address ?? doctor.area}`)} target="_blank" rel="noopener noreferrer" className="h-9 px-3 rounded-lg border border-[#E7E5E4] font-caption-strong text-caption inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">directions</span>Directions</a>
-                    {facility?.phone && <a href={`tel:${facility.phone.replace(/\s/g, '')}`} className="h-9 px-3 rounded-lg border border-[#E7E5E4] font-caption-strong text-caption inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">call</span>Call clinic</a>}
+                    {facility && (
+                      <ContactButtons size="sm" targetType="facility" slug={facility.slug} name={facility.name} phones={[facility.phone]} whatsapps={[facility.whatsapp]} />
+                    )}
                     <button type="button" onClick={() => goToBooking('clinic')} className="h-9 px-3 rounded-lg bg-[#C1121F] text-white font-caption-strong text-caption">Book clinic visit</button>
                   </div>
                 </div>
@@ -293,11 +323,11 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
       {/* Phones: the bar follows the widget — once a time is picked it books it directly. */}
       <div className="lg:hidden fixed bottom-16 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#E7E5E4] px-margin py-3 flex items-center gap-3">
         <div className="min-w-0">
-          <p className="font-micro text-micro text-[#78716C] truncate">{picked ? `${picked.mode === 'video' ? 'Video' : 'Clinic'} · ${time(picked.startsAt)}` : widgetMode === 'video' ? 'Video consult' : 'Clinic visit'}</p>
-          <p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">{picked ? (picked.fee === 0 ? 'Free' : rupees(picked.fee)) : rupees(widgetMode === 'video' ? doctor.videoFee : doctor.fee)}</p>
+          <p className="font-micro text-micro text-[#78716C] truncate">{picked ? `${pickedMode === 'audio' ? 'Phone' : picked.mode === 'video' ? 'Video' : 'Clinic'} · ${time(picked.startsAt)}` : widgetMode === 'audio' ? 'Phone consult' : widgetMode === 'video' ? 'Video consult' : 'Clinic visit'}</p>
+          <p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">{picked ? (picked.fee === 0 ? 'Free' : rupees(picked.fee)) : rupees(widgetMode === 'clinic' ? doctor.fee : doctor.videoFee)}</p>
         </div>
         {picked ? (
-          <button type="button" onClick={() => router.push(`/book?slot=${picked.id}&doctor=${doctor.slug}`)} className="flex-1 h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-1.5">
+          <button type="button" onClick={() => router.push(`/book?slot=${picked.id}&doctor=${doctor.slug}${pickedMode === 'audio' ? '&mode=audio' : ''}`)} className="flex-1 h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-1.5">
             Book this slot<span className="material-symbols-outlined text-[18px]">arrow_forward</span>
           </button>
         ) : (

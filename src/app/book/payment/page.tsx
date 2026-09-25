@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import SlotCountdown, { clearSlotHold } from '@/components/SlotCountdown';
 import { ApiError, api, rupees } from '@/lib/api';
-import { clearDraft, formatSlot, getDraft, type BookingDraft } from '@/lib/booking';
+import { clearDraft, formatSlot, getDraft, modeLabel, type BookingDraft } from '@/lib/booking';
 import { getToken } from '@/lib/session';
 
 const METHODS = [
@@ -29,7 +29,7 @@ function Payment() {
       return;
     }
     setDraft(current);
-    if (current.mode === 'video') setMethod('upi');
+    if (current.mode !== 'clinic') setMethod('upi');
   }, [router]);
 
   if (!draft?.patient) return <main className="w-full max-w-[760px] mx-auto px-4 py-16" aria-busy="true" />;
@@ -47,7 +47,7 @@ function Payment() {
     setBusy(true);
     setError('');
     try {
-      const { appointment } = await api.book({ slotId: draft.slotId, patient: draft.patient, focus: draft.focus }, token);
+      const { appointment } = await api.book({ slotId: draft.slotId, patient: draft.patient, focus: draft.focus, ...(draft.mode === 'audio' ? { mode: 'audio' as const } : {}) }, token);
       clearSlotHold();
       clearDraft();
       router.push(`/book/confirmed?ref=${appointment.reference}`);
@@ -74,7 +74,7 @@ function Payment() {
           {[
             ['Doctor', draft.doctorName],
             ['When', formatSlot(draft.startsAt)],
-            ['Type', draft.mode === 'video' ? 'Video consultation' : 'In-clinic visit'],
+            ['Type', modeLabel(draft.mode)],
             ['Patient', `${draft.patient.name}${draft.patient.age ? `, ${draft.patient.age}` : ''}`],
           ].map(([label, value]) => (
             <div key={label} className="flex items-start justify-between gap-4">

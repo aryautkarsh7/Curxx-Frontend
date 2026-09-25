@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { api, errorMessage, rupees, type Appointment, type Slot } from '@/lib/api';
+import { modeLabel } from '@/lib/booking';
 import { getToken } from '@/lib/session';
 
 /** Moves an appointment to another open slot with the same doctor and mode. */
@@ -15,7 +16,7 @@ export default function RescheduleModal({ appointment, onClose, onDone }: { appo
   useEffect(() => {
     if (!appointment) return;
     setSlots(null); setSlotId(null); setDay(null); setError(null);
-    api.slots(appointment.doctorSlug, appointment.mode).then((r) => setSlots(r.slots)).catch(() => setSlots([]));
+    api.slots(appointment.doctorSlug, appointment.mode === 'clinic' ? 'clinic' : 'video').then((r) => setSlots(r.slots)).catch(() => setSlots([]));
   }, [appointment]);
 
   const byDay = useMemo(() => {
@@ -38,7 +39,7 @@ export default function RescheduleModal({ appointment, onClose, onDone }: { appo
       onDone(updated);
     } catch (e) {
       setError(errorMessage(e));
-      api.slots(appointment.doctorSlug, appointment.mode).then((r) => setSlots(r.slots)).catch(() => {});
+      api.slots(appointment.doctorSlug, appointment.mode === 'clinic' ? 'clinic' : 'video').then((r) => setSlots(r.slots)).catch(() => {});
     } finally {
       setBusy(false);
     }
@@ -55,7 +56,7 @@ export default function RescheduleModal({ appointment, onClose, onDone }: { appo
             <div className="px-5 py-4 border-b border-surface-variant flex items-start justify-between gap-3">
               <div>
                 <h2 id="reschedule-title" className="font-headline-h3 text-headline-h3 text-on-surface">Reschedule</h2>
-                <p className="font-caption text-caption text-on-surface-variant">{appointment.doctor?.name} · {appointment.mode === 'video' ? 'Video consult' : 'Clinic visit'}</p>
+                <p className="font-caption text-caption text-on-surface-variant">{appointment.doctor?.name} · {modeLabel(appointment.mode, true)}</p>
               </div>
               <button type="button" onClick={onClose} aria-label="Close" className="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container"><span className="material-symbols-outlined text-[20px]">close</span></button>
             </div>
