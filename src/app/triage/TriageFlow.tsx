@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { slotLabel } from '@/components/DoctorCard';
-import { api, errorMessage, photo, rupees, type TriageResult } from '@/lib/api';
+import { api, doctorPhoto, errorMessage, rupees, type TriageResult } from '@/lib/api';
 import { useCity } from '@/lib/city-store';
 
 type ForWhom = 'self' | 'child' | 'parent' | 'other';
@@ -306,7 +306,7 @@ function TriageOutcome({ result, city, cityName, onRestart }: { result: TriageRe
           <div className="grid gap-3">
             {result.doctors.map((d) => (
               <article key={d.slug} className="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest flex flex-col sm:flex-row sm:items-center gap-4">
-                <img src={photo(d.photoUrl, 128)} alt="" loading="lazy" className="w-16 h-16 rounded-full object-cover" />
+                <img src={doctorPhoto(d.photoUrl, 128)} alt="" loading="lazy" className="w-16 h-16 rounded-full object-cover" />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-body-strong text-body-strong text-on-surface">{d.name}</h3>
                   <p className="font-caption text-caption text-on-surface-variant">{d.title} · {d.experienceYears} yrs · {d.area}</p>

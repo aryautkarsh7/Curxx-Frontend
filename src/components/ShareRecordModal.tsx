@@ -1,7 +1,7 @@
 'use client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import { api, errorMessage, photo, type AccessGrant, type Doctor } from '@/lib/api';
+import { api, doctorPhoto, errorMessage, type AccessGrant, type Doctor } from '@/lib/api';
 import { getToken } from '@/lib/session';
 
 const DURATION_ON = 'h-9 rounded-lg border-2 border-primary bg-[#FFF1F2] text-caption-strong font-caption-strong text-primary shadow-xs';
@@ -134,7 +134,7 @@ export default function ShareRecordModal({ open, records, recipient = null, onCl
                   {kind === 'doctor' && doctor ? (
                     <div className="p-3 bg-[#FFF1F2] border-2 border-primary rounded-xl flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <img src={photo(doctor.photoUrl, 80)} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                        <img src={doctorPhoto(doctor.photoUrl, 80)} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
                         <div className="min-w-0">
                           <p className="text-body-strong font-body-strong text-on-surface truncate">{doctor.name}</p>
                           <p className="text-caption font-caption text-on-surface-variant truncate">{doctor.title} · {doctor.clinicName}</p>
@@ -151,7 +151,7 @@ export default function ShareRecordModal({ open, records, recipient = null, onCl
                           {results.map((d) => (
                             <li key={d.slug}>
                               <button type="button" onClick={() => setDoctor(d)} className="w-full p-2.5 bg-surface-container-lowest border border-surface-variant hover:border-outline rounded-xl flex items-center gap-3 text-left">
-                                <img src={photo(d.photoUrl, 80)} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0" />
+                                <img src={doctorPhoto(d.photoUrl, 80)} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0" />
                                 <span className="min-w-0">
                                   <span className="block text-body-strong font-body-strong text-on-surface truncate">{d.name}</span>
                                   <span className="block text-micro font-micro text-on-surface-variant truncate">{d.title} · {d.clinicName}, {d.area}</span>

@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { TableSkeleton } from '@/components/skeletons';
-import { api, photo, rupees, type Article, type Doctor } from '@/lib/api';
+import { api, doctorPhoto, rupees, type Article, type Doctor } from '@/lib/api';
 import { getToken } from '@/lib/session';
 
 export default function SavedItems() {
@@ -42,7 +42,7 @@ export default function SavedItems() {
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {data.doctors.map((d) => (
               <li key={d.slug} className="p-4 rounded-xl border border-[#E7E5E4] bg-white flex items-center gap-3">
-                <img src={photo(d.photoUrl, 96)} alt="" className="w-12 h-12 rounded-full object-cover" />
+                <img src={doctorPhoto(d.photoUrl, 96)} alt="" className="w-12 h-12 rounded-full object-cover" />
                 <Link href={`/doctor/${d.slug}`} className="flex-1 min-w-0">
                   <span className="block font-body-strong text-body-strong text-on-surface truncate">{d.name}</span>
                   <span className="block font-caption text-caption text-on-surface-variant truncate">{d.title} · {rupees(d.fee)}</span>

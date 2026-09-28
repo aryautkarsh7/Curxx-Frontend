@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import FaqAccordion from '@/components/seo/FaqAccordion';
 import SurgeryLeadForm from '@/components/surgery/SurgeryLeadForm';
-import { ApiError, api, photo, rupees } from '@/lib/api';
+import { ApiError, api, hasReviews, photo, rupees } from '@/lib/api';
 import { resolveCity } from '@/lib/catalogue-live';
 import { JsonLd } from '@/lib/seo';
 
@@ -140,7 +140,7 @@ export default async function SurgeryPage({ params }: Props) {
                         <h3 className="font-body-strong text-body-strong text-on-surface">{h.name}</h3>
                         <p className="font-caption text-caption text-on-surface-variant">{h.category} · {h.area}</p>
                         <p className="font-micro text-micro text-on-surface-variant flex flex-wrap gap-x-3">
-                          <span className="text-tertiary">★ {h.rating}</span>
+                          {hasReviews(h) && <span className="text-tertiary">★ {h.rating}</span>}
                           {h.nabh && <span>NABH accredited</span>}
                           {h.beds > 0 && <span>{h.beds} beds</span>}
                           {h.insurers.length > 0 && <span>Cashless: {h.insurers.slice(0, 2).join(', ')}</span>}
@@ -160,7 +160,7 @@ export default async function SurgeryPage({ params }: Props) {
                         <span className="min-w-0">
                           <h3 className="font-body-strong text-body-strong text-on-surface truncate">{d.name}</h3>
                           <span className="block font-caption text-caption text-on-surface-variant truncate">{d.title} · {d.experienceYears} yrs</span>
-                          <span className="block font-micro text-micro text-on-surface-variant truncate">{d.clinicName}, {d.area} · ★ {d.rating}</span>
+                          <span className="block font-micro text-micro text-on-surface-variant truncate">{d.clinicName}, {d.area}{hasReviews(d) ? ` · ★ ${d.rating}` : ''}</span>
                         </span>
                       </Link>
                     ))}

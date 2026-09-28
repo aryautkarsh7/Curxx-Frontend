@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Doctor">
+  <rect width="240" height="240" fill="#F5F5F4"/>
+  <circle cx="120" cy="96" r="44" fill="#D6D3D1"/>
+  <path d="M40 240c0-48 36-80 80-80s80 32 80 80z" fill="#D6D3D1"/>
+  <path d="M104 164h32l-16 22z" fill="#F5F5F4"/>
+</svg>

@@ -62,7 +62,7 @@ export default function ListingSeoContent({ content, basePath }: Props) {
                   {content.topDoctors.map((d) => (
                     <li key={d.slug}>
                       <Link href={`/doctor/${d.slug}`} className="font-caption-strong text-caption-strong hover:text-[#C1121F]">{d.name}</Link>
-                      <span className="text-[#78716C]"> — {d.experienceYears} yrs experience · {d.rating.toFixed(1)}★ ({d.reviewCount} reviews) · {d.area} · ₹{d.fee.toLocaleString('en-IN')}</span>
+                      <span className="text-[#78716C]"> — {d.experienceYears} yrs experience · {d.rating.toFixed(1)}★ ({d.reviewCount} reviews) · {d.area} · {d.feeVerified === false ? 'approx. ' : ''}₹{d.fee.toLocaleString('en-IN')}</span>
                     </li>
                   ))}
                 </ol>

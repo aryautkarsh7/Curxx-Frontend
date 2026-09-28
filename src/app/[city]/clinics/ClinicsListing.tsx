@@ -4,7 +4,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import FilterPillSheet from '@/components/FilterPillSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import { photo, type Facet, type Facility, type FacilityQuery } from '@/lib/api';
+import NewBadge from '@/components/NewBadge';
+import { hasReviews, photo, type Facet, type Facility, type FacilityQuery } from '@/lib/api';
 
 const SORTS = [
   { value: 'rating', label: 'Rating (highest first)' },
@@ -64,11 +65,15 @@ export function FacilityCard({ f }: { f: Facility }) {
                   {f.tagline} · {f.area}
                 </p>
               </div>
-              <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface shrink-0">
-                <span className="material-symbols-outlined text-amber-500 text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                <span>{f.rating}</span>
-                <span className="text-outline font-caption">({f.reviewCount.toLocaleString('en-IN')} reviews)</span>
-              </div>
+              {hasReviews(f) ? (
+                <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface shrink-0">
+                  <span className="material-symbols-outlined text-amber-500 text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                  <span>{f.rating}</span>
+                  <span className="text-outline font-caption">({f.reviewCount.toLocaleString('en-IN')} reviews)</span>
+                </div>
+              ) : (
+                <NewBadge className="shrink-0" />
+              )}
             </div>
             <p className="text-caption font-caption text-on-surface-variant flex items-start gap-1 mt-2">
               <span className="material-symbols-outlined text-[16px] text-outline shrink-0">pin_drop</span>{f.address}

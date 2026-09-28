@@ -8,7 +8,8 @@ import Header from '@/components/Header';
 import ContactButtons from '@/components/profile/ContactButtons';
 import ReportIssue from '@/components/profile/ReportIssue';
 import Toast, { useToast } from '@/components/Toast';
-import { api, photo, rupees, type Doctor, type Facility, type Slot } from '@/lib/api';
+import NewBadge from '@/components/NewBadge';
+import { api, doctorPhoto, hasReviews, photo, rupees, type Doctor, type Facility, type Slot } from '@/lib/api';
 
 const AMENITY_ICON: Record<string, string> = {
   '24x7 Pharmacy': 'medication', 'Cashless Insurance Desk': 'credit_card', 'Ambulance Service': 'ambulance', 'Digital Reports': 'description',
@@ -23,7 +24,9 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
   const router = useRouter();
   const [toast, showToast] = useToast();
   const [dept, setDept] = useState<string | null>(null);
-  const [doctorSlug, setDoctorSlug] = useState(doctors[0]?.slug ?? '');
+  // Listing-only doctors (no online booking) stay out of the OPD panel; their cards link to the profile.
+  const bookableDoctors = useMemo(() => doctors.filter((d) => d.bookable !== false), [doctors]);
+  const [doctorSlug, setDoctorSlug] = useState(bookableDoctors[0]?.slug ?? '');
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [slotId, setSlotId] = useState<string | null>(null);
 
@@ -105,10 +108,14 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
               {[f.established && `Since ${f.established}`, f.beds > 0 && `${f.beds} beds`, `${f.departments.length} departments`, `${doctors.length} doctors on Curxx`].filter(Boolean).join(' · ')}
             </p>
             <p className="text-caption font-caption text-on-surface-variant flex items-start gap-1"><span className="material-symbols-outlined text-[16px] text-outline">pin_drop</span>{f.address}</p>
-            <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface">
-              <span className="material-symbols-outlined text-amber-500 text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>{f.rating}
-              <span className="text-outline font-caption">({f.reviewCount.toLocaleString('en-IN')} Google reviews)</span>
-            </div>
+            {hasReviews(f) ? (
+              <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface">
+                <span className="material-symbols-outlined text-amber-500 text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>{f.rating}
+                <span className="text-outline font-caption">({f.reviewCount.toLocaleString('en-IN')} Google reviews)</span>
+              </div>
+            ) : (
+              <NewBadge />
+            )}
           </div>
           <div className="flex flex-wrap lg:flex-col gap-2 shrink-0">
             <ContactButtons className="lg:flex-col" showNumber={Boolean(f.phone)} targetType="facility" slug={f.slug} name={f.name} phones={[f.phone, contact?.phone]} whatsapps={[f.whatsapp, contact?.whatsapp]} message={`Hi, I'd like to know more about ${f.name} (found on Curxx).`} />
@@ -173,18 +180,22 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
                   {shownDoctors.map((d) => (
                     <div key={d.slug} className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest flex flex-col gap-3">
                       <div className="flex items-center gap-3">
-                        <img src={photo(d.photoUrl, 112)} alt={d.name} loading="lazy" className="w-14 h-14 rounded-full object-cover border border-[#E7E5E4]" />
+                        <img src={doctorPhoto(d.photoUrl, 112)} alt={d.name} loading="lazy" className="w-14 h-14 rounded-full object-cover border border-[#E7E5E4]" />
                         <div className="min-w-0">
                           <Link href={`/doctor/${d.slug}`} className="block font-body-strong text-body-strong text-on-surface hover:text-primary truncate">{d.name}</Link>
                           <p className="font-caption text-caption text-on-surface-variant truncate">{d.title}</p>
-                          <p className="font-micro text-micro text-outline">{d.experienceYears} yrs · {d.recommendPercent}% recommend</p>
+                          <p className="font-micro text-micro text-outline">{d.experienceYears} yrs{hasReviews(d) ? ` · ${d.recommendPercent}% recommend` : ' · New on Curxx'}</p>
                           {d.consultHours && <p className="font-micro text-micro text-on-surface-variant">Consults {d.consultHours}</p>}
                         </div>
                       </div>
                       {d.nextSlotAt && <p className="font-micro text-micro text-[#8E0E17] bg-[#FFF1F2] border border-[#F9C6C9] rounded px-2 py-1 text-center">Next: {slotLabel(d.nextSlotAt)}</p>}
                       <div className="flex items-center justify-between gap-2 mt-auto">
-                        <span className="font-body-strong text-body-strong text-on-surface">{rupees(d.fee)}</span>
-                        <button type="button" onClick={() => { setDoctorSlug(d.slug); document.getElementById('book-opd')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="h-9 px-3.5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong">Book visit</button>
+                        <span className="font-body-strong text-body-strong text-on-surface">{d.feeVerified === false ? 'Approx. ' : ''}{rupees(d.fee)}</span>
+                        {d.bookable === false ? (
+                          <Link href={`/doctor/${d.slug}#book`} className="h-9 px-3.5 rounded-lg border border-primary-container text-primary-container font-caption-strong text-caption-strong inline-flex items-center">Call / Visit</Link>
+                        ) : (
+                          <button type="button" onClick={() => { setDoctorSlug(d.slug); document.getElementById('book-opd')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="h-9 px-3.5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong">Book visit</button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -226,14 +237,14 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
           <aside id="book-opd" className="w-full lg:w-[360px] lg:shrink-0 lg:sticky lg:top-24 space-y-4 scroll-mt-24">
             <div className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 shadow-sm space-y-4">
               <h2 className="font-headline-h3 text-headline-h3 text-on-surface">Book an OPD visit</h2>
-              {doctors.length === 0 ? (
+              {bookableDoctors.length === 0 ? (
                 <p className="font-caption text-caption text-on-surface-variant">Online booking isn&apos;t available for this centre yet. Call the front desk to book.</p>
               ) : (
                 <>
                   <label className="block space-y-1">
                     <span className="font-caption-strong text-caption-strong text-on-surface">Doctor</span>
                     <select value={doctorSlug} onChange={(e) => setDoctorSlug(e.target.value)} className="w-full h-11 px-3 rounded-lg border border-[#E7E5E4] bg-white font-body-default text-body-default">
-                      {doctors.map((d) => <option key={d.slug} value={d.slug}>{d.name} · {specialtyLabel(d.specialty)}</option>)}
+                      {bookableDoctors.map((d) => <option key={d.slug} value={d.slug}>{d.name} · {specialtyLabel(d.specialty)}</option>)}
                     </select>
                   </label>
                   {doctor && (

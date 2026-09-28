@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import LoginModal from '@/components/LoginModal';
 import { formatHold, startSlotHold, useSlotHold } from '@/components/SlotCountdown';
-import { ApiError, api, photo, rupees, type Doctor, type Slot } from '@/lib/api';
+import { ApiError, api, doctorPhoto, rupees, type Doctor, type Slot } from '@/lib/api';
 import { formatSlot, saveDraft } from '@/lib/booking';
 import { getToken, isSignedIn } from '@/lib/session';
 import BookingSkeleton from './BookingSkeleton';
@@ -127,7 +127,7 @@ function SelectSlot() {
         <div className="bg-white rounded-2xl border border-[#E7E5E4] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
           <div className="flex items-center gap-4">
             <div className="relative flex-shrink-0">
-              <img loading="lazy" decoding="async" alt={doctor.name} className="w-16 h-16 rounded-full object-cover border border-[#E7E5E4]" src={photo(doctor.photoUrl, 128)} />
+              <img loading="lazy" decoding="async" alt={doctor.name} className="w-16 h-16 rounded-full object-cover border border-[#E7E5E4]" src={doctorPhoto(doctor.photoUrl, 128)} />
               <div className="absolute -bottom-1 -right-1 bg-white p-0.5 rounded-full shadow-xs">
                 <span className="material-symbols-outlined text-[#047857] text-[18px] block" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
               </div>

@@ -72,6 +72,10 @@ export type Doctor = {
   /** Direct numbers for the Call / WhatsApp buttons (empty = the clinic's, then Curxx's). */
   phone?: string;
   whatsapp?: string;
+  /** False = listing only (no online booking): the profile offers Call / Visit instead. Missing = bookable. */
+  bookable?: boolean;
+  /** False when the fee is an estimate rather than confirmed by the doctor — shown as "Approx.". */
+  feeVerified?: boolean;
 };
 
 export type DoctorDetail = Doctor & {
@@ -123,7 +127,7 @@ export type SpecialtyContent = {
   conditions: string[];
   whenToSee: string[];
   faqs: Faq[];
-  topDoctors: { slug: string; name: string; experienceYears: number; rating: number; reviewCount: number; area: string; fee: number }[];
+  topDoctors: { slug: string; name: string; experienceYears: number; rating: number; reviewCount: number; area: string; fee: number; feeVerified?: boolean }[];
   facilities: { slug: string; name: string; area: string; type: 'hospital' | 'clinic' }[];
   localities: LinkCount[];
   otherCities: LinkCount[];
@@ -743,6 +747,13 @@ export const api = {
 
 /** lh3 portrait URLs take a `=w<px>` size suffix; keep requests as small as they render. Other URLs are used as they are. */
 export const photo = (url: string, width: number) => (!url ? '' : url.includes('googleusercontent.com/') && !/=w\d+$/.test(url) ? `${url}=w${width}` : url);
+
+/** Shown for doctors without a photo, so a portrait is never an empty <img src>. */
+export const DOCTOR_PLACEHOLDER = '/images/doctor-placeholder.svg';
+export const doctorPhoto = (url: string | null | undefined, width: number) => (url ? photo(url, width) : DOCTOR_PLACEHOLDER);
+
+/** Ratings mean something only once there are reviews; before that a "New" badge shows instead. */
+export const hasReviews = (r: { reviewCount?: number | null }) => (r.reviewCount ?? 0) > 0;
 
 export const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN')}`;
 

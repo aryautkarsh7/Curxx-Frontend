@@ -13,7 +13,8 @@ import Toast, { useToast } from '@/components/Toast';
 import ContactButtons from '@/components/profile/ContactButtons';
 import ReportIssue from '@/components/profile/ReportIssue';
 import VideoGallery from '@/components/profile/VideoGallery';
-import { photo, rupees, type ConsultMode, type Doctor, type DoctorDetail, type Facility, type Slot, type Video } from '@/lib/api';
+import NewBadge from '@/components/NewBadge';
+import { doctorPhoto, photo, rupees, type ConsultMode, type Doctor, type DoctorDetail, type Facility, type Slot, type Video } from '@/lib/api';
 import { slotLabel } from '@/components/DoctorCard';
 
 type Service = { slug: string; name: string; description: string; icon: string; focus: boolean };
@@ -52,6 +53,9 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
   const cityName = doctor.cityName ?? 'Bengaluru';
   const specialtyPlural = doctor.specialtyPlural ?? 'Doctors';
   const firstName = doctor.name.replace(/^Dr\.\s*/, '').split(' ')[0];
+  const bookable = doctor.bookable !== false;
+  const approx = doctor.feeVerified === false ? 'about ' : '';
+  const approxLabel = doctor.feeVerified === false ? 'Approx. ' : '';
 
   async function share() {
     const url = window.location.href;
@@ -77,14 +81,16 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
   const time = (startsAt: string) => slotLabel(startsAt);
 
   const faqs = [
-    { question: `What is ${doctor.name}’s consultation fee?`, answer: `${rupees(doctor.fee)} for an in-clinic visit at ${doctor.clinicName}${doctor.offersVideo !== false ? `, and ${rupees(doctor.videoFee)} for a video consultation${doctor.freeVideo ? ' (the first video consult is free on selected slots)' : ''}` : ''}. Every booking includes a 7-day chat follow-up.` },
+    { question: `What is ${doctor.name}’s consultation fee?`, answer: `${approx}${rupees(doctor.fee)} for an in-clinic visit at ${doctor.clinicName}${doctor.offersVideo !== false ? `, and ${rupees(doctor.videoFee)} for a video consultation${doctor.freeVideo ? ' (the first video consult is free on selected slots)' : ''}` : ''}.${doctor.feeVerified === false ? ' Please confirm the exact fee with the clinic.' : ''}${bookable ? ' Every booking includes a 7-day chat follow-up.' : ''}` },
     doctor.offersVideo !== false
       ? { question: `Does ${doctor.name} offer online consultations?`, answer: nextVideo ? `Yes. The next video slot is ${slotLabel(nextVideo.startsAt).toLowerCase()}. You get a digitally signed e-prescription after the call.` : `Video consultations are offered, but there are no open video slots this week. Book a clinic visit or check back tomorrow.` }
-      : { question: `Does ${doctor.name} offer online consultations?`, answer: `${doctor.name} sees patients in person at ${doctor.clinicName}. Book a clinic visit at a time that suits you.` },
-    { question: `When is ${doctor.name} available?`, answer: `${doctor.consultHours ? `${doctor.name} consults ${doctor.consultHours}.` : ''} Open slots for the next seven days are shown in the booking panel${facility?.openHours ? `; ${facility.name} is open ${facility.openHours}` : ''}.` },
+      : { question: `Does ${doctor.name} offer online consultations?`, answer: `${doctor.name} sees patients in person at ${doctor.clinicName}. ${bookable ? 'Book a clinic visit at a time that suits you.' : 'Call the clinic to arrange a visit.'}` },
+    bookable
+      ? { question: `When is ${doctor.name} available?`, answer: `${doctor.consultHours ? `${doctor.name} consults ${doctor.consultHours}.` : ''} Open slots for the next seven days are shown in the booking panel${facility?.openHours ? `; ${facility.name} is open ${facility.openHours}` : ''}.` }
+      : { question: `When is ${doctor.name} available?`, answer: `${doctor.consultHours ? `${doctor.name} usually consults ${doctor.consultHours}. ` : ''}Online booking isn’t available yet, so please call ${doctor.clinicName} to confirm timings before you visit.` },
     { question: `Where does ${doctor.name} practise?`, answer: `${doctor.clinicName}, ${doctor.area}, ${cityName}.${facility?.address ? ` ${facility.address}.` : ''}` },
     { question: `Which languages does ${doctor.name} speak?`, answer: `${doctor.languages.join(', ')}.` },
-    { question: 'Can I cancel or reschedule?', answer: 'Yes — from My Appointments, free of charge up to 2 hours before the slot. Any payment is refunded to the original method within 5–7 working days.' },
+    ...(bookable ? [{ question: 'Can I cancel or reschedule?', answer: 'Yes — from My Appointments, free of charge up to 2 hours before the slot. Any payment is refunded to the original method within 5–7 working days.' }] : []),
   ];
 
   const physician = {
@@ -127,7 +133,7 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
               </div>
               <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 items-start">
                 <div className="relative shrink-0">
-                  <img alt={doctor.name} className="w-24 h-24 sm:w-[120px] sm:h-[120px] rounded-full object-cover border-2 border-white shadow-sm ring-1 ring-[#E7E5E4]" src={photo(doctor.photoUrl, 240)} />
+                  <img alt={doctor.name} className="w-24 h-24 sm:w-[120px] sm:h-[120px] rounded-full object-cover border-2 border-white shadow-sm ring-1 ring-[#E7E5E4]" src={doctorPhoto(doctor.photoUrl, 240)} />
                   {doctor.verified && (
                     <span className="absolute bottom-1 right-1 bg-[#047857] text-white p-1 rounded-full flex items-center justify-center border-2 border-white" title="Credentials verified">
                       <span className="material-symbols-outlined text-[16px] font-bold">check</span>
@@ -153,14 +159,23 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
                 </div>
               </div>
               <div className="mt-6 bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-4 grid grid-cols-3 divide-x divide-[#E7E5E4]">
-                <div className="px-2 sm:px-3 text-center">
-                  <div className="font-headline-h2 text-headline-h2 text-[#047857] font-bold">{doctor.recommendPercent}%</div>
-                  <div className="font-caption-strong text-caption-strong text-[#1C1917]">Recommend</div>
-                </div>
-                <div className="px-2 sm:px-3 text-center">
-                  <div className="font-headline-h2 text-headline-h2 text-[#1C1917] font-bold">{doctor.reviewSummary.average || doctor.rating}</div>
-                  <div className="font-caption-strong text-caption-strong text-[#1C1917]">{reviewTotal.toLocaleString('en-IN')} reviews</div>
-                </div>
+                {reviewTotal > 0 ? (
+                  <>
+                    <div className="px-2 sm:px-3 text-center">
+                      <div className="font-headline-h2 text-headline-h2 text-[#047857] font-bold">{doctor.recommendPercent}%</div>
+                      <div className="font-caption-strong text-caption-strong text-[#1C1917]">Recommend</div>
+                    </div>
+                    <div className="px-2 sm:px-3 text-center">
+                      <div className="font-headline-h2 text-headline-h2 text-[#1C1917] font-bold">{doctor.reviewSummary.average || doctor.rating}</div>
+                      <div className="font-caption-strong text-caption-strong text-[#1C1917]">{reviewTotal.toLocaleString('en-IN')} reviews</div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="col-span-2 px-2 sm:px-3 flex flex-col items-center justify-center gap-1 text-center">
+                    <NewBadge />
+                    <div className="font-caption text-caption text-[#78716C]">No patient reviews yet</div>
+                  </div>
+                )}
                 <div className="px-2 sm:px-3 text-center">
                   <div className="font-headline-h2 text-headline-h2 text-[#1C1917] font-bold">{doctor.experienceYears} yrs</div>
                   <div className="font-caption-strong text-caption-strong text-[#1C1917]">Experience</div>
@@ -192,7 +207,15 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
           </div>
 
           <aside id="book" aria-label="Book an appointment" className="w-full lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto no-scrollbar space-y-3 scroll-mt-20 rounded-2xl">
-            <BookingWidget key={widgetMode} doctor={doctor} slots={slots} initialMode={widgetMode} initialSlotId={initialSlot} onSelect={onSelect} />
+            <BookingWidget
+              key={widgetMode}
+              doctor={doctor}
+              slots={slots}
+              initialMode={widgetMode}
+              initialSlotId={initialSlot}
+              onSelect={onSelect}
+              contact={{ phones: [doctor.phone, facility?.phone, contact?.phone], whatsapps: [doctor.whatsapp, facility?.whatsapp, contact?.whatsapp], address: facility?.address ?? `${doctor.area}, ${cityName}` }}
+            />
             {nextVideo && widgetMode === 'clinic' && doctor.offersVideo !== false && (
               <div className="bg-[#FFF1F2] border border-[#F9C6C9] rounded-xl p-3 flex items-center justify-between gap-2 text-caption font-caption text-[#8E0E17]">
                 <span>Next video slot: <strong>{slotLabel(nextVideo.startsAt)}</strong>{nextVideo.free ? ' · Free' : ''}</span>
@@ -277,13 +300,13 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
                   <p className="font-caption text-caption text-[#78716C]">{facility?.address ?? `${doctor.area}, ${cityName}`}</p>
                   {facility && <p className="font-caption text-caption text-[#78716C]">{facility.category ? `${facility.category} · ` : ''}Open {facility.openHours}{facility.emergency24x7 ? ' · 24x7 emergency' : ''}</p>}
                   {doctor.consultHours && <p className="font-caption text-caption text-[#78716C]">{firstName} consults here {doctor.consultHours}</p>}
-                  <p className="font-caption text-caption text-[#1C1917]">Consultation fee: <strong className="font-body-strong">{rupees(doctor.fee)}</strong>{doctor.offersVideo !== false ? ` · Video ${rupees(doctor.videoFee)}` : ''}</p>
+                  <p className="font-caption text-caption text-[#1C1917]">Consultation fee: <strong className="font-body-strong">{approxLabel}{rupees(doctor.fee)}</strong>{doctor.offersVideo !== false ? ` · Video ${rupees(doctor.videoFee)}` : ''}</p>
                   <div className="flex flex-wrap gap-2 pt-2">
                     <a href={mapsUrl(`${doctor.clinicName} ${facility?.address ?? doctor.area}`)} target="_blank" rel="noopener noreferrer" className="h-9 px-3 rounded-lg border border-[#E7E5E4] font-caption-strong text-caption inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">directions</span>Directions</a>
                     {facility && (
                       <ContactButtons size="sm" targetType="facility" slug={facility.slug} name={facility.name} phones={[facility.phone]} whatsapps={[facility.whatsapp]} />
                     )}
-                    <button type="button" onClick={() => goToBooking('clinic')} className="h-9 px-3 rounded-lg bg-[#C1121F] text-white font-caption-strong text-caption">Book clinic visit</button>
+                    {bookable && <button type="button" onClick={() => goToBooking('clinic')} className="h-9 px-3 rounded-lg bg-[#C1121F] text-white font-caption-strong text-caption">Book clinic visit</button>}
                   </div>
                 </div>
               </div>
@@ -303,11 +326,11 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {similar.map((d) => (
                 <Link key={d.slug} href={`/doctor/${d.slug}`} className="p-4 rounded-xl border border-[#E7E5E4] bg-white hover:border-[#A8A29E] flex items-center gap-3">
-                  <img src={photo(d.photoUrl, 112)} alt={d.name} loading="lazy" className="w-14 h-14 rounded-full object-cover" />
+                  <img src={doctorPhoto(d.photoUrl, 112)} alt={d.name} loading="lazy" className="w-14 h-14 rounded-full object-cover" />
                   <span className="min-w-0">
                     <h3 className="block font-body-strong text-body-strong text-[#1C1917] truncate">{d.name}</h3>
                     <span className="block font-caption text-caption text-[#78716C] truncate">{d.title} · {d.experienceYears} yrs</span>
-                    <span className="block font-caption-strong text-caption text-[#1C1917]">{rupees(d.fee)} · {d.area}</span>
+                    <span className="block font-caption-strong text-caption text-[#1C1917]">{d.feeVerified === false ? 'Approx. ' : ''}{rupees(d.fee)} · {d.area}</span>
                   </span>
                 </Link>
               ))}
@@ -324,9 +347,13 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
       <div className="lg:hidden fixed bottom-16 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#E7E5E4] px-margin py-3 flex items-center gap-3">
         <div className="min-w-0">
           <p className="font-micro text-micro text-[#78716C] truncate">{picked ? `${pickedMode === 'audio' ? 'Phone' : picked.mode === 'video' ? 'Video' : 'Clinic'} · ${time(picked.startsAt)}` : widgetMode === 'audio' ? 'Phone consult' : widgetMode === 'video' ? 'Video consult' : 'Clinic visit'}</p>
-          <p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">{picked ? (picked.fee === 0 ? 'Free' : rupees(picked.fee)) : rupees(widgetMode === 'clinic' ? doctor.fee : doctor.videoFee)}</p>
+          <p className="font-headline-h3 text-headline-h3 text-[#1C1917] leading-none">{picked ? (picked.fee === 0 ? 'Free' : rupees(picked.fee)) : `${approxLabel}${rupees(widgetMode === 'clinic' ? doctor.fee : doctor.videoFee)}`}</p>
         </div>
-        {picked ? (
+        {!bookable ? (
+          <button type="button" onClick={() => goToBooking()} className="flex-1 h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-1.5">
+            <span className="material-symbols-outlined text-[18px]">call</span>Call / Visit
+          </button>
+        ) : picked ? (
           <button type="button" onClick={() => router.push(`/book?slot=${picked.id}&doctor=${doctor.slug}${pickedMode === 'audio' ? '&mode=audio' : ''}`)} className="flex-1 h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] text-white font-body-strong text-body-strong flex items-center justify-center gap-1.5">
             Book this slot<span className="material-symbols-outlined text-[18px]">arrow_forward</span>
           </button>

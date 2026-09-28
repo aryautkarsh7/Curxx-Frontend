@@ -1,6 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import ContactButtons from '@/components/profile/ContactButtons';
 import { rupees, type Doctor, type Slot } from '@/lib/api';
 
 /** audio = phone teleconsultation, booked on the doctor's video slots. */
@@ -31,9 +32,63 @@ type Props = {
   /** A slot picked elsewhere (listing chip, consult-now card) arrives preselected. */
   initialSlotId?: string;
   onSelect?: (slot: Slot | null, mode: Mode) => void;
+  /** Numbers (first non-empty wins) and the address, for doctors who can't be booked online. */
+  contact?: { phones: (string | undefined | null)[]; whatsapps: (string | undefined | null)[]; address: string };
 };
 
-export default function BookingWidget({ doctor, slots, initialMode = 'clinic', initialSlotId, onSelect }: Props) {
+const mapsUrl = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+
+export default function BookingWidget(props: Props) {
+  return props.doctor.bookable === false ? <VisitPanel doctor={props.doctor} contact={props.contact} /> : <SlotBooking {...props} />;
+}
+
+/** Listing-only doctors (no online booking yet): call the clinic or go there. */
+function VisitPanel({ doctor, contact }: Pick<Props, 'doctor' | 'contact'>) {
+  const address = contact?.address || `${doctor.clinicName}, ${doctor.area}`;
+  return (
+    <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-sm space-y-5">
+      <div className="border-b border-[#E7E5E4] pb-4">
+        <span className="font-caption text-caption text-[#78716C] block">Consultation fee · pay at the clinic</span>
+        <div className="flex items-baseline gap-2">
+          {doctor.feeVerified === false && <span className="font-caption text-caption text-[#78716C]">Approx.</span>}
+          <span className="font-display text-display text-[#1C1917]">{rupees(doctor.fee)}</span>
+        </div>
+        {doctor.consultHours && (
+          <div className="font-caption text-caption text-[#78716C] mt-1 flex items-start gap-1">
+            <span className="material-symbols-outlined text-[16px]">schedule</span>
+            <span>Consults {doctor.consultHours}</span>
+          </div>
+        )}
+      </div>
+      <div className="space-y-1">
+        <p className="font-body-strong text-body-strong text-[#1C1917] flex items-center gap-1.5">
+          <span className="material-symbols-outlined text-[18px] text-[#C1121F]">local_hospital</span>
+          {doctor.clinicName}
+        </p>
+        <p className="font-caption text-caption text-[#78716C]">{address}</p>
+      </div>
+      <p className="px-3 py-2 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] font-caption text-caption text-[#1C1917] flex items-start gap-1.5">
+        <span className="material-symbols-outlined text-[16px] text-[#78716C]">info</span>
+        <span>Online booking isn’t available for {doctor.name} yet. Call to confirm timings, or visit the clinic.</span>
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <ContactButtons
+          targetType="doctor"
+          slug={doctor.slug}
+          name={doctor.name}
+          phones={contact?.phones ?? [doctor.phone]}
+          whatsapps={contact?.whatsapps ?? [doctor.whatsapp]}
+          message={`Hi, I'd like to book a consultation with ${doctor.name} (found on Curxx).`}
+        />
+        <a href={mapsUrl(`${doctor.clinicName} ${address}`)} target="_blank" rel="noopener noreferrer" className="h-10 px-3 rounded-lg border border-[#E7E5E4] font-caption-strong text-caption-strong inline-flex items-center gap-1">
+          <span className="material-symbols-outlined text-[16px]">directions</span>Directions
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onSelect }: Props) {
   const router = useRouter();
   const offersVideo = doctor.offersVideo !== false && slots.some((s) => s.mode === 'video');
   const offersClinic = slots.some((s) => s.mode === 'clinic') || !offersVideo;
@@ -134,6 +189,7 @@ export default function BookingWidget({ doctor, slots, initialMode = 'clinic', i
       {/* Pricing Block */}
       <div className="border-b border-[#E7E5E4] pb-4">
         <div className="flex items-baseline gap-2 flex-wrap">
+          {fee !== 0 && doctor.feeVerified === false && <span className="font-caption text-caption text-[#78716C]">Approx.</span>}
           <span className="font-display text-display text-[#1C1917]">{fee === 0 ? 'Free' : rupees(fee)}</span>
           {selected?.free && <span className="font-caption text-caption text-[#78716C] line-through">{rupees(doctor.videoFee)}</span>}
           <span className="ml-auto bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] px-2 py-0.5 rounded-full font-micro text-micro">Instant confirmation</span>
