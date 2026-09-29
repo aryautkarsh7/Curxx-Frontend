@@ -94,10 +94,10 @@ export async function listingMetadata({ city, specialty: slug, locality }: Scope
   }
   const title = q
     ? `Doctors for ${q} in ${place} — Book Online or In-Clinic | Curxx`
-    : `${specialty.plural} in ${place} — Book Verified Doctors Online or In-Clinic | Curxx`;
+    : `${specialty.plural} in ${place} — Book Online or In-Clinic | Curxx`;
   const description = q
-    ? `Find verified doctors for ${q} in ${place}. Compare fees, experience and patient ratings, then book a video consult or a clinic visit on Curxx.`
-    : `Book ${lower(specialty.plural)} in ${place} for a video consult or a zero-wait clinic visit. Compare fees, experience and patient ratings, then confirm your slot on Curxx.`;
+    ? `Find doctors for ${q} in ${place}. Compare fees, experience and patient ratings, then book a video consult or a clinic visit on Curxx.`
+    : `Book ${lower(specialty.plural)} in ${place} for a video consult or a clinic visit. Compare fees, experience and patient ratings, then confirm your slot on Curxx.`;
   // A locality with no doctors of this specialty yet is thin content: keep it out of the index.
   const empty = area && slug !== ALL_DOCTORS.slug ? (await loadContent(slug, city, area.slug))?.stats.doctors === 0 : false;
   return {

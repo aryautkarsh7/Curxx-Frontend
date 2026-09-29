@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { surgery } = data;
   const name = info.name;
   return {
-    title: { absolute: `${surgery.name} in ${name} — Cost ${rupees(surgery.cost[0])}–${rupees(surgery.cost[1])}, Top Hospitals | Curxx` },
+    title: { absolute: `${surgery.name} in ${name} — Est. Cost ${rupees(surgery.cost[0])}–${rupees(surgery.cost[1])}, Hospitals | Curxx` },
     description: [
       surgery.description,
       surgery.cost[1] > 0 ? `Estimated cost in ${name}: ${rupees(surgery.cost[0])} to ${rupees(surgery.cost[1])}.` : '',
@@ -101,7 +101,7 @@ export default async function SurgeryPage({ params }: Props) {
                 </div>
                 {surgery.insurance && (
                   <p className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] font-caption text-caption text-[#047857]">
-                    <span className="material-symbols-outlined text-[16px]">verified_user</span>Usually covered by health insurance · cashless at partner hospitals
+                    <span className="material-symbols-outlined text-[16px]">verified_user</span>Usually covered by health insurance when medically necessary
                   </p>
                 )}
               </div>
