@@ -20,10 +20,16 @@ export default function HomeDoctorCard({ doctor, onOpen }: { doctor: Doctor; onO
             <img loading="lazy" decoding="async" alt={doctor.name} className="w-full h-full object-cover" src={doctorPhoto(doctor.photoUrl, 112)} />
           </div>
           <div>
-            <div className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary text-micro font-micro font-semibold">
-              <span className="material-symbols-outlined text-[12px]">check_circle</span>
-              <span>Verified {degree(doctor.qualification)}</span>
-            </div>
+            {doctor.verified ? (
+              <div className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary text-micro font-micro font-semibold">
+                <span className="material-symbols-outlined text-[12px]">check_circle</span>
+                <span>Verified {degree(doctor.qualification)}</span>
+              </div>
+            ) : (
+              <div className="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-low border border-surface-variant text-on-surface-variant text-micro font-micro font-semibold">
+                {degree(doctor.qualification)}
+              </div>
+            )}
             <h3 className="text-headline-h3 font-headline-h3 text-on-surface mt-1">{doctor.name}</h3>
             <div className="text-caption font-caption text-on-surface-variant">{doctor.qualification}</div>
           </div>

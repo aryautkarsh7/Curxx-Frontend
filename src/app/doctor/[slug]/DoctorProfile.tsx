@@ -151,11 +151,16 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
                   </div>
                   <p className="font-body-default text-body-default text-[#78716C]">{doctor.qualification}</p>
                   <p className="font-body-strong text-body-strong text-[#1C1917]">{doctor.title}{doctor.title !== doctor.specialtyName ? ` · ${doctor.specialtyName}` : ''}</p>
-                  {doctor.registration && (
+                  {doctor.registration && (doctor.verified ? (
                     <p className="flex items-center gap-1.5 pt-1 text-[#78716C] font-caption text-caption">
                       <span className="material-symbols-outlined text-[16px] text-[#047857]">shield</span>Reg. No: {doctor.registration} · credentials verified by Curxx
                     </p>
-                  )}
+                  ) : (
+                    // Not checked by Curxx (e.g. imported listings): state the number, claim nothing.
+                    <p className="flex items-center gap-1.5 pt-1 text-[#78716C] font-caption text-caption">
+                      <span className="material-symbols-outlined text-[16px]">info</span>Registration no. on record: {doctor.registration}
+                    </p>
+                  ))}
                 </div>
               </div>
               <div className="mt-6 bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-4 grid grid-cols-3 divide-x divide-[#E7E5E4]">
@@ -319,7 +324,7 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
             <div className="flex items-end justify-between gap-3 flex-wrap">
               <div>
                 <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Similar {specialtyPlural.toLowerCase()} in {cityName}</h2>
-                <p className="font-caption text-caption text-[#78716C]">Verified specialists you can book today</p>
+                <p className="font-caption text-caption text-[#78716C]">More {specialtyPlural.toLowerCase()} near you</p>
               </div>
               <Link className="font-body-strong text-body-strong text-[#C1121F] hover:underline flex items-center gap-1" href={`/${city}/${doctor.specialty}`}>View all<span className="material-symbols-outlined text-[18px]">arrow_forward</span></Link>
             </div>

@@ -322,9 +322,11 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
           <div className="flex items-center gap-1">
             <span className="material-symbols-outlined text-[14px]">bolt</span> Instant Confirm
           </div>
-          <div className="flex items-center gap-1">
-            <span className="material-symbols-outlined text-[14px]">verified_user</span> Verified Doctor
-          </div>
+          {doctor.verified && (
+            <div className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-[14px]">verified_user</span> Verified Doctor
+            </div>
+          )}
           <div className="flex items-center gap-1">
             <span className="material-symbols-outlined text-[14px]">lock</span> ABDM Sync
           </div>
