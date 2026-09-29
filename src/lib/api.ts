@@ -5,7 +5,14 @@
  */
 import type { CityInfo, ConditionInfo, FacilityTypeInfo, SpecialtyInfo, SurgeryInfo } from './catalogue-data';
 
-const BASE = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1').replace(/\/$/, '');
+const CONFIGURED_API = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1').replace(/\/$/, '');
+/**
+ * Vercel preview deployments (staging branches) must never read or write live data: if a preview is
+ * built with the production API URL (e.g. a variable scoped to all environments), it gets an address
+ * that never answers instead. Set NEXT_PUBLIC_API_URL for Preview to the staging API.
+ */
+const IS_PREVIEW = (process.env.VERCEL_ENV ?? process.env.NEXT_PUBLIC_VERCEL_ENV) === 'preview';
+const BASE = IS_PREVIEW && CONFIGURED_API.includes('crux-backend-production') ? 'https://staging-api-not-configured.invalid/api/v1' : CONFIGURED_API;
 
 export const TOKEN_KEY = 'curxx_token';
 
