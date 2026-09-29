@@ -17,6 +17,7 @@ import NewBadge from '@/components/NewBadge';
 import { doctorPhoto, photo, rupees, type ConsultMode, type Doctor, type DoctorDetail, type Facility, type Slot, type Video } from '@/lib/api';
 import { slotLabel } from '@/components/DoctorCard';
 import { doctorProfileContent } from '@/lib/doctor-content';
+import { lower } from '@/lib/seo-content';
 
 type Service = { slug: string; name: string; description: string; icon: string; focus: boolean };
 type Props = {
@@ -327,8 +328,8 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
           <section className="mt-16 pt-8 border-t border-[#E7E5E4] space-y-6">
             <div className="flex items-end justify-between gap-3 flex-wrap">
               <div>
-                <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Similar {specialtyPlural.toLowerCase()} in {cityName}</h2>
-                <p className="font-caption text-caption text-[#78716C]">More {specialtyPlural.toLowerCase()} near you</p>
+                <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Similar {lower(specialtyPlural)} in {cityName}</h2>
+                <p className="font-caption text-caption text-[#78716C]">More {lower(specialtyPlural)} near you</p>
               </div>
               <Link className="font-body-strong text-body-strong text-[#C1121F] hover:underline flex items-center gap-1" href={`/${city}/${doctor.specialty}`}>View all<span className="material-symbols-outlined text-[18px]">arrow_forward</span></Link>
             </div>

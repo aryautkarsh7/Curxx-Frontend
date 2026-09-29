@@ -23,7 +23,31 @@ export const feeCell = (r: FeeRange | null | undefined, empty = '–') => (!r ? 
 /** "₹300 to ₹1,500" (sentences). */
 const feeSpan = (r: FeeRange) => `${approx(r)}${r.min === r.max ? inr(r.min) : `${inr(r.min)} to ${inr(r.max)}`}`;
 const feeFrom = (r: FeeRange) => `${approx(r)}${inr(r.min)}`;
-const lower = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+/** "General Physicians" → "general physicians"; acronyms keep their capitals ("ENT specialists"). */
+export const lower = (s: string) => s.split(' ').map((w) => (/^[A-Z]{2,}/.test(w) ? w : w.toLowerCase())).join(' ');
+/** "a dermatologist", "an ENT Specialist", "an orthopedist", "a urologist". */
+export const an = (phrase: string) =>
+  `${/^(uni|uro|use|usu|eu|one)/i.test(phrase) ? 'a' : /^[aeiou]/i.test(phrase) || /^[AEFHILMNORSX][A-Z]/.test(phrase) ? 'an' : 'a'} ${phrase}`;
+/** "1 of them offers" / "3 of them offer". */
+const verbFor = (n: number, one: string, many: string) => (n === 1 ? one : many);
+
+/** Rows sharing the top count, and the rest: "A and B have the most (2 each)" instead of a false "A has the most". */
+function leaders<T extends { name: string; count: number }>(rows: T[]) {
+  const tied = rows.filter((r) => r.count === rows[0]?.count);
+  return { tied, rest: rows.slice(tied.length) };
+}
+/** "Jadavpur has the most (4)" or "Jadavpur and Salt Lake have the most (2 each)". */
+function mostSentence(rows: { name: string; count: number }[], what = '') {
+  const { tied } = leaders(rows);
+  return tied.length > 1
+    ? `${list(tied.map((r) => r.name))} have the most${what} (${num(tied[0]!.count)} each)`
+    : `${rows[0]!.name} has the most${what} (${num(rows[0]!.count)})`;
+}
+/** FAQ answer: "Jadavpur, with 4." or "Jadavpur and Salt Lake, with 2 each." */
+function mostAnswer(rows: { name: string; count: number }[], noun = '') {
+  const { tied } = leaders(rows);
+  return tied.length > 1 ? `${list(tied.map((r) => r.name))}, with ${num(tied[0]!.count)}${noun} each.` : `${rows[0]!.name}, with ${num(rows[0]!.count)}${noun}.`;
+}
 
 /** A slot time in IST: "Today, 10:30 AM", "Tomorrow, 9:00 AM" or "Wed, 2 Oct, 9:00 AM". */
 export function slotText(iso: string | null | undefined, now = new Date()) {
@@ -108,7 +132,7 @@ function costFaq(subject: string, place: string, s: DoctorStats, tail = ''): Faq
 }
 
 function todayFaq(question: string, s: DoctorStats): Faq | null {
-  if (s.todayCount > 0) return { question, answer: `Yes, ${num(s.todayCount)} of ${num(s.total)} have open slots today.` };
+  if (s.todayCount > 0) return { question, answer: `Yes, ${num(s.todayCount)} of ${num(s.total)} ${verbFor(s.todayCount, 'has', 'have')} open slots today.` };
   const earliest = slotText(s.earliest);
   return earliest ? { question, answer: `No slots are open today. The earliest slot is ${earliest}.` } : null;
 }
@@ -182,7 +206,7 @@ export function cityDoctorsPage(s: DoctorStats): SeoPage | null {
     ? sentences(
         areas.length === 1
           ? `All ${areaWord(s.total)} are in ${areas[0]!.name}.`
-          : `The most doctors are in ${areas[0]!.name} (${num(areas[0]!.count)}), followed by ${list(top(areas.slice(1), 4).map((a) => `${a.name} (${num(a.count)})`))}.`,
+          : `${mostSentence(areas, ' doctors')}${leaders(areas).rest.length ? `, followed by ${list(top(leaders(areas).rest, 4).map((a) => `${a.name} (${num(a.count)})`))}` : ''}.`,
         areas.length > 5 ? `You can also find doctors in ${list(areas.slice(5, 8).map((a) => a.name))}.` : '',
         'Use the locality filter to see clinics closest to you.',
       )
@@ -231,10 +255,10 @@ export function cityDoctorsPage(s: DoctorStats): SeoPage | null {
   const faqs = [
     costFaq('a doctor consultation', c, s, 'The fee depends on the specialty and the doctor’s experience.'),
     s.todayCount > 0
-      ? { question: `Can I see a doctor in ${c} today?`, answer: `Yes. ${num(s.todayCount)} doctors in ${c} have open slots today. Use the “Today” filter to see them.` }
+      ? { question: `Can I see a doctor in ${c} today?`, answer: `Yes. ${num(s.todayCount)} ${verbFor(s.todayCount, 'doctor in ' + c + ' has', 'doctors in ' + c + ' have')} open slots today. Use the “Today” filter to see them.` }
       : todayFaq(`Can I see a doctor in ${c} today?`, s),
-    s.freeVideoCount > 0 ? { question: `Which doctors in ${c} offer a free video consult?`, answer: `${num(s.freeVideoCount)} doctors offer a free first video consultation. Use the “Free video consult” filter.` } : null,
-    areas.length ? { question: `Which area of ${c} has the most doctors?`, answer: `${areas[0]!.name} has the most, with ${areaWord(areas[0]!.count)}.` } : null,
+    s.freeVideoCount > 0 ? { question: `Which doctors in ${c} offer a free video consult?`, answer: `${num(s.freeVideoCount)} ${verbFor(s.freeVideoCount, 'doctor offers', 'doctors offer')} a free first video consultation. Use the “Free video consult” filter.` } : null,
+    areas.length ? { question: `Which area of ${c} has the most doctors?`, answer: mostAnswer(areas, ' doctors') } : null,
     { question: 'Is a follow-up included?', answer: 'Bookings made on Curxx include a free 7-day chat follow-up with the doctor.' },
   ].filter(Boolean) as Faq[];
 
@@ -250,7 +274,7 @@ export function cityDoctorsPage(s: DoctorStats): SeoPage | null {
     upper: sentences(
       `Curxx lists ${num(s.total)} doctors in ${c} across ${s.specialtyCount} ${s.specialtyCount === 1 ? 'specialty' : 'specialties'}.`,
       s.clinicCount > 0 && s.clinicFee ? `Clinic visit fees in ${c} range from ${feeSpan(s.clinicFee)}${s.videoCount > 0 && s.videoFee ? `, and video consultations cost ${feeSpan(s.videoFee)}` : ''}.` : s.videoCount > 0 && s.videoFee ? `Video consultations cost ${feeSpan(s.videoFee)}.` : '',
-      s.freeVideoCount > 0 ? `${num(s.freeVideoCount)} doctors offer a free first video consult.` : '',
+      s.freeVideoCount > 0 ? `${num(s.freeVideoCount)} ${verbFor(s.freeVideoCount, 'doctor offers', 'doctors offer')} a free first video consult.` : '',
       `Compare experience, patient ratings and earliest available slots, then ${s.bookableCount > 0 ? 'book online' : 'contact the clinic'}.`,
     ),
     readMore,
@@ -290,8 +314,8 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
     national ? `Curxx lists ${num(s.total)} ${pluralLc} across ${s.cityCount} ${s.cityCount === 1 ? 'city' : 'cities'} in India.` : `Curxx lists ${num(s.total)} ${pluralLc} in ${place}.`,
     s.clinicCount > 0 && s.clinicFee ? `Clinic consultations cost ${feeSpan(s.clinicFee)}.` : '',
     videoSentence(s, pluralLc, national),
-    s.freeVideoCount > 0 ? `${num(s.freeVideoCount)} of them offer a free first video consult.` : '',
-    s.todayCount > 0 ? `${num(s.todayCount)} of them have a slot open today.` : '',
+    s.freeVideoCount > 0 ? `${num(s.freeVideoCount)} of them ${verbFor(s.freeVideoCount, 'offers', 'offer')} a free first video consult.` : '',
+    s.todayCount > 0 ? `${num(s.todayCount)} of them ${verbFor(s.todayCount, 'has', 'have')} a slot open today.` : '',
     ratingSentence(s),
     national && topCities.length >= 2 ? `${topCities[0]!.name} has the most (${num(topCities[0]!.count)}), followed by ${topCities[1]!.name} (${num(topCities[1]!.count)}).` : '',
     s.bookableCount > 0 ? 'Compare them below and book online.' : 'Compare them below and contact the clinic to book.',
@@ -299,10 +323,10 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
 
   const readMore: SeoSection[] = [];
   if (national) {
-    if (topCities.length === 1) readMore.push({ heading: `Where can you find a ${singular} in India?`, paragraphs: [sentences(`All ${num(s.total)} are in ${topCities[0]!.name}.`, s.videoCount > 0 ? 'Video consultations let you consult from home, wherever you live.' : '')] });
+    if (topCities.length === 1) readMore.push({ heading: `Where can you find ${an(singular)} in India?`, paragraphs: [sentences(`All ${num(s.total)} are in ${topCities[0]!.name}.`, s.videoCount > 0 ? 'Video consultations let you consult from home, wherever you live.' : '')] });
     else if (topCities.length > 1)
       readMore.push({
-        heading: `Where can you find a ${singular} in India?`,
+        heading: `Where can you find ${an(singular)} in India?`,
         paragraphs: [
           sentences(
             `${plural} are available in ${s.cityCount} cities. ${list(top(topCities, 3).map((c) => `${c.name} has ${num(c.count)}`))}.`,
@@ -315,7 +339,7 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
     const highest = [...withFee].sort((a, b) => b.clinicFee!.min - a.clinicFee!.min)[0];
     if (s.clinicFee || s.videoFee)
       readMore.push({
-        heading: `How much does a ${singular} cost in India?`,
+        heading: `How much does ${an(singular)} cost in India?`,
         paragraphs: [
           sentences(
             s.clinicCount > 0 && s.clinicFee ? `Clinic fees range from ${feeSpan(s.clinicFee)}.` : '',
@@ -334,19 +358,19 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
       });
     if (areas.length)
       readMore.push({
-        heading: `Where can you find a ${singular} in ${place}?`,
+        heading: `Where can you find ${an(singular)} in ${place}?`,
         paragraphs: [
           areas.length === 1
             ? `All ${num(s.total)} are in ${areas[0]!.name}.`
             : sentences(
-                `${areas[0]!.name} has the most with ${num(areas[0]!.count)}, followed by ${list(top(areas.slice(1), 2).map((a) => `${a.name} (${num(a.count)})`))}.`,
+                `${mostSentence(areas)}${leaders(areas).rest.length ? `, followed by ${list(top(leaders(areas).rest, 2).map((a) => `${a.name} (${num(a.count)})`))}` : ''}.`,
                 `Use the locality filter to find the clinic closest to you${s.videoCount > 0 ? ', or choose video if none is nearby' : ''}.`,
               ),
         ],
       });
   }
-  if (sp.conditions.length) readMore.push({ heading: `What does a ${singular} treat?`, list: sp.conditions });
-  if (sp.whenToSee.length) readMore.push({ heading: `When should you see a ${singular}?`, list: sp.whenToSee });
+  if (sp.conditions.length) readMore.push({ heading: `What does ${an(singular)} treat?`, list: sp.conditions });
+  if (sp.whenToSee.length) readMore.push({ heading: `When should you see ${an(singular)}?`, list: sp.whenToSee });
   readMore.push({ heading: 'When should you not wait for an appointment?', paragraphs: [EMERGENCY] });
   if (s.clinicCount > 0 && s.videoCount > 0)
     readMore.push({
@@ -399,13 +423,13 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
 
   const topRated = topRatedText(s, national);
   const faqs = [
-    costFaq(`a ${singular}`, place, s),
-    national && topCities.length ? { question: `Which city has the most ${plural} on Curxx?`, answer: `${topCities[0]!.name}, with ${num(topCities[0]!.count)}.` } : null,
-    !national ? todayFaq(`Can I see a ${singular} in ${place} today?`, s) : null,
+    costFaq(`${an(singular)}`, place, s),
+    national && topCities.length ? { question: `Which city has the most ${plural} on Curxx?`, answer: mostAnswer(topCities) } : null,
+    !national ? todayFaq(`Can I see ${an(singular)} in ${place} today?`, s) : null,
     topRated ? { question: `Who are the top-rated ${plural} in ${place}?`, answer: `${topRated}. Ratings count only doctors with at least 5 patient reviews.` } : null,
-    onlineFaq(`Can I consult a ${singular} online${national ? '' : ` in ${place}`}?`, s, pluralLc, place),
-    !national && areas.length ? { question: `Which area of ${place} has the most ${plural}?`, answer: `${areas[0]!.name}, with ${num(areas[0]!.count)}.` } : null,
-    national ? todayFaq(`Can I see a ${singular} today?`, s) : null,
+    onlineFaq(`Can I consult ${an(singular)} online${national ? '' : ` in ${place}`}?`, s, pluralLc, place),
+    !national && areas.length ? { question: `Which area of ${place} has the most ${plural}?`, answer: mostAnswer(areas) } : null,
+    national ? todayFaq(`Can I see ${an(singular)} today?`, s) : null,
     howToBook(s),
   ].filter(Boolean) as Faq[];
 
@@ -416,7 +440,7 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
     subline: [national ? `${num(s.total)} ${pluralLc} · ${s.cityCount} ${s.cityCount === 1 ? 'city' : 'cities'}` : `${num(s.total)} ${pluralLc}`, s.todayCount > 0 ? `${num(s.todayCount)} available today` : '', 'Updated today']
       .filter(Boolean)
       .join(' · '),
-    h2: `${verb(s)} a ${singular} in ${place}: Compare Fees, ${national ? 'Cities' : 'Experience'} & Availability`,
+    h2: `${verb(s)} ${an(singular)} in ${place}: Compare Fees, ${national ? 'Cities' : 'Experience'} & Availability`,
     stats: [national ? `${num(s.total)} ${plural}` : `${num(s.total)} Doctors`, ...(national ? [`${s.cityCount} ${s.cityCount === 1 ? 'City' : 'Cities'}`] : []), ...feeChips(s), ...statsChips(s)],
     upper,
     readMore,
@@ -489,7 +513,7 @@ export function indiaDoctorsPage(s: DoctorStats): SeoPage | null {
   const faqs = [
     { question: 'How many doctors are available on Curxx in India?', answer: `${num(s.total)} doctors across ${s.cityCount} ${s.cityCount === 1 ? 'city' : 'cities'} and ${s.specialtyCount} specialties.` },
     costFaq('a doctor consultation', 'India', s, 'The exact fee is shown on each profile before you book.'),
-    top3.length ? { question: 'Which city has the most doctors on Curxx?', answer: `${top3[0]!.name}, with ${num(top3[0]!.count)}.` } : null,
+    top3.length ? { question: 'Which city has the most doctors on Curxx?', answer: mostAnswer(cities) } : null,
     s.videoCount === 0
       ? { question: 'Can I consult a doctor online in India?', answer: 'Video is not available right now. You can book a clinic visit.' }
       : s.videoCount === s.total
@@ -554,7 +578,8 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
       : sentences(`Compare ${s.procedureCount} surgeries in ${place}${s.hospitalCount ? ` at ${num(s.hospitalCount)} hospitals` : ''}.`, `Estimated costs from ${inr(s.minCost)}.`, 'Book a free surgeon consultation.'),
   );
 
-  const hospitalNames = h3.map((h) => (h.area && !national ? `${h.name} (${h.area})` : h.name));
+  // "(Area)" only when the name doesn't already say it ("…Hospital, Karol Bagh (Karol Bagh)").
+  const hospitalNames = h3.map((h) => (h.area && !national && !h.name.toLowerCase().includes(h.area.toLowerCase()) ? `${h.name} (${h.area})` : h.name));
   const upper = sentences(
     national
       ? `Curxx lists ${num(s.hospitalCount)} hospitals and ${num(s.surgeonCount)} surgeons across ${s.cityCount} cities in India.`
@@ -573,7 +598,7 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
       paragraphs: [
         sentences(
           `Curxx lists ${s.hospitalCount === 1 ? '1 hospital' : `${num(s.hospitalCount)} hospitals`} in ${place}.`,
-          areas.length > 1 ? `${areas[0]!.name} has the most (${num(areas[0]!.count)}), followed by ${list(top(areas.slice(1), 2).map((a) => `${a.name} (${num(a.count)})`))}.` : '',
+          areas.length > 1 ? `${mostSentence(areas)}${leaders(areas).rest.length ? `, followed by ${list(top(leaders(areas).rest, 2).map((a) => `${a.name} (${num(a.count)})`))}` : ''}.` : '',
         ),
       ],
     });
@@ -638,7 +663,7 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
   const faqs = [
     !national && s.hospitalCount > 0 ? { question: `Which hospitals in ${place} are listed on Curxx for surgery?`, answer: `${s.hospitalCount === 1 ? '1 hospital' : `${num(s.hospitalCount)} hospitals`}, including ${list(h3.map((h) => h.name))}.` } : null,
     { question: `How much does surgery cost in ${place}?`, answer: `Estimated package costs start from ${inr(s.minCost)} and go up to ${inr(s.maxCost)}, depending on the procedure. The final bill depends on the hospital, technique, implant and room category.` },
-    !national && areas.length ? { question: `Which area of ${place} has the most hospitals?`, answer: `${areas[0]!.name}, with ${num(areas[0]!.count)}.` } : null,
+    !national && areas.length ? { question: `Which area of ${place} has the most hospitals?`, answer: mostAnswer(areas) } : null,
     s.daycareCount > 0 ? { question: 'Which surgeries are day care?', answer: `${num(s.daycareCount)} procedures: ${list(s.daycare.map((d) => d.name))}.` } : null,
     { question: 'Is surgery covered by health insurance?', answer: INSURANCE },
     { question: `How do I book a free consultation${national ? '' : ` in ${place}`}?`, answer: 'Choose your procedure, leave your mobile number in the form, and a Curxx care coordinator will call you.' },

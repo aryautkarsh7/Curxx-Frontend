@@ -11,7 +11,7 @@ export type ProfileSection = { heading: string; paragraphs?: string[]; list?: st
 const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
 const list = (items: string[]) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 /** "Dermatologist" → "dermatologist"; acronyms such as "ENT Specialist" keep their capitals. */
-const lowerTitle = (s: string) => (/^[A-Z]{2}/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1));
+const lowerTitle = (s: string) => s.split(' ').map((w) => (/^[A-Z]{2,}/.test(w) ? w : w.toLowerCase())).join(' ');
 /** "a"/"an" by sound: an orthopedist, an ENT specialist, but a urologist. */
 const article = (word: string) => (/^(uni|uro|use|usu|eu)/i.test(word) ? 'a' : /^[aeiou]/i.test(word) || /^[AEFHILMNORSX][A-Z]/.test(word) ? 'an' : 'a');
 const clean = (s?: string | null) => (s ?? '').trim();
@@ -54,14 +54,17 @@ export function doctorProfileContent(d: DoctorDetail, facility: Facility | null,
           .filter(Boolean)
           .join(' ');
 
-  const reasons = (d.services ?? []).slice(0, 4).map((s) => lowerTitle(s.name));
+  // First complaint of each service ("Ear ache, blocked ear…" → "ear ache"): reads as a reason, unlike the category label.
+  const reasons = (d.services ?? []).slice(0, 4).map((s) => lowerTitle(clean(s.description).split(/,\s*/)[0] ?? '')).filter(Boolean);
   const candidates: (ProfileSection | null)[] = [
     qualification || exp
       ? {
           heading: 'Qualification & Expertise',
           paragraphs: [
             [
-              qualification ? `${name} has completed ${qualification} and specialises in ${speciality}${exp ? `, with ${exp} years of practice` : ''}.` : `${name} specialises in ${speciality}, with ${exp} years of practice.`,
+              qualification
+                ? `${name} has completed ${qualification} and practises as ${article(speciality)} ${speciality}${exp ? `, with ${exp} years of practice` : ''}.`
+                : `${name} practises as ${article(speciality)} ${speciality}, with ${exp} years of practice.`,
               d.focusAreaNames?.length ? `Areas of special interest include ${list(d.focusAreaNames.map(lowerTitle))}.` : '',
               reasons.length ? `Common reasons to see ${article(speciality)} ${speciality} include ${list(reasons)}.` : '',
             ]
@@ -121,7 +124,7 @@ export function doctorProfileContent(d: DoctorDetail, facility: Facility | null,
     {
       heading: `Why Choose ${name}?`,
       list: [
-        exp ? `${exp}+ years of experience in ${speciality}` : '',
+        exp ? `${exp}+ years of experience as ${article(speciality)} ${speciality}` : '',
         qualification ? `${qualification} qualified` : '',
         hospital ? `Practising at ${[hospital, place].filter(Boolean).join(', ')}` : '',
         languages.length ? `Consults in ${list(languages)}` : '',

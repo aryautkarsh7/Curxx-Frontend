@@ -8,6 +8,7 @@ import MobileFilterSheet from '@/components/MobileFilterSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import type { DoctorList } from '@/lib/api';
+import { lower } from '@/lib/seo-content';
 
 export type Crumb = { label: string; href?: string };
 
@@ -78,7 +79,7 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
               <h1 className="font-headline-h1 text-headline-h1 text-[#1C1917] tracking-tight">{heading}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <span className="w-2 h-2 rounded-full bg-[#047857]"></span>
-                <p className="font-caption text-caption text-[#78716C]">{subheading ?? `${total.toLocaleString('en-IN')} ${plural.toLowerCase()} available in ${place} · Updated today`}</p>
+                <p className="font-caption text-caption text-[#78716C]">{subheading ?? `${total.toLocaleString('en-IN')} ${lower(plural)} available in ${place} · Updated today`}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -122,10 +123,10 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
                   <span className="material-symbols-outlined text-[32px] text-[#C1121F]">search_off</span>
                 </div>
                 <p className="font-headline-h2 text-headline-h2 text-[#1C1917] tracking-tight">
-                  {activeChips.length ? `No ${plural.toLowerCase()} match these filters` : `No ${plural.toLowerCase()} listed in ${place} yet`}
+                  {activeChips.length ? `No ${lower(plural)} match these filters` : `No ${lower(plural)} listed in ${place} yet`}
                 </p>
                 <p className="font-body-default text-body-default text-[#5c403d] max-w-[500px] mt-2 leading-relaxed">
-                  {activeChips.length ? 'Try clearing a filter or two.' : `We are adding ${plural.toLowerCase()} here. Doctors elsewhere in ${cityName} can see you, and many consult on video.`}
+                  {activeChips.length ? 'Try clearing a filter or two.' : `We are adding ${lower(plural)} here. Doctors elsewhere in ${cityName} can see you, and many consult on video.`}
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-3 mt-6 w-full max-w-[440px]">
                   {activeChips.length > 0 && (
@@ -201,7 +202,7 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
         </div>
       </main>
       {children}
-      <MobileFilterSheet filters={filters} activeChips={activeChips} total={total} noun={plural.toLowerCase()} setParam={setParam} setAvailability={setAvailability} clearFilters={clearFilters} hide={hide ? [...hide] : undefined} areas={facets?.areas} languages={facets?.languages} />
+      <MobileFilterSheet filters={filters} activeChips={activeChips} total={total} noun={lower(plural)} setParam={setParam} setAvailability={setAvailability} clearFilters={clearFilters} hide={hide ? [...hide] : undefined} areas={facets?.areas} languages={facets?.languages} />
       <Footer />
     </>
   );

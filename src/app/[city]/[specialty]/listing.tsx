@@ -3,7 +3,7 @@ import ListingSeoContent, { InternalLinks, allDoctorsFaqs } from '@/components/l
 import FaqAccordion from '@/components/seo/FaqAccordion';
 import { SeoBody, SeoIntro } from '@/components/seo/SeoContent';
 import { api, type DoctorList, type DoctorQuery, type DoctorStats, type SpecialtyContent } from '@/lib/api';
-import { cityDoctorsPage, citySpecialtyPage, type SeoPage } from '@/lib/seo-content';
+import { cityDoctorsPage, citySpecialtyPage, lower, type SeoPage } from '@/lib/seo-content';
 import { liveCatalogue, resolveCity, resolveSpecialty } from '@/lib/catalogue-live';
 import type { CityInfo, SpecialtyInfo } from '@/lib/catalogue-data';
 import { JsonLd } from '@/lib/seo';
@@ -88,7 +88,7 @@ export async function listingMetadata({ city, specialty: slug, locality }: Scope
       title: { absolute: template.title },
       description: template.description,
       alternates: { canonical: template.canonical },
-      robots: isVariant(params) ? { index: false, follow: true } : undefined,
+      ...(isVariant(params) ? { robots: { index: false, follow: true } } : {}),
       openGraph: { title: template.title, description: template.description, type: 'website', url: template.canonical },
     };
   }
@@ -97,7 +97,7 @@ export async function listingMetadata({ city, specialty: slug, locality }: Scope
     : `${specialty.plural} in ${place} — Book Verified Doctors Online or In-Clinic | Curxx`;
   const description = q
     ? `Find verified doctors for ${q} in ${place}. Compare fees, experience and patient ratings, then book a video consult or a clinic visit on Curxx.`
-    : `Book ${specialty.plural.toLowerCase()} in ${place} for a video consult or a zero-wait clinic visit. Compare fees, experience and patient ratings, then confirm your slot on Curxx.`;
+    : `Book ${lower(specialty.plural)} in ${place} for a video consult or a zero-wait clinic visit. Compare fees, experience and patient ratings, then confirm your slot on Curxx.`;
   // A locality with no doctors of this specialty yet is thin content: keep it out of the index.
   const empty = area && slug !== ALL_DOCTORS.slug ? (await loadContent(slug, city, area.slug))?.stats.doctors === 0 : false;
   return {
@@ -105,7 +105,7 @@ export async function listingMetadata({ city, specialty: slug, locality }: Scope
     description,
     alternates: { canonical: path },
     // Filtered and searched views point to the clean listing rather than competing with it.
-    robots: isVariant(params) || empty ? { index: false, follow: true } : undefined,
+    ...(isVariant(params) || empty ? { robots: { index: false, follow: true } } : {}),
     openGraph: { title, description, type: 'website', url: path },
   };
 }
@@ -140,7 +140,7 @@ export async function renderListing({ city, specialty: slug, locality }: Scope, 
   const subheading = q
     ? `${listing.total.toLocaleString('en-IN')} doctors${matched?.length ? ` — ${matched.join(', ')}` : ''} · ${place}`
     : widened
-      ? `No ${specialty.plural.toLowerCase()} listed in ${area!.name} yet — showing ${listing.total} across ${cityInfo.name}`
+      ? `No ${lower(specialty.plural)} listed in ${area!.name} yet — showing ${listing.total} across ${cityInfo.name}`
       : template?.subline;
   // Template copy describes the whole page, so filtered and paged views leave the intro out.
   const intro = template && !isVariant(params) ? <SeoIntro page={template} className="mt-5 pt-5 border-t border-[#E7E5E4]" /> : undefined;
@@ -162,10 +162,10 @@ export async function renderListing({ city, specialty: slug, locality }: Scope, 
         plural={q ? 'Doctors' : specialty.plural}
         heading={heading}
         subheading={subheading}
-        resultsHeading={q ? `Best matches for “${q}”` : widened ? `${specialty.plural} near ${area!.name}, ${cityInfo.name}` : `Top-rated ${specialty.plural.toLowerCase()} available in ${place}`}
+        resultsHeading={q ? `Best matches for “${q}”` : widened ? `${specialty.plural} near ${area!.name}, ${cityInfo.name}` : `Top-rated ${lower(specialty.plural)} available in ${place}`}
         breadcrumbs={breadcrumbs}
         lockedArea={Boolean(area) && !widened}
-        emptyAction={area ? { href: basePath, label: `See all ${specialty.plural.toLowerCase()} in ${cityInfo.name}` } : undefined}
+        emptyAction={area ? { href: basePath, label: `See all ${lower(specialty.plural)} in ${cityInfo.name}` } : undefined}
         intro={intro}
       >
         {template ? (

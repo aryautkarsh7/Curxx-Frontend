@@ -33,7 +33,7 @@ export default async function IndiaDoctorsPage() {
   return (
     <SeoLandingPage page={page} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'India' }, { label: 'Doctors' }]}>
       <LinkGrid heading="All Specialties in India" links={stats.specialties.map((s) => ({ text: `${s.plural} in India`, href: `/india/${s.slug}` }))} />
-      <LinkGrid heading="Doctors by City" links={stats.cities.map((c) => ({ text: `Doctors in ${c.name}`, href: `/${c.slug}/doctors` }))} />
+      <LinkGrid heading="Find Doctors in Your City" links={stats.cities.map((c) => ({ text: `Doctors in ${c.name}`, href: `/${c.slug}/doctors` }))} />
     </SeoLandingPage>
   );
 }

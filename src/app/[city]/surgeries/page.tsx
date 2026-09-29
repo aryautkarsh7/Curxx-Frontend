@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: { absolute: page.title },
     description: page.description,
     alternates: { canonical: page.index === false ? '/india/surgeries' : page.canonical },
-    robots: page.index === false ? { index: false, follow: true } : undefined,
+    ...(page.index === false ? { robots: { index: false, follow: true } } : {}),
     openGraph: { title: page.title, description: page.description, type: 'website', url: page.canonical },
   };
 }

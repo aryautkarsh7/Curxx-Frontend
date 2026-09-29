@@ -37,7 +37,7 @@ export default async function IndiaSpecialtyPage({ params }: Props) {
   const sp = stats.scope.specialty!;
   return (
     <SeoLandingPage page={page} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'India', href: '/india/doctors' }, { label: sp.plural }]}>
-      <LinkGrid heading={`${sp.plural} by City`} links={stats.cities.map((c) => ({ text: `${sp.plural} in ${c.name}`, href: `/${c.slug}/${sp.slug}` }))} />
+      <LinkGrid heading={`Find ${sp.plural} in Your City`} links={stats.cities.map((c) => ({ text: `${sp.plural} in ${c.name}`, href: `/${c.slug}/${sp.slug}` }))} />
       <LinkGrid heading="Doctors across India" links={[{ text: 'All doctors in India', href: '/india/doctors' }]} />
     </SeoLandingPage>
   );
