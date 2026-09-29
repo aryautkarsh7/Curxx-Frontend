@@ -16,6 +16,7 @@ import VideoGallery from '@/components/profile/VideoGallery';
 import NewBadge from '@/components/NewBadge';
 import { doctorPhoto, photo, rupees, type ConsultMode, type Doctor, type DoctorDetail, type Facility, type Slot, type Video } from '@/lib/api';
 import { slotLabel } from '@/components/DoctorCard';
+import { doctorProfileContent } from '@/lib/doctor-content';
 
 type Service = { slug: string; name: string; description: string; icon: string; focus: boolean };
 type Props = {
@@ -54,7 +55,6 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
   const specialtyPlural = doctor.specialtyPlural ?? 'Doctors';
   const firstName = doctor.name.replace(/^Dr\.\s*/, '').split(' ')[0];
   const bookable = doctor.bookable !== false;
-  const approx = doctor.feeVerified === false ? 'about ' : '';
   const approxLabel = doctor.feeVerified === false ? 'Approx. ' : '';
 
   async function share() {
@@ -80,18 +80,9 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
 
   const time = (startsAt: string) => slotLabel(startsAt);
 
-  const faqs = [
-    { question: `What is ${doctor.name}’s consultation fee?`, answer: `${approx}${rupees(doctor.fee)} for an in-clinic visit at ${doctor.clinicName}${doctor.offersVideo !== false ? `, and ${rupees(doctor.videoFee)} for a video consultation${doctor.freeVideo ? ' (the first video consult is free on selected slots)' : ''}` : ''}.${doctor.feeVerified === false ? ' Please confirm the exact fee with the clinic.' : ''}${bookable ? ' Every booking includes a 7-day chat follow-up.' : ''}` },
-    doctor.offersVideo !== false
-      ? { question: `Does ${doctor.name} offer online consultations?`, answer: nextVideo ? `Yes. The next video slot is ${slotLabel(nextVideo.startsAt).toLowerCase()}. You get a digitally signed e-prescription after the call.` : `Video consultations are offered, but there are no open video slots this week. Book a clinic visit or check back tomorrow.` }
-      : { question: `Does ${doctor.name} offer online consultations?`, answer: `${doctor.name} sees patients in person at ${doctor.clinicName}. ${bookable ? 'Book a clinic visit at a time that suits you.' : 'Call the clinic to arrange a visit.'}` },
-    bookable
-      ? { question: `When is ${doctor.name} available?`, answer: `${doctor.consultHours ? `${doctor.name} consults ${doctor.consultHours}.` : ''} Open slots for the next seven days are shown in the booking panel${facility?.openHours ? `; ${facility.name} is open ${facility.openHours}` : ''}.` }
-      : { question: `When is ${doctor.name} available?`, answer: `${doctor.consultHours ? `${doctor.name} usually consults ${doctor.consultHours}. ` : ''}Online booking isn’t available yet, so please call ${doctor.clinicName} to confirm timings before you visit.` },
-    { question: `Where does ${doctor.name} practise?`, answer: `${doctor.clinicName}, ${doctor.area}, ${cityName}.${facility?.address ? ` ${facility.address}.` : ''}` },
-    { question: `Which languages does ${doctor.name} speak?`, answer: `${doctor.languages.join(', ')}.` },
-    ...(bookable ? [{ question: 'Can I cancel or reschedule?', answer: 'Yes — from My Appointments, free of charge up to 2 hours before the slot. Any payment is refunded to the original method within 5–7 working days.' }] : []),
-  ];
+  // Profile copy and FAQs from Diksha's template (lib/doctor-content.ts), built from this doctor's record.
+  const content = doctorProfileContent(doctor, facility, { bookable });
+  const faqs = content.faqs;
 
   const physician = {
     '@context': 'https://schema.org',
@@ -240,8 +231,21 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
             <section id="overview" className="bg-white border border-[#E7E5E4] rounded-2xl p-5 sm:p-8 space-y-6 scroll-mt-32">
               <div>
                 <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917] mb-3">About {doctor.name}</h2>
-                <p className="font-body-default text-body-default text-[#1C1917] leading-relaxed">{doctor.about}</p>
+                <p className="font-body-default text-body-default text-[#1C1917] leading-relaxed">{content.about}</p>
               </div>
+              {content.sections.map((section) => (
+                <div key={section.heading}>
+                  <h2 className="font-headline-h3 text-headline-h3 text-[#1C1917] mb-2">{section.heading}</h2>
+                  {section.paragraphs?.map((p) => (
+                    <p key={p} className="font-body-default text-body-default text-[#1C1917] leading-relaxed">{p}</p>
+                  ))}
+                  {section.list && (
+                    <ul className="list-disc pl-5 space-y-1 font-body-default text-body-default text-[#1C1917]">
+                      {section.list.map((item) => <li key={item}>{item}</li>)}
+                    </ul>
+                  )}
+                </div>
+              ))}
               {doctor.focusAreaNames.length > 0 && (
                 <div>
                   <h3 className="font-headline-h3 text-headline-h3 text-[#1C1917] mb-3">Special interests</h3>

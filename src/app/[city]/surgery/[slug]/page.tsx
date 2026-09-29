@@ -31,7 +31,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const name = info.name;
   return {
     title: { absolute: `${surgery.name} in ${name} — Cost ${rupees(surgery.cost[0])}–${rupees(surgery.cost[1])}, Top Hospitals | Curxx` },
-    description: `${surgery.description} Typical cost in ${name}: ${rupees(surgery.cost[0])} to ${rupees(surgery.cost[1])}. ${surgery.stay} stay, ${surgery.recovery} recovery. Book a free surgeon consultation.`,
+    description: [
+      surgery.description,
+      surgery.cost[1] > 0 ? `Estimated cost in ${name}: ${rupees(surgery.cost[0])} to ${rupees(surgery.cost[1])}.` : '',
+      surgery.stay ? `Hospital stay: ${surgery.stay}.` : '',
+      'Book a free surgeon consultation.',
+    ].filter(Boolean).join(' '),
     alternates: { canonical: `/${canonical}/surgery/${slug}` },
   };
 }
@@ -47,12 +52,13 @@ export default async function SurgeryPage({ params }: Props) {
   const { surgery, hospitals, surgeons, related, otherCities, faqs, specialty } = data;
   const cityName = info.name;
 
-  const facts: [string, string, string][] = [
-    ['payments', 'Typical cost', `${rupees(surgery.cost[0])} – ${rupees(surgery.cost[1])}`],
-    ['bed', 'Hospital stay', surgery.stay],
-    ['timer', 'Procedure time', `${surgery.durationMinutes[0]}–${surgery.durationMinutes[1]} min`],
-    ['healing', 'Recovery', surgery.recovery],
-  ];
+  // Procedures added from the cost sheet carry fewer details: leave out whatever isn't known.
+  const facts = ([
+    surgery.cost[1] > 0 ? ['payments', 'Estimated cost', `${rupees(surgery.cost[0])} – ${rupees(surgery.cost[1])}`] : null,
+    surgery.stay ? ['bed', 'Hospital stay', surgery.stay] : null,
+    surgery.durationMinutes[1] > 0 ? ['timer', 'Procedure time', `${surgery.durationMinutes[0]}–${surgery.durationMinutes[1]} min`] : null,
+    surgery.recovery ? ['healing', 'Recovery', surgery.recovery] : null,
+  ] as ([string, string, string] | null)[]).filter((f): f is [string, string, string] => f !== null);
 
   return (
     <>
@@ -64,8 +70,8 @@ export default async function SurgeryPage({ params }: Props) {
           name: surgery.name,
           description: surgery.description,
           procedureType: 'https://schema.org/SurgicalProcedure',
-          howPerformed: surgery.techniques.join(', '),
-          followup: surgery.recovery,
+          ...(surgery.techniques.length ? { howPerformed: surgery.techniques.join(', ') } : {}),
+          ...(surgery.recovery ? { followup: surgery.recovery } : {}),
           offers: { '@type': 'AggregateOffer', priceCurrency: 'INR', lowPrice: surgery.cost[0], highPrice: surgery.cost[1] },
         }}
       />
@@ -99,16 +105,19 @@ export default async function SurgeryPage({ params }: Props) {
                   </p>
                 )}
               </div>
+              {(surgery.treats.length > 0 || surgery.techniques.length > 0) && (
               <section className="grid sm:grid-cols-2 gap-6">
-                <div>
+                {surgery.treats.length > 0 && <div>
                   <h2 className="text-headline-h3 font-headline-h3 text-on-surface mb-2">Who Needs It</h2>
                   <ul className="space-y-1.5 text-caption font-caption text-on-surface">{surgery.treats.map((t) => <li key={t} className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary-container mt-2 shrink-0"></span>{t}</li>)}</ul>
-                </div>
-                <div>
+                </div>}
+                {surgery.techniques.length > 0 && <div>
                   <h2 className="text-headline-h3 font-headline-h3 text-on-surface mb-2">Techniques</h2>
                   <ul className="space-y-1.5 text-caption font-caption text-on-surface">{surgery.techniques.map((t) => <li key={t} className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-primary-container mt-2 shrink-0"></span>{t}</li>)}</ul>
-                </div>
+                </div>}
               </section>
+              )}
+              {(surgery.steps.length > 0 || surgery.anaesthesia) && (
               <section className="space-y-3">
                 <h2 className="text-headline-h2 font-headline-h2 text-on-surface">How the Procedure Works</h2>
                 <ol className="space-y-3">
@@ -119,18 +128,21 @@ export default async function SurgeryPage({ params }: Props) {
                     </li>
                   ))}
                 </ol>
-                <p className="text-caption font-caption text-on-surface-variant">Anaesthesia: {surgery.anaesthesia}.</p>
+                {surgery.anaesthesia && <p className="text-caption font-caption text-on-surface-variant">Anaesthesia: {surgery.anaesthesia}.</p>}
               </section>
+              )}
+              {(surgery.benefits.length > 0 || surgery.risks.length > 0) && (
               <section className="grid sm:grid-cols-2 gap-6">
-                <div className="p-4 rounded-xl border border-[#A7F3D0] bg-[#ECFDF5]">
+                {surgery.benefits.length > 0 && <div className="p-4 rounded-xl border border-[#A7F3D0] bg-[#ECFDF5]">
                   <h2 className="text-headline-h3 font-headline-h3 text-[#047857] mb-2">Benefits</h2>
                   <ul className="space-y-1.5 text-caption font-caption text-on-surface">{surgery.benefits.map((b) => <li key={b} className="flex gap-2"><span className="material-symbols-outlined text-[16px] text-[#047857]">check</span>{b}</li>)}</ul>
-                </div>
-                <div className="p-4 rounded-xl border border-surface-variant bg-surface-container-low">
+                </div>}
+                {surgery.risks.length > 0 && <div className="p-4 rounded-xl border border-surface-variant bg-surface-container-low">
                   <h2 className="text-headline-h3 font-headline-h3 text-on-surface mb-2">Possible Risks</h2>
                   <ul className="space-y-1.5 text-caption font-caption text-on-surface">{surgery.risks.map((r) => <li key={r} className="flex gap-2"><span className="material-symbols-outlined text-[16px] text-on-surface-variant">info</span>{r}</li>)}</ul>
-                </div>
+                </div>}
               </section>
+              )}
               {hospitals.length > 0 && (
                 <section className="space-y-3">
                   <h2 className="text-headline-h2 font-headline-h2 text-on-surface">Hospitals for {surgery.name} in {cityName}</h2>
@@ -185,7 +197,7 @@ export default async function SurgeryPage({ params }: Props) {
             </div>
             <div className="lg:sticky lg:top-24 space-y-3">
               <SurgeryLeadForm surgery={{ slug: surgery.slug, name: surgery.name }} city={canonical} cityName={cityName} />
-              <p className="px-1 font-micro text-micro text-on-surface-variant">Costs are typical package ranges in {cityName} and vary with hospital, room type and technique. Your coordinator shares an itemised estimate.</p>
+              <p className="px-1 font-micro text-micro text-on-surface-variant">Costs are estimated package ranges in {cityName} and vary with hospital, room type and technique. Your coordinator shares an itemised estimate.</p>
             </div>
           </div>
         </div>

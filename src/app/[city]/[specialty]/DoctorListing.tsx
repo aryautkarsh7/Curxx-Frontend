@@ -25,12 +25,14 @@ type Props = DoctorList & {
   lockedArea?: boolean;
   /** Shown instead of the empty state when this page has no doctors (e.g. a quiet locality). */
   emptyAction?: { href: string; label: string };
+  /** Page copy under the H1 (template H2, stats strip, upper and read-more content). */
+  intro?: ReactNode;
   children?: ReactNode;
 };
 
 const SUBNAV = 'whitespace-nowrap text-on-surface-variant font-body-default text-body-default pb-1 hover:text-primary transition-colors duration-150';
 
-export default function DoctorListing({ city, cityName, place, plural, heading, subheading, resultsHeading, breadcrumbs, lockedArea, emptyAction, children, doctors, total, pages, facets }: Props) {
+export default function DoctorListing({ city, cityName, place, plural, heading, subheading, resultsHeading, breadcrumbs, lockedArea, emptyAction, intro, children, doctors, total, pages, facets }: Props) {
   const { page, sort, filters, setParam, setAvailability, setSort, clearFilters, goToPage, openDoctor } = useListingControls();
   const pageNumbers = Array.from({ length: Math.min(pages, 5) }, (_, i) => i + 1).filter((n) => n <= pages);
   const activeChips = toChips(filters);
@@ -76,7 +78,7 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
               <h1 className="font-headline-h1 text-headline-h1 text-[#1C1917] tracking-tight">{heading}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <span className="w-2 h-2 rounded-full bg-[#047857]"></span>
-                <p className="font-caption text-caption text-[#78716C]">{subheading ?? `${total.toLocaleString('en-IN')} verified ${plural.toLowerCase()} available in ${place} · Updated today`}</p>
+                <p className="font-caption text-caption text-[#78716C]">{subheading ?? `${total.toLocaleString('en-IN')} ${plural.toLowerCase()} available in ${place} · Updated today`}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -94,6 +96,7 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
               </div>
             </div>
           </div>
+          {intro}
         </div>
       </section>
       {/* ==================== THREE-COLUMN RESULTS LAYOUT ==================== */}

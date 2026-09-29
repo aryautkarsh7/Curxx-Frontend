@@ -76,6 +76,10 @@ export type Doctor = {
   bookable?: boolean;
   /** False when the fee is an estimate rather than confirmed by the doctor — shown as "Approx.". */
   feeVerified?: boolean;
+  /** instant (book & pay) · request (send a request) · none (Call / Visit). From the API. */
+  booking?: 'instant' | 'request' | 'none';
+  /** Where an imported profile came from ("doctar"); empty for Curxx's own. */
+  source?: string;
 };
 
 export type DoctorDetail = Doctor & {
@@ -85,6 +89,10 @@ export type DoctorDetail = Doctor & {
   cityName: string;
   services: (SubSpecialty & { focus: boolean })[];
   reviewSummary: { average: number; total: number };
+  /** Weekly hours grouped by day, e.g. [{ days: 'Mon–Fri', hours: ['9:00 AM – 1:00 PM'] }]. Empty when unknown. */
+  timings?: { days: string; dayCount: number; hours: string[]; allDay: boolean }[];
+  /** Hand-written in the admin panel: its own About text wins over the generated one. */
+  managed?: boolean;
 };
 
 export type SubSpecialty = { slug: string; name: string; description: string; icon: string };
@@ -113,6 +121,69 @@ export type Specialty = {
 export type Slot = { id: string; startsAt: string; mode: 'clinic' | 'video'; fee: number; free?: boolean };
 
 export type Faq = { question: string; answer: string };
+
+/** A fee range; `approx` when a fee the doctor hasn't confirmed sets either end. */
+export type FeeRange = { min: number; max: number; approx: boolean };
+
+/** Live figures behind the dynamic SEO copy (GET /seo/doctors). Dates are ISO strings. */
+export type DoctorStats = {
+  scope: {
+    city: { slug: string; name: string } | null;
+    specialty: { slug: string; name: string; plural: string; conditions: string[]; whenToSee: string[] } | null;
+  };
+  total: number;
+  bookableCount: number;
+  clinicCount: number;
+  videoCount: number;
+  clinicOnlyCount: number;
+  freeVideoCount: number;
+  todayCount: number;
+  clinicTodayCount: number;
+  videoTodayCount: number;
+  clinicFee: FeeRange | null;
+  videoFee: FeeRange | null;
+  earliest: string | null;
+  avgExperience: number | null;
+  reviewCount: number;
+  avgRating: number | null;
+  specialtyCount: number;
+  cityCount: number;
+  clinicCityCount: number;
+  smallCityCount: number;
+  specialties: { slug: string; name: string; plural: string; count: number; cityCount: number; clinicFee: FeeRange | null; videoFee: FeeRange | null; earliest: string | null }[];
+  cities: { slug: string; name: string; count: number; clinicFee: FeeRange | null; videoFee: FeeRange | null; earliest: string | null }[];
+  areas: { name: string; slug: string | null; count: number; clinicFee: FeeRange | null }[];
+  languages: { name: string; count: number }[];
+  feeBands: { label: string; count: number; setting: string | null }[];
+  topDoctors: {
+    slug: string; name: string; city: string; cityName: string; area: string; experienceYears: number; rating: number | null; reviewCount: number;
+    fee: number | null; videoFee: number | null; feeApprox: boolean; next: string | null;
+  }[];
+};
+
+/** Live figures behind the surgery pages (GET /seo/surgeries). */
+export type SurgeryStats = {
+  city: { slug: string; name: string } | null;
+  hospitalCount: number;
+  surgeonCount: number;
+  procedureCount: number;
+  categoryCount: number;
+  minCost: number | null;
+  maxCost: number | null;
+  cheapest: string | null;
+  priciest: string | null;
+  costBands: { label: string; count: number }[];
+  shortStayCount: number;
+  daycareCount: number;
+  daycare: { slug: string; name: string }[];
+  hospitals: { slug: string; name: string; area: string; city: string; surgeons: number; departments: string[]; nabh: boolean; beds: number | null }[];
+  areas: { name: string; count: number }[];
+  surgeonTable: { slug: string; count: number; avgExperience: number | null }[];
+  cities: { slug: string; name: string; hospitals: number; surgeons: number }[];
+  cityCount: number;
+  directory: { category: string; procedures: string[] }[];
+  indexable: boolean;
+};
 export type LinkCount = { slug: string; name: string; count: number };
 
 /** SEO content for a specialty listing, specific to specialty × city × locality. */
@@ -637,6 +708,8 @@ export const api = {
   cities: () => request<{ cities: { slug: string; name: string; state: string; tier: number; doctorCount: number; localities: { slug: string; name: string; pincode: string }[] }[] }>('/cities', cached(600)),
   conditions: () => request<{ conditions: { slug: string; name: string; specialty: string; summary: string; popular: string | null }[] }>('/conditions', cached(600)),
   condition: (slug: string, city: string) => request<ConditionDetail>(`/conditions/${slug}${qs({ city })}`, cached(300)),
+  seoDoctors: (city: string, specialty?: string) => request<DoctorStats>(`/seo/doctors${qs({ city, specialty })}`, cached(300)),
+  seoSurgeries: (city: string) => request<SurgeryStats>(`/seo/surgeries${qs({ city })}`, cached(300)),
   surgeries: (city: string) => request<{ categories: string[]; city: { slug: string; name: string }; surgeries: SurgerySummary[] }>(`/surgeries${qs({ city })}`, cached(300)),
   surgery: (slug: string, city: string) => request<SurgeryDetail>(`/surgeries/${slug}${qs({ city })}`, cached(300)),
   suggest: (q: string, city: string) => request<Suggestions>(`/search/suggest${qs({ q, city })}`, cached(60)),

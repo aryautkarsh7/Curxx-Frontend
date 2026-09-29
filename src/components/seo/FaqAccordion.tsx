@@ -7,13 +7,16 @@ type Props = {
   /** Emit FAQPage structured data alongside the visible questions. */
   schema?: boolean;
   className?: string;
+  /** Answer element: h4 (the homepage spec) or p (the listing / India / surgery templates). */
+  answerAs?: 'h4' | 'p';
 };
 
 /**
  * FAQ block with the heading outline the SEO spec asks for: section H2, question H3, answer H4.
  * Native <details> keeps every answer in the HTML (indexable) while staying collapsible.
  */
-export default function FaqAccordion({ faqs, heading = 'Frequently Asked Questions', schema = true, className = '' }: Props) {
+export default function FaqAccordion({ faqs, heading = 'Frequently Asked Questions', schema = true, className = '', answerAs = 'h4' }: Props) {
+  const Answer = answerAs;
   if (!faqs.length) return null;
   return (
     <div className={`space-y-3 ${className}`}>
@@ -25,7 +28,7 @@ export default function FaqAccordion({ faqs, heading = 'Frequently Asked Questio
             <h3 className="text-left font-body-strong text-body-strong text-[#1C1917]">{faq.question}</h3>
             <span className="material-symbols-outlined text-[20px] text-[#78716C] transition-transform group-open:rotate-180" aria-hidden="true">expand_more</span>
           </summary>
-          <h4 className="mt-2 text-caption font-caption font-normal text-[#5c403d] leading-relaxed">{faq.answer}</h4>
+          <Answer className="mt-2 text-caption font-caption font-normal text-[#5c403d] leading-relaxed">{faq.answer}</Answer>
         </details>
       ))}
     </div>

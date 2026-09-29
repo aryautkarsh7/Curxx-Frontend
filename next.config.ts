@@ -41,7 +41,14 @@ const SPECIALTY_ALIAS_REDIRECTS = Object.entries(SPECIALTY_ALIASES).flatMap(([al
   { source: `/:city/${alias}/:rest+`, destination: `/:city/${slug}/:rest+` },
 ]);
 
+// Mirrors src/lib/site-env.ts (next.config can't import from src at build time on every setup).
+const productionSite = process.env.APP_ENV ? process.env.APP_ENV.trim().toLowerCase() === 'production' : process.env.VERCEL_ENV === 'production';
+
 const nextConfig: NextConfig = {
+  /** Belt and braces for staging and previews: a noindex header on every response. */
+  async headers() {
+    return productionSite ? [] : [{ source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }];
+  },
   async redirects() {
     return [
       ...MOVED.map((r) => ({ ...r, permanent: true })),
