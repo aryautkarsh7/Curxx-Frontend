@@ -4,7 +4,10 @@ import { api, type LabDirectoryQuery } from '@/lib/api';
 import { resolveCity } from '@/lib/catalogue-live';
 import LabsListing from './LabsListing';
 
-type Props = { params: Promise<{ city: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
+type Props = {
+  params: Promise<{ city: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const info = await resolveCity((await params).city);
@@ -43,7 +46,10 @@ export default async function CityLabsPage({ params, searchParams }: Props) {
   };
   const [data, tests] = await Promise.all([
     api.labs(query).catch(() => null),
-    api.labTests({ limit: 60 }).then((r) => r.items.map((t) => ({ slug: t.slug, name: t.name, kind: t.kind }))).catch(() => []),
+    api
+      .labTests({ limit: 60 })
+      .then((r) => r.items.map((t) => ({ slug: t.slug, name: t.name, kind: t.kind })))
+      .catch(() => []),
   ]);
   return (
     <LabsListing
@@ -51,7 +57,12 @@ export default async function CityLabsPage({ params, searchParams }: Props) {
       total={data?.total ?? 0}
       city={canonical}
       cityName={info.name}
-      near={data?.near ?? { pincode: info.localities[0]?.pincode ?? '', area: info.localities[0]?.name ?? info.name }}
+      near={
+        data?.near ?? {
+          pincode: info.localities[0]?.pincode ?? '',
+          area: info.localities[0]?.name ?? info.name,
+        }
+      }
       areas={data?.facets.areas ?? []}
       accreditations={data?.facets.accreditations ?? []}
       tests={tests}

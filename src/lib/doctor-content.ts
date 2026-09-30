@@ -9,22 +9,40 @@ import type { DoctorDetail, Facility, Faq } from './api';
 export type ProfileSection = { heading: string; paragraphs?: string[]; list?: string[] };
 
 const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
-const list = (items: string[]) => (items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
+const list = (items: string[]) =>
+  items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
 /** "Dermatologist" → "dermatologist"; acronyms such as "ENT Specialist" keep their capitals. */
-const lowerTitle = (s: string) => s.split(' ').map((w) => (/^[A-Z]{2,}/.test(w) ? w : w.toLowerCase())).join(' ');
+const lowerTitle = (s: string) =>
+  s
+    .split(' ')
+    .map((w) => (/^[A-Z]{2,}/.test(w) ? w : w.toLowerCase()))
+    .join(' ');
 /** "a"/"an" by sound: an orthopedist, an ENT specialist, but a urologist. */
-const article = (word: string) => (/^(uni|uro|use|usu|eu)/i.test(word) ? 'a' : /^[aeiou]/i.test(word) || /^[AEFHILMNORSX][A-Z]/.test(word) ? 'an' : 'a');
+const article = (word: string) =>
+  /^(uni|uro|use|usu|eu)/i.test(word)
+    ? 'a'
+    : /^[aeiou]/i.test(word) || /^[AEFHILMNORSX][A-Z]/.test(word)
+      ? 'an'
+      : 'a';
 const clean = (s?: string | null) => (s ?? '').trim();
 
 /** "Mon–Fri from 9:00 AM to 1:00 PM and 5:00 PM to 8:00 PM, and Sat from 10:00 AM to 1:00 PM". */
 export function timingsText(timings: DoctorDetail['timings']) {
   if (!timings?.length) return '';
   return list(
-    timings.map((t) => (t.allDay ? `${t.days}, 24 hours` : `${t.days} from ${list(t.hours.map((h) => h.replace(' – ', ' to ')))}`)),
+    timings.map((t) =>
+      t.allDay
+        ? `${t.days}, 24 hours`
+        : `${t.days} from ${list(t.hours.map((h) => h.replace(' – ', ' to ')))}`,
+    ),
   );
 }
 
-export function doctorProfileContent(d: DoctorDetail, facility: Facility | null, opts: { bookable: boolean }) {
+export function doctorProfileContent(
+  d: DoctorDetail,
+  facility: Facility | null,
+  opts: { bookable: boolean },
+) {
   const name = d.name;
   const speciality = lowerTitle(clean(d.specialtyName) || clean(d.title) || 'doctor');
   const city = clean(d.cityName);
@@ -49,13 +67,18 @@ export function doctorProfileContent(d: DoctorDetail, facility: Facility | null,
       : [
           `${name} is ${article(experienced || speciality)} ${experienced}${speciality}${place ? ` in ${place}` : ''}${exp ? `, with ${exp}+ years of clinical experience` : ''}.`,
           qualification ? `${name} holds ${qualification}.` : '',
-          hospital && city ? `Patients looking for ${article(speciality)} ${speciality} in ${city} can consult ${name} at ${hospital}${locality ? `, ${locality}` : ''}.` : '',
+          hospital && city
+            ? `Patients looking for ${article(speciality)} ${speciality} in ${city} can consult ${name} at ${hospital}${locality ? `, ${locality}` : ''}.`
+            : '',
         ]
           .filter(Boolean)
           .join(' ');
 
   // First complaint of each service ("Ear ache, blocked ear…" → "ear ache"): reads as a reason, unlike the category label.
-  const reasons = (d.services ?? []).slice(0, 4).map((s) => lowerTitle(clean(s.description).split(/,\s*/)[0] ?? '')).filter(Boolean);
+  const reasons = (d.services ?? [])
+    .slice(0, 4)
+    .map((s) => lowerTitle(clean(s.description).split(/,\s*/)[0] ?? ''))
+    .filter(Boolean);
   const candidates: (ProfileSection | null)[] = [
     qualification || exp
       ? {
@@ -65,8 +88,12 @@ export function doctorProfileContent(d: DoctorDetail, facility: Facility | null,
               qualification
                 ? `${name} has completed ${qualification} and practises as ${article(speciality)} ${speciality}${exp ? `, with ${exp} years of practice` : ''}.`
                 : `${name} practises as ${article(speciality)} ${speciality}, with ${exp} years of practice.`,
-              d.focusAreaNames?.length ? `Areas of special interest include ${list(d.focusAreaNames.map(lowerTitle))}.` : '',
-              reasons.length ? `Common reasons to see ${article(speciality)} ${speciality} include ${list(reasons)}.` : '',
+              d.focusAreaNames?.length
+                ? `Areas of special interest include ${list(d.focusAreaNames.map(lowerTitle))}.`
+                : '',
+              reasons.length
+                ? `Common reasons to see ${article(speciality)} ${speciality} include ${list(reasons)}.`
+                : '',
             ]
               .filter(Boolean)
               .join(' '),
@@ -80,7 +107,9 @@ export function doctorProfileContent(d: DoctorDetail, facility: Facility | null,
             [
               `${name} practises at ${hospital}${place ? ` in ${place}` : ''}.`,
               clean(facility?.address) ? `Address: ${clean(facility?.address)}.` : '',
-              city ? `Patients from nearby areas of ${city} can ${opts.bookable ? 'book a visit here' : 'visit or call the clinic'}.` : '',
+              city
+                ? `Patients from nearby areas of ${city} can ${opts.bookable ? 'book a visit here' : 'visit or call the clinic'}.`
+                : '',
             ]
               .filter(Boolean)
               .join(' '),
@@ -90,27 +119,40 @@ export function doctorProfileContent(d: DoctorDetail, facility: Facility | null,
     hours
       ? {
           heading: 'Clinic Timings',
-          paragraphs: [`${name} is available ${hours}. ${opts.bookable ? 'Patients are advised to book an appointment in advance to avoid waiting time.' : 'Please call the clinic to confirm timings before you visit.'}`],
+          paragraphs: [
+            `${name} is available ${hours}. ${opts.bookable ? 'Patients are advised to book an appointment in advance to avoid waiting time.' : 'Please call the clinic to confirm timings before you visit.'}`,
+          ],
         }
       : null,
     languages.length
-      ? { heading: 'Languages Spoken', paragraphs: [`${name} speaks ${list(languages)}, so patients can explain their symptoms comfortably and understand the treatment plan without any language barrier.`] }
+      ? {
+          heading: 'Languages Spoken',
+          paragraphs: [
+            `${name} speaks ${list(languages)}, so patients can explain their symptoms comfortably and understand the treatment plan without any language barrier.`,
+          ],
+        }
       : null,
     fee
       ? {
           heading: 'Consultation Fee',
-          paragraphs: [`The consultation fee for ${name} is ${fee}.${approxFee ? ' Please confirm the exact fee with the clinic.' : ''} Fees may vary depending on the type of visit or follow-up.`],
+          paragraphs: [
+            `The consultation fee for ${name} is ${fee}.${approxFee ? ' Please confirm the exact fee with the clinic.' : ''} Fees may vary depending on the type of visit or follow-up.`,
+          ],
         }
       : null,
     video
       ? {
           heading: 'Online Video Consultation',
-          paragraphs: [`Can’t visit the clinic? ${name} also offers video consultation. You can consult ${article(speciality)} ${speciality} from home, share your reports online and get guidance without travelling. Online consultation is helpful for follow-ups, second opinions and non-emergency concerns.`],
+          paragraphs: [
+            `Can’t visit the clinic? ${name} also offers video consultation. You can consult ${article(speciality)} ${speciality} from home, share your reports online and get guidance without travelling. Online consultation is helpful for follow-ups, second opinions and non-emergency concerns.`,
+          ],
         }
       : hospital
         ? {
             heading: 'Consultation Mode',
-            paragraphs: [`${name} currently consults in person only at ${hospital}. Video consultation is not available at the moment, so please ${opts.bookable ? 'book an in-clinic appointment' : 'call the clinic to arrange a visit'}.`],
+            paragraphs: [
+              `${name} currently consults in person only at ${hospital}. Video consultation is not available at the moment, so please ${opts.bookable ? 'book an in-clinic appointment' : 'call the clinic to arrange a visit'}.`,
+            ],
           }
         : null,
     {
@@ -142,16 +184,50 @@ export function doctorProfileContent(d: DoctorDetail, facility: Facility | null,
       ],
     },
   ];
-  const sections = candidates.filter((s): s is ProfileSection => s !== null && (Boolean(s.paragraphs?.length) || Boolean(s.list?.length)));
+  const sections = candidates.filter(
+    (s): s is ProfileSection =>
+      s !== null && (Boolean(s.paragraphs?.length) || Boolean(s.list?.length)),
+  );
 
   const faqs: Faq[] = [
-    { question: `Who is ${name}?`, answer: `${name} is ${article(speciality)} ${speciality}${city ? ` in ${city}` : ''}${exp ? ` with ${exp}+ years of experience` : ''}${qualification ? `${exp ? ' and' : ' with'} ${qualification} qualification` : ''}.` },
-    hospital ? { question: `Where does ${name} practise?`, answer: `At ${[hospital, place].filter(Boolean).join(', ')}.` } : null,
-    hours ? { question: `What are ${name}’s timings?`, answer: `${hours.charAt(0).toUpperCase()}${hours.slice(1)}.${opts.bookable ? '' : ' Please call the clinic to confirm before you visit.'}` } : null,
-    fee ? { question: 'What is the consultation fee?', answer: `${fee.charAt(0).toUpperCase()}${fee.slice(1)}.${approxFee ? ' Please confirm the exact fee with the clinic.' : ''}` } : null,
-    languages.length ? { question: `Which languages does ${name} speak?`, answer: `${list(languages)}.` } : null,
-    { question: `Does ${name} offer video consultation?`, answer: video ? `Yes, ${name} offers online video consultation.` : 'No, currently only in-clinic consultation is available.' },
-    opts.bookable ? { question: 'Can I cancel or reschedule?', answer: 'Yes, from My Appointments, free of charge up to 2 hours before the slot. Any payment is refunded to the original method within 5–7 working days.' } : null,
+    {
+      question: `Who is ${name}?`,
+      answer: `${name} is ${article(speciality)} ${speciality}${city ? ` in ${city}` : ''}${exp ? ` with ${exp}+ years of experience` : ''}${qualification ? `${exp ? ' and' : ' with'} ${qualification} qualification` : ''}.`,
+    },
+    hospital
+      ? {
+          question: `Where does ${name} practise?`,
+          answer: `At ${[hospital, place].filter(Boolean).join(', ')}.`,
+        }
+      : null,
+    hours
+      ? {
+          question: `What are ${name}’s timings?`,
+          answer: `${hours.charAt(0).toUpperCase()}${hours.slice(1)}.${opts.bookable ? '' : ' Please call the clinic to confirm before you visit.'}`,
+        }
+      : null,
+    fee
+      ? {
+          question: 'What is the consultation fee?',
+          answer: `${fee.charAt(0).toUpperCase()}${fee.slice(1)}.${approxFee ? ' Please confirm the exact fee with the clinic.' : ''}`,
+        }
+      : null,
+    languages.length
+      ? { question: `Which languages does ${name} speak?`, answer: `${list(languages)}.` }
+      : null,
+    {
+      question: `Does ${name} offer video consultation?`,
+      answer: video
+        ? `Yes, ${name} offers online video consultation.`
+        : 'No, currently only in-clinic consultation is available.',
+    },
+    opts.bookable
+      ? {
+          question: 'Can I cancel or reschedule?',
+          answer:
+            'Yes, from My Appointments, free of charge up to 2 hours before the slot. Any payment is refunded to the original method within 5–7 working days.',
+        }
+      : null,
   ].filter(Boolean) as Faq[];
 
   return { about, sections, faqs };

@@ -29,16 +29,34 @@ type Props = {
  * Call and WhatsApp buttons for a profile. Every tap is recorded (who, which profile, when) for the
  * team's follow-ups; the buttons hide when no number is known.
  */
-export default function ContactButtons({ targetType, slug, name, phones, whatsapps, message, className = '', size = 'md', showNumber = false }: Props) {
+export default function ContactButtons({
+  targetType,
+  slug,
+  name,
+  phones,
+  whatsapps,
+  message,
+  className = '',
+  size = 'md',
+  showNumber = false,
+}: Props) {
   const phone = phones.find((p) => p && p.replace(/\D/g, '').length >= 6)?.trim() ?? '';
   const whatsapp = whatsapps.find((p) => p && p.replace(/\D/g, '').length >= 10)?.trim() ?? '';
   if (!phone && !whatsapp) return null;
 
   const track = (kind: 'call' | 'whatsapp', number: string) => {
-    api.track({ kind, targetType, targetSlug: slug, number, page: window.location.pathname }, getToken()).catch(() => {});
+    api
+      .track(
+        { kind, targetType, targetSlug: slug, number, page: window.location.pathname },
+        getToken(),
+      )
+      .catch(() => {});
   };
   const text = message ?? `Hi, I found ${name} on Curxx and would like to know more.`;
-  const base = size === 'sm' ? 'h-9 px-3 font-caption-strong text-caption' : 'h-11 px-4 font-body-strong text-body-strong';
+  const base =
+    size === 'sm'
+      ? 'h-9 px-3 font-caption-strong text-caption'
+      : 'h-11 px-4 font-body-strong text-body-strong';
 
   return (
     <div className={`flex flex-wrap gap-2 ${className}`}>
@@ -49,7 +67,8 @@ export default function ContactButtons({ targetType, slug, name, phones, whatsap
           className={`${base} rounded-lg border border-[#E7E5E4] bg-white hover:bg-[#FAFAF9] text-[#1C1917] inline-flex items-center gap-1.5`}
           aria-label={`Call ${name}`}
         >
-          <span className="material-symbols-outlined text-[18px] text-[#C1121F]">call</span>{showNumber ? phone : 'Call'}
+          <span className="material-symbols-outlined text-[18px] text-[#C1121F]">call</span>
+          {showNumber ? phone : 'Call'}
         </a>
       )}
       {whatsapp && (

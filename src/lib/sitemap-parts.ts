@@ -18,7 +18,8 @@ export const ALL_PART_IDS: PartId[] = [
 /** The files that have URLs in them right now. */
 export function usedPartIds(index: SitemapIndex | null): PartId[] {
   if (!index) return ['pages'];
-  const parts = (kind: 'doctors' | 'facilities') => Math.min(MAX_PARTS[kind], Math.ceil(index.counts[kind] / index.partSize));
+  const parts = (kind: 'doctors' | 'facilities') =>
+    Math.min(MAX_PARTS[kind], Math.ceil(index.counts[kind] / index.partSize));
   return [
     'pages',
     ...Array.from({ length: parts('doctors') }, (_, i) => `doctors-${i}` as const),

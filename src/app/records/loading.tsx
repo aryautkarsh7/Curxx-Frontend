@@ -1,4 +1,9 @@
-import { CardGridSkeleton, HeadingSkeleton, PageSkeleton, TableSkeleton } from '@/components/skeletons';
+import {
+  CardGridSkeleton,
+  HeadingSkeleton,
+  PageSkeleton,
+  TableSkeleton,
+} from '@/components/skeletons';
 
 export default function Loading() {
   return (

@@ -27,13 +27,27 @@ export async function conditionMetadata(city: string, slug: string): Promise<Met
   const path = conditionHref(city, slug);
   // No doctors for it in this city yet: keep the page out of the index until there are.
   const empty = detail.doctorCount === 0;
-  return { title: { absolute: title }, description, alternates: { canonical: path }, ...(empty ? { robots: { index: false, follow: true } } : {}), openGraph: { title, description, url: path, type: 'article' } };
+  return {
+    title: { absolute: title },
+    description,
+    alternates: { canonical: path },
+    ...(empty ? { robots: { index: false, follow: true } } : {}),
+    openGraph: { title, description, url: path, type: 'article' },
+  };
 }
 
 const LINK = 'text-[#78716C] hover:text-[#C1121F] transition-colors';
 
 /** /{city}/treatment-for-{condition}: a clean, indexable page for the homepage's popular consultations. */
-export default async function ConditionPage({ city, slug, searchParams }: { city: string; slug: string; searchParams: SearchParams }) {
+export default async function ConditionPage({
+  city,
+  slug,
+  searchParams,
+}: {
+  city: string;
+  slug: string;
+  searchParams: SearchParams;
+}) {
   const detail = await load(city, slug);
   if (!detail || !detail.specialty) notFound();
   const { condition, specialty } = detail;
@@ -58,8 +72,14 @@ export default async function ConditionPage({ city, slug, searchParams }: { city
           '@type': 'MedicalCondition',
           name: condition.name,
           description: condition.summary,
-          signOrSymptom: condition.symptoms.map((s) => ({ '@type': 'MedicalSignOrSymptom', name: s })),
-          possibleTreatment: condition.treatments.map((t) => ({ '@type': 'MedicalTherapy', name: t })),
+          signOrSymptom: condition.symptoms.map((s) => ({
+            '@type': 'MedicalSignOrSymptom',
+            name: s,
+          })),
+          possibleTreatment: condition.treatments.map((t) => ({
+            '@type': 'MedicalTherapy',
+            name: t,
+          })),
           relevantSpecialty: specialty.name,
         }}
       />
@@ -70,16 +90,32 @@ export default async function ConditionPage({ city, slug, searchParams }: { city
         place={cityInfo.name}
         plural={specialty.plural}
         heading={`${condition.name} Treatment in ${cityInfo.name}`}
-        subheading={listing.total ? `${listing.total.toLocaleString('en-IN')} ${(listing.total === 1 ? specialty.name : specialty.plural).toLowerCase()} for ${condition.name.toLowerCase()}` : `No ${specialty.plural.toLowerCase()} listed yet`}
+        subheading={
+          listing.total
+            ? `${listing.total.toLocaleString('en-IN')} ${(listing.total === 1 ? specialty.name : specialty.plural).toLowerCase()} for ${condition.name.toLowerCase()}`
+            : `No ${specialty.plural.toLowerCase()} listed yet`
+        }
         resultsHeading={`${specialty.plural} for ${condition.name} in ${cityInfo.name}`}
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: cityInfo.name, href: `/${city}/specialties` }, { label: specialty.plural, href: `/${city}/${specialty.slug}` }, { label: condition.name }]}
-        emptyAction={{ href: `/${city}/${specialty.slug}`, label: `See all ${specialty.plural.toLowerCase()}` }}
+        breadcrumbs={[
+          { label: 'Home', href: '/' },
+          { label: cityInfo.name, href: `/${city}/specialties` },
+          { label: specialty.plural, href: `/${city}/${specialty.slug}` },
+          { label: condition.name },
+        ]}
+        emptyAction={{
+          href: `/${city}/${specialty.slug}`,
+          label: `See all ${specialty.plural.toLowerCase()}`,
+        }}
       >
         <section className="bg-[#FAFAF9] border-y border-[#E7E5E4] py-12">
           <div className="w-full max-w-[900px] mx-auto px-6 space-y-6">
             <div className="space-y-3">
-              <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">About {condition.name}</h2>
-              <p className="text-body-default font-body-default text-[#5c403d] leading-relaxed">{condition.summary}</p>
+              <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">
+                About {condition.name}
+              </h2>
+              <p className="text-body-default font-body-default text-[#5c403d] leading-relaxed">
+                {condition.summary}
+              </p>
               <p className="text-body-default font-body-default text-[#5c403d] leading-relaxed">
                 {specialty.plural} treat {condition.name.toLowerCase()}.{' '}
                 {detail.doctorCount
@@ -90,7 +126,9 @@ export default async function ConditionPage({ city, slug, searchParams }: { city
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {lists.map(([heading, items]) => (
                 <div key={heading}>
-                  <h3 className="font-headline-h3 text-headline-h3 text-[#1C1917] mb-2">{heading}</h3>
+                  <h3 className="font-headline-h3 text-headline-h3 text-[#1C1917] mb-2">
+                    {heading}
+                  </h3>
                   <ul className="space-y-1.5 text-caption font-caption text-[#1C1917]">
                     {items.map((item) => (
                       <li key={item} className="flex items-start gap-2">
@@ -103,37 +141,64 @@ export default async function ConditionPage({ city, slug, searchParams }: { city
               ))}
             </div>
             {detail.article && (
-              <Link href={`/blog/${detail.article.slug}`} className="block p-4 rounded-xl border border-[#E7E5E4] bg-white hover:border-[#C1121F] transition">
-                <span className="text-micro font-micro uppercase tracking-wider text-[#78716C]">Read the full guide · {detail.article.readMinutes} min</span>
-                <span className="block font-body-strong text-body-strong text-[#1C1917] mt-1">{detail.article.title}</span>
+              <Link
+                href={`/blog/${detail.article.slug}`}
+                className="block p-4 rounded-xl border border-[#E7E5E4] bg-white hover:border-[#C1121F] transition"
+              >
+                <span className="text-micro font-micro uppercase tracking-wider text-[#78716C]">
+                  Read the full guide · {detail.article.readMinutes} min
+                </span>
+                <span className="block font-body-strong text-body-strong text-[#1C1917] mt-1">
+                  {detail.article.title}
+                </span>
               </Link>
             )}
-            <p className="text-micro font-micro text-[#78716C]">This page is for general information and is not a substitute for a doctor’s advice. In an emergency call 108.</p>
-            <FaqAccordion faqs={detail.faqs} heading={`${condition.name}: Frequently Asked Questions`} className="pt-6 border-t border-[#E7E5E4]" />
+            <p className="text-micro font-micro text-[#78716C]">
+              This page is for general information and is not a substitute for a doctor’s advice. In
+              an emergency call 108.
+            </p>
+            <FaqAccordion
+              faqs={detail.faqs}
+              heading={`${condition.name}: Frequently Asked Questions`}
+              className="pt-6 border-t border-[#E7E5E4]"
+            />
           </div>
         </section>
         <section className="bg-[#FFFFFF] py-10">
           <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-8">
-            <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">More Ways to Get Care</h2>
+            <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">
+              More Ways to Get Care
+            </h2>
             {detail.related.length > 0 && (
               <div>
-                <h3 className="font-headline-h3 text-headline-h3 text-[#1C1917] mb-3">Related Conditions</h3>
+                <h3 className="font-headline-h3 text-headline-h3 text-[#1C1917] mb-3">
+                  Related Conditions
+                </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-y-2 gap-x-4 text-caption font-caption">
                   {detail.related.map((c) => (
-                    <Link key={c.slug} href={conditionHref(city, c.slug)} className={LINK}>{c.name} treatment in {cityInfo.name}</Link>
+                    <Link key={c.slug} href={conditionHref(city, c.slug)} className={LINK}>
+                      {c.name} treatment in {cityInfo.name}
+                    </Link>
                   ))}
                 </div>
               </div>
             )}
             <div>
-              <h3 className="font-headline-h3 text-headline-h3 text-[#1C1917] mb-3">{condition.name} Treatment in Other Cities</h3>
+              <h3 className="font-headline-h3 text-headline-h3 text-[#1C1917] mb-3">
+                {condition.name} Treatment in Other Cities
+              </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-y-2 gap-x-4 text-caption font-caption">
                 {detail.otherCities.map((c) => (
-                  <Link key={c.slug} href={conditionHref(c.slug, slug)} className={LINK}>{condition.name} treatment in {c.name}</Link>
+                  <Link key={c.slug} href={conditionHref(c.slug, slug)} className={LINK}>
+                    {condition.name} treatment in {c.name}
+                  </Link>
                 ))}
               </div>
             </div>
-            <Link href={path.replace(`treatment-for-${slug}`, specialty.slug)} className="inline-flex items-center gap-1 font-caption-strong text-caption-strong text-[#C1121F] hover:underline">
+            <Link
+              href={path.replace(`treatment-for-${slug}`, specialty.slug)}
+              className="inline-flex items-center gap-1 font-caption-strong text-caption-strong text-[#C1121F] hover:underline"
+            >
               All {specialty.plural.toLowerCase()} in {cityInfo.name}
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </Link>

@@ -13,11 +13,21 @@ export function SkeletonBlock({ className = 'h-40 w-full' }: { className?: strin
   return <div className={`rounded-xl ${PULSE} ${className}`} />;
 }
 
-export function PageSkeleton({ children, label = 'Loading' }: { children: ReactNode; label?: string }) {
+export function PageSkeleton({
+  children,
+  label = 'Loading',
+}: {
+  children: ReactNode;
+  label?: string;
+}) {
   return (
     <>
       <Header />
-      <main className="flex-1 w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-xl" aria-busy="true" aria-live="polite">
+      <main
+        className="flex-1 w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-xl"
+        aria-busy="true"
+        aria-live="polite"
+      >
         <span className="sr-only">{label}…</span>
         {children}
       </main>
@@ -26,7 +36,13 @@ export function PageSkeleton({ children, label = 'Loading' }: { children: ReactN
   );
 }
 
-export function CardGridSkeleton({ count = 6, columns = 'sm:grid-cols-2 lg:grid-cols-3' }: { count?: number; columns?: string }) {
+export function CardGridSkeleton({
+  count = 6,
+  columns = 'sm:grid-cols-2 lg:grid-cols-3',
+}: {
+  count?: number;
+  columns?: string;
+}) {
   return (
     <div className={`grid grid-cols-1 ${columns} gap-4`}>
       {Array.from({ length: count }, (_, i) => (
@@ -115,7 +131,9 @@ export function ProfileSkeleton() {
         <div className="p-5 rounded-xl border border-surface-variant space-y-4">
           <SkeletonLine className="w-24 h-6" />
           <div className="grid grid-cols-4 gap-2">
-            {Array.from({ length: 8 }, (_, i) => <SkeletonBlock key={i} className="h-12" />)}
+            {Array.from({ length: 8 }, (_, i) => (
+              <SkeletonBlock key={i} className="h-12" />
+            ))}
           </div>
           <SkeletonBlock className="h-12" />
         </div>
@@ -133,7 +151,10 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
         <SkeletonLine className="w-64" />
       </div>
       {Array.from({ length: rows }, (_, i) => (
-        <div key={i} className="flex items-center gap-4 px-4 py-3.5 border-b border-surface-variant last:border-0">
+        <div
+          key={i}
+          className="flex items-center gap-4 px-4 py-3.5 border-b border-surface-variant last:border-0"
+        >
           <SkeletonBlock className="h-9 w-9" />
           <div className="flex-1 space-y-2">
             <SkeletonLine className="w-1/3 h-4" />
@@ -160,7 +181,9 @@ export function DetailSkeleton() {
         <SkeletonLine className="w-28 h-7" />
         <SkeletonLine className="w-40" />
         <div className="grid grid-cols-2 gap-2">
-          {Array.from({ length: 6 }, (_, i) => <SkeletonBlock key={i} className="h-10" />)}
+          {Array.from({ length: 6 }, (_, i) => (
+            <SkeletonBlock key={i} className="h-10" />
+          ))}
         </div>
         <SkeletonBlock className="h-12" />
       </aside>

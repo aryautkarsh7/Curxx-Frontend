@@ -20,7 +20,12 @@ async function loadSpecialty(slug: string): Promise<Specialty | null> {
 /** Every video-available doctor in the specialty, used to count doctors per focus area. */
 async function loadDoctors(slug: string): Promise<Doctor[]> {
   try {
-    const { doctors } = await api.doctors({ city: 'all', specialty: slug, mode: 'video', limit: 50 });
+    const { doctors } = await api.doctors({
+      city: 'all',
+      specialty: slug,
+      mode: 'video',
+      limit: 50,
+    });
     return doctors;
   } catch {
     return [];
@@ -54,19 +59,31 @@ export default async function ConsultFocusPage({ params }: Props) {
       <ConsultSteps current={2} backTo={{ 1: '/consult/video' }} />
       <main className="flex-1 bg-surface-container-lowest">
         <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-2xl space-y-8">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-caption font-caption text-on-surface-variant">
-            <Link className="hover:text-primary-container" href="/">Home</Link>
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 text-caption font-caption text-on-surface-variant"
+          >
+            <Link className="hover:text-primary-container" href="/">
+              Home
+            </Link>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <Link className="hover:text-primary-container" href="/consult/video">Video consult</Link>
+            <Link className="hover:text-primary-container" href="/consult/video">
+              Video consult
+            </Link>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
             <span className="text-on-surface font-caption-strong">{specialty.name}</span>
           </nav>
 
           <div className="space-y-2">
-            <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Step 2 of 4</span>
-            <h1 className="text-headline-h1 font-headline-h1 text-on-surface">What do you need help with?</h1>
+            <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">
+              Step 2 of 4
+            </span>
+            <h1 className="text-headline-h1 font-headline-h1 text-on-surface">
+              What do you need help with?
+            </h1>
             <p className="text-body-default font-body-default text-on-surface-variant max-w-2xl">
-              Choose the area closest to your concern and we will only show {specialty.plural.toLowerCase()} who treat it on video.
+              Choose the area closest to your concern and we will only show{' '}
+              {specialty.plural.toLowerCase()} who treat it on video.
             </p>
           </div>
 
@@ -83,10 +100,20 @@ export default async function ConsultFocusPage({ params }: Props) {
                     <span className="material-symbols-outlined text-[22px]">{sub.icon}</span>
                   </span>
                   <h2 className="text-headline-h3 font-headline-h3 text-on-surface">{sub.name}</h2>
-                  <p className="text-caption font-caption text-on-surface-variant">{sub.description}</p>
-                  <span className={available > 0 ? 'inline-flex items-center gap-1.5 text-caption-strong font-caption-strong text-[#047857]' : 'inline-flex items-center gap-1.5 text-caption font-caption text-on-surface-variant'}>
+                  <p className="text-caption font-caption text-on-surface-variant">
+                    {sub.description}
+                  </p>
+                  <span
+                    className={
+                      available > 0
+                        ? 'inline-flex items-center gap-1.5 text-caption-strong font-caption-strong text-[#047857]'
+                        : 'inline-flex items-center gap-1.5 text-caption font-caption text-on-surface-variant'
+                    }
+                  >
                     {available > 0 && <span className="w-1.5 h-1.5 rounded-full bg-[#047857]" />}
-                    {available > 0 ? `${available} ${available === 1 ? 'doctor' : 'doctors'} on video` : 'By appointment'}
+                    {available > 0
+                      ? `${available} ${available === 1 ? 'doctor' : 'doctors'} on video`
+                      : 'By appointment'}
                   </span>
                 </Link>
               );
@@ -102,13 +129,18 @@ export default async function ConsultFocusPage({ params }: Props) {
                 <span className="material-symbols-outlined text-[22px]">help</span>
               </span>
               <div>
-                <h2 className="text-caption-strong font-caption-strong text-on-surface">Not sure — show me every {specialty.name.toLowerCase()}</h2>
+                <h2 className="text-caption-strong font-caption-strong text-on-surface">
+                  Not sure — show me every {specialty.name.toLowerCase()}
+                </h2>
                 <p className="text-caption font-caption text-on-surface-variant">
-                  {doctors.length} {doctors.length === 1 ? 'doctor' : 'doctors'} available on video, no focus filter applied.
+                  {doctors.length} {doctors.length === 1 ? 'doctor' : 'doctors'} available on video,
+                  no focus filter applied.
                 </p>
               </div>
             </div>
-            <span className="material-symbols-outlined text-[20px] text-outline">arrow_forward</span>
+            <span className="material-symbols-outlined text-[20px] text-outline">
+              arrow_forward
+            </span>
           </Link>
         </div>
       </main>

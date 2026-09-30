@@ -6,7 +6,15 @@ import { useMemo, useSyncExternalStore } from 'react';
  * priced again by the API at checkout — the stored price is display-only.
  */
 export type CartKind = 'pharmacy' | 'lab';
-export type CartItem = { slug: string; name: string; price: number; mrp: number; qty: number; rxRequired?: boolean; subtitle?: string };
+export type CartItem = {
+  slug: string;
+  name: string;
+  price: number;
+  mrp: number;
+  qty: number;
+  rxRequired?: boolean;
+  subtitle?: string;
+};
 
 const KEY: Record<CartKind, string> = { pharmacy: 'curxx_cart', lab: 'curxx_lab_cart' };
 const EVENT = 'curxx-cart';
@@ -24,7 +32,11 @@ function parse(raw: string): CartItem[] {
   try {
     const items = JSON.parse(raw);
     // Older carts stored items without a slug-derived shape; drop anything malformed.
-    return Array.isArray(items) ? items.filter((i) => i && typeof i.slug === 'string' && typeof i.price === 'number').map((i) => ({ mrp: i.price, ...i })) : [];
+    return Array.isArray(items)
+      ? items
+          .filter((i) => i && typeof i.slug === 'string' && typeof i.price === 'number')
+          .map((i) => ({ mrp: i.price, ...i }))
+      : [];
   } catch {
     return [];
   }
@@ -58,7 +70,10 @@ export function addToCart(item: Omit<CartItem, 'qty'>, qty = 1, kind: CartKind =
 
 export function setQty(slug: string, qty: number, kind: CartKind = 'pharmacy') {
   const items = parse(read(kind));
-  const next = qty <= 0 ? items.filter((i) => i.slug !== slug) : items.map((i) => (i.slug === slug ? { ...i, qty: Math.min(MAX_QTY[kind], qty) } : i));
+  const next =
+    qty <= 0
+      ? items.filter((i) => i.slug !== slug)
+      : items.map((i) => (i.slug === slug ? { ...i, qty: Math.min(MAX_QTY[kind], qty) } : i));
   write(kind, next);
 }
 
@@ -68,9 +83,17 @@ export const clearCart = (kind: CartKind = 'pharmacy') => write(kind, []);
 const noop = () => () => {};
 
 export function useCart(kind: CartKind = 'pharmacy') {
-  const raw = useSyncExternalStore(subscribe, () => read(kind), () => '[]');
+  const raw = useSyncExternalStore(
+    subscribe,
+    () => read(kind),
+    () => '[]',
+  );
   // False on the server and during hydration, when the cart always reads as empty.
-  const hydrated = useSyncExternalStore(noop, () => true, () => false);
+  const hydrated = useSyncExternalStore(
+    noop,
+    () => true,
+    () => false,
+  );
   return useMemo(() => {
     const items = parse(raw);
     const total = items.reduce((n, i) => n + i.qty * i.price, 0);

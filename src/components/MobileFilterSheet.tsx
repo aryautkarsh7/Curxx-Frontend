@@ -17,10 +17,34 @@ type Props = {
 };
 
 /** Doctor-listing filters inside the floating pill sheet. */
-export default function MobileFilterSheet({ filters, activeChips, total, noun, setParam, setAvailability, clearFilters, hide, areas, languages }: Props) {
+export default function MobileFilterSheet({
+  filters,
+  activeChips,
+  total,
+  noun,
+  setParam,
+  setAvailability,
+  clearFilters,
+  hide,
+  areas,
+  languages,
+}: Props) {
   return (
-    <FilterPillSheet activeCount={activeChips.length} total={total} noun={noun} onClear={clearFilters}>
-      <ListingFilterGroups filters={filters} activeChips={activeChips} setParam={setParam} setAvailability={setAvailability} hide={hide} areas={areas} languages={languages} />
+    <FilterPillSheet
+      activeCount={activeChips.length}
+      total={total}
+      noun={noun}
+      onClear={clearFilters}
+    >
+      <ListingFilterGroups
+        filters={filters}
+        activeChips={activeChips}
+        setParam={setParam}
+        setAvailability={setAvailability}
+        hide={hide}
+        areas={areas}
+        languages={languages}
+      />
     </FilterPillSheet>
   );
 }

@@ -37,7 +37,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function LabTestPage({ params }: Props) {
   const data = await load((await params).slug);
   if (!data) notFound();
-  const categories = await api.labCategories().then((r) => r.categories).catch(() => []);
+  const categories = await api
+    .labCategories()
+    .then((r) => r.categories)
+    .catch(() => []);
   const category = categories.find((c) => c.slug === data.test.categories[0]) ?? null;
-  return <LabTestDetail pkg={data.test} related={data.related} category={category} availability={data.availability} />;
+  return (
+    <LabTestDetail
+      pkg={data.test}
+      related={data.related}
+      category={category}
+      availability={data.availability}
+    />
+  );
 }

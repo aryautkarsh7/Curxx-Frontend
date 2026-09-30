@@ -6,7 +6,8 @@ import AuthPage from './AuthPage';
 
 export const metadata: Metadata = {
   title: { absolute: 'Log in to Curxx — Mobile OTP Login' },
-  description: 'Log in to Curxx with your mobile number to manage appointments, prescriptions, lab reports and your ABHA health locker.',
+  description:
+    'Log in to Curxx with your mobile number to manage appointments, prescriptions, lab reports and your ABHA health locker.',
   alternates: { canonical: '/login' },
   robots: { index: false, follow: true },
 };

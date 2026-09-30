@@ -4,7 +4,8 @@ import RecordsVault from './RecordsVault';
 
 export const metadata: Metadata = {
   title: 'Health Records & ABHA Locker | Curxx',
-  description: 'Your prescriptions, lab reports and scans in one encrypted locker, shared only with your consent.',
+  description:
+    'Your prescriptions, lab reports and scans in one encrypted locker, shared only with your consent.',
   robots: { index: false },
 };
 

@@ -10,7 +10,10 @@ export default async function TeleconsultationPolicyPage() {
   const { sections } = await loadSite('teleconsultation-policy');
   const policy = sections['teleconsultation-policy/policy'];
   return (
-    <StaticPage title={policy?.title || 'Teleconsultation Policy'} intro={policy?.intro || undefined}>
+    <StaticPage
+      title={policy?.title || 'Teleconsultation Policy'}
+      intro={policy?.intro || undefined}
+    >
       {items<LegalSection>(sections, 'teleconsultation-policy/policy').map(({ heading, body }) => (
         <section key={heading} className="space-y-1.5">
           <h2 className="text-headline-h3 font-headline-h3 text-on-surface">{heading}</h2>

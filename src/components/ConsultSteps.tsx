@@ -12,7 +12,10 @@ type Props = {
 /** Progress rail for the instant video consult flow: specialty → focus area → doctor → join. */
 export default function ConsultSteps({ current, backTo = {} }: Props) {
   return (
-    <nav aria-label="Consultation progress" className="bg-surface-container-lowest border-b border-surface-variant">
+    <nav
+      aria-label="Consultation progress"
+      className="bg-surface-container-lowest border-b border-surface-variant"
+    >
       <ol className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-3 flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar">
         {CONSULT_STEPS.map((label, index) => {
           const step = index + 1;
@@ -48,12 +51,19 @@ export default function ConsultSteps({ current, backTo = {} }: Props) {
           return (
             <li key={label} className="flex items-center gap-2 sm:gap-3">
               {href ? (
-                <Link href={href} className="hover:text-primary-container transition-colors">{content}</Link>
+                <Link href={href} className="hover:text-primary-container transition-colors">
+                  {content}
+                </Link>
               ) : (
                 <span aria-current={active ? 'step' : undefined}>{content}</span>
               )}
               {step < CONSULT_STEPS.length && (
-                <span className="material-symbols-outlined text-[16px] text-outline-variant" aria-hidden="true">chevron_right</span>
+                <span
+                  className="material-symbols-outlined text-[16px] text-outline-variant"
+                  aria-hidden="true"
+                >
+                  chevron_right
+                </span>
               )}
             </li>
           );

@@ -33,13 +33,22 @@ type Props = {
   initialSlotId?: string;
   onSelect?: (slot: Slot | null, mode: Mode) => void;
   /** Numbers (first non-empty wins) and the address, for doctors who can't be booked online. */
-  contact?: { phones: (string | undefined | null)[]; whatsapps: (string | undefined | null)[]; address: string };
+  contact?: {
+    phones: (string | undefined | null)[];
+    whatsapps: (string | undefined | null)[];
+    address: string;
+  };
 };
 
-const mapsUrl = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+const mapsUrl = (q: string) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 
 export default function BookingWidget(props: Props) {
-  return !canBook(props.doctor) ? <VisitPanel doctor={props.doctor} contact={props.contact} /> : <SlotBooking {...props} />;
+  return !canBook(props.doctor) ? (
+    <VisitPanel doctor={props.doctor} contact={props.contact} />
+  ) : (
+    <SlotBooking {...props} />
+  );
 }
 
 /** Listing-only doctors (no online booking yet): call the clinic or go there. */
@@ -48,9 +57,13 @@ function VisitPanel({ doctor, contact }: Pick<Props, 'doctor' | 'contact'>) {
   return (
     <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-sm space-y-5">
       <div className="border-b border-[#E7E5E4] pb-4">
-        <span className="font-caption text-caption text-[#78716C] block">Consultation fee · pay at the clinic</span>
+        <span className="font-caption text-caption text-[#78716C] block">
+          Consultation fee · pay at the clinic
+        </span>
         <div className="flex items-baseline gap-2">
-          {doctor.feeVerified === false && <span className="font-caption text-caption text-[#78716C]">Approx.</span>}
+          {doctor.feeVerified === false && (
+            <span className="font-caption text-caption text-[#78716C]">Approx.</span>
+          )}
           <span className="font-display text-display text-[#1C1917]">{rupees(doctor.fee)}</span>
         </div>
         {doctor.consultHours && (
@@ -62,14 +75,19 @@ function VisitPanel({ doctor, contact }: Pick<Props, 'doctor' | 'contact'>) {
       </div>
       <div className="space-y-1">
         <p className="font-body-strong text-body-strong text-[#1C1917] flex items-center gap-1.5">
-          <span className="material-symbols-outlined text-[18px] text-[#C1121F]">local_hospital</span>
+          <span className="material-symbols-outlined text-[18px] text-[#C1121F]">
+            local_hospital
+          </span>
           {doctor.clinicName}
         </p>
         <p className="font-caption text-caption text-[#78716C]">{address}</p>
       </div>
       <p className="px-3 py-2 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] font-caption text-caption text-[#1C1917] flex items-start gap-1.5">
         <span className="material-symbols-outlined text-[16px] text-[#78716C]">info</span>
-        <span>Online booking isn’t available for {doctor.name} yet. Call to confirm timings, or visit the clinic.</span>
+        <span>
+          Online booking isn’t available for {doctor.name} yet. Call to confirm timings, or visit
+          the clinic.
+        </span>
       </p>
       <div className="flex flex-wrap gap-2">
         <ContactButtons
@@ -80,7 +98,12 @@ function VisitPanel({ doctor, contact }: Pick<Props, 'doctor' | 'contact'>) {
           whatsapps={contact?.whatsapps ?? [doctor.whatsapp]}
           message={`Hi, I'd like to book a consultation with ${doctor.name} (found on Curxx).`}
         />
-        <a href={mapsUrl(`${doctor.clinicName} ${address}`)} target="_blank" rel="noopener noreferrer" className="h-10 px-3 rounded-lg border border-[#E7E5E4] font-caption-strong text-caption-strong inline-flex items-center gap-1">
+        <a
+          href={mapsUrl(`${doctor.clinicName} ${address}`)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="h-10 px-3 rounded-lg border border-[#E7E5E4] font-caption-strong text-caption-strong inline-flex items-center gap-1"
+        >
           <span className="material-symbols-outlined text-[16px]">directions</span>Directions
         </a>
       </div>
@@ -92,13 +115,22 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
   const router = useRouter();
   const offersVideo = doctor.offersVideo !== false && slots.some((s) => s.mode === 'video');
   const offersClinic = slots.some((s) => s.mode === 'clinic') || !offersVideo;
-  const preselected = initialSlotId ? slots.find((s) => s.id === initialSlotId) ?? null : null;
+  const preselected = initialSlotId ? (slots.find((s) => s.id === initialSlotId) ?? null) : null;
   const startMode: Mode =
-    preselected?.mode === 'video' && initialMode === 'audio' ? 'audio' : preselected?.mode ?? ((initialMode === 'video' || initialMode === 'audio') && offersVideo ? initialMode : offersClinic ? 'clinic' : 'video');
+    preselected?.mode === 'video' && initialMode === 'audio'
+      ? 'audio'
+      : (preselected?.mode ??
+        ((initialMode === 'video' || initialMode === 'audio') && offersVideo
+          ? initialMode
+          : offersClinic
+            ? 'clinic'
+            : 'video'));
 
   const [mode, setMode] = useState<Mode>(startMode);
   const [selected, setSelected] = useState<Slot | null>(preselected);
-  const [activeDay, setActiveDay] = useState<string | null>(preselected ? dayKey(preselected.startsAt) : null);
+  const [activeDay, setActiveDay] = useState<string | null>(
+    preselected ? dayKey(preselected.startsAt) : null,
+  );
   const timesRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const missedSlot = Boolean(initialSlotId && !preselected);
@@ -116,10 +148,16 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
   }, [modeSlots]);
 
   const day = activeDay ?? days.find((d) => d.hasSlots)?.key ?? days[0]!.key;
-  const daySlots = useMemo(() => modeSlots.filter((s) => dayKey(s.startsAt) === day), [modeSlots, day]);
+  const daySlots = useMemo(
+    () => modeSlots.filter((s) => dayKey(s.startsAt) === day),
+    [modeSlots, day],
+  );
   const freeToday = daySlots.some((s) => s.free);
   const fee = selected ? selected.fee : mode === 'clinic' ? doctor.fee : doctor.videoFee;
-  const time = (slot: Slot) => new Date(slot.startsAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase();
+  const time = (slot: Slot) =>
+    new Date(slot.startsAt)
+      .toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
+      .toUpperCase();
 
   useEffect(() => {
     onSelect?.(selected, mode);
@@ -152,36 +190,59 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
 
   function book() {
     if (!selected) return;
-    router.push(`/book?slot=${selected.id}&doctor=${doctor.slug}${mode === 'audio' ? '&mode=audio' : ''}`);
+    router.push(
+      `/book?slot=${selected.id}&doctor=${doctor.slug}${mode === 'audio' ? '&mode=audio' : ''}`,
+    );
   }
 
   return (
     <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-sm space-y-5">
       {/* Mode Segmented Switcher */}
       {offersVideo ? (
-        <div className={`bg-[#FAFAF9] p-1 border border-[#E7E5E4] rounded-xl grid ${offersClinic ? 'grid-cols-3' : 'grid-cols-2'} gap-1 text-center font-caption-strong text-caption-strong`} role="tablist" aria-label="Consultation type">
-          {(offersClinic ? (['video', 'audio', 'clinic'] as const) : (['video', 'audio'] as const)).map((value) => (
+        <div
+          className={`bg-[#FAFAF9] p-1 border border-[#E7E5E4] rounded-xl grid ${offersClinic ? 'grid-cols-3' : 'grid-cols-2'} gap-1 text-center font-caption-strong text-caption-strong`}
+          role="tablist"
+          aria-label="Consultation type"
+        >
+          {(offersClinic
+            ? (['video', 'audio', 'clinic'] as const)
+            : (['video', 'audio'] as const)
+          ).map((value) => (
             <button
               key={value}
               type="button"
               role="tab"
               aria-selected={mode === value}
               onClick={() => switchMode(value)}
-              className={mode === value ? 'py-2 rounded-lg bg-white border border-[#E7E5E4] text-[#1C1917] shadow-xs' : 'py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] transition duration-150'}
+              className={
+                mode === value
+                  ? 'py-2 rounded-lg bg-white border border-[#E7E5E4] text-[#1C1917] shadow-xs'
+                  : 'py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] transition duration-150'
+              }
             >
               <span className="flex flex-col items-center leading-tight">
                 <span className="inline-flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px]">{value === 'video' ? 'videocam' : value === 'audio' ? 'call' : 'local_hospital'}</span>
+                  <span className="material-symbols-outlined text-[16px]">
+                    {value === 'video' ? 'videocam' : value === 'audio' ? 'call' : 'local_hospital'}
+                  </span>
                   {value === 'video' ? 'Video' : value === 'audio' ? 'Phone' : 'Clinic'}
                 </span>
-                <span className="font-micro text-micro text-[#78716C]">{value === 'clinic' ? rupees(doctor.fee) : doctor.freeVideo ? 'Free first' : rupees(doctor.videoFee)}</span>
+                <span className="font-micro text-micro text-[#78716C]">
+                  {value === 'clinic'
+                    ? rupees(doctor.fee)
+                    : doctor.freeVideo
+                      ? 'Free first'
+                      : rupees(doctor.videoFee)}
+                </span>
               </span>
             </button>
           ))}
         </div>
       ) : (
         <p className="px-3 py-2 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] font-caption-strong text-caption-strong text-[#1C1917] flex items-center gap-1.5">
-          <span className="material-symbols-outlined text-[18px] text-[#C1121F]">local_hospital</span>
+          <span className="material-symbols-outlined text-[18px] text-[#C1121F]">
+            local_hospital
+          </span>
           In-clinic visits only
         </p>
       )}
@@ -189,12 +250,24 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
       {/* Pricing Block */}
       <div className="border-b border-[#E7E5E4] pb-4">
         <div className="flex items-baseline gap-2 flex-wrap">
-          {fee !== 0 && doctor.feeVerified === false && <span className="font-caption text-caption text-[#78716C]">Approx.</span>}
-          <span className="font-display text-display text-[#1C1917]">{fee === 0 ? 'Free' : rupees(fee)}</span>
-          {selected?.free && <span className="font-caption text-caption text-[#78716C] line-through">{rupees(doctor.videoFee)}</span>}
-          <span className="ml-auto bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] px-2 py-0.5 rounded-full font-micro text-micro">Instant confirmation</span>
+          {fee !== 0 && doctor.feeVerified === false && (
+            <span className="font-caption text-caption text-[#78716C]">Approx.</span>
+          )}
+          <span className="font-display text-display text-[#1C1917]">
+            {fee === 0 ? 'Free' : rupees(fee)}
+          </span>
+          {selected?.free && (
+            <span className="font-caption text-caption text-[#78716C] line-through">
+              {rupees(doctor.videoFee)}
+            </span>
+          )}
+          <span className="ml-auto bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] px-2 py-0.5 rounded-full font-micro text-micro">
+            Instant confirmation
+          </span>
         </div>
-        <div className="font-caption text-caption text-[#78716C] mt-1">Includes 7-day follow-up chat support</div>
+        <div className="font-caption text-caption text-[#78716C] mt-1">
+          Includes 7-day follow-up chat support
+        </div>
         {doctor.consultHours && (
           <div className="font-caption text-caption text-[#78716C] mt-1 flex items-start gap-1">
             <span className="material-symbols-outlined text-[16px]">schedule</span>
@@ -204,7 +277,10 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
       </div>
 
       {missedSlot && (
-        <p role="status" className="px-3 py-2 rounded-lg bg-[#FFF7ED] border border-[#FED7AA] font-caption text-caption text-[#9A3412]">
+        <p
+          role="status"
+          className="px-3 py-2 rounded-lg bg-[#FFF7ED] border border-[#FED7AA] font-caption text-caption text-[#9A3412]"
+        >
           That slot was just booked by someone else. Here are the next open times.
         </p>
       )}
@@ -212,8 +288,12 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
       {/* 7-Day Date Strip */}
       <div>
         <div className="flex items-center justify-between mb-2.5">
-          <span className="font-caption-strong text-caption-strong text-[#1C1917]">Select Date</span>
-          <span className="font-micro text-micro text-[#78716C]">{new Date(day).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}</span>
+          <span className="font-caption-strong text-caption-strong text-[#1C1917]">
+            Select Date
+          </span>
+          <span className="font-micro text-micro text-[#78716C]">
+            {new Date(day).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
+          </span>
         </div>
         <div className="grid grid-cols-7 gap-1 text-center">
           {days.map(({ date, key, hasSlots }) => {
@@ -232,9 +312,27 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
                     : `border border-[#E7E5E4] bg-[#FAFAF9] hover:bg-white rounded-lg py-2 flex flex-col items-center justify-center ${hasSlots ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`
                 }
               >
-                <span className={active ? 'font-micro text-micro text-white/80' : 'font-micro text-micro text-[#78716C]'}>{date.toLocaleDateString('en-IN', { weekday: 'short' })}</span>
-                <span className={active ? 'font-body-strong text-body-strong' : 'font-body-strong text-body-strong text-[#1C1917]'}>{date.getDate()}</span>
-                <span className={`w-1 h-1 rounded-full mt-1 ${active ? 'bg-white' : hasSlots ? 'bg-[#047857]' : 'bg-transparent'}`}></span>
+                <span
+                  className={
+                    active
+                      ? 'font-micro text-micro text-white/80'
+                      : 'font-micro text-micro text-[#78716C]'
+                  }
+                >
+                  {date.toLocaleDateString('en-IN', { weekday: 'short' })}
+                </span>
+                <span
+                  className={
+                    active
+                      ? 'font-body-strong text-body-strong'
+                      : 'font-body-strong text-body-strong text-[#1C1917]'
+                  }
+                >
+                  {date.getDate()}
+                </span>
+                <span
+                  className={`w-1 h-1 rounded-full mt-1 ${active ? 'bg-white' : hasSlots ? 'bg-[#047857]' : 'bg-transparent'}`}
+                ></span>
               </button>
             );
           })}
@@ -246,13 +344,22 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
         {mode === 'audio' && (
           <p className="font-caption text-caption text-[#1C1917] flex items-start gap-1.5 px-3 py-2 rounded-lg bg-[#F5F3FF] border border-[#DDD6FE]">
             <span className="material-symbols-outlined text-[16px] text-[#6D28D9]">call</span>
-            <span>Phone teleconsultation — the doctor calls your mobile at the chosen time. No internet or video needed.</span>
+            <span>
+              Phone teleconsultation — the doctor calls your mobile at the chosen time. No internet
+              or video needed.
+            </span>
           </p>
         )}
-        {daySlots.length === 0 && <p className="font-caption text-caption text-[#78716C]">No {mode === 'clinic' ? 'in-clinic' : mode === 'audio' ? 'phone' : 'video'} slots left on this day. Try another date.</p>}
+        {daySlots.length === 0 && (
+          <p className="font-caption text-caption text-[#78716C]">
+            No {mode === 'clinic' ? 'in-clinic' : mode === 'audio' ? 'phone' : 'video'} slots left
+            on this day. Try another date.
+          </p>
+        )}
         {freeToday && (
           <p className="font-caption text-caption text-[#047857] flex items-center gap-1">
-            <span className="material-symbols-outlined text-[16px]">redeem</span>Slots marked Free cost nothing — a free first {mode === 'audio' ? 'phone' : 'video'} consult.
+            <span className="material-symbols-outlined text-[16px]">redeem</span>Slots marked Free
+            cost nothing — a free first {mode === 'audio' ? 'phone' : 'video'} consult.
           </p>
         )}
         {BANDS.map((band, index) => {
@@ -266,7 +373,9 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
             <div key={band.id}>
               <div className="flex items-center gap-1.5 text-caption-strong font-caption-strong text-[#78716C] mb-2">
                 <span className="material-symbols-outlined text-[16px]">{band.icon}</span>
-                <span>{band.label} ({inBand.length} {inBand.length === 1 ? 'slot' : 'slots'})</span>
+                <span>
+                  {band.label} ({inBand.length} {inBand.length === 1 ? 'slot' : 'slots'})
+                </span>
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {inBand.map((slot) => (
@@ -282,7 +391,11 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
                     }
                   >
                     {time(slot)}
-                    {slot.free && <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-1.5 rounded-full bg-[#047857] text-white text-[10px] leading-4 font-semibold">FREE</span>}
+                    {slot.free && (
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-1.5 rounded-full bg-[#047857] text-white text-[10px] leading-4 font-semibold">
+                        FREE
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -292,12 +405,25 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
       </div>
 
       {/* Confirm — kept in view on desktop while the slot list scrolls. */}
-      <div ref={ctaRef} className="space-y-3 lg:sticky lg:bottom-0 bg-white pt-2 -mb-1 pb-1 scroll-mb-28">
+      <div
+        ref={ctaRef}
+        className="space-y-3 lg:sticky lg:bottom-0 bg-white pt-2 -mb-1 pb-1 scroll-mb-28"
+      >
         {selected && (
           <div className="bg-[#FAFAF9] border border-[#E7E5E4] rounded-lg p-2.5 flex items-center gap-2">
             <span className="material-symbols-outlined text-[#C1121F] text-[18px]">alarm</span>
             <span className="font-caption text-caption text-[#1C1917]">
-              Selected: <strong>{new Date(selected.startsAt).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}, {time(selected)}</strong> · {mode === 'audio' ? 'Phone' : selected.mode === 'video' ? 'Video' : 'Clinic'} — held for 8 minutes once you continue
+              Selected:{' '}
+              <strong>
+                {new Date(selected.startsAt).toLocaleDateString('en-IN', {
+                  weekday: 'short',
+                  day: 'numeric',
+                  month: 'short',
+                })}
+                , {time(selected)}
+              </strong>{' '}
+              · {mode === 'audio' ? 'Phone' : selected.mode === 'video' ? 'Video' : 'Clinic'} — held
+              for 8 minutes once you continue
             </span>
           </div>
         )}
@@ -307,7 +433,13 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
           disabled={!selected}
           className="w-full h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] active:scale-[0.99] disabled:bg-[#A8A29E] disabled:active:scale-100 text-white font-body-strong text-body-strong tracking-wide shadow-sm transition duration-150 flex items-center justify-center gap-2"
         >
-          <span>{selected ? (selected.free ? 'Book Free Consultation' : 'Book Appointment') : 'Select a time slot'}</span>
+          <span>
+            {selected
+              ? selected.free
+                ? 'Book Free Consultation'
+                : 'Book Appointment'
+              : 'Select a time slot'}
+          </span>
           <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
         </button>
       </div>
@@ -324,7 +456,8 @@ function SlotBooking({ doctor, slots, initialMode = 'clinic', initialSlotId, onS
           </div>
           {doctor.verified && (
             <div className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[14px]">verified_user</span> Verified Doctor
+              <span className="material-symbols-outlined text-[14px]">verified_user</span> Verified
+              Doctor
             </div>
           )}
           <div className="flex items-center gap-1">

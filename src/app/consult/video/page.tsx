@@ -15,13 +15,15 @@ async function loadSpecialties() {
 }
 
 /** Nobody on video yet (listed doctors see patients at their clinics): the page says so and stays out of the index. */
-const nobodyOnVideo = (specialties: Awaited<ReturnType<typeof loadSpecialties>>) => specialties.length > 0 && specialties.every((s) => !s.availableDoctors);
+const nobodyOnVideo = (specialties: Awaited<ReturnType<typeof loadSpecialties>>) =>
+  specialties.length > 0 && specialties.every((s) => !s.availableDoctors);
 
 export async function generateMetadata(): Promise<Metadata> {
   const empty = nobodyOnVideo(await loadSpecialties());
   return {
     title: 'Instant Video Consultation — Choose a Specialty | Curxx',
-    description: 'Start a video consultation with a verified doctor. Pick a specialty, narrow it to your concern, compare doctors available now and join the call.',
+    description:
+      'Start a video consultation with a verified doctor. Pick a specialty, narrow it to your concern, compare doctors available now and join the call.',
     alternates: { canonical: '/consult/video' },
     ...(empty ? { robots: { index: false, follow: true } } : {}),
   };
@@ -47,26 +49,44 @@ export default async function ConsultSpecialtyPage() {
                 {doctorsOnline} doctors available on video this week
               </span>
             )}
-            <h1 className="text-headline-h1 font-headline-h1 text-on-surface">Which specialty do you need?</h1>
+            <h1 className="text-headline-h1 font-headline-h1 text-on-surface">
+              Which specialty do you need?
+            </h1>
             <p className="text-body-default font-body-default text-on-surface-variant max-w-2xl">
-              Pick a specialty to start. Next you will narrow it to your specific concern, then choose a doctor and join the video call.
+              Pick a specialty to start. Next you will narrow it to your specific concern, then
+              choose a doctor and join the video call.
             </p>
           </div>
 
           {empty ? (
             <div className="p-8 rounded-xl border border-surface-variant bg-surface-container-low text-center flex flex-col items-center gap-3">
-              <span className="material-symbols-outlined text-[32px] text-primary-container">videocam_off</span>
-              <p className="text-headline-h3 font-headline-h3 text-on-surface">No doctors are available on video yet</p>
-              <p className="text-body-default font-body-default text-on-surface-variant max-w-md">The doctors listed on Curxx see patients at their clinics for now. Find one near you and call or visit the clinic.</p>
-              <Link href="/doctors" className="inline-flex items-center gap-1.5 h-11 px-5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong transition">
+              <span className="material-symbols-outlined text-[32px] text-primary-container">
+                videocam_off
+              </span>
+              <p className="text-headline-h3 font-headline-h3 text-on-surface">
+                No doctors are available on video yet
+              </p>
+              <p className="text-body-default font-body-default text-on-surface-variant max-w-md">
+                The doctors listed on Curxx see patients at their clinics for now. Find one near you
+                and call or visit the clinic.
+              </p>
+              <Link
+                href="/doctors"
+                className="inline-flex items-center gap-1.5 h-11 px-5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong transition"
+              >
                 Find a doctor near you
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </Link>
             </div>
           ) : specialties.length === 0 ? (
             <div className="p-8 rounded-xl border border-surface-variant bg-surface-container-low text-center space-y-3">
-              <p className="text-body-default font-body-default text-on-surface">We could not load the specialty list just now.</p>
-              <Link href="/doctors" className="inline-flex items-center gap-1.5 h-11 px-5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong transition">
+              <p className="text-body-default font-body-default text-on-surface">
+                We could not load the specialty list just now.
+              </p>
+              <Link
+                href="/doctors"
+                className="inline-flex items-center gap-1.5 h-11 px-5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong transition"
+              >
                 Browse all verified doctors
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </Link>
@@ -83,16 +103,22 @@ export default async function ConsultSpecialtyPage() {
                     <span className="material-symbols-outlined text-[24px]">{specialty.icon}</span>
                   </span>
                   <div className="min-w-0 space-y-1">
-                    <h2 className="text-headline-h3 font-headline-h3 text-on-surface">{specialty.name}</h2>
+                    <h2 className="text-headline-h3 font-headline-h3 text-on-surface">
+                      {specialty.name}
+                    </h2>
                     <p className="text-caption font-caption text-on-surface-variant">
-                      Video consult from ₹{specialty.fromPrice} · {specialty.subSpecialties.length} focus areas
+                      Video consult from ₹{specialty.fromPrice} · {specialty.subSpecialties.length}{' '}
+                      focus areas
                     </p>
                     <span className="inline-flex items-center gap-1.5 text-caption-strong font-caption-strong text-[#047857]">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#047857]" />
-                      {specialty.availableDoctors} {specialty.availableDoctors === 1 ? 'doctor' : 'doctors'} available
+                      {specialty.availableDoctors}{' '}
+                      {specialty.availableDoctors === 1 ? 'doctor' : 'doctors'} available
                     </span>
                   </div>
-                  <span className="material-symbols-outlined text-[20px] text-outline ml-auto group-hover:text-primary-container transition-colors">chevron_right</span>
+                  <span className="material-symbols-outlined text-[20px] text-outline ml-auto group-hover:text-primary-container transition-colors">
+                    chevron_right
+                  </span>
                 </Link>
               ))}
             </div>
@@ -100,8 +126,12 @@ export default async function ConsultSpecialtyPage() {
 
           {!empty && byAppointment.length > 0 && (
             <div className="pt-6 border-t border-surface-variant space-y-3">
-              <h2 className="text-headline-h3 font-headline-h3 text-on-surface">No one on video right now in these specialties</h2>
-              <p className="text-caption font-caption text-on-surface-variant">You can still book a scheduled consultation or a clinic visit.</p>
+              <h2 className="text-headline-h3 font-headline-h3 text-on-surface">
+                No one on video right now in these specialties
+              </h2>
+              <p className="text-caption font-caption text-on-surface-variant">
+                You can still book a scheduled consultation or a clinic visit.
+              </p>
               <div className="flex flex-wrap gap-2">
                 {byAppointment.map((specialty) => (
                   <Link
@@ -122,11 +152,19 @@ export default async function ConsultSpecialtyPage() {
                 <span className="material-symbols-outlined text-[22px]">smart_toy</span>
               </span>
               <div>
-                <h2 className="text-caption-strong font-caption-strong text-on-surface">Not sure which specialty fits?</h2>
-                <p className="text-caption font-caption text-on-surface-variant">Describe your symptoms and our triage points you to the right department in 60 seconds.</p>
+                <h2 className="text-caption-strong font-caption-strong text-on-surface">
+                  Not sure which specialty fits?
+                </h2>
+                <p className="text-caption font-caption text-on-surface-variant">
+                  Describe your symptoms and our triage points you to the right department in 60
+                  seconds.
+                </p>
               </div>
             </div>
-            <Link href="/triage" className="h-11 px-5 rounded-lg border border-primary-container text-primary-container hover:bg-surface-container-lowest font-caption-strong text-caption-strong flex items-center justify-center whitespace-nowrap transition">
+            <Link
+              href="/triage"
+              className="h-11 px-5 rounded-lg border border-primary-container text-primary-container hover:bg-surface-container-lowest font-caption-strong text-caption-strong flex items-center justify-center whitespace-nowrap transition"
+            >
               Start free AI triage
             </Link>
           </div>

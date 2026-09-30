@@ -21,13 +21,26 @@ export type Band = {
 export type PartnerSection = Band & { points: string[] };
 
 /** A homepage care-ecosystem card. `{city}` in href and `{accreditedFacilities}` in body are filled in. */
-export type ServiceCard = { eyebrow: string; title: string; body: string; icon: string; cta: string; href: string; anchor?: string };
+export type ServiceCard = {
+  eyebrow: string;
+  title: string;
+  body: string;
+  icon: string;
+  cta: string;
+  href: string;
+  anchor?: string;
+};
 
 /** A "How Curxx Works" step. */
 export type Step = { title: string; body: string; footnote?: string };
 
 /** Icon + title + body, e.g. Curxx Plus benefits and the pharmacy trust strip. */
-export type Feature = { icon: string; title: string; body: string; tone?: 'tertiary' | 'primary' | 'neutral' };
+export type Feature = {
+  icon: string;
+  title: string;
+  body: string;
+  tone?: 'tertiary' | 'primary' | 'neutral';
+};
 
 /** One section of a legal page. */
 export type LegalSection = { heading: string; body: string };

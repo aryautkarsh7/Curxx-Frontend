@@ -60,7 +60,10 @@ if (typeof window !== 'undefined') {
 
 /** Reactive view of the session: re-renders on sign-in, sign-out and other tabs. */
 export function useSession() {
-  const [state, setState] = useState<{ ready: boolean; user: SessionUser | null }>({ ready: false, user: null });
+  const [state, setState] = useState<{ ready: boolean; user: SessionUser | null }>({
+    ready: false,
+    user: null,
+  });
 
   useEffect(() => {
     const sync = () => setState({ ready: true, user: getUser() });

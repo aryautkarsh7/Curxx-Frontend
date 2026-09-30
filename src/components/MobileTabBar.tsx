@@ -38,8 +38,16 @@ export default function MobileTabBar() {
                     className="absolute inset-x-3 top-1.5 h-8 rounded-full bg-[#FFF1F2]"
                   />
                 )}
-                <span className={`material-symbols-outlined relative text-[22px] leading-none ${active ? 'text-primary-container' : ''}`}>{tab.icon}</span>
-                <span className={`relative text-micro font-micro ${active ? 'text-primary-container font-semibold' : ''}`}>{tab.label}</span>
+                <span
+                  className={`material-symbols-outlined relative text-[22px] leading-none ${active ? 'text-primary-container' : ''}`}
+                >
+                  {tab.icon}
+                </span>
+                <span
+                  className={`relative text-micro font-micro ${active ? 'text-primary-container font-semibold' : ''}`}
+                >
+                  {tab.label}
+                </span>
               </Link>
             </li>
           );

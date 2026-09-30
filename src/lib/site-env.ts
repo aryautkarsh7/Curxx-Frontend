@@ -12,4 +12,8 @@ export function isProductionSite() {
 }
 
 /** Canonical origin: SITE_URL, then NEXT_PUBLIC_SITE_URL, then the Vercel production domain. */
-export const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://curxx-frontend.vercel.app').replace(/\/$/, '');
+export const SITE_URL = (
+  process.env.SITE_URL ||
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  'https://curxx-frontend.vercel.app'
+).replace(/\/$/, '');

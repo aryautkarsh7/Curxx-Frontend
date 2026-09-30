@@ -5,7 +5,15 @@ import type { ReactNode } from 'react';
 export const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** Reveals a section as it scrolls into view. Runs once. */
-export default function FadeIn({ children, className, delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+export default function FadeIn({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
   return (
     <motion.div
       className={className}

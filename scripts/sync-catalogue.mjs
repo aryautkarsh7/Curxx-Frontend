@@ -43,4 +43,6 @@ export const SURGERY_LIST: SurgeryInfo[] = ${j(c.surgeries)};
 export const FACILITY_TYPES: FacilityTypeInfo[] = ${j(c.facilityTypes)};
 `;
 writeFileSync(new URL('../src/lib/catalogue-data.ts', import.meta.url), file);
-console.log(`catalogue-data.ts: ${c.cities.length} cities, ${c.specialties.length} specialties, ${c.conditions.length} conditions, ${c.surgeries.length} surgeries`);
+console.log(
+  `catalogue-data.ts: ${c.cities.length} cities, ${c.specialties.length} specialties, ${c.conditions.length} conditions, ${c.surgeries.length} surgeries`,
+);

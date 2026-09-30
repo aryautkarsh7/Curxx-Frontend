@@ -18,8 +18,21 @@ export default async function Page() {
   // Plans, doctor stories and FAQs are edited in the admin panel; the doctor count is live.
   const [{ sections, stats }, plans, testimonials] = await Promise.all([
     loadSite('for-providers'),
-    api.plans('provider').then((r) => r.plans).catch(() => []),
-    api.testimonials('provider').then((r) => r.testimonials).catch(() => []),
+    api
+      .plans('provider')
+      .then((r) => r.plans)
+      .catch(() => []),
+    api
+      .testimonials('provider')
+      .then((r) => r.testimonials)
+      .catch(() => []),
   ]);
-  return <ProviderLanding doctorsLabel={countLabel(stats?.verifiedDoctors)} plans={plans} testimonials={testimonials} faqs={items<Faq>(sections, 'for-providers/faqs')} />;
+  return (
+    <ProviderLanding
+      doctorsLabel={countLabel(stats?.verifiedDoctors)}
+      plans={plans}
+      testimonials={testimonials}
+      faqs={items<Faq>(sections, 'for-providers/faqs')}
+    />
+  );
 }

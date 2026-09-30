@@ -10,7 +10,19 @@
  */
 import { cache } from 'react';
 import { api, type RoutingCatalogue } from './api';
-import { CITY_LIST, CONDITION_LIST, FACILITY_TYPES, SPECIALTY_ALIASES, SPECIALTY_CATEGORIES, SPECIALTY_LIST, SURGERY_CATEGORIES, SURGERY_LIST, type CityInfo, type ConditionInfo, type SpecialtyInfo } from './catalogue-data';
+import {
+  CITY_LIST,
+  CONDITION_LIST,
+  FACILITY_TYPES,
+  SPECIALTY_ALIASES,
+  SPECIALTY_CATEGORIES,
+  SPECIALTY_LIST,
+  SURGERY_CATEGORIES,
+  SURGERY_LIST,
+  type CityInfo,
+  type ConditionInfo,
+  type SpecialtyInfo,
+} from './catalogue-data';
 
 const SNAPSHOT: RoutingCatalogue = {
   cities: CITY_LIST.map((c) => ({ ...c, popularOrder: c.popularOrder ?? 0 })),

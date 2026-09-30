@@ -23,7 +23,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const sp = data?.stats.scope.specialty;
   if (data && !data.stats.total && sp) {
     // Nobody listed anywhere yet: a clean empty page, kept out of the index.
-    return { title: { absolute: `${sp.plural} in India | Curxx` }, description: `No ${sp.plural.toLowerCase()} are listed on Curxx yet.`, alternates: { canonical: `/india/${sp.slug}` }, robots: { index: false, follow: true } };
+    return {
+      title: { absolute: `${sp.plural} in India | Curxx` },
+      description: `No ${sp.plural.toLowerCase()} are listed on Curxx yet.`,
+      alternates: { canonical: `/india/${sp.slug}` },
+      robots: { index: false, follow: true },
+    };
   }
   if (!data?.page) return {};
   const { page } = data;
@@ -31,20 +36,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: { absolute: page.title },
     description: page.description,
     alternates: { canonical: page.canonical },
-    openGraph: { title: page.title, description: page.description, type: 'website', url: page.canonical },
+    openGraph: {
+      title: page.title,
+      description: page.description,
+      type: 'website',
+      url: page.canonical,
+    },
   };
 }
 
 export default async function IndiaSpecialtyPage({ params }: Props) {
   const data = await load((await params).specialty);
-  const empty = data?.stats.scope.specialty && !data.stats.total ? data.stats.scope.specialty : null;
+  const empty =
+    data?.stats.scope.specialty && !data.stats.total ? data.stats.scope.specialty : null;
   if (empty) {
     return (
       <EmptyLandingPage
         heading={`${empty.plural} in India`}
         message={`No ${empty.plural.toLowerCase()} listed here yet`}
         action={{ href: '/india/doctors', label: 'See all doctors in India' }}
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'India', href: '/india/doctors' }, { label: empty.plural }]}
+        breadcrumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'India', href: '/india/doctors' },
+          { label: empty.plural },
+        ]}
       />
     );
   }
@@ -52,9 +67,25 @@ export default async function IndiaSpecialtyPage({ params }: Props) {
   const { page, stats } = data;
   const sp = stats.scope.specialty!;
   return (
-    <SeoLandingPage page={page} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'India', href: '/india/doctors' }, { label: sp.plural }]}>
-      <LinkGrid heading={`Find ${sp.plural} in Your City`} links={stats.cities.map((c) => ({ text: `${sp.plural} in ${c.name}`, href: `/${c.slug}/${sp.slug}` }))} />
-      <LinkGrid heading="Doctors across India" links={[{ text: 'All doctors in India', href: '/india/doctors' }]} />
+    <SeoLandingPage
+      page={page}
+      breadcrumbs={[
+        { label: 'Home', href: '/' },
+        { label: 'India', href: '/india/doctors' },
+        { label: sp.plural },
+      ]}
+    >
+      <LinkGrid
+        heading={`Find ${sp.plural} in Your City`}
+        links={stats.cities.map((c) => ({
+          text: `${sp.plural} in ${c.name}`,
+          href: `/${c.slug}/${sp.slug}`,
+        }))}
+      />
+      <LinkGrid
+        heading="Doctors across India"
+        links={[{ text: 'All doctors in India', href: '/india/doctors' }]}
+      />
     </SeoLandingPage>
   );
 }

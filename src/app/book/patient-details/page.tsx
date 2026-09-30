@@ -18,7 +18,8 @@ async function refreshProfile(token: string, name: string) {
   }
 }
 
-const FIELD = 'w-full h-11 px-3 bg-white border border-[#E7E5E4] rounded-lg font-body-default text-body-default text-[#1C1917] placeholder-[#A8A29E] outline-none focus:border-primary-container focus:ring-2 focus:ring-[rgba(193,18,31,0.15)]';
+const FIELD =
+  'w-full h-11 px-3 bg-white border border-[#E7E5E4] rounded-lg font-body-default text-body-default text-[#1C1917] placeholder-[#A8A29E] outline-none focus:border-primary-container focus:ring-2 focus:ring-[rgba(193,18,31,0.15)]';
 const LABEL = 'font-caption-strong text-caption-strong text-[#1C1917]';
 
 function PatientDetails() {
@@ -46,7 +47,8 @@ function PatientDetails() {
     setReady(true);
   }, [router]);
 
-  if (!ready || !draft) return <main className="w-full max-w-[760px] mx-auto px-4 py-16" aria-busy="true" />;
+  if (!ready || !draft)
+    return <main className="w-full max-w-[760px] mx-auto px-4 py-16" aria-busy="true" />;
 
   const valid = name.trim().length >= 2 && /^[6-9]\d{9}$/.test(phone.replace(/\D/g, ''));
 
@@ -73,19 +75,32 @@ function PatientDetails() {
     <main className="w-full max-w-[760px] mx-auto px-4 py-8 space-y-5 pb-24">
       <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5 flex items-center justify-between gap-4 shadow-sm flex-wrap">
         <div>
-          <div className="font-caption text-caption text-[#78716C]">{draft.mode === 'clinic' ? 'Clinic visit' : modeLabel(draft.mode)} with</div>
+          <div className="font-caption text-caption text-[#78716C]">
+            {draft.mode === 'clinic' ? 'Clinic visit' : modeLabel(draft.mode)} with
+          </div>
           <div className="font-headline-h3 text-headline-h3 text-[#1C1917]">{draft.doctorName}</div>
-          <div className="font-caption text-caption text-[#78716C] mt-0.5">{formatSlot(draft.startsAt)}</div>
+          <div className="font-caption text-caption text-[#78716C] mt-0.5">
+            {formatSlot(draft.startsAt)}
+          </div>
         </div>
-        <div className="font-display text-display text-[#1C1917]">{draft.fee === 0 ? 'Free' : rupees(draft.fee)}</div>
+        <div className="font-display text-display text-[#1C1917]">
+          {draft.fee === 0 ? 'Free' : rupees(draft.fee)}
+        </div>
       </div>
 
       <SlotCountdown />
 
-      <form onSubmit={submit} className="bg-white border border-[#E7E5E4] rounded-2xl p-5 space-y-5 shadow-sm">
+      <form
+        onSubmit={submit}
+        className="bg-white border border-[#E7E5E4] rounded-2xl p-5 space-y-5 shadow-sm"
+      >
         <div className="space-y-1">
-          <h1 className="font-headline-h2 text-headline-h2 text-[#1C1917]">Who is this appointment for?</h1>
-          <p className="font-caption text-caption text-[#78716C]">These details go on the prescription, so use the patient&apos;s legal name.</p>
+          <h1 className="font-headline-h2 text-headline-h2 text-[#1C1917]">
+            Who is this appointment for?
+          </h1>
+          <p className="font-caption text-caption text-[#78716C]">
+            These details go on the prescription, so use the patient&apos;s legal name.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-2">
@@ -119,14 +134,22 @@ function PatientDetails() {
 
         <label className="block space-y-1.5">
           <span className={LABEL}>Full name</span>
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Patient's full name" className={FIELD} autoFocus={!forSelf} />
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Patient's full name"
+            className={FIELD}
+            autoFocus={!forSelf}
+          />
         </label>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="block space-y-1.5">
             <span className={LABEL}>Mobile number</span>
             <div className="flex items-center h-11 bg-white border border-[#E7E5E4] rounded-lg focus-within:border-primary-container focus-within:ring-2 focus-within:ring-[rgba(193,18,31,0.15)]">
-              <span className="px-3 font-body-strong text-body-strong text-[#1C1917] border-r border-[#E7E5E4]">+91</span>
+              <span className="px-3 font-body-strong text-body-strong text-[#1C1917] border-r border-[#E7E5E4]">
+                +91
+              </span>
               <input
                 inputMode="numeric"
                 maxLength={10}
@@ -139,7 +162,14 @@ function PatientDetails() {
           </label>
           <label className="block space-y-1.5">
             <span className={LABEL}>Age</span>
-            <input inputMode="numeric" maxLength={3} value={age} onChange={(e) => setAge(e.target.value.replace(/\D/g, ''))} placeholder="Years" className={FIELD} />
+            <input
+              inputMode="numeric"
+              maxLength={3}
+              value={age}
+              onChange={(e) => setAge(e.target.value.replace(/\D/g, ''))}
+              placeholder="Years"
+              className={FIELD}
+            />
           </label>
         </div>
 
@@ -181,7 +211,9 @@ export default function PatientDetailsPage() {
     <>
       <Header />
       <BookingProgress currentStep={2} />
-      <Suspense fallback={<main className="w-full max-w-[760px] mx-auto px-4 py-16" aria-busy="true" />}>
+      <Suspense
+        fallback={<main className="w-full max-w-[760px] mx-auto px-4 py-16" aria-busy="true" />}
+      >
         <PatientDetails />
       </Suspense>
       <Footer />

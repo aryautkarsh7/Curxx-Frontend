@@ -12,18 +12,37 @@ const emit = () => listeners.forEach((l) => l());
 function load() {
   const token = getToken();
   if (!token) return;
-  pending ??= api.saved(token).then((r) => { cache = r.slugs; emit(); }).catch(() => {}).finally(() => { pending = null; });
+  pending ??= api
+    .saved(token)
+    .then((r) => {
+      cache = r.slugs;
+      emit();
+    })
+    .catch(() => {})
+    .finally(() => {
+      pending = null;
+    });
 }
 
 if (typeof window !== 'undefined') {
   // A different account means a different saved list.
-  window.addEventListener('curxx:session', () => { cache = null; emit(); });
+  window.addEventListener('curxx:session', () => {
+    cache = null;
+    emit();
+  });
 }
 
 /** Saved state for one doctor or article, shared across every button on the page. */
 export function useSaved(kind: 'doctors' | 'articles', slug: string) {
   const session = useSession();
-  const slugs = useSyncExternalStore((cb) => { listeners.add(cb); return () => listeners.delete(cb); }, () => cache, () => null);
+  const slugs = useSyncExternalStore(
+    (cb) => {
+      listeners.add(cb);
+      return () => listeners.delete(cb);
+    },
+    () => cache,
+    () => null,
+  );
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {

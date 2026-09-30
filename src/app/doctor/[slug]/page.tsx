@@ -34,12 +34,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = [
     `${bookable ? 'Book ' : ''}${doctor.name}, ${lower(doctor.title)} at ${doctor.clinicName}, ${doctor.area}.`,
     doctor.experienceYears > 0 ? `${doctor.experienceYears} years of experience.` : '',
-    from > 0 ? `Consultation ${doctor.feeVerified === false ? 'approx. ' : 'from '}₹${from.toLocaleString('en-IN')}.` : '',
-    bookable ? (video ? 'Video consult or in-clinic visit on Curxx.' : 'In-clinic visits on Curxx.') : 'Timings, fees and clinic contact on Curxx.',
+    from > 0
+      ? `Consultation ${doctor.feeVerified === false ? 'approx. ' : 'from '}₹${from.toLocaleString('en-IN')}.`
+      : '',
+    bookable
+      ? video
+        ? 'Video consult or in-clinic visit on Curxx.'
+        : 'In-clinic visits on Curxx.'
+      : 'Timings, fees and clinic contact on Curxx.',
   ]
     .filter(Boolean)
     // Keep it within 155 characters by dropping whole trailing sentences.
-    .reduce((out, part) => (out && `${out} ${part}`.length > 155 ? out : out ? `${out} ${part}` : part), '');
+    .reduce(
+      (out, part) => (out && `${out} ${part}`.length > 155 ? out : out ? `${out} ${part}` : part),
+      '',
+    );
   return {
     title,
     description,
@@ -62,7 +71,21 @@ export default async function DoctorPage({ params, searchParams }: Props) {
     api.videos({ doctor: slug, limit: 12 }).catch(() => ({ videos: [] })),
     api.siteSettings().catch(() => ({ settings: {} as Record<string, string> })),
   ]);
-  const contact = { phone: settings['contact-phone'] ?? '', whatsapp: settings['contact-whatsapp'] ?? '' };
+  const contact = {
+    phone: settings['contact-phone'] ?? '',
+    whatsapp: settings['contact-whatsapp'] ?? '',
+  };
 
-  return <DoctorProfile doctor={data.doctor} facility={data.facility} similar={data.similar} slots={slots} mode={mode} slotId={first(query.slot)} videos={videos} contact={contact} />;
+  return (
+    <DoctorProfile
+      doctor={data.doctor}
+      facility={data.facility}
+      similar={data.similar}
+      slots={slots}
+      mode={mode}
+      slotId={first(query.slot)}
+      videos={videos}
+      contact={contact}
+    />
+  );
 }

@@ -4,7 +4,10 @@ import { liveCatalogue, resolveCity } from '@/lib/catalogue-live';
 import ClinicsListing from '../clinics/ClinicsListing';
 import { loadFacilities } from '../clinics/loadFacilities';
 
-type Props = { params: Promise<{ city: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
+type Props = {
+  params: Promise<{ city: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const info = await resolveCity((await params).city);
@@ -14,8 +17,14 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const category = (await searchParams).category;
   const type = FACILITY_TYPES.find((t) => t.slug === category);
   return {
-    title: { absolute: type ? `${type.name}s in ${name} — Book Doctors & Check Timings | Curxx` : `Hospitals in ${name} — Doctors, Departments & Timings | Curxx` },
-    description: type ? `${type.description} in ${name}: timings, departments, insurers and doctors you can book on Curxx.` : `Compare hospitals in ${name} by type — multispecialty, government, eye, maternity and more — with 24x7 emergency, departments, insurers and doctors you can book online.`,
+    title: {
+      absolute: type
+        ? `${type.name}s in ${name} — Book Doctors & Check Timings | Curxx`
+        : `Hospitals in ${name} — Doctors, Departments & Timings | Curxx`,
+    },
+    description: type
+      ? `${type.description} in ${name}: timings, departments, insurers and doctors you can book on Curxx.`
+      : `Compare hospitals in ${name} by type — multispecialty, government, eye, maternity and more — with 24x7 emergency, departments, insurers and doctors you can book online.`,
     alternates: { canonical: `/${canonical}/hospitals${type ? `?category=${type.slug}` : ''}` },
   };
 }

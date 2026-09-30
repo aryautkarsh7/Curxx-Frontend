@@ -4,7 +4,10 @@ import { countLabel, image, items, loadSite } from '@/lib/site';
 import LabTestsHome from './LabTestsHome';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const stats = await api.siteStats().then((r) => r.stats).catch(() => null);
+  const stats = await api
+    .siteStats()
+    .then((r) => r.stats)
+    .catch(() => null);
   const tests = countLabel(stats?.labTests);
   return {
     title: `Lab Tests at Home, Most Reports in 6 Hours | ${tests ? `${tests} ` : ''}Tests & Scans | Curxx`,
@@ -23,15 +26,24 @@ export default async function LabTestsPage({ searchParams }: { searchParams: Sea
   const query: LabQuery = {
     category: one(params.category),
     q: one(params.q),
-    kind: kind === 'package' || kind === 'test' || kind === 'scan' || kind === 'procedure' ? kind : undefined,
+    kind:
+      kind === 'package' || kind === 'test' || kind === 'scan' || kind === 'procedure'
+        ? kind
+        : undefined,
     sort: sort === 'discount' || sort === 'price_asc' || sort === 'price_desc' ? sort : 'popular',
     page: Math.max(1, Number(one(params.page)) || 1),
     limit: 9,
   };
   const [categories, results, labs, site] = await Promise.all([
-    api.labCategories().then((r) => r.categories).catch(() => []),
+    api
+      .labCategories()
+      .then((r) => r.categories)
+      .catch(() => []),
     api.labTests(query).catch(() => ({ items: [], total: 0, page: 1, limit: 9, pages: 1 })),
-    api.labs({ limit: 4 }).then((r) => ({ items: r.items, total: r.total, near: r.near })).catch(() => null),
+    api
+      .labs({ limit: 4 })
+      .then((r) => ({ items: r.items, total: r.total, near: r.near }))
+      .catch(() => null),
     loadSite('lab-tests'),
   ]);
   return (

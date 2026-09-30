@@ -6,7 +6,8 @@ import MedicineStore from './MedicineStore';
 
 export const metadata: Metadata = {
   title: 'Order Medicines Online, Delivered in 2 Hours | Curxx',
-  description: 'Genuine prescription medicines, devices and wellness essentials from licensed pharmacies across India. Upload a prescription or shop by category.',
+  description:
+    'Genuine prescription medicines, devices and wellness essentials from licensed pharmacies across India. Upload a prescription or shop by category.',
   alternates: { canonical: '/medicines' },
 };
 
@@ -29,9 +30,15 @@ export default async function MedicinesPage({ searchParams }: { searchParams: Se
   // The storefront still renders if the API is briefly unavailable.
   const empty = { items: [], total: 0, page: 1, limit: 12, pages: 1 };
   const [categories, results, deals, site] = await Promise.all([
-    api.medicineCategories().then((r) => r.categories).catch(() => []),
+    api
+      .medicineCategories()
+      .then((r) => r.categories)
+      .catch(() => []),
     api.medicines(query).catch(() => empty),
-    api.medicines({ category: 'deals', sort: 'discount', limit: 4 }).then((r) => r.items).catch(() => []),
+    api
+      .medicines({ category: 'deals', sort: 'discount', limit: 4 })
+      .then((r) => r.items)
+      .catch(() => []),
     loadSite('medicines'),
   ]);
 

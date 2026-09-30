@@ -51,7 +51,11 @@ export function modeLabel(mode: ConsultMode, short = false) {
 /** "Sat, 20 Sep · 05:45 PM" — the format used across the booking steps. */
 export function formatSlot(startsAt: string) {
   const date = new Date(startsAt);
-  const day = date.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+  const day = date.toLocaleDateString('en-IN', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
   return `${day} · ${formatTime(startsAt)}`;
 }
 

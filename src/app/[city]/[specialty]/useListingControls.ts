@@ -53,11 +53,22 @@ export function useListingControls() {
     sort,
     filters,
     setParam,
-    setSort: (value: string) => navigate((p) => { value === 'relevance' ? p.delete('sort') : p.set('sort', value); p.delete('page'); }),
+    setSort: (value: string) =>
+      navigate((p) => {
+        value === 'relevance' ? p.delete('sort') : p.set('sort', value);
+        p.delete('page');
+      }),
     setAvailability: (value: string) => setParam('availability', value),
     // Keeps a search query (?q=fever) — it defines the page rather than filtering it.
-    clearFilters: () => router.replace(params.get('q') ? `${pathname}?q=${encodeURIComponent(params.get('q')!)}` : pathname, { scroll: false }),
-    goToPage: (n: number) => navigate((p) => (n <= 1 ? p.delete('page') : p.set('page', String(n))), { keepScroll: false }),
+    clearFilters: () =>
+      router.replace(
+        params.get('q') ? `${pathname}?q=${encodeURIComponent(params.get('q')!)}` : pathname,
+        { scroll: false },
+      ),
+    goToPage: (n: number) =>
+      navigate((p) => (n <= 1 ? p.delete('page') : p.set('page', String(n))), {
+        keepScroll: false,
+      }),
 
     /** Card-level navigation that ignores clicks on the card's own links and buttons. */
     openDoctor: (href: string) => (e: MouseEvent<HTMLElement>) => {

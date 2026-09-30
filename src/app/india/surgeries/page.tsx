@@ -18,12 +18,21 @@ async function load() {
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = (await load())?.page;
-  if (!page) return { title: { absolute: 'Surgery in India: Hospitals & Cost | Curxx' }, alternates: { canonical: '/india/surgeries' } };
+  if (!page)
+    return {
+      title: { absolute: 'Surgery in India: Hospitals & Cost | Curxx' },
+      alternates: { canonical: '/india/surgeries' },
+    };
   return {
     title: { absolute: page.title },
     description: page.description,
     alternates: { canonical: page.canonical },
-    openGraph: { title: page.title, description: page.description, type: 'website', url: page.canonical },
+    openGraph: {
+      title: page.title,
+      description: page.description,
+      type: 'website',
+      url: page.canonical,
+    },
   };
 }
 
@@ -31,7 +40,10 @@ export default async function IndiaSurgeriesPage() {
   const data = await load();
   if (!data) notFound();
   return (
-    <SeoLandingPage page={data.page} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'India' }, { label: 'Surgeries' }]}>
+    <SeoLandingPage
+      page={data.page}
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'India' }, { label: 'Surgeries' }]}
+    >
       <ProcedureDirectory groups={data.stats.directory} />
     </SeoLandingPage>
   );

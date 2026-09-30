@@ -12,7 +12,12 @@ import { getToken } from '@/lib/session';
 const METHODS = [
   { id: 'upi', label: 'UPI', detail: 'GPay, PhonePe, Paytm', icon: 'qr_code_2' },
   { id: 'card', label: 'Card', detail: 'Visa, Mastercard, RuPay', icon: 'credit_card' },
-  { id: 'clinic', label: 'Pay at clinic', detail: 'Settle at the reception desk', icon: 'payments' },
+  {
+    id: 'clinic',
+    label: 'Pay at clinic',
+    detail: 'Settle at the reception desk',
+    icon: 'payments',
+  },
 ] as const;
 
 function Payment() {
@@ -32,7 +37,8 @@ function Payment() {
     if (current.mode !== 'clinic') setMethod('upi');
   }, [router]);
 
-  if (!draft?.patient) return <main className="w-full max-w-[760px] mx-auto px-4 py-16" aria-busy="true" />;
+  if (!draft?.patient)
+    return <main className="w-full max-w-[760px] mx-auto px-4 py-16" aria-busy="true" />;
 
   const platformFee = 0;
   const total = draft.fee + platformFee;
@@ -47,7 +53,15 @@ function Payment() {
     setBusy(true);
     setError('');
     try {
-      const { appointment } = await api.book({ slotId: draft.slotId, patient: draft.patient, focus: draft.focus, ...(draft.mode === 'audio' ? { mode: 'audio' as const } : {}) }, token);
+      const { appointment } = await api.book(
+        {
+          slotId: draft.slotId,
+          patient: draft.patient,
+          focus: draft.focus,
+          ...(draft.mode === 'audio' ? { mode: 'audio' as const } : {}),
+        },
+        token,
+      );
       clearSlotHold();
       clearDraft();
       router.push(`/book/confirmed?ref=${appointment.reference}`);
@@ -75,7 +89,10 @@ function Payment() {
             ['Doctor', draft.doctorName],
             ['When', formatSlot(draft.startsAt)],
             ['Type', modeLabel(draft.mode)],
-            ['Patient', `${draft.patient.name}${draft.patient.age ? `, ${draft.patient.age}` : ''}`],
+            [
+              'Patient',
+              `${draft.patient.name}${draft.patient.age ? `, ${draft.patient.age}` : ''}`,
+            ],
           ].map(([label, value]) => (
             <div key={label} className="flex items-start justify-between gap-4">
               <dt className="text-[#78716C]">{label}</dt>
@@ -86,7 +103,9 @@ function Payment() {
         <div className="border-t border-[#E7E5E4] pt-3 space-y-2">
           <div className="flex items-center justify-between font-body-default text-body-default text-[#78716C]">
             <span>Consultation fee</span>
-            <span className={free ? 'text-[#047857]' : undefined}>{free ? 'Free consult' : rupees(draft.fee)}</span>
+            <span className={free ? 'text-[#047857]' : undefined}>
+              {free ? 'Free consult' : rupees(draft.fee)}
+            </span>
           </div>
           <div className="flex items-center justify-between font-body-default text-body-default text-[#78716C]">
             <span>Platform fee</span>
@@ -94,7 +113,9 @@ function Payment() {
           </div>
           <div className="flex items-center justify-between pt-2 border-t border-[#E7E5E4]">
             <span className="font-body-strong text-body-strong text-[#1C1917]">Total payable</span>
-            <span className="font-display text-display text-[#1C1917]">{free ? '₹0' : rupees(total)}</span>
+            <span className="font-display text-display text-[#1C1917]">
+              {free ? '₹0' : rupees(total)}
+            </span>
           </div>
         </div>
       </section>
@@ -102,38 +123,55 @@ function Payment() {
       {/* PAYMENT METHOD — not needed for a free consult */}
       {free ? (
         <p className="px-4 py-3 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] font-caption text-caption text-[#047857] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[18px]">redeem</span>This is a free consultation — nothing to pay. Confirm to book your slot.
+          <span className="material-symbols-outlined text-[18px]">redeem</span>This is a free
+          consultation — nothing to pay. Confirm to book your slot.
         </p>
       ) : (
-      <section className="bg-white border border-[#E7E5E4] rounded-2xl p-5 space-y-3 shadow-sm">
-        <h2 className="font-headline-h3 text-headline-h3 text-[#1C1917]">Payment method</h2>
-        {METHODS.filter((m) => m.id !== 'clinic' || draft.mode === 'clinic').map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            onClick={() => setMethod(option.id)}
-            className={`w-full flex items-center gap-3 p-3.5 rounded-xl border text-left transition ${
-              method === option.id ? 'border-2 border-primary-container bg-[#FFF1F2]' : 'border-[#E7E5E4] bg-white hover:border-[#1C1917]'
-            }`}
-          >
-            <span className="w-10 h-10 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] flex items-center justify-center text-[#78716C]">
-              <span className="material-symbols-outlined text-[20px]">{option.icon}</span>
-            </span>
-            <span className="flex-1 min-w-0">
-              <span className="block font-body-strong text-body-strong text-[#1C1917]">{option.label}</span>
-              <span className="block font-caption text-caption text-[#78716C]">{option.detail}</span>
-            </span>
-            {method === option.id && <span className="material-symbols-outlined text-[20px] text-primary-container">check_circle</span>}
-          </button>
-        ))}
-        <p className="font-micro text-micro text-[#78716C]">
-          This is a prototype checkout — no card details are collected and no money moves. The appointment is created on Curxx immediately.
-        </p>
-      </section>
+        <section className="bg-white border border-[#E7E5E4] rounded-2xl p-5 space-y-3 shadow-sm">
+          <h2 className="font-headline-h3 text-headline-h3 text-[#1C1917]">Payment method</h2>
+          {METHODS.filter((m) => m.id !== 'clinic' || draft.mode === 'clinic').map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => setMethod(option.id)}
+              className={`w-full flex items-center gap-3 p-3.5 rounded-xl border text-left transition ${
+                method === option.id
+                  ? 'border-2 border-primary-container bg-[#FFF1F2]'
+                  : 'border-[#E7E5E4] bg-white hover:border-[#1C1917]'
+              }`}
+            >
+              <span className="w-10 h-10 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] flex items-center justify-center text-[#78716C]">
+                <span className="material-symbols-outlined text-[20px]">{option.icon}</span>
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="block font-body-strong text-body-strong text-[#1C1917]">
+                  {option.label}
+                </span>
+                <span className="block font-caption text-caption text-[#78716C]">
+                  {option.detail}
+                </span>
+              </span>
+              {method === option.id && (
+                <span className="material-symbols-outlined text-[20px] text-primary-container">
+                  check_circle
+                </span>
+              )}
+            </button>
+          ))}
+          <p className="font-micro text-micro text-[#78716C]">
+            This is a prototype checkout — no card details are collected and no money moves. The
+            appointment is created on Curxx immediately.
+          </p>
+        </section>
       )}
 
       {error && (
-        <p role="alert" className="px-4 py-3 rounded-lg bg-[#FFF1F2] border border-[#F9C6C9] font-caption text-caption text-[#8E0E17]">{error}</p>
+        <p
+          role="alert"
+          className="px-4 py-3 rounded-lg bg-[#FFF1F2] border border-[#F9C6C9] font-caption text-caption text-[#8E0E17]"
+        >
+          {error}
+        </p>
       )}
 
       <button
@@ -142,7 +180,11 @@ function Payment() {
         disabled={busy}
         className="w-full h-12 rounded-lg bg-[#C1121F] hover:bg-[#8E0E17] disabled:bg-[#A8A29E] text-white font-body-strong text-body-strong flex items-center justify-center gap-2 transition"
       >
-        {busy ? 'Confirming…' : free ? 'Confirm free consultation' : `Confirm and pay ${rupees(total)}`}
+        {busy
+          ? 'Confirming…'
+          : free
+            ? 'Confirm free consultation'
+            : `Confirm and pay ${rupees(total)}`}
         <span className="material-symbols-outlined text-[18px]">lock</span>
       </button>
     </main>
@@ -154,7 +196,9 @@ export default function PaymentPage() {
     <>
       <Header />
       <BookingProgress currentStep={3} />
-      <Suspense fallback={<main className="w-full max-w-[760px] mx-auto px-4 py-16" aria-busy="true" />}>
+      <Suspense
+        fallback={<main className="w-full max-w-[760px] mx-auto px-4 py-16" aria-busy="true" />}
+      >
         <Payment />
       </Suspense>
       <Footer />

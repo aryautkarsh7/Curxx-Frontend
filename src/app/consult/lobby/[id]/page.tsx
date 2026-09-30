@@ -5,16 +5,23 @@ import Header from '@/components/Header';
 import { api } from '@/lib/api';
 import ConsultLobby from './ConsultLobby';
 
-export const metadata: Metadata = { title: 'Video Consultation Lobby | Curxx', robots: { index: false } };
+export const metadata: Metadata = {
+  title: 'Video Consultation Lobby | Curxx',
+  robots: { index: false },
+};
 
-const isAppointmentRef = (id: string) => /^[a-f0-9]{24}$/i.test(id) || /^CRX-[A-F0-9]{8}$/i.test(id);
+const isAppointmentRef = (id: string) =>
+  /^[a-f0-9]{24}$/i.test(id) || /^CRX-[A-F0-9]{8}$/i.test(id);
 
 export default async function LobbyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   // Older links pointed the lobby at a doctor; a consult needs a booking first.
   if (!isAppointmentRef(id)) {
-    const doctor = await api.doctor(id).then((r) => r.doctor).catch(() => null);
+    const doctor = await api
+      .doctor(id)
+      .then((r) => r.doctor)
+      .catch(() => null);
     redirect(doctor ? `/book?doctor=${doctor.slug}&mode=video` : '/consult/video');
   }
 

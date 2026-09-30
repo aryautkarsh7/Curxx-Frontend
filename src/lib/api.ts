@@ -3,16 +3,28 @@
  * Server components call it directly; browser code goes through the same helpers
  * so the JWT and error shape are handled in one place.
  */
-import type { CityInfo, ConditionInfo, FacilityTypeInfo, SpecialtyInfo, SurgeryInfo } from './catalogue-data';
+import type {
+  CityInfo,
+  ConditionInfo,
+  FacilityTypeInfo,
+  SpecialtyInfo,
+  SurgeryInfo,
+} from './catalogue-data';
 
-const CONFIGURED_API = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1').replace(/\/$/, '');
+const CONFIGURED_API = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1').replace(
+  /\/$/,
+  '',
+);
 /**
  * Vercel preview deployments (staging branches) must never read or write live data: if a preview is
  * built with the production API URL (e.g. a variable scoped to all environments), it gets an address
  * that never answers instead. Set NEXT_PUBLIC_API_URL for Preview to the staging API.
  */
 const IS_PREVIEW = (process.env.VERCEL_ENV ?? process.env.NEXT_PUBLIC_VERCEL_ENV) === 'preview';
-const BASE = IS_PREVIEW && CONFIGURED_API.includes('crux-backend-production') ? 'https://staging-api-not-configured.invalid/api/v1' : CONFIGURED_API;
+const BASE =
+  IS_PREVIEW && CONFIGURED_API.includes('crux-backend-production')
+    ? 'https://staging-api-not-configured.invalid/api/v1'
+    : CONFIGURED_API;
 
 export const TOKEN_KEY = 'curxx_token';
 
@@ -30,8 +42,15 @@ export class ApiError extends Error {
 }
 
 /** Human message for any thrown value — API errors carry their own copy. */
-export const errorMessage = (error: unknown, fallback = 'Something went wrong. Please try again.') =>
-  error instanceof ApiError ? error.message : error instanceof TypeError ? 'Can’t reach Curxx right now. Check your connection and try again.' : fallback;
+export const errorMessage = (
+  error: unknown,
+  fallback = 'Something went wrong. Please try again.',
+) =>
+  error instanceof ApiError
+    ? error.message
+    : error instanceof TypeError
+      ? 'Can’t reach Curxx right now. Check your connection and try again.'
+      : fallback;
 
 // ---------------------------------------------------------------- Types
 
@@ -90,7 +109,8 @@ export type Doctor = {
 };
 
 /** How a doctor can be booked: the API's booking mode (older responses only had `bookable`). */
-export const bookingModeOf = (d: Pick<Doctor, 'booking' | 'bookable'>) => d.booking ?? (d.bookable === false ? 'none' : 'instant');
+export const bookingModeOf = (d: Pick<Doctor, 'booking' | 'bookable'>) =>
+  d.booking ?? (d.bookable === false ? 'none' : 'instant');
 /** Online booking (instant or request); otherwise the page offers Call / Visit. */
 export const canBook = (d: Pick<Doctor, 'booking' | 'bookable'>) => bookingModeOf(d) !== 'none';
 
@@ -130,7 +150,13 @@ export type Specialty = {
   availableDoctors?: number;
 };
 
-export type Slot = { id: string; startsAt: string; mode: 'clinic' | 'video'; fee: number; free?: boolean };
+export type Slot = {
+  id: string;
+  startsAt: string;
+  mode: 'clinic' | 'video';
+  fee: number;
+  free?: boolean;
+};
 
 export type Faq = { question: string; answer: string };
 
@@ -141,7 +167,13 @@ export type FeeRange = { min: number; max: number; approx: boolean };
 export type DoctorStats = {
   scope: {
     city: { slug: string; name: string } | null;
-    specialty: { slug: string; name: string; plural: string; conditions: string[]; whenToSee: string[] } | null;
+    specialty: {
+      slug: string;
+      name: string;
+      plural: string;
+      conditions: string[];
+      whenToSee: string[];
+    } | null;
   };
   total: number;
   bookableCount: number;
@@ -162,14 +194,40 @@ export type DoctorStats = {
   cityCount: number;
   clinicCityCount: number;
   smallCityCount: number;
-  specialties: { slug: string; name: string; plural: string; count: number; cityCount: number; clinicFee: FeeRange | null; videoFee: FeeRange | null; earliest: string | null }[];
-  cities: { slug: string; name: string; count: number; clinicFee: FeeRange | null; videoFee: FeeRange | null; earliest: string | null }[];
+  specialties: {
+    slug: string;
+    name: string;
+    plural: string;
+    count: number;
+    cityCount: number;
+    clinicFee: FeeRange | null;
+    videoFee: FeeRange | null;
+    earliest: string | null;
+  }[];
+  cities: {
+    slug: string;
+    name: string;
+    count: number;
+    clinicFee: FeeRange | null;
+    videoFee: FeeRange | null;
+    earliest: string | null;
+  }[];
   areas: { name: string; slug: string | null; count: number; clinicFee: FeeRange | null }[];
   languages: { name: string; count: number }[];
   feeBands: { label: string; count: number; setting: string | null }[];
   topDoctors: {
-    slug: string; name: string; city: string; cityName: string; area: string; experienceYears: number; rating: number | null; reviewCount: number;
-    fee: number | null; videoFee: number | null; feeApprox: boolean; next: string | null;
+    slug: string;
+    name: string;
+    city: string;
+    cityName: string;
+    area: string;
+    experienceYears: number;
+    rating: number | null;
+    reviewCount: number;
+    fee: number | null;
+    videoFee: number | null;
+    feeApprox: boolean;
+    next: string | null;
   }[];
 };
 
@@ -197,8 +255,16 @@ export type SitemapData = {
 };
 export type SitemapEntry = { slug: string; updatedAt: string | null };
 /** GET /seo/sitemap/index: the sitemap without the doctor and hospital lists, which come in parts. */
-export type SitemapIndex = Omit<SitemapData, 'doctors' | 'facilities'> & { partSize: number; counts: { doctors: number; facilities: number } };
-export type SitemapPart = { kind: 'doctors' | 'facilities'; part: number; parts: number; entries: SitemapEntry[] };
+export type SitemapIndex = Omit<SitemapData, 'doctors' | 'facilities'> & {
+  partSize: number;
+  counts: { doctors: number; facilities: number };
+};
+export type SitemapPart = {
+  kind: 'doctors' | 'facilities';
+  part: number;
+  parts: number;
+  entries: SitemapEntry[];
+};
 
 export type SurgeryStats = {
   city: { slug: string; name: string } | null;
@@ -214,7 +280,16 @@ export type SurgeryStats = {
   shortStayCount: number;
   daycareCount: number;
   daycare: { slug: string; name: string }[];
-  hospitals: { slug: string; name: string; area: string; city: string; surgeons: number; departments: string[]; nabh: boolean; beds: number | null }[];
+  hospitals: {
+    slug: string;
+    name: string;
+    area: string;
+    city: string;
+    surgeons: number;
+    departments: string[];
+    nabh: boolean;
+    beds: number | null;
+  }[];
   areas: { name: string; count: number }[];
   surgeonTable: { slug: string; count: number; avgExperience: number | null }[];
   cities: { slug: string; name: string; hospitals: number; surgeons: number }[];
@@ -226,17 +301,46 @@ export type LinkCount = { slug: string; name: string; count: number };
 
 /** SEO content for a specialty listing, specific to specialty × city × locality. */
 export type SpecialtyContent = {
-  specialty: { slug: string; name: string; plural: string; icon: string; category: string; description: string; video: boolean; subSpecialties: SubSpecialty[] };
+  specialty: {
+    slug: string;
+    name: string;
+    plural: string;
+    icon: string;
+    category: string;
+    description: string;
+    video: boolean;
+    subSpecialties: SubSpecialty[];
+  };
   city: { slug: string; name: string; state: string };
   locality: { slug: string; name: string; pincode: string } | null;
   place: string;
-  stats: { doctors: number; minFee: number; maxFee: number; minVideoFee: number | null; video: number; free: number; female: number; rating: number | null; experience: number | null; reviews: number };
+  stats: {
+    doctors: number;
+    minFee: number;
+    maxFee: number;
+    minVideoFee: number | null;
+    video: number;
+    free: number;
+    female: number;
+    rating: number | null;
+    experience: number | null;
+    reviews: number;
+  };
   intro: string;
   about: string[];
   conditions: string[];
   whenToSee: string[];
   faqs: Faq[];
-  topDoctors: { slug: string; name: string; experienceYears: number; rating: number; reviewCount: number; area: string; fee: number; feeVerified?: boolean }[];
+  topDoctors: {
+    slug: string;
+    name: string;
+    experienceYears: number;
+    rating: number;
+    reviewCount: number;
+    area: string;
+    fee: number;
+    feeVerified?: boolean;
+  }[];
   facilities: { slug: string; name: string; area: string; type: 'hospital' | 'clinic' }[];
   localities: LinkCount[];
   otherCities: LinkCount[];
@@ -246,7 +350,19 @@ export type SpecialtyContent = {
 };
 
 export type ConditionDetail = {
-  condition: { slug: string; name: string; specialty: string; focus: string; summary: string; symptoms: string[]; causes: string[]; treatments: string[]; selfCare: string[]; whenToSee: string[]; popular?: string };
+  condition: {
+    slug: string;
+    name: string;
+    specialty: string;
+    focus: string;
+    summary: string;
+    symptoms: string[];
+    causes: string[];
+    treatments: string[];
+    selfCare: string[];
+    whenToSee: string[];
+    popular?: string;
+  };
   city: { slug: string; name: string };
   specialty: { slug: string; name: string; plural: string; icon: string; video: boolean } | null;
   focus: SubSpecialty | null;
@@ -257,13 +373,60 @@ export type ConditionDetail = {
   faqs: Faq[];
 };
 
-export type SurgerySummary = { slug: string; name: string; category: string; specialty: string; icon: string; popular: boolean; description: string; stay: string; recovery: string; cost: [number, number]; insurance: boolean };
+export type SurgerySummary = {
+  slug: string;
+  name: string;
+  category: string;
+  specialty: string;
+  icon: string;
+  popular: boolean;
+  description: string;
+  stay: string;
+  recovery: string;
+  cost: [number, number];
+  insurance: boolean;
+};
 export type SurgeryDetail = {
-  surgery: SurgerySummary & { treats: string[]; techniques: string[]; durationMinutes: [number, number]; anaesthesia: string; steps: string[]; benefits: string[]; risks: string[]; departments: string[] };
+  surgery: SurgerySummary & {
+    treats: string[];
+    techniques: string[];
+    durationMinutes: [number, number];
+    anaesthesia: string;
+    steps: string[];
+    benefits: string[];
+    risks: string[];
+    departments: string[];
+  };
   city: { slug: string; name: string };
   specialty: { slug: string; name: string; plural: string } | null;
-  hospitals: { id: string; slug: string; name: string; area: string; category: string; rating: number; reviewCount: number; nabh: boolean; beds: number; insurers: string[]; emergency24x7: boolean }[];
-  surgeons: Pick<Doctor, 'id' | 'slug' | 'name' | 'title' | 'experienceYears' | 'rating' | 'reviewCount' | 'area' | 'clinicName' | 'photoUrl' | 'qualification' | 'fee'>[];
+  hospitals: {
+    id: string;
+    slug: string;
+    name: string;
+    area: string;
+    category: string;
+    rating: number;
+    reviewCount: number;
+    nabh: boolean;
+    beds: number;
+    insurers: string[];
+    emergency24x7: boolean;
+  }[];
+  surgeons: Pick<
+    Doctor,
+    | 'id'
+    | 'slug'
+    | 'name'
+    | 'title'
+    | 'experienceYears'
+    | 'rating'
+    | 'reviewCount'
+    | 'area'
+    | 'clinicName'
+    | 'photoUrl'
+    | 'qualification'
+    | 'fee'
+  >[];
   related: SurgerySummary[];
   otherCities: { slug: string; name: string }[];
   faqs: Faq[];
@@ -305,12 +468,30 @@ export type Appointment = {
   focus?: string;
   notes?: string;
   patient: { name: string; age?: number; gender?: string; phone: string };
-  doctor: Pick<Doctor, 'slug' | 'name' | 'title' | 'clinicName' | 'area' | 'photoUrl' | 'specialty' | 'facilitySlug' | 'fee' | 'videoFee'> | null;
+  doctor: Pick<
+    Doctor,
+    | 'slug'
+    | 'name'
+    | 'title'
+    | 'clinicName'
+    | 'area'
+    | 'photoUrl'
+    | 'specialty'
+    | 'facilitySlug'
+    | 'fee'
+    | 'videoFee'
+  > | null;
   room: { opensAt: string; closesAt: string; canJoin: boolean };
   createdAt: string;
 };
 
-export type Message = { id: string; from: 'patient' | 'doctor' | 'system'; text: string; attachment?: { name: string; size: number }; createdAt: string };
+export type Message = {
+  id: string;
+  from: 'patient' | 'doctor' | 'system';
+  text: string;
+  attachment?: { name: string; size: number };
+  createdAt: string;
+};
 
 export type Review = {
   id: string;
@@ -325,7 +506,12 @@ export type Review = {
   visitedFor: string;
   createdAt: string;
 };
-export type ReviewSummary = { average: number; total: number; breakdown: Record<'1' | '2' | '3' | '4' | '5', number>; byMode: { clinic: number; video: number } };
+export type ReviewSummary = {
+  average: number;
+  total: number;
+  breakdown: Record<'1' | '2' | '3' | '4' | '5', number>;
+  byMode: { clinic: number; video: number };
+};
 
 export type Facility = {
   id: string;
@@ -392,7 +578,14 @@ export type Medicine = {
   safetyAdvice?: string[];
   storage?: string;
 };
-export type MedicineCategory = { id: string; slug: string; name: string; icon: string; featured: boolean; count: number };
+export type MedicineCategory = {
+  id: string;
+  slug: string;
+  name: string;
+  icon: string;
+  featured: boolean;
+  count: number;
+};
 
 export type LabParameterGroup = { name: string; icon: string; count: number; parameters: string[] };
 export type LabTest = {
@@ -417,8 +610,20 @@ export type LabTest = {
   categories: string[];
   parameterGroups: LabParameterGroup[];
 };
-export type LabCategory = { id: string; slug: string; name: string; icon: string; packages: number; tests: number; group?: 'concern' | 'department' };
-export type CollectionDay = { date: string; closed?: boolean; windows: { window: string; remaining: number; available: boolean }[] };
+export type LabCategory = {
+  id: string;
+  slug: string;
+  name: string;
+  icon: string;
+  packages: number;
+  tests: number;
+  group?: 'concern' | 'department';
+};
+export type CollectionDay = {
+  date: string;
+  closed?: boolean;
+  windows: { window: string; remaining: number; available: boolean }[];
+};
 export type CollectionMode = 'home' | 'lab';
 
 /** A partner lab as listed; `distanceKm`/`canCollect` are relative to the pincode asked about. */
@@ -467,18 +672,50 @@ export type LabMatch = {
   visitOnly?: string[];
   reason: string | null;
   recommended: string | null;
-  labs: (LabSummary & { offersAll: boolean; missingTests: string[]; canVisit: boolean; eligible: boolean })[];
+  labs: (LabSummary & {
+    offersAll: boolean;
+    missingTests: string[];
+    canVisit: boolean;
+    eligible: boolean;
+  })[];
 };
 export type Near = { pincode: string; area: string; approximate?: boolean; city?: string };
 
-export type Address = { id?: string; label: string; name?: string; line1: string; line2?: string; area?: string; city?: string; pincode: string; phone: string; isDefault?: boolean };
+export type Address = {
+  id?: string;
+  label: string;
+  name?: string;
+  line1: string;
+  line2?: string;
+  area?: string;
+  city?: string;
+  pincode: string;
+  phone: string;
+  isDefault?: boolean;
+};
 
-export type OrderStatus = 'placed' | 'confirmed' | 'packed' | 'out_for_delivery' | 'delivered' | 'sample_scheduled' | 'sample_collected' | 'report_ready' | 'cancelled';
+export type OrderStatus =
+  | 'placed'
+  | 'confirmed'
+  | 'packed'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'sample_scheduled'
+  | 'sample_collected'
+  | 'report_ready'
+  | 'cancelled';
 export type Order = {
   id: string;
   reference: string;
   kind: 'pharmacy' | 'lab';
-  items: { slug: string; name: string; price: number; mrp: number; qty: number; rxRequired: boolean }[];
+  items: {
+    slug: string;
+    name: string;
+    price: number;
+    mrp: number;
+    qty: number;
+    rxRequired: boolean;
+  }[];
   subtotal: number;
   discount: number;
   deliveryFee: number;
@@ -489,13 +726,23 @@ export type Order = {
   patient?: { name: string; age?: number; gender?: string; phone: string };
   pickup?: { date: string; window: string };
   collectionMode?: CollectionMode;
-  lab?: { slug: string; name: string; area: string; address: string; phone: string; lat: number; lng: number; pathologist?: string };
+  lab?: {
+    slug: string;
+    name: string;
+    area: string;
+    address: string;
+    phone: string;
+    lat: number;
+    lng: number;
+    pathologist?: string;
+  };
   payment: { method: string; status: string };
   etaAt?: string;
   createdAt: string;
 };
 
-export type RecordKind = 'prescription' | 'lab_report' | 'imaging' | 'discharge' | 'vaccination' | 'invoice';
+export type RecordKind =
+  'prescription' | 'lab_report' | 'imaging' | 'discharge' | 'vaccination' | 'invoice';
 export type HealthRecord = {
   id: string;
   kind: RecordKind;
@@ -509,7 +756,13 @@ export type HealthRecord = {
   fileName: string;
   fileSize: number;
   mimeType: string;
-  findings: { name: string; value: string; unit: string; range: string; flag: 'normal' | 'high' | 'low' }[];
+  findings: {
+    name: string;
+    value: string;
+    unit: string;
+    range: string;
+    flag: 'normal' | 'high' | 'low';
+  }[];
   medicines: { name: string; dosage: string; duration: string }[];
   createdAt: string;
 };
@@ -541,7 +794,15 @@ export type Article = {
   sections?: { heading: string; body: string }[];
 };
 
-export type Notification = { id: string; icon: string; title: string; body: string; href: string; at: string; tone: 'info' | 'success' | 'warning' };
+export type Notification = {
+  id: string;
+  icon: string;
+  title: string;
+  body: string;
+  href: string;
+  at: string;
+  tone: 'info' | 'success' | 'warning';
+};
 
 export type TriageResult = {
   urgency: 'emergency' | 'urgent' | 'soon' | 'routine';
@@ -561,7 +822,10 @@ export type SearchResults = {
   conditions?: { slug: string; name: string; specialty: string; summary: string }[];
   specialties: Pick<Specialty, 'slug' | 'name' | 'plural' | 'icon' | 'fromPrice'>[];
   doctors: Doctor[];
-  medicines: Pick<Medicine, 'id' | 'slug' | 'name' | 'subtitle' | 'price' | 'mrp' | 'icon' | 'imageUrl' | 'rxRequired'>[];
+  medicines: Pick<
+    Medicine,
+    'id' | 'slug' | 'name' | 'subtitle' | 'price' | 'mrp' | 'icon' | 'imageUrl' | 'rxRequired'
+  >[];
   labTests: Pick<LabTest, 'id' | 'slug' | 'name' | 'kind' | 'price' | 'mrp' | 'testsIncluded'>[];
   facilities: Pick<Facility, 'id' | 'slug' | 'name' | 'type' | 'area' | 'rating'>[];
   articles: Pick<Article, 'id' | 'slug' | 'title' | 'category' | 'readMinutes'>[];
@@ -638,7 +902,12 @@ export type RoutingCatalogue = {
   facilityTypes: FacilityTypeInfo[];
 };
 
-export type Registration = { name: string; email?: string; gender?: 'female' | 'male' | 'other' | ''; dob?: string };
+export type Registration = {
+  name: string;
+  email?: string;
+  gender?: 'female' | 'male' | 'other' | '';
+  dob?: string;
+};
 
 // ---------------------------------------------------------------- Transport
 
@@ -657,10 +926,16 @@ async function request<T>(path: string, options: Options = {}): Promise<T> {
 
   const payload = await response.json().catch(() => null);
   // A rejected token means the session is over everywhere, not just for this call.
-  if (response.status === 401 && token && typeof window !== 'undefined') window.dispatchEvent(new Event('curxx:unauthorized'));
+  if (response.status === 401 && token && typeof window !== 'undefined')
+    window.dispatchEvent(new Event('curxx:unauthorized'));
   if (!response.ok) {
     const body = payload as { message?: string; error?: string; field?: string } | null;
-    throw new ApiError(response.status, body?.message ?? `Request failed (${response.status})`, body?.error, body?.field);
+    throw new ApiError(
+      response.status,
+      body?.message ?? `Request failed (${response.status})`,
+      body?.error,
+      body?.field,
+    );
   }
   return payload as T;
 }
@@ -683,9 +958,14 @@ export type Video = {
 };
 
 /** Catalogue reads are safe to cache briefly; everything else must be fresh. */
-const cached = (seconds: number): RequestInit => ({ next: { revalidate: seconds } } as RequestInit);
+const cached = (seconds: number): RequestInit => ({ next: { revalidate: seconds } }) as RequestInit;
 const fresh: RequestInit = { cache: 'no-store' };
-const send = (method: string, body: unknown, token?: string | null): Options => ({ method, body: JSON.stringify(body ?? {}), token, ...fresh });
+const send = (method: string, body: unknown, token?: string | null): Options => ({
+  method,
+  body: JSON.stringify(body ?? {}),
+  token,
+  ...fresh,
+});
 
 function qs(query: Record<string, string | number | boolean | undefined>) {
   const params = new URLSearchParams();
@@ -717,7 +997,13 @@ export type DoctorQuery = {
 };
 
 export type DoctorList = {
-  doctors: Doctor[]; page: number; limit: number; total: number; pages: number; facets?: { areas: Facet[]; languages: Facet[] }; matchedSpecialties?: string[];
+  doctors: Doctor[];
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+  facets?: { areas: Facet[]; languages: Facet[] };
+  matchedSpecialties?: string[];
   /** The doctor directory (or the API) is down for now: the list may be incomplete, so the page says so. */
   unavailable?: boolean;
 };
@@ -742,144 +1028,440 @@ export type FacilityQuery = {
   page?: number;
   limit?: number;
 };
-export type MedicineQuery = { category?: string; q?: string; rx?: 'required' | 'otc'; sort?: 'popular' | 'price_asc' | 'price_desc' | 'discount' | 'rating'; page?: number; limit?: number };
-export type LabQuery = { category?: string; kind?: LabTest['kind']; department?: string; homeCollection?: boolean; q?: string; sort?: 'popular' | 'price_asc' | 'price_desc' | 'discount'; page?: number; limit?: number };
+export type MedicineQuery = {
+  category?: string;
+  q?: string;
+  rx?: 'required' | 'otc';
+  sort?: 'popular' | 'price_asc' | 'price_desc' | 'discount' | 'rating';
+  page?: number;
+  limit?: number;
+};
+export type LabQuery = {
+  category?: string;
+  kind?: LabTest['kind'];
+  department?: string;
+  homeCollection?: boolean;
+  q?: string;
+  sort?: 'popular' | 'price_asc' | 'price_desc' | 'discount';
+  page?: number;
+  limit?: number;
+};
 
-export type PharmacyOrderInput = { kind: 'pharmacy'; items: { slug: string; qty: number }[]; address: Address; prescriptionId?: string; paymentMethod: 'upi' | 'card' | 'cod' };
-export type LabDirectoryQuery = { city?: string; pincode?: string; area?: string; q?: string; test?: string; accreditation?: 'NABL' | 'CAP' | 'ISO 15189'; homeCollection?: boolean; walkIn?: boolean; sort?: 'distance' | 'rating' | 'reviews'; page?: number; limit?: number };
-export type LabOrderInput = { kind: 'lab'; items: { slug: string }[]; collectionMode: CollectionMode; labSlug: string; address?: Address; patient: { name: string; age?: number; gender?: string; phone: string }; pickup: { date: string; window: string }; paymentMethod: 'upi' | 'card' | 'cod' };
+export type PharmacyOrderInput = {
+  kind: 'pharmacy';
+  items: { slug: string; qty: number }[];
+  address: Address;
+  prescriptionId?: string;
+  paymentMethod: 'upi' | 'card' | 'cod';
+};
+export type LabDirectoryQuery = {
+  city?: string;
+  pincode?: string;
+  area?: string;
+  q?: string;
+  test?: string;
+  accreditation?: 'NABL' | 'CAP' | 'ISO 15189';
+  homeCollection?: boolean;
+  walkIn?: boolean;
+  sort?: 'distance' | 'rating' | 'reviews';
+  page?: number;
+  limit?: number;
+};
+export type LabOrderInput = {
+  kind: 'lab';
+  items: { slug: string }[];
+  collectionMode: CollectionMode;
+  labSlug: string;
+  address?: Address;
+  patient: { name: string; age?: number; gender?: string; phone: string };
+  pickup: { date: string; window: string };
+  paymentMethod: 'upi' | 'card' | 'cod';
+};
 
 export const api = {
   // Catalogue — doctors
-  specialties: (mode?: 'clinic' | 'video', city?: string) => request<{ specialties: Specialty[]; categories?: string[] }>(`/specialties${qs({ mode, city })}`, cached(mode ? 60 : 300)),
-  specialtyContent: (slug: string, city: string, area?: string) => request<SpecialtyContent>(`/specialties/${slug}${qs({ city, area })}`, cached(300)),
-  cities: () => request<{ cities: { slug: string; name: string; state: string; tier: number; doctorCount: number; localities: { slug: string; name: string; pincode: string }[] }[] }>('/cities', cached(600)),
-  conditions: () => request<{ conditions: { slug: string; name: string; specialty: string; summary: string; popular: string | null }[] }>('/conditions', cached(600)),
-  condition: (slug: string, city: string) => request<ConditionDetail>(`/conditions/${slug}${qs({ city })}`, cached(300)),
-  seoDoctors: (city: string, specialty?: string) => request<DoctorStats>(`/seo/doctors${qs({ city, specialty })}`, cached(300)),
-  seoSurgeries: (city: string) => request<SurgeryStats>(`/seo/surgeries${qs({ city })}`, cached(300)),
+  specialties: (mode?: 'clinic' | 'video', city?: string) =>
+    request<{ specialties: Specialty[]; categories?: string[] }>(
+      `/specialties${qs({ mode, city })}`,
+      cached(mode ? 60 : 300),
+    ),
+  specialtyContent: (slug: string, city: string, area?: string) =>
+    request<SpecialtyContent>(`/specialties/${slug}${qs({ city, area })}`, cached(300)),
+  cities: () =>
+    request<{
+      cities: {
+        slug: string;
+        name: string;
+        state: string;
+        tier: number;
+        doctorCount: number;
+        localities: { slug: string; name: string; pincode: string }[];
+      }[];
+    }>('/cities', cached(600)),
+  conditions: () =>
+    request<{
+      conditions: {
+        slug: string;
+        name: string;
+        specialty: string;
+        summary: string;
+        popular: string | null;
+      }[];
+    }>('/conditions', cached(600)),
+  condition: (slug: string, city: string) =>
+    request<ConditionDetail>(`/conditions/${slug}${qs({ city })}`, cached(300)),
+  seoDoctors: (city: string, specialty?: string) =>
+    request<DoctorStats>(`/seo/doctors${qs({ city, specialty })}`, cached(300)),
+  seoSurgeries: (city: string) =>
+    request<SurgeryStats>(`/seo/surgeries${qs({ city })}`, cached(300)),
   sitemap: () => request<SitemapData>('/seo/sitemap', cached(3600)),
   sitemapIndex: () => request<SitemapIndex>('/seo/sitemap/index', cached(3600)),
   // A part can pass the 2 MB data-cache limit; the sitemap file that uses it is itself cached for an hour.
-  sitemapPart: (kind: 'doctors' | 'facilities', part: number) => request<SitemapPart>(`/seo/sitemap/${kind}${qs({ part })}`, cached(3600)),
-  surgeries: (city: string) => request<{ categories: string[]; city: { slug: string; name: string }; surgeries: SurgerySummary[] }>(`/surgeries${qs({ city })}`, cached(300)),
-  surgery: (slug: string, city: string) => request<SurgeryDetail>(`/surgeries/${slug}${qs({ city })}`, cached(300)),
-  suggest: (q: string, city: string) => request<Suggestions>(`/search/suggest${qs({ q, city })}`, cached(60)),
-  doctors: (query: DoctorQuery = {}) => request<DoctorList>(`/doctors${qs({ city: 'bangalore', ...query })}`, cached(60)),
-  doctor: (slug: string) => request<{ doctor: DoctorDetail; facility: Facility | null; similar: Doctor[] }>(`/doctors/${slug}`, cached(60)),
-  slots: (slug: string, mode?: 'clinic' | 'video') => request<{ slots: Slot[] }>(`/doctors/${slug}/slots${qs({ mode })}`, fresh),
-  reviews: (slug: string, query: { sort?: string; mode?: 'clinic' | 'video'; page?: number; limit?: number } = {}) =>
-    request<Paged<Review> & { summary: ReviewSummary }>(`/doctors/${slug}/reviews${qs(query)}`, fresh),
-  writeReview: (slug: string, body: { rating: number; text: string; mode: 'clinic' | 'video'; visitedFor?: string; tags?: string[] }, token: string) =>
-    request<{ review: Review }>(`/doctors/${slug}/reviews`, send('POST', body, token)),
-  markHelpful: (reviewId: string, token: string) => request<{ helpful: number; counted: boolean }>(`/reviews/${reviewId}/helpful`, send('POST', {}, token)),
+  sitemapPart: (kind: 'doctors' | 'facilities', part: number) =>
+    request<SitemapPart>(`/seo/sitemap/${kind}${qs({ part })}`, cached(3600)),
+  surgeries: (city: string) =>
+    request<{
+      categories: string[];
+      city: { slug: string; name: string };
+      surgeries: SurgerySummary[];
+    }>(`/surgeries${qs({ city })}`, cached(300)),
+  surgery: (slug: string, city: string) =>
+    request<SurgeryDetail>(`/surgeries/${slug}${qs({ city })}`, cached(300)),
+  suggest: (q: string, city: string) =>
+    request<Suggestions>(`/search/suggest${qs({ q, city })}`, cached(60)),
+  doctors: (query: DoctorQuery = {}) =>
+    request<DoctorList>(`/doctors${qs({ city: 'bangalore', ...query })}`, cached(60)),
+  doctor: (slug: string) =>
+    request<{ doctor: DoctorDetail; facility: Facility | null; similar: Doctor[] }>(
+      `/doctors/${slug}`,
+      cached(60),
+    ),
+  slots: (slug: string, mode?: 'clinic' | 'video') =>
+    request<{ slots: Slot[] }>(`/doctors/${slug}/slots${qs({ mode })}`, fresh),
+  reviews: (
+    slug: string,
+    query: { sort?: string; mode?: 'clinic' | 'video'; page?: number; limit?: number } = {},
+  ) =>
+    request<Paged<Review> & { summary: ReviewSummary }>(
+      `/doctors/${slug}/reviews${qs(query)}`,
+      fresh,
+    ),
+  writeReview: (
+    slug: string,
+    body: {
+      rating: number;
+      text: string;
+      mode: 'clinic' | 'video';
+      visitedFor?: string;
+      tags?: string[];
+    },
+    token: string,
+  ) => request<{ review: Review }>(`/doctors/${slug}/reviews`, send('POST', body, token)),
+  markHelpful: (reviewId: string, token: string) =>
+    request<{ helpful: number; counted: boolean }>(
+      `/reviews/${reviewId}/helpful`,
+      send('POST', {}, token),
+    ),
 
   // Catalogue — facilities
   facilities: (query: FacilityQuery = {}) =>
-    request<Paged<Facility> & { city?: string; unavailable?: boolean; facets: { areas: Facet[]; departments?: Facet[]; categories?: { value: string; label: string; group: string; icon: string; count: number }[] } }>(`/facilities${qs(query)}`, cached(60)),
-  facility: (slug: string) => request<{ facility: Facility; doctors: Doctor[]; similar?: Facility[] }>(`/facilities/${slug}`, cached(60)),
+    request<
+      Paged<Facility> & {
+        city?: string;
+        unavailable?: boolean;
+        facets: {
+          areas: Facet[];
+          departments?: Facet[];
+          categories?: {
+            value: string;
+            label: string;
+            group: string;
+            icon: string;
+            count: number;
+          }[];
+        };
+      }
+    >(`/facilities${qs(query)}`, cached(60)),
+  facility: (slug: string) =>
+    request<{ facility: Facility; doctors: Doctor[]; similar?: Facility[] }>(
+      `/facilities/${slug}`,
+      cached(60),
+    ),
 
   // Catalogue — pharmacy & labs
-  medicineCategories: () => request<{ categories: MedicineCategory[] }>('/medicine-categories', cached(300)),
-  medicines: (query: MedicineQuery = {}) => request<Paged<Medicine>>(`/medicines${qs(query)}`, cached(60)),
-  medicine: (slug: string) => request<{ medicine: Medicine; substitutes: Medicine[]; similar: Medicine[] }>(`/medicines/${slug}`, cached(60)),
+  medicineCategories: () =>
+    request<{ categories: MedicineCategory[] }>('/medicine-categories', cached(300)),
+  medicines: (query: MedicineQuery = {}) =>
+    request<Paged<Medicine>>(`/medicines${qs(query)}`, cached(60)),
+  medicine: (slug: string) =>
+    request<{ medicine: Medicine; substitutes: Medicine[]; similar: Medicine[] }>(
+      `/medicines/${slug}`,
+      cached(60),
+    ),
   labCategories: () => request<{ categories: LabCategory[] }>('/lab-categories', cached(300)),
   labTests: (query: LabQuery = {}) => request<Paged<LabTest>>(`/lab-tests${qs(query)}`, cached(60)),
   labTest: (slug: string, pincode?: string, city?: string) =>
-    request<{ test: LabTest; related: LabTest[]; availability: { labCount: number; near: Near; nearest: (LabSummary & { canCollect: boolean }) | null } }>(`/lab-tests/${slug}${qs({ pincode, city })}`, cached(60)),
-  collectionSlots: (lab?: string, mode: CollectionMode = 'home') => request<{ lab: string; mode: CollectionMode; days: CollectionDay[] }>(`/lab-collection-slots${qs({ lab, mode })}`, fresh),
-  labs: (query: LabDirectoryQuery = {}) => request<Paged<LabSummary> & { near: Near; facets: { areas: Facet[]; accreditations: Facet[] } }>(`/labs${qs(query)}`, cached(60)),
-  lab: (slug: string, pincode?: string) => request<{ lab: Lab; near: Near; tests: LabTest[]; nearby: LabSummary[] }>(`/labs/${slug}${qs({ pincode })}`, cached(60)),
-  labMatch: (query: { pincode?: string; city?: string; tests: string[]; mode: CollectionMode }) => request<LabMatch>(`/labs/match${qs({ ...query, tests: query.tests.join(',') })}`, fresh),
+    request<{
+      test: LabTest;
+      related: LabTest[];
+      availability: {
+        labCount: number;
+        near: Near;
+        nearest: (LabSummary & { canCollect: boolean }) | null;
+      };
+    }>(`/lab-tests/${slug}${qs({ pincode, city })}`, cached(60)),
+  collectionSlots: (lab?: string, mode: CollectionMode = 'home') =>
+    request<{ lab: string; mode: CollectionMode; days: CollectionDay[] }>(
+      `/lab-collection-slots${qs({ lab, mode })}`,
+      fresh,
+    ),
+  labs: (query: LabDirectoryQuery = {}) =>
+    request<
+      Paged<LabSummary> & { near: Near; facets: { areas: Facet[]; accreditations: Facet[] } }
+    >(`/labs${qs(query)}`, cached(60)),
+  lab: (slug: string, pincode?: string) =>
+    request<{ lab: Lab; near: Near; tests: LabTest[]; nearby: LabSummary[] }>(
+      `/labs/${slug}${qs({ pincode })}`,
+      cached(60),
+    ),
+  labMatch: (query: { pincode?: string; city?: string; tests: string[]; mode: CollectionMode }) =>
+    request<LabMatch>(`/labs/match${qs({ ...query, tests: query.tests.join(',') })}`, fresh),
 
   // Editable website data (admin panel → Website)
   // Engagement
-  track: (body: { kind: 'call' | 'whatsapp'; targetType: ProfileType; targetSlug: string; number: string; page: string }, token?: string | null) =>
+  track: (
+    body: {
+      kind: 'call' | 'whatsapp';
+      targetType: ProfileType;
+      targetSlug: string;
+      number: string;
+      page: string;
+    },
+    token?: string | null,
+  ) =>
     // keepalive: the tap usually navigates away (tel:, wa.me) — let the request finish anyway.
     request<{ ok: true }>('/track', { ...send('POST', body, token), keepalive: true }),
-  report: (body: { targetType: ProfileType; targetSlug: string; issues: string[]; details: string; contact: string; page: string }, token?: string | null) =>
-    request<{ report: { id: string } }>('/reports', send('POST', body, token)),
-  videos: (query: { doctor?: string; specialty?: string; city?: string; featured?: boolean; limit?: number }) =>
-    request<{ videos: Video[] }>(`/videos${qs({ ...query, featured: query.featured ? 'true' : undefined })}`, cached(120)),
+  report: (
+    body: {
+      targetType: ProfileType;
+      targetSlug: string;
+      issues: string[];
+      details: string;
+      contact: string;
+      page: string;
+    },
+    token?: string | null,
+  ) => request<{ report: { id: string } }>('/reports', send('POST', body, token)),
+  videos: (query: {
+    doctor?: string;
+    specialty?: string;
+    city?: string;
+    featured?: boolean;
+    limit?: number;
+  }) =>
+    request<{ videos: Video[] }>(
+      `/videos${qs({ ...query, featured: query.featured ? 'true' : undefined })}`,
+      cached(120),
+    ),
 
   siteSettings: () => request<{ settings: SiteSettings }>('/site/settings', cached(300)),
   siteStats: () => request<{ stats: SiteStats }>('/site/stats', cached(300)),
   /** Sections of one or more pages, keyed "page/section". */
-  content: (...pages: string[]) => request<{ sections: Record<string, ContentSection> }>(`/content/${pages.join(',')}`, cached(300)),
-  testimonials: (audience: Testimonial['audience'] = 'patient') => request<{ testimonials: Testimonial[] }>(`/testimonials${qs({ audience })}`, cached(300)),
-  plans: (audience: Plan['audience'] = 'plus') => request<{ plans: Plan[] }>(`/plans${qs({ audience })}`, cached(300)),
+  content: (...pages: string[]) =>
+    request<{ sections: Record<string, ContentSection> }>(
+      `/content/${pages.join(',')}`,
+      cached(300),
+    ),
+  testimonials: (audience: Testimonial['audience'] = 'patient') =>
+    request<{ testimonials: Testimonial[] }>(`/testimonials${qs({ audience })}`, cached(300)),
+  plans: (audience: Plan['audience'] = 'plus') =>
+    request<{ plans: Plan[] }>(`/plans${qs({ audience })}`, cached(300)),
   routing: () => request<RoutingCatalogue>('/catalogue/routing', cached(300)),
 
   // Content
-  articles: (query: { category?: string; featured?: boolean; page?: number; limit?: number } = {}) =>
-    request<Paged<Article> & { categories: Facet[] }>(`/articles${qs(query)}`, cached(120)),
-  article: (slug: string) => request<{ article: Article; author: Doctor | null; related: Article[] }>(`/articles/${slug}`, cached(120)),
+  articles: (
+    query: { category?: string; featured?: boolean; page?: number; limit?: number } = {},
+  ) => request<Paged<Article> & { categories: Facet[] }>(`/articles${qs(query)}`, cached(120)),
+  article: (slug: string) =>
+    request<{ article: Article; author: Doctor | null; related: Article[] }>(
+      `/articles/${slug}`,
+      cached(120),
+    ),
   search: (q: string, city?: string) => request<SearchResults>(`/search${qs({ q, city })}`, fresh),
-  triage: (body: { symptoms: string; age?: number; durationDays?: number; severity?: 'mild' | 'moderate' | 'severe'; forWhom?: 'self' | 'child' | 'parent' | 'other'; city?: string }) =>
-    request<TriageResult>('/triage', send('POST', body)),
-  lead: (body: { kind: 'provider' | 'hospital' | 'corporate' | 'callback' | 'newsletter' | 'surgery' | 'plus'; surgery?: string; name?: string; phone?: string; email?: string; organisation?: string; city?: string; specialty?: string; message?: string; source?: string }) =>
-    request<{ lead: { id: string; kind: string } }>('/leads', send('POST', body)),
+  triage: (body: {
+    symptoms: string;
+    age?: number;
+    durationDays?: number;
+    severity?: 'mild' | 'moderate' | 'severe';
+    forWhom?: 'self' | 'child' | 'parent' | 'other';
+    city?: string;
+  }) => request<TriageResult>('/triage', send('POST', body)),
+  lead: (body: {
+    kind: 'provider' | 'hospital' | 'corporate' | 'callback' | 'newsletter' | 'surgery' | 'plus';
+    surgery?: string;
+    name?: string;
+    phone?: string;
+    email?: string;
+    organisation?: string;
+    city?: string;
+    specialty?: string;
+    message?: string;
+    source?: string;
+  }) => request<{ lead: { id: string; kind: string } }>('/leads', send('POST', body)),
 
   // Auth & profile
   requestOtp: (phone: string, intent: 'login' | 'register' | 'any' = 'any') =>
-    request<{ phone: string; registered?: boolean; expiresInSeconds: number; devCode?: string }>('/auth/otp/request', send('POST', { phone, intent })),
+    request<{ phone: string; registered?: boolean; expiresInSeconds: number; devCode?: string }>(
+      '/auth/otp/request',
+      send('POST', { phone, intent }),
+    ),
   verifyOtp: (phone: string, code: string, registration?: Registration) =>
-    request<{ token: string; user: SessionUser }>('/auth/otp/verify', send('POST', { phone, code, registration })),
+    request<{ token: string; user: SessionUser }>(
+      '/auth/otp/verify',
+      send('POST', { phone, code, registration }),
+    ),
   me: (token: string) => request<{ user: SessionUser }>('/auth/me', { token, ...fresh }),
-  updateProfile: (patch: Partial<Omit<SessionUser, 'id' | 'phone'>>, token: string) => request<{ user: SessionUser }>('/auth/me', send('PATCH', patch, token)),
+  updateProfile: (patch: Partial<Omit<SessionUser, 'id' | 'phone'>>, token: string) =>
+    request<{ user: SessionUser }>('/auth/me', send('PATCH', patch, token)),
 
   // Booking & consults
-  holdSlot: (slotId: string, token: string) => request<{ slotId: string; expiresAt: string; holdSeconds: number }>(`/slots/${slotId}/hold`, send('POST', {}, token)),
-  book: (body: { slotId: string; patient: Appointment['patient']; focus?: string; notes?: string; mode?: ConsultMode }, token: string) =>
-    request<{ appointment: Appointment }>('/appointments', send('POST', body, token)),
-  appointments: (token: string) => request<{ appointments: Appointment[] }>('/appointments', { token, ...fresh }),
-  appointment: (idOrRef: string, token: string) => request<{ appointment: Appointment }>(`/appointments/${idOrRef}`, { token, ...fresh }),
-  cancel: (id: string, token: string) => request<{ appointment: Appointment }>(`/appointments/${id}/cancel`, send('PATCH', {}, token)),
-  reschedule: (id: string, slotId: string, token: string) => request<{ appointment: Appointment }>(`/appointments/${id}/reschedule`, send('PATCH', { slotId }, token)),
-  messages: (id: string, token: string) => request<{ messages: Message[] }>(`/appointments/${id}/messages`, { token, ...fresh }),
-  sendMessage: (id: string, body: { text: string; attachment?: { name: string; size: number } }, token: string) =>
-    request<{ messages: Message[] }>(`/appointments/${id}/messages`, send('POST', body, token)),
+  holdSlot: (slotId: string, token: string) =>
+    request<{ slotId: string; expiresAt: string; holdSeconds: number }>(
+      `/slots/${slotId}/hold`,
+      send('POST', {}, token),
+    ),
+  book: (
+    body: {
+      slotId: string;
+      patient: Appointment['patient'];
+      focus?: string;
+      notes?: string;
+      mode?: ConsultMode;
+    },
+    token: string,
+  ) => request<{ appointment: Appointment }>('/appointments', send('POST', body, token)),
+  appointments: (token: string) =>
+    request<{ appointments: Appointment[] }>('/appointments', { token, ...fresh }),
+  appointment: (idOrRef: string, token: string) =>
+    request<{ appointment: Appointment }>(`/appointments/${idOrRef}`, { token, ...fresh }),
+  cancel: (id: string, token: string) =>
+    request<{ appointment: Appointment }>(`/appointments/${id}/cancel`, send('PATCH', {}, token)),
+  reschedule: (id: string, slotId: string, token: string) =>
+    request<{ appointment: Appointment }>(
+      `/appointments/${id}/reschedule`,
+      send('PATCH', { slotId }, token),
+    ),
+  messages: (id: string, token: string) =>
+    request<{ messages: Message[] }>(`/appointments/${id}/messages`, { token, ...fresh }),
+  sendMessage: (
+    id: string,
+    body: { text: string; attachment?: { name: string; size: number } },
+    token: string,
+  ) => request<{ messages: Message[] }>(`/appointments/${id}/messages`, send('POST', body, token)),
 
   // Orders
-  placeOrder: (body: PharmacyOrderInput | LabOrderInput, token: string) => request<{ order: Order }>('/orders', send('POST', body, token)),
-  orders: (token: string, kind?: 'pharmacy' | 'lab') => request<{ orders: Order[] }>(`/orders${qs({ kind })}`, { token, ...fresh }),
-  order: (reference: string, token: string) => request<{ order: Order }>(`/orders/${reference}`, { token, ...fresh }),
-  cancelOrder: (reference: string, token: string) => request<{ order: Order }>(`/orders/${reference}/cancel`, send('PATCH', {}, token)),
+  placeOrder: (body: PharmacyOrderInput | LabOrderInput, token: string) =>
+    request<{ order: Order }>('/orders', send('POST', body, token)),
+  orders: (token: string, kind?: 'pharmacy' | 'lab') =>
+    request<{ orders: Order[] }>(`/orders${qs({ kind })}`, { token, ...fresh }),
+  order: (reference: string, token: string) =>
+    request<{ order: Order }>(`/orders/${reference}`, { token, ...fresh }),
+  cancelOrder: (reference: string, token: string) =>
+    request<{ order: Order }>(`/orders/${reference}/cancel`, send('PATCH', {}, token)),
 
   // Records & consent
   records: (token: string, query: { kind?: RecordKind; q?: string } = {}) =>
-    request<{ records: HealthRecord[]; counts: Partial<Record<RecordKind, number>> }>(`/records${qs(query)}`, { token, ...fresh }),
-  record: (id: string, token: string) => request<{ record: HealthRecord }>(`/records/${id}`, { token, ...fresh }),
-  uploadRecord: (body: { kind: RecordKind; title: string; doctorName?: string; facility?: string; date: string; summary?: string; fileName: string; fileSize: number; mimeType: string }, token: string) =>
-    request<{ record: HealthRecord }>('/records', send('POST', body, token)),
-  deleteRecord: (id: string, token: string) => request<{ ok: true }>(`/records/${id}`, { method: 'DELETE', token, ...fresh }),
+    request<{ records: HealthRecord[]; counts: Partial<Record<RecordKind, number>> }>(
+      `/records${qs(query)}`,
+      { token, ...fresh },
+    ),
+  record: (id: string, token: string) =>
+    request<{ record: HealthRecord }>(`/records/${id}`, { token, ...fresh }),
+  uploadRecord: (
+    body: {
+      kind: RecordKind;
+      title: string;
+      doctorName?: string;
+      facility?: string;
+      date: string;
+      summary?: string;
+      fileName: string;
+      fileSize: number;
+      mimeType: string;
+    },
+    token: string,
+  ) => request<{ record: HealthRecord }>('/records', send('POST', body, token)),
+  deleteRecord: (id: string, token: string) =>
+    request<{ ok: true }>(`/records/${id}`, { method: 'DELETE', token, ...fresh }),
   grants: (token: string) => request<{ grants: AccessGrant[] }>('/access', { token, ...fresh }),
-  grantAccess: (body: { granteeName: string; granteeKind: AccessGrant['grantee']['kind']; granteeDetail?: string; scope: AccessGrant['scope']; recordIds?: string[]; hours: number; permission: AccessGrant['permission'] }, token: string) =>
-    request<{ grant: AccessGrant }>('/access', send('POST', body, token)),
-  revokeAccess: (id: string, token: string) => request<{ grant: AccessGrant }>(`/access/${id}/revoke`, send('PATCH', {}, token)),
+  grantAccess: (
+    body: {
+      granteeName: string;
+      granteeKind: AccessGrant['grantee']['kind'];
+      granteeDetail?: string;
+      scope: AccessGrant['scope'];
+      recordIds?: string[];
+      hours: number;
+      permission: AccessGrant['permission'];
+    },
+    token: string,
+  ) => request<{ grant: AccessGrant }>('/access', send('POST', body, token)),
+  revokeAccess: (id: string, token: string) =>
+    request<{ grant: AccessGrant }>(`/access/${id}/revoke`, send('PATCH', {}, token)),
 
   // Account
-  saved: (token: string) => request<{ doctors: Doctor[]; articles: Article[]; slugs: { doctors: string[]; articles: string[] } }>('/me/saved', { token, ...fresh }),
-  save: (kind: 'doctors' | 'articles', slug: string, token: string) => request<{ saved: boolean; slugs: { doctors: string[]; articles: string[] } }>(`/me/saved/${kind}/${slug}`, send('PUT', {}, token)),
-  unsave: (kind: 'doctors' | 'articles', slug: string, token: string) => request<{ saved: boolean; slugs: { doctors: string[]; articles: string[] } }>(`/me/saved/${kind}/${slug}`, { method: 'DELETE', token, ...fresh }),
-  addresses: (token: string) => request<{ addresses: Address[] }>('/me/addresses', { token, ...fresh }),
-  addAddress: (body: Omit<Address, 'id'>, token: string) => request<{ addresses: Address[] }>('/me/addresses', send('POST', body, token)),
-  setDefaultAddress: (id: string, token: string) => request<{ addresses: Address[] }>(`/me/addresses/${id}/default`, send('PATCH', {}, token)),
-  deleteAddress: (id: string, token: string) => request<{ addresses: Address[] }>(`/me/addresses/${id}`, { method: 'DELETE', token, ...fresh }),
-  notifications: (token: string) => request<{ notifications: Notification[] }>('/me/notifications', { token, ...fresh }),
-  summary: (token: string) => request<{ upcomingAppointments: number; orders: number; records: number; activeGrants: number }>('/me/summary', { token, ...fresh }),
+  saved: (token: string) =>
+    request<{
+      doctors: Doctor[];
+      articles: Article[];
+      slugs: { doctors: string[]; articles: string[] };
+    }>('/me/saved', { token, ...fresh }),
+  save: (kind: 'doctors' | 'articles', slug: string, token: string) =>
+    request<{ saved: boolean; slugs: { doctors: string[]; articles: string[] } }>(
+      `/me/saved/${kind}/${slug}`,
+      send('PUT', {}, token),
+    ),
+  unsave: (kind: 'doctors' | 'articles', slug: string, token: string) =>
+    request<{ saved: boolean; slugs: { doctors: string[]; articles: string[] } }>(
+      `/me/saved/${kind}/${slug}`,
+      { method: 'DELETE', token, ...fresh },
+    ),
+  addresses: (token: string) =>
+    request<{ addresses: Address[] }>('/me/addresses', { token, ...fresh }),
+  addAddress: (body: Omit<Address, 'id'>, token: string) =>
+    request<{ addresses: Address[] }>('/me/addresses', send('POST', body, token)),
+  setDefaultAddress: (id: string, token: string) =>
+    request<{ addresses: Address[] }>(`/me/addresses/${id}/default`, send('PATCH', {}, token)),
+  deleteAddress: (id: string, token: string) =>
+    request<{ addresses: Address[] }>(`/me/addresses/${id}`, { method: 'DELETE', token, ...fresh }),
+  notifications: (token: string) =>
+    request<{ notifications: Notification[] }>('/me/notifications', { token, ...fresh }),
+  summary: (token: string) =>
+    request<{
+      upcomingAppointments: number;
+      orders: number;
+      records: number;
+      activeGrants: number;
+    }>('/me/summary', { token, ...fresh }),
 };
 
 /** lh3 portrait URLs take a `=w<px>` size suffix; keep requests as small as they render. Other URLs are used as they are. */
-export const photo = (url: string, width: number) => (!url ? '' : url.includes('googleusercontent.com/') && !/=w\d+$/.test(url) ? `${url}=w${width}` : url);
+export const photo = (url: string, width: number) =>
+  !url
+    ? ''
+    : url.includes('googleusercontent.com/') && !/=w\d+$/.test(url)
+      ? `${url}=w${width}`
+      : url;
 
 /** Shown for doctors without a photo, so a portrait is never an empty <img src>. */
 export const DOCTOR_PLACEHOLDER = '/images/doctor-placeholder.svg';
-export const doctorPhoto = (url: string | null | undefined, width: number) => (url ? photo(url, width) : DOCTOR_PLACEHOLDER);
+export const doctorPhoto = (url: string | null | undefined, width: number) =>
+  url ? photo(url, width) : DOCTOR_PLACEHOLDER;
 
 /** Ratings mean something only once there are reviews; before that a "New" badge shows instead. */
 export const hasReviews = (r: { reviewCount?: number | null }) => (r.reviewCount ?? 0) > 0;
 
 export const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN')}`;
 
-export const discountPct = (price: number, mrp: number) => (mrp > price ? Math.round((1 - price / mrp) * 100) : 0);
+export const discountPct = (price: number, mrp: number) =>
+  mrp > price ? Math.round((1 - price / mrp) * 100) : 0;

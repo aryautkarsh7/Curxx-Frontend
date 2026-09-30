@@ -18,7 +18,17 @@ export type MediaState = {
  * on/off toggles that really stop the tracks' output, device switching and a mic level.
  */
 export function useLocalMedia(autoStart = true) {
-  const [state, setState] = useState<MediaState>({ stream: null, error: null, cameraOn: true, micOn: true, level: 0, cameras: [], mics: [], cameraId: '', micId: '' });
+  const [state, setState] = useState<MediaState>({
+    stream: null,
+    error: null,
+    cameraOn: true,
+    micOn: true,
+    level: 0,
+    cameras: [],
+    mics: [],
+    cameraId: '',
+    micId: '',
+  });
   const streamRef = useRef<MediaStream | null>(null);
   const rafRef = useRef<number | null>(null);
   const audioRef = useRef<AudioContext | null>(null);
@@ -31,65 +41,78 @@ export function useLocalMedia(autoStart = true) {
     audioRef.current = null;
   }, []);
 
-  const start = useCallback(async (cameraId?: string, micId?: string) => {
-    if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
-      setState((s) => ({ ...s, error: 'This browser can’t access a camera. Try Chrome or Safari on a phone or laptop.' }));
-      return;
-    }
-    stop();
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: cameraId ? { deviceId: { exact: cameraId } } : { facingMode: 'user', width: { ideal: 1280 } },
-        audio: micId ? { deviceId: { exact: micId } } : true,
-      });
-      streamRef.current = stream;
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoTrack = stream.getVideoTracks()[0];
-      const audioTrack = stream.getAudioTracks()[0];
-
-      // Mic level meter.
-      try {
-        const ctx = new AudioContext();
-        audioRef.current = ctx;
-        const analyser = ctx.createAnalyser();
-        analyser.fftSize = 256;
-        ctx.createMediaStreamSource(stream).connect(analyser);
-        const data = new Uint8Array(analyser.frequencyBinCount);
-        const tick = () => {
-          analyser.getByteFrequencyData(data);
-          const avg = data.reduce((n, v) => n + v, 0) / data.length;
-          setState((s) => (Math.abs(s.level - avg / 128) > 0.02 ? { ...s, level: Math.min(1, avg / 128) } : s));
-          rafRef.current = requestAnimationFrame(tick);
-        };
-        tick();
-      } catch {
-        // Level meter is optional.
+  const start = useCallback(
+    async (cameraId?: string, micId?: string) => {
+      if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+        setState((s) => ({
+          ...s,
+          error: 'This browser can’t access a camera. Try Chrome or Safari on a phone or laptop.',
+        }));
+        return;
       }
+      stop();
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: cameraId
+            ? { deviceId: { exact: cameraId } }
+            : { facingMode: 'user', width: { ideal: 1280 } },
+          audio: micId ? { deviceId: { exact: micId } } : true,
+        });
+        streamRef.current = stream;
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoTrack = stream.getVideoTracks()[0];
+        const audioTrack = stream.getAudioTracks()[0];
 
-      setState((s) => ({
-        ...s,
-        stream,
-        error: null,
-        cameras: devices.filter((d) => d.kind === 'videoinput'),
-        mics: devices.filter((d) => d.kind === 'audioinput'),
-        cameraId: videoTrack?.getSettings().deviceId ?? '',
-        micId: audioTrack?.getSettings().deviceId ?? '',
-        cameraOn: true,
-        micOn: true,
-      }));
-    } catch (e) {
-      const name = (e as DOMException)?.name;
-      setState((s) => ({
-        ...s,
-        stream: null,
-        error:
-          name === 'NotAllowedError' ? 'Camera and microphone are blocked. Allow access in your browser’s address bar, then try again.'
-          : name === 'NotFoundError' ? 'No camera or microphone was found on this device.'
-          : name === 'NotReadableError' ? 'Your camera is being used by another app. Close it and try again.'
-          : 'We couldn’t start your camera. Please try again.',
-      }));
-    }
-  }, [stop]);
+        // Mic level meter.
+        try {
+          const ctx = new AudioContext();
+          audioRef.current = ctx;
+          const analyser = ctx.createAnalyser();
+          analyser.fftSize = 256;
+          ctx.createMediaStreamSource(stream).connect(analyser);
+          const data = new Uint8Array(analyser.frequencyBinCount);
+          const tick = () => {
+            analyser.getByteFrequencyData(data);
+            const avg = data.reduce((n, v) => n + v, 0) / data.length;
+            setState((s) =>
+              Math.abs(s.level - avg / 128) > 0.02 ? { ...s, level: Math.min(1, avg / 128) } : s,
+            );
+            rafRef.current = requestAnimationFrame(tick);
+          };
+          tick();
+        } catch {
+          // Level meter is optional.
+        }
+
+        setState((s) => ({
+          ...s,
+          stream,
+          error: null,
+          cameras: devices.filter((d) => d.kind === 'videoinput'),
+          mics: devices.filter((d) => d.kind === 'audioinput'),
+          cameraId: videoTrack?.getSettings().deviceId ?? '',
+          micId: audioTrack?.getSettings().deviceId ?? '',
+          cameraOn: true,
+          micOn: true,
+        }));
+      } catch (e) {
+        const name = (e as DOMException)?.name;
+        setState((s) => ({
+          ...s,
+          stream: null,
+          error:
+            name === 'NotAllowedError'
+              ? 'Camera and microphone are blocked. Allow access in your browser’s address bar, then try again.'
+              : name === 'NotFoundError'
+                ? 'No camera or microphone was found on this device.'
+                : name === 'NotReadableError'
+                  ? 'Your camera is being used by another app. Close it and try again.'
+                  : 'We couldn’t start your camera. Please try again.',
+        }));
+      }
+    },
+    [stop],
+  );
 
   useEffect(() => {
     if (autoStart) void start();

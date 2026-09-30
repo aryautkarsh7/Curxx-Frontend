@@ -1,8 +1,6 @@
+node_modules/
 .next/
 out/
-# Existing source and static exports are the formatting baseline.
-src/
-public/pages/
-scripts/sync-catalogue.mjs
-next.config.ts
-postcss.config.mjs
+build/
+coverage/
+package-lock.json

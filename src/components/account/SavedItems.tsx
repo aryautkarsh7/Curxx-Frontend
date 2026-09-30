@@ -10,7 +10,11 @@ export default function SavedItems() {
 
   const load = () => {
     const token = getToken();
-    if (token) api.saved(token).then(setData).catch(() => setData({ doctors: [], articles: [] }));
+    if (token)
+      api
+        .saved(token)
+        .then(setData)
+        .catch(() => setData({ doctors: [], articles: [] }));
   };
   useEffect(load, []);
 
@@ -26,10 +30,22 @@ export default function SavedItems() {
     return (
       <div className="p-6 rounded-xl border border-[#E7E5E4] bg-white text-center space-y-2">
         <span className="material-symbols-outlined text-[32px] text-[#78716C]">bookmark</span>
-        <p className="font-body-default text-body-default text-on-surface-variant">Nothing saved yet. Tap the bookmark on a doctor or article to keep it here.</p>
+        <p className="font-body-default text-body-default text-on-surface-variant">
+          Nothing saved yet. Tap the bookmark on a doctor or article to keep it here.
+        </p>
         <div className="flex justify-center gap-3 pt-1">
-          <Link href="/doctors" className="font-caption-strong text-caption-strong text-primary-container hover:underline">Find doctors</Link>
-          <Link href="/blog" className="font-caption-strong text-caption-strong text-primary-container hover:underline">Read articles</Link>
+          <Link
+            href="/doctors"
+            className="font-caption-strong text-caption-strong text-primary-container hover:underline"
+          >
+            Find doctors
+          </Link>
+          <Link
+            href="/blog"
+            className="font-caption-strong text-caption-strong text-primary-container hover:underline"
+          >
+            Read articles
+          </Link>
         </div>
       </div>
     );
@@ -38,16 +54,41 @@ export default function SavedItems() {
     <div className="space-y-6">
       {data.doctors.length > 0 && (
         <section className="space-y-3">
-          <h2 className="font-headline-h3 text-headline-h3 text-on-surface">Doctors ({data.doctors.length})</h2>
+          <h2 className="font-headline-h3 text-headline-h3 text-on-surface">
+            Doctors ({data.doctors.length})
+          </h2>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {data.doctors.map((d) => (
-              <li key={d.slug} className="p-4 rounded-xl border border-[#E7E5E4] bg-white flex items-center gap-3">
-                <img src={doctorPhoto(d.photoUrl, 96)} alt="" className="w-12 h-12 rounded-full object-cover" />
+              <li
+                key={d.slug}
+                className="p-4 rounded-xl border border-[#E7E5E4] bg-white flex items-center gap-3"
+              >
+                <img
+                  src={doctorPhoto(d.photoUrl, 96)}
+                  alt=""
+                  className="w-12 h-12 rounded-full object-cover"
+                />
                 <Link href={`/doctor/${d.slug}`} className="flex-1 min-w-0">
-                  <span className="block font-body-strong text-body-strong text-on-surface truncate">{d.name}</span>
-                  <span className="block font-caption text-caption text-on-surface-variant truncate">{d.title} · {rupees(d.fee)}</span>
+                  <span className="block font-body-strong text-body-strong text-on-surface truncate">
+                    {d.name}
+                  </span>
+                  <span className="block font-caption text-caption text-on-surface-variant truncate">
+                    {d.title} · {rupees(d.fee)}
+                  </span>
                 </Link>
-                <button type="button" onClick={() => remove('doctors', d.slug)} aria-label={`Remove ${d.name}`} className="p-1.5 text-[#C1121F]"><span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>bookmark</span></button>
+                <button
+                  type="button"
+                  onClick={() => remove('doctors', d.slug)}
+                  aria-label={`Remove ${d.name}`}
+                  className="p-1.5 text-[#C1121F]"
+                >
+                  <span
+                    className="material-symbols-outlined text-[20px]"
+                    style={{ fontVariationSettings: "'FILL' 1" }}
+                  >
+                    bookmark
+                  </span>
+                </button>
               </li>
             ))}
           </ul>
@@ -55,15 +96,36 @@ export default function SavedItems() {
       )}
       {data.articles.length > 0 && (
         <section className="space-y-3">
-          <h2 className="font-headline-h3 text-headline-h3 text-on-surface">Articles ({data.articles.length})</h2>
+          <h2 className="font-headline-h3 text-headline-h3 text-on-surface">
+            Articles ({data.articles.length})
+          </h2>
           <ul className="space-y-2">
             {data.articles.map((a) => (
-              <li key={a.slug} className="p-4 rounded-xl border border-[#E7E5E4] bg-white flex items-center gap-3">
+              <li
+                key={a.slug}
+                className="p-4 rounded-xl border border-[#E7E5E4] bg-white flex items-center gap-3"
+              >
                 <Link href={`/blog/${a.slug}`} className="flex-1 min-w-0">
-                  <span className="block font-body-strong text-body-strong text-on-surface">{a.title}</span>
-                  <span className="block font-caption text-caption text-on-surface-variant">{a.readMinutes} min read · {a.author?.name}</span>
+                  <span className="block font-body-strong text-body-strong text-on-surface">
+                    {a.title}
+                  </span>
+                  <span className="block font-caption text-caption text-on-surface-variant">
+                    {a.readMinutes} min read · {a.author?.name}
+                  </span>
                 </Link>
-                <button type="button" onClick={() => remove('articles', a.slug)} aria-label={`Remove ${a.title}`} className="p-1.5 text-[#C1121F]"><span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>bookmark</span></button>
+                <button
+                  type="button"
+                  onClick={() => remove('articles', a.slug)}
+                  aria-label={`Remove ${a.title}`}
+                  className="p-1.5 text-[#C1121F]"
+                >
+                  <span
+                    className="material-symbols-outlined text-[20px]"
+                    style={{ fontVariationSettings: "'FILL' 1" }}
+                  >
+                    bookmark
+                  </span>
+                </button>
               </li>
             ))}
           </ul>

@@ -37,8 +37,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ClinicPage({ params }: Props) {
-  const [data, settings] = await Promise.all([load((await params).slug), api.siteSettings().then((r) => r.settings).catch(() => ({}))]);
+  const [data, settings] = await Promise.all([
+    load((await params).slug),
+    api
+      .siteSettings()
+      .then((r) => r.settings)
+      .catch(() => ({})),
+  ]);
   if (!data) notFound();
-  const contact = { phone: (settings as Record<string, string>)['contact-phone'] ?? '', whatsapp: (settings as Record<string, string>)['contact-whatsapp'] ?? '' };
-  return <ClinicProfile facility={data.facility} doctors={data.doctors} interior={image(settings, 'image-clinic-interior')} contact={contact} />;
+  const contact = {
+    phone: (settings as Record<string, string>)['contact-phone'] ?? '',
+    whatsapp: (settings as Record<string, string>)['contact-whatsapp'] ?? '',
+  };
+  return (
+    <ClinicProfile
+      facility={data.facility}
+      doctors={data.doctors}
+      interior={image(settings, 'image-clinic-interior')}
+      contact={contact}
+    />
+  );
 }

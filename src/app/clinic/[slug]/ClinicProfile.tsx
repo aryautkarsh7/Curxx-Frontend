@@ -9,18 +9,47 @@ import ContactButtons from '@/components/profile/ContactButtons';
 import ReportIssue from '@/components/profile/ReportIssue';
 import Toast, { useToast } from '@/components/Toast';
 import NewBadge from '@/components/NewBadge';
-import { api, canBook, doctorPhoto, hasReviews, photo, rupees, type Doctor, type Facility, type Slot } from '@/lib/api';
+import {
+  api,
+  canBook,
+  doctorPhoto,
+  hasReviews,
+  photo,
+  rupees,
+  type Doctor,
+  type Facility,
+  type Slot,
+} from '@/lib/api';
 
 const AMENITY_ICON: Record<string, string> = {
-  '24x7 Pharmacy': 'medication', 'Cashless Insurance Desk': 'credit_card', 'Ambulance Service': 'ambulance', 'Digital Reports': 'description',
-  'Wheelchair Accessible': 'accessible', 'Car Parking': 'local_parking', Cafeteria: 'restaurant', 'Online Payments': 'payments', 'Air-conditioned Waiting': 'ac_unit',
+  '24x7 Pharmacy': 'medication',
+  'Cashless Insurance Desk': 'credit_card',
+  'Ambulance Service': 'ambulance',
+  'Digital Reports': 'description',
+  'Wheelchair Accessible': 'accessible',
+  'Car Parking': 'local_parking',
+  Cafeteria: 'restaurant',
+  'Online Payments': 'payments',
+  'Air-conditioned Waiting': 'ac_unit',
 };
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const mapsUrl = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
-const specialtyLabel = (slug: string) => slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+const mapsUrl = (q: string) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+const specialtyLabel = (slug: string) =>
+  slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
 /** `interior`: the site-wide default photo beside the clinic's own, used when it has no gallery. */
-export default function ClinicProfile({ facility: f, doctors, interior, contact }: { facility: Facility; doctors: Doctor[]; interior: string; contact?: { phone: string; whatsapp: string } }) {
+export default function ClinicProfile({
+  facility: f,
+  doctors,
+  interior,
+  contact,
+}: {
+  facility: Facility;
+  doctors: Doctor[];
+  interior: string;
+  contact?: { phone: string; whatsapp: string };
+}) {
   const router = useRouter();
   const [toast, showToast] = useToast();
   const [dept, setDept] = useState<string | null>(null);
@@ -43,7 +72,10 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
     if (!doctorSlug) return;
     setSlots(null);
     setSlotId(null);
-    api.slots(doctorSlug, 'clinic').then((r) => setSlots(r.slots)).catch(() => setSlots([]));
+    api
+      .slots(doctorSlug, 'clinic')
+      .then((r) => setSlots(r.slots))
+      .catch(() => setSlots([]));
   }, [doctorSlug]);
 
   const slotsByDay = useMemo(() => {
@@ -60,7 +92,8 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
   async function share() {
     const url = window.location.href;
     try {
-      if (navigator.share) await navigator.share({ title: f.name, text: `${f.name}, ${f.area}`, url });
+      if (navigator.share)
+        await navigator.share({ title: f.name, text: `${f.name}, ${f.area}`, url });
       else {
         await navigator.clipboard.writeText(url);
         showToast('Link copied');
@@ -74,136 +107,349 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
     <>
       <Header />
       <main className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-space-md pb-28 lg:pb-space-md">
-        <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-2 text-caption font-caption text-outline mb-space-base">
-          <Link href="/" className="hover:text-primary">Home</Link>
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center flex-wrap gap-2 text-caption font-caption text-outline mb-space-base"
+        >
+          <Link href="/" className="hover:text-primary">
+            Home
+          </Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <Link href={`/${f.city}/${f.type === 'hospital' ? 'hospitals' : 'clinics'}`} className="hover:text-primary">{f.type === 'hospital' ? 'Hospitals' : 'Clinics'}</Link>
+          <Link
+            href={`/${f.city}/${f.type === 'hospital' ? 'hospitals' : 'clinics'}`}
+            className="hover:text-primary"
+          >
+            {f.type === 'hospital' ? 'Hospitals' : 'Clinics'}
+          </Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <span className="text-on-surface font-caption-strong text-caption-strong truncate">{f.name}</span>
+          <span className="text-on-surface font-caption-strong text-caption-strong truncate">
+            {f.name}
+          </span>
         </nav>
 
         {/* GALLERY: the centre's own photos. The stock interior photo only stands in for Curxx's own listings, never an imported one. */}
         {(f.photoUrl || secondPhoto) && (
-        <section className="grid grid-cols-12 gap-3 h-[220px] sm:h-[340px] rounded-2xl overflow-hidden bg-surface-container-lowest border border-[#E7E5E4] shadow-sm mb-space-base">
-          <div className={`col-span-12 ${secondPhoto ? 'sm:col-span-8' : ''} relative overflow-hidden h-full`}>
-            {(f.photoUrl || secondPhoto) && <img className="w-full h-full object-cover" alt={`${f.name} exterior`} src={photo(f.photoUrl || secondPhoto!, 1200)} />}
-            {f.tagline && !f.source && (
-              <div className="absolute bottom-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[#E7E5E4] flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-[18px]">verified</span>
-                <span className="font-caption-strong text-caption-strong text-on-surface">{f.tagline}</span>
+          <section className="grid grid-cols-12 gap-3 h-[220px] sm:h-[340px] rounded-2xl overflow-hidden bg-surface-container-lowest border border-[#E7E5E4] shadow-sm mb-space-base">
+            <div
+              className={`col-span-12 ${secondPhoto ? 'sm:col-span-8' : ''} relative overflow-hidden h-full`}
+            >
+              {(f.photoUrl || secondPhoto) && (
+                <img
+                  className="w-full h-full object-cover"
+                  alt={`${f.name} exterior`}
+                  src={photo(f.photoUrl || secondPhoto!, 1200)}
+                />
+              )}
+              {f.tagline && !f.source && (
+                <div className="absolute bottom-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[#E7E5E4] flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[18px]">
+                    verified
+                  </span>
+                  <span className="font-caption-strong text-caption-strong text-on-surface">
+                    {f.tagline}
+                  </span>
+                </div>
+              )}
+            </div>
+            {f.photoUrl && secondPhoto && (
+              <div className="hidden sm:block col-span-4 h-full overflow-hidden rounded-lg">
+                <img
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                  alt={`${f.shortName} interior`}
+                  src={photo(secondPhoto, 600)}
+                />
               </div>
             )}
-          </div>
-          {f.photoUrl && secondPhoto && (
-            <div className="hidden sm:block col-span-4 h-full overflow-hidden rounded-lg">
-              <img loading="lazy" className="w-full h-full object-cover" alt={`${f.shortName} interior`} src={photo(secondPhoto, 600)} />
-            </div>
-          )}
-        </section>
+          </section>
         )}
 
         {/* HERO */}
         <section className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 sm:p-6 shadow-sm mb-space-lg flex flex-col lg:flex-row lg:items-start justify-between gap-5">
           <div className="space-y-2 min-w-0">
             <div className="flex flex-wrap gap-2">
-              {f.category && <span className="inline-flex items-center gap-1 bg-[#FFF1F2] border border-[#F9C6C9] text-[#8E0E17] text-micro font-micro px-2 py-0.5 rounded-full"><span className="material-symbols-outlined text-[13px]">{f.categoryInfo?.icon ?? 'local_hospital'}</span>{f.category}</span>}
-              {f.nabh && <span className="inline-flex items-center gap-1 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-2 py-0.5 rounded-full"><span className="material-symbols-outlined text-[13px]">shield</span>NABH accredited</span>}
-              {f.emergency24x7 && <span className="inline-flex items-center gap-1 bg-[#EE1C25] text-white text-micro font-micro px-2 py-0.5 rounded-full"><span className="material-symbols-outlined text-[13px]">emergency</span>24x7 emergency</span>}
-              <span className="inline-flex items-center gap-1 bg-surface-container border border-[#E7E5E4] text-on-surface-variant text-micro font-micro px-2 py-0.5 rounded-full capitalize">{f.type}</span>
+              {f.category && (
+                <span className="inline-flex items-center gap-1 bg-[#FFF1F2] border border-[#F9C6C9] text-[#8E0E17] text-micro font-micro px-2 py-0.5 rounded-full">
+                  <span className="material-symbols-outlined text-[13px]">
+                    {f.categoryInfo?.icon ?? 'local_hospital'}
+                  </span>
+                  {f.category}
+                </span>
+              )}
+              {f.nabh && (
+                <span className="inline-flex items-center gap-1 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-2 py-0.5 rounded-full">
+                  <span className="material-symbols-outlined text-[13px]">shield</span>NABH
+                  accredited
+                </span>
+              )}
+              {f.emergency24x7 && (
+                <span className="inline-flex items-center gap-1 bg-[#EE1C25] text-white text-micro font-micro px-2 py-0.5 rounded-full">
+                  <span className="material-symbols-outlined text-[13px]">emergency</span>24x7
+                  emergency
+                </span>
+              )}
+              <span className="inline-flex items-center gap-1 bg-surface-container border border-[#E7E5E4] text-on-surface-variant text-micro font-micro px-2 py-0.5 rounded-full capitalize">
+                {f.type}
+              </span>
             </div>
             <h1 className="text-display font-display text-on-surface tracking-tight">{f.name}</h1>
             <p className="text-body-default font-body-default text-on-surface-variant">
-              {[f.established && `Since ${f.established}`, f.beds > 0 && `${f.beds} beds`, f.departments.length > 0 && `${f.departments.length} ${f.departments.length === 1 ? 'department' : 'departments'}`, doctors.length > 0 && `${doctors.length} ${doctors.length === 1 ? 'doctor' : 'doctors'} on Curxx`].filter(Boolean).join(' · ')}
+              {[
+                f.established && `Since ${f.established}`,
+                f.beds > 0 && `${f.beds} beds`,
+                f.departments.length > 0 &&
+                  `${f.departments.length} ${f.departments.length === 1 ? 'department' : 'departments'}`,
+                doctors.length > 0 &&
+                  `${doctors.length} ${doctors.length === 1 ? 'doctor' : 'doctors'} on Curxx`,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
             </p>
-            <p className="text-caption font-caption text-on-surface-variant flex items-start gap-1"><span className="material-symbols-outlined text-[16px] text-outline">pin_drop</span>{f.address}</p>
+            <p className="text-caption font-caption text-on-surface-variant flex items-start gap-1">
+              <span className="material-symbols-outlined text-[16px] text-outline">pin_drop</span>
+              {f.address}
+            </p>
             {hasReviews(f) ? (
               <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface">
-                <span className="material-symbols-outlined text-amber-500 text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>{f.rating}
-                <span className="text-outline font-caption">({f.reviewCount.toLocaleString('en-IN')} Google reviews)</span>
+                <span
+                  className="material-symbols-outlined text-amber-500 text-[18px]"
+                  style={{ fontVariationSettings: "'FILL' 1" }}
+                >
+                  star
+                </span>
+                {f.rating}
+                <span className="text-outline font-caption">
+                  ({f.reviewCount.toLocaleString('en-IN')} Google reviews)
+                </span>
               </div>
             ) : (
               <NewBadge />
             )}
           </div>
           <div className="flex flex-wrap lg:flex-col gap-2 shrink-0">
-            <ContactButtons className="lg:flex-col" showNumber={Boolean(f.phone)} targetType="facility" slug={f.slug} name={f.name} phones={[f.phone, contact?.phone]} whatsapps={[f.whatsapp, contact?.whatsapp]} message={`Hi, I'd like to know more about ${f.name} (found on Curxx).`} />
-            <a href={mapsUrl(`${f.name} ${f.address}`)} target="_blank" rel="noopener noreferrer" className="h-11 px-4 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong flex items-center gap-1.5 hover:bg-[#FAFAF9]"><span className="material-symbols-outlined text-[18px]">directions</span>Directions</a>
-            <button type="button" onClick={share} className="h-11 px-4 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong flex items-center gap-1.5 hover:bg-[#FAFAF9]"><span className="material-symbols-outlined text-[18px]">share</span>Share</button>
+            <ContactButtons
+              className="lg:flex-col"
+              showNumber={Boolean(f.phone)}
+              targetType="facility"
+              slug={f.slug}
+              name={f.name}
+              phones={[f.phone, contact?.phone]}
+              whatsapps={[f.whatsapp, contact?.whatsapp]}
+              message={`Hi, I'd like to know more about ${f.name} (found on Curxx).`}
+            />
+            <a
+              href={mapsUrl(`${f.name} ${f.address}`)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-11 px-4 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong flex items-center gap-1.5 hover:bg-[#FAFAF9]"
+            >
+              <span className="material-symbols-outlined text-[18px]">directions</span>Directions
+            </a>
+            <button
+              type="button"
+              onClick={share}
+              className="h-11 px-4 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption-strong text-caption-strong flex items-center gap-1.5 hover:bg-[#FAFAF9]"
+            >
+              <span className="material-symbols-outlined text-[18px]">share</span>Share
+            </button>
             <ReportIssue targetType="facility" slug={f.slug} name={f.name} className="px-1 py-1" />
           </div>
         </section>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           <div className="flex-1 min-w-0 space-y-space-lg w-full">
-            <nav aria-label="Sections" className="sticky top-16 z-20 bg-surface border-b border-[#E7E5E4] flex gap-6 overflow-x-auto no-scrollbar py-2">
+            <nav
+              aria-label="Sections"
+              className="sticky top-16 z-20 bg-surface border-b border-[#E7E5E4] flex gap-6 overflow-x-auto no-scrollbar py-2"
+            >
               {/* Only sections the page has: imported centres often have no hours or departments yet. */}
-              {([['overview', 'Overview', true], ['doctors', `Doctors (${doctors.length})`, true], ['timings', 'Timings', Boolean(f.openHours)], ['departments', 'Departments', hasDepartments]] as const).filter(([, , shown]) => shown).map(([id, label]) => (
-                <a key={id} href={`#${id}`} className="text-on-surface-variant hover:text-primary font-body-default text-body-default whitespace-nowrap pb-1">{label}</a>
-              ))}
+              {(
+                [
+                  ['overview', 'Overview', true],
+                  ['doctors', `Doctors (${doctors.length})`, true],
+                  ['timings', 'Timings', Boolean(f.openHours)],
+                  ['departments', 'Departments', hasDepartments],
+                ] as const
+              )
+                .filter(([, , shown]) => shown)
+                .map(([id, label]) => (
+                  <a
+                    key={id}
+                    href={`#${id}`}
+                    className="text-on-surface-variant hover:text-primary font-body-default text-body-default whitespace-nowrap pb-1"
+                  >
+                    {label}
+                  </a>
+                ))}
             </nav>
 
             <section id="overview" className="scroll-mt-32 space-y-4">
               <h2 className="text-headline-h2 font-headline-h2 text-on-surface">About</h2>
-              <p className="text-body-default font-body-default text-on-surface-variant leading-relaxed">{f.about || `${f.name} is a ${(f.category ?? f.type).toLowerCase()}${f.area ? ` in ${f.area}` : ''}.`}</p>
+              <p className="text-body-default font-body-default text-on-surface-variant leading-relaxed">
+                {f.about ||
+                  `${f.name} is a ${(f.category ?? f.type).toLowerCase()}${f.area ? ` in ${f.area}` : ''}.`}
+              </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {f.amenities.map((a) => (
-                  <div key={a} className="p-3 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest flex flex-col gap-2">
-                    <span className="w-9 h-9 rounded-lg bg-[#FFF1F2] text-primary-container flex items-center justify-center"><span className="material-symbols-outlined text-[20px]">{AMENITY_ICON[a] ?? 'check'}</span></span>
-                    <span className="text-caption-strong font-caption-strong text-on-surface">{a}</span>
+                  <div
+                    key={a}
+                    className="p-3 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest flex flex-col gap-2"
+                  >
+                    <span className="w-9 h-9 rounded-lg bg-[#FFF1F2] text-primary-container flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[20px]">
+                        {AMENITY_ICON[a] ?? 'check'}
+                      </span>
+                    </span>
+                    <span className="text-caption-strong font-caption-strong text-on-surface">
+                      {a}
+                    </span>
                   </div>
                 ))}
               </div>
               {f.insurers.length > 0 && (
                 <div className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest">
-                  <h3 className="font-body-strong text-body-strong text-on-surface mb-2">Cashless insurance partners</h3>
+                  <h3 className="font-body-strong text-body-strong text-on-surface mb-2">
+                    Cashless insurance partners
+                  </h3>
                   <div className="flex flex-wrap gap-2">
-                    {f.insurers.map((i) => <span key={i} className="px-2.5 py-1 rounded-full bg-surface-container border border-[#E7E5E4] text-caption font-caption text-on-surface">{i}</span>)}
+                    {f.insurers.map((i) => (
+                      <span
+                        key={i}
+                        className="px-2.5 py-1 rounded-full bg-surface-container border border-[#E7E5E4] text-caption font-caption text-on-surface"
+                      >
+                        {i}
+                      </span>
+                    ))}
                   </div>
                 </div>
               )}
               {f.emergency24x7 && (
                 <div className="p-4 rounded-xl border-2 border-[#EE1C25] bg-[#FFF1F2] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <p className="font-body-strong text-body-strong text-[#1C1917] flex items-center gap-1.5"><span className="material-symbols-outlined text-[#EE1C25]">e911_emergency</span>24x7 emergency department</p>
-                    <p className="font-caption text-caption text-on-surface-variant">Walk in any time. For an ambulance, call 108.</p>
+                    <p className="font-body-strong text-body-strong text-[#1C1917] flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[#EE1C25]">
+                        e911_emergency
+                      </span>
+                      24x7 emergency department
+                    </p>
+                    <p className="font-caption text-caption text-on-surface-variant">
+                      Walk in any time. For an ambulance, call 108.
+                    </p>
                   </div>
-                  <a href="tel:108" className="h-11 px-5 rounded-lg bg-[#EE1C25] text-white font-caption-strong text-caption-strong flex items-center justify-center gap-1.5"><span className="material-symbols-outlined text-[18px]">call</span>Call 108</a>
+                  <a
+                    href="tel:108"
+                    className="h-11 px-5 rounded-lg bg-[#EE1C25] text-white font-caption-strong text-caption-strong flex items-center justify-center gap-1.5"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">call</span>Call 108
+                  </a>
                 </div>
               )}
             </section>
 
             <section id="doctors" className="scroll-mt-32 space-y-4">
-              <h2 className="text-headline-h2 font-headline-h2 text-on-surface">Doctors at {f.shortName}</h2>
+              <h2 className="text-headline-h2 font-headline-h2 text-on-surface">
+                Doctors at {f.shortName}
+              </h2>
               {specialties.length > 1 && (
                 <div className="flex flex-wrap gap-2">
-                  <button type="button" onClick={() => setDept(null)} className={!dept ? 'h-9 px-4 rounded-full bg-[#FFF1F2] border border-primary-container text-primary-container font-caption-strong text-caption' : 'h-9 px-4 rounded-full border border-[#E7E5E4] bg-white text-on-surface font-caption text-caption'}>All</button>
+                  <button
+                    type="button"
+                    onClick={() => setDept(null)}
+                    className={
+                      !dept
+                        ? 'h-9 px-4 rounded-full bg-[#FFF1F2] border border-primary-container text-primary-container font-caption-strong text-caption'
+                        : 'h-9 px-4 rounded-full border border-[#E7E5E4] bg-white text-on-surface font-caption text-caption'
+                    }
+                  >
+                    All
+                  </button>
                   {specialties.map((s) => (
-                    <button key={s} type="button" onClick={() => setDept(s)} className={dept === s ? 'h-9 px-4 rounded-full bg-[#FFF1F2] border border-primary-container text-primary-container font-caption-strong text-caption' : 'h-9 px-4 rounded-full border border-[#E7E5E4] bg-white text-on-surface font-caption text-caption'}>{specialtyLabel(s)}</button>
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setDept(s)}
+                      className={
+                        dept === s
+                          ? 'h-9 px-4 rounded-full bg-[#FFF1F2] border border-primary-container text-primary-container font-caption-strong text-caption'
+                          : 'h-9 px-4 rounded-full border border-[#E7E5E4] bg-white text-on-surface font-caption text-caption'
+                      }
+                    >
+                      {specialtyLabel(s)}
+                    </button>
                   ))}
                 </div>
               )}
               {shownDoctors.length === 0 ? (
-                <p className="text-body-default font-body-default text-on-surface-variant">No doctors from this centre are listed on Curxx yet.</p>
+                <p className="text-body-default font-body-default text-on-surface-variant">
+                  No doctors from this centre are listed on Curxx yet.
+                </p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {shownDoctors.map((d) => (
-                    <div key={d.slug} className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest flex flex-col gap-3">
+                    <div
+                      key={d.slug}
+                      className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest flex flex-col gap-3"
+                    >
                       <div className="flex items-center gap-3">
-                        <img src={doctorPhoto(d.photoUrl, 112)} alt={d.name} loading="lazy" className="w-14 h-14 rounded-full object-cover border border-[#E7E5E4]" />
+                        <img
+                          src={doctorPhoto(d.photoUrl, 112)}
+                          alt={d.name}
+                          loading="lazy"
+                          className="w-14 h-14 rounded-full object-cover border border-[#E7E5E4]"
+                        />
                         <div className="min-w-0">
-                          <Link href={`/doctor/${d.slug}`} className="block font-body-strong text-body-strong text-on-surface hover:text-primary truncate">{d.name}</Link>
-                          <p className="font-caption text-caption text-on-surface-variant truncate">{d.title}</p>
-                          <p className="font-micro text-micro text-outline">{d.experienceYears} yrs{hasReviews(d) ? ` · ${d.recommendPercent}% recommend` : ' · New on Curxx'}</p>
-                          {d.consultHours && <p className="font-micro text-micro text-on-surface-variant">Consults {d.consultHours}</p>}
+                          <Link
+                            href={`/doctor/${d.slug}`}
+                            className="block font-body-strong text-body-strong text-on-surface hover:text-primary truncate"
+                          >
+                            {d.name}
+                          </Link>
+                          <p className="font-caption text-caption text-on-surface-variant truncate">
+                            {d.title}
+                          </p>
+                          <p className="font-micro text-micro text-outline">
+                            {d.experienceYears} yrs
+                            {hasReviews(d)
+                              ? ` · ${d.recommendPercent}% recommend`
+                              : ' · New on Curxx'}
+                          </p>
+                          {d.consultHours && (
+                            <p className="font-micro text-micro text-on-surface-variant">
+                              Consults {d.consultHours}
+                            </p>
+                          )}
                         </div>
                       </div>
-                      {d.nextSlotAt && <p className="font-micro text-micro text-[#8E0E17] bg-[#FFF1F2] border border-[#F9C6C9] rounded px-2 py-1 text-center">Next: {slotLabel(d.nextSlotAt)}</p>}
+                      {d.nextSlotAt && (
+                        <p className="font-micro text-micro text-[#8E0E17] bg-[#FFF1F2] border border-[#F9C6C9] rounded px-2 py-1 text-center">
+                          Next: {slotLabel(d.nextSlotAt)}
+                        </p>
+                      )}
                       <div className="flex items-center justify-between gap-2 mt-auto">
-                        <span className="font-body-strong text-body-strong text-on-surface">{d.feeVerified === false ? 'Approx. ' : ''}{rupees(d.fee)}</span>
+                        <span className="font-body-strong text-body-strong text-on-surface">
+                          {d.feeVerified === false ? 'Approx. ' : ''}
+                          {rupees(d.fee)}
+                        </span>
                         {!canBook(d) ? (
-                          <Link href={`/doctor/${d.slug}#book`} className="h-9 px-3.5 rounded-lg border border-primary-container text-primary-container font-caption-strong text-caption-strong inline-flex items-center">Call / Visit</Link>
+                          <Link
+                            href={`/doctor/${d.slug}#book`}
+                            className="h-9 px-3.5 rounded-lg border border-primary-container text-primary-container font-caption-strong text-caption-strong inline-flex items-center"
+                          >
+                            Call / Visit
+                          </Link>
                         ) : (
-                          <button type="button" onClick={() => { setDoctorSlug(d.slug); document.getElementById('book-opd')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="h-9 px-3.5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong">Book visit</button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDoctorSlug(d.slug);
+                              document
+                                .getElementById('book-opd')
+                                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }}
+                            className="h-9 px-3.5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong"
+                          >
+                            Book visit
+                          </button>
                         )}
                       </div>
                     </div>
@@ -213,68 +459,146 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
             </section>
 
             {f.openHours && (
-            <section id="timings" className="scroll-mt-32 space-y-3">
-              <h2 className="text-headline-h2 font-headline-h2 text-on-surface">Timings</h2>
-              <ul className="rounded-xl border border-[#E7E5E4] bg-surface-container-lowest divide-y divide-[#E7E5E4]">
-                {DAYS.map((d) => (
-                  <li key={d} className={`flex justify-between px-4 py-2.5 font-caption text-caption ${d === today ? 'bg-[#FFF1F2] font-caption-strong text-primary-container' : 'text-on-surface'}`}>
-                    <span>{d}{d === today ? ' (today)' : ''}</span><span>{f.openHours}</span>
-                  </li>
-                ))}
-              </ul>
-              {f.opdHours && f.opdHours !== f.openHours && (
-                <p className="font-caption text-caption text-on-surface-variant">
-                  <span className="font-caption-strong text-on-surface">OPD (doctor consultations):</span> {f.opdHours}. Each doctor’s own consulting hours are shown on their card; bookable slots fall within them.
-                </p>
-              )}
-              {/* Imported records only say "no emergency" by default, so this isn't claimed for them. */}
-              {!open24 && f.emergency24x7 === false && !f.source && <p className="font-caption text-caption text-on-surface-variant">Outpatient centre — no overnight emergency care. <Link href={`/${f.city}/hospitals?emergency=true`} className="text-primary-container underline">Find a 24x7 hospital</Link>.</p>}
-            </section>
+              <section id="timings" className="scroll-mt-32 space-y-3">
+                <h2 className="text-headline-h2 font-headline-h2 text-on-surface">Timings</h2>
+                <ul className="rounded-xl border border-[#E7E5E4] bg-surface-container-lowest divide-y divide-[#E7E5E4]">
+                  {DAYS.map((d) => (
+                    <li
+                      key={d}
+                      className={`flex justify-between px-4 py-2.5 font-caption text-caption ${d === today ? 'bg-[#FFF1F2] font-caption-strong text-primary-container' : 'text-on-surface'}`}
+                    >
+                      <span>
+                        {d}
+                        {d === today ? ' (today)' : ''}
+                      </span>
+                      <span>{f.openHours}</span>
+                    </li>
+                  ))}
+                </ul>
+                {f.opdHours && f.opdHours !== f.openHours && (
+                  <p className="font-caption text-caption text-on-surface-variant">
+                    <span className="font-caption-strong text-on-surface">
+                      OPD (doctor consultations):
+                    </span>{' '}
+                    {f.opdHours}. Each doctor’s own consulting hours are shown on their card;
+                    bookable slots fall within them.
+                  </p>
+                )}
+                {/* Imported records only say "no emergency" by default, so this isn't claimed for them. */}
+                {!open24 && f.emergency24x7 === false && !f.source && (
+                  <p className="font-caption text-caption text-on-surface-variant">
+                    Outpatient centre — no overnight emergency care.{' '}
+                    <Link
+                      href={`/${f.city}/hospitals?emergency=true`}
+                      className="text-primary-container underline"
+                    >
+                      Find a 24x7 hospital
+                    </Link>
+                    .
+                  </p>
+                )}
+              </section>
             )}
 
             {hasDepartments && (
-            <section id="departments" className="scroll-mt-32 space-y-3">
-              <h2 className="text-headline-h2 font-headline-h2 text-on-surface">Departments &amp; services</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {f.departments.length > 0 && (
-                <ul className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest space-y-2">
-                  {f.departments.map((d) => <li key={d} className="flex items-center gap-2 font-caption text-caption text-on-surface"><span className="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>{d}</li>)}
-                </ul>
-                )}
-                {f.services.length > 0 && (
-                <ul className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest space-y-2">
-                  {f.services.map((s) => <li key={s} className="flex items-center gap-2 font-caption text-caption text-on-surface"><span className="material-symbols-outlined text-[16px] text-primary-container">medical_services</span>{s}</li>)}
-                </ul>
-                )}
-              </div>
-            </section>
+              <section id="departments" className="scroll-mt-32 space-y-3">
+                <h2 className="text-headline-h2 font-headline-h2 text-on-surface">
+                  Departments &amp; services
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {f.departments.length > 0 && (
+                    <ul className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest space-y-2">
+                      {f.departments.map((d) => (
+                        <li
+                          key={d}
+                          className="flex items-center gap-2 font-caption text-caption text-on-surface"
+                        >
+                          <span className="material-symbols-outlined text-[16px] text-tertiary">
+                            check_circle
+                          </span>
+                          {d}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {f.services.length > 0 && (
+                    <ul className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest space-y-2">
+                      {f.services.map((s) => (
+                        <li
+                          key={s}
+                          className="flex items-center gap-2 font-caption text-caption text-on-surface"
+                        >
+                          <span className="material-symbols-outlined text-[16px] text-primary-container">
+                            medical_services
+                          </span>
+                          {s}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </section>
             )}
           </div>
 
           {/* OPD BOOKING */}
-          <aside id="book-opd" className="w-full lg:w-[360px] lg:shrink-0 lg:sticky lg:top-24 space-y-4 scroll-mt-24">
+          <aside
+            id="book-opd"
+            className="w-full lg:w-[360px] lg:shrink-0 lg:sticky lg:top-24 space-y-4 scroll-mt-24"
+          >
             <div className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 shadow-sm space-y-4">
-              <h2 className="font-headline-h3 text-headline-h3 text-on-surface">Book an OPD visit</h2>
+              <h2 className="font-headline-h3 text-headline-h3 text-on-surface">
+                Book an OPD visit
+              </h2>
               {bookableDoctors.length === 0 ? (
-                <p className="font-caption text-caption text-on-surface-variant">Online booking isn&apos;t available for this centre yet. Call the front desk to book.</p>
+                <p className="font-caption text-caption text-on-surface-variant">
+                  Online booking isn&apos;t available for this centre yet. Call the front desk to
+                  book.
+                </p>
               ) : (
                 <>
                   <label className="block space-y-1">
-                    <span className="font-caption-strong text-caption-strong text-on-surface">Doctor</span>
-                    <select value={doctorSlug} onChange={(e) => setDoctorSlug(e.target.value)} className="w-full h-11 px-3 rounded-lg border border-[#E7E5E4] bg-white font-body-default text-body-default">
-                      {bookableDoctors.map((d) => <option key={d.slug} value={d.slug}>{d.name} · {specialtyLabel(d.specialty)}</option>)}
+                    <span className="font-caption-strong text-caption-strong text-on-surface">
+                      Doctor
+                    </span>
+                    <select
+                      value={doctorSlug}
+                      onChange={(e) => setDoctorSlug(e.target.value)}
+                      className="w-full h-11 px-3 rounded-lg border border-[#E7E5E4] bg-white font-body-default text-body-default"
+                    >
+                      {bookableDoctors.map((d) => (
+                        <option key={d.slug} value={d.slug}>
+                          {d.name} · {specialtyLabel(d.specialty)}
+                        </option>
+                      ))}
                     </select>
                   </label>
                   {doctor && (
                     <div className="flex items-center justify-between p-3 rounded-lg bg-surface-container-low border border-[#E7E5E4]">
-                      <span className="font-caption text-caption text-on-surface-variant">Consultation fee</span>
-                      <span className="font-body-strong text-body-strong text-on-surface">{rupees(doctor.fee)}</span>
+                      <span className="font-caption text-caption text-on-surface-variant">
+                        Consultation fee
+                      </span>
+                      <span className="font-body-strong text-body-strong text-on-surface">
+                        {rupees(doctor.fee)}
+                      </span>
                     </div>
                   )}
                   {slots === null ? (
-                    <div className="h-28 rounded-lg bg-surface-container-low animate-pulse" aria-busy="true" />
+                    <div
+                      className="h-28 rounded-lg bg-surface-container-low animate-pulse"
+                      aria-busy="true"
+                    />
                   ) : slotsByDay.length === 0 ? (
-                    <p className="font-caption text-caption text-on-surface-variant">No clinic slots in the next few days. <Link href={`/doctor/${doctorSlug}?mode=video`} className="text-primary-container underline">Try a video consult</Link>.</p>
+                    <p className="font-caption text-caption text-on-surface-variant">
+                      No clinic slots in the next few days.{' '}
+                      <Link
+                        href={`/doctor/${doctorSlug}?mode=video`}
+                        className="text-primary-container underline"
+                      >
+                        Try a video consult
+                      </Link>
+                      .
+                    </p>
                   ) : (
                     <>
                       <div className="grid grid-cols-5 gap-1.5">
@@ -282,8 +606,19 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
                           const d = new Date(key);
                           const selected = activeDay?.[0] === key;
                           return (
-                            <button key={key} type="button" onClick={() => { setDayKey(key); setSlotId(null); }} aria-pressed={selected} className={`flex flex-col items-center py-2 rounded-lg border ${selected ? 'border-primary-container bg-[#FFF1F2] text-primary font-semibold' : 'border-[#E7E5E4] bg-surface-container-low'}`}>
-                              <span className="text-micro font-micro">{d.toLocaleDateString('en-IN', { weekday: 'short' })}</span>
+                            <button
+                              key={key}
+                              type="button"
+                              onClick={() => {
+                                setDayKey(key);
+                                setSlotId(null);
+                              }}
+                              aria-pressed={selected}
+                              className={`flex flex-col items-center py-2 rounded-lg border ${selected ? 'border-primary-container bg-[#FFF1F2] text-primary font-semibold' : 'border-[#E7E5E4] bg-surface-container-low'}`}
+                            >
+                              <span className="text-micro font-micro">
+                                {d.toLocaleDateString('en-IN', { weekday: 'short' })}
+                              </span>
                               <span className="font-body-strong text-caption">{d.getDate()}</span>
                             </button>
                           );
@@ -291,17 +626,40 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         {(activeDay?.[1] ?? []).map((s) => (
-                          <button key={s.id} type="button" onClick={() => setSlotId(s.id)} aria-pressed={slotId === s.id} className={slotId === s.id ? 'py-2 rounded-lg border-2 border-primary-container bg-[#FFF1F2] text-primary-container font-caption-strong text-caption' : 'py-2 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption text-caption hover:border-[#1C1917]'}>
-                            {new Date(s.startsAt).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase()}
+                          <button
+                            key={s.id}
+                            type="button"
+                            onClick={() => setSlotId(s.id)}
+                            aria-pressed={slotId === s.id}
+                            className={
+                              slotId === s.id
+                                ? 'py-2 rounded-lg border-2 border-primary-container bg-[#FFF1F2] text-primary-container font-caption-strong text-caption'
+                                : 'py-2 rounded-lg border border-[#E7E5E4] bg-white text-on-surface font-caption text-caption hover:border-[#1C1917]'
+                            }
+                          >
+                            {new Date(s.startsAt)
+                              .toLocaleTimeString('en-IN', {
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                hour12: true,
+                              })
+                              .toUpperCase()}
                           </button>
                         ))}
                       </div>
                     </>
                   )}
-                  <button type="button" disabled={!slotId} onClick={() => router.push(`/book?slot=${slotId}&doctor=${doctorSlug}`)} className="w-full h-12 rounded-lg bg-primary-container hover:bg-[#8E0E17] disabled:bg-[#A8A29E] text-white font-body-strong text-body-strong">
+                  <button
+                    type="button"
+                    disabled={!slotId}
+                    onClick={() => router.push(`/book?slot=${slotId}&doctor=${doctorSlug}`)}
+                    className="w-full h-12 rounded-lg bg-primary-container hover:bg-[#8E0E17] disabled:bg-[#A8A29E] text-white font-body-strong text-body-strong"
+                  >
                     {slotId ? 'Continue to book' : 'Pick a time'}
                   </button>
-                  <p className="font-micro text-micro text-outline text-center">Free cancellation up to 2 hours before your visit</p>
+                  <p className="font-micro text-micro text-outline text-center">
+                    Free cancellation up to 2 hours before your visit
+                  </p>
                 </>
               )}
             </div>

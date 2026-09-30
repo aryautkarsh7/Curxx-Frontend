@@ -15,5 +15,7 @@ export function faqSchema(faqs: Faq[]) {
 
 /** Renders structured data. Next keeps this out of the React tree on the client. */
 export function JsonLd({ data }: { data: object }) {
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
+  return (
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
+  );
 }

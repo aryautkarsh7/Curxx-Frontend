@@ -71,7 +71,10 @@ export default async function ConsultDoctorPickerPage({ params, searchParams }: 
     focus: focus?.slug,
     mode: 'video',
     free: when === 'free' || undefined,
-    availability: when === 'now' ? 'now' : (one(query.availability) as DoctorQuery['availability']) ?? 'next-7-days',
+    availability:
+      when === 'now'
+        ? 'now'
+        : ((one(query.availability) as DoctorQuery['availability']) ?? 'next-7-days'),
     area: one(query.area),
     language: one(query.language),
     maxFee: num(query.maxFee),

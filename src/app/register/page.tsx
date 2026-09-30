@@ -6,7 +6,8 @@ import AuthPage from '../login/AuthPage';
 
 export const metadata: Metadata = {
   title: { absolute: 'Create a Curxx Account — Register in 30 Seconds' },
-  description: 'Register on Curxx with your name and mobile number to book doctors online or in-clinic, order medicines and store your health records.',
+  description:
+    'Register on Curxx with your name and mobile number to book doctors online or in-clinic, order medicines and store your health records.',
   alternates: { canonical: '/register' },
   robots: { index: false, follow: true },
 };

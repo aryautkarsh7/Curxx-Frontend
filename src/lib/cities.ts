@@ -11,7 +11,13 @@ const ALIASES = new Map(CITIES.flatMap((c) => c.aliases.map((a) => [a, c.slug] a
 /** Picker and footer order: cities with a popular order first (set in the admin panel). */
 export const POPULAR_CITIES: string[] = [];
 const sortPopular = () => {
-  POPULAR_CITIES.splice(0, POPULAR_CITIES.length, ...CITIES.filter((c) => (c.popularOrder ?? 0) > 0).sort((a, b) => a.popularOrder! - b.popularOrder!).map((c) => c.slug));
+  POPULAR_CITIES.splice(
+    0,
+    POPULAR_CITIES.length,
+    ...CITIES.filter((c) => (c.popularOrder ?? 0) > 0)
+      .sort((a, b) => a.popularOrder! - b.popularOrder!)
+      .map((c) => c.slug),
+  );
 };
 sortPopular();
 
@@ -39,7 +45,8 @@ export function canonicalCity(slug: string): string | null {
 
 export const getCity = (slug: string) => BY_SLUG.get(canonicalCity(slug) ?? '');
 export const cityName = (slug: string) => getCity(slug)?.name ?? 'Bengaluru';
-export const getLocality = (city: string, locality: string) => getCity(city)?.localities.find((l) => l.slug === locality.toLowerCase());
+export const getLocality = (city: string, locality: string) =>
+  getCity(city)?.localities.find((l) => l.slug === locality.toLowerCase());
 
 /** The nearest city we serve to a coordinate, for "use my location". */
 export function nearestCity(lat: number, lng: number) {

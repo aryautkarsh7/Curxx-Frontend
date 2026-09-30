@@ -37,7 +37,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function MedicinePage({ params }: Props) {
   const data = await load((await params).slug);
   if (!data) notFound();
-  const categories = await api.medicineCategories().then((r) => r.categories).catch(() => []);
+  const categories = await api
+    .medicineCategories()
+    .then((r) => r.categories)
+    .catch(() => []);
   const categoryName = categories.find((c) => c.slug === data.medicine.categories[0])?.name ?? null;
-  return <MedicineDetail medicine={data.medicine} substitutes={data.substitutes} similar={data.similar} categoryName={categoryName} />;
+  return (
+    <MedicineDetail
+      medicine={data.medicine}
+      substitutes={data.substitutes}
+      similar={data.similar}
+      categoryName={categoryName}
+    />
+  );
 }
