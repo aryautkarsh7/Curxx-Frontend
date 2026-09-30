@@ -1,5 +1,14 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Project commands
+
+```bash
+npm run format
+npm run format:check
+npm run lint
+npm run test
+```
+
 ## Getting Started
 
 First, run the development server:
