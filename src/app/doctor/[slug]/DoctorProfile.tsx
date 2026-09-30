@@ -308,7 +308,7 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
                     {facility ? <Link href={`/clinic/${facility.slug}`} className="hover:text-[#C1121F]">{facility.name}</Link> : doctor.clinicName}
                   </h3>
                   <p className="font-caption text-caption text-[#78716C]">{facility?.address ?? `${doctor.area}, ${cityName}`}</p>
-                  {facility && <p className="font-caption text-caption text-[#78716C]">{facility.category ? `${facility.category} · ` : ''}{/^open\b/i.test(facility.openHours) ? facility.openHours : `Open ${facility.openHours}`}{facility.emergency24x7 ? ' · 24x7 emergency' : ''}</p>}
+                  {facility && <p className="font-caption text-caption text-[#78716C]">{[facility.category, facility.openHours && (/^open\b/i.test(facility.openHours) ? facility.openHours : `Open ${facility.openHours}`), facility.emergency24x7 && '24x7 emergency'].filter(Boolean).join(' · ')}</p>}
                   {doctor.consultHours && <p className="font-caption text-caption text-[#78716C]">{firstName} consults here {doctor.consultHours}</p>}
                   <p className="font-caption text-caption text-[#1C1917]">Consultation fee: <strong className="font-body-strong">{approxLabel}{rupees(doctor.fee)}</strong>{doctor.offersVideo !== false ? ` · Video ${rupees(doctor.videoFee)}` : ''}</p>
                   <div className="flex flex-wrap gap-2 pt-2">

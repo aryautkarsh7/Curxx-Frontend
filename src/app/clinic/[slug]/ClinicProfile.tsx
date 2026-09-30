@@ -210,6 +210,7 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
               )}
             </section>
 
+            {f.openHours && (
             <section id="timings" className="scroll-mt-32 space-y-3">
               <h2 className="text-headline-h2 font-headline-h2 text-on-surface">Timings</h2>
               <ul className="rounded-xl border border-[#E7E5E4] bg-surface-container-lowest divide-y divide-[#E7E5E4]">
@@ -224,8 +225,10 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
                   <span className="font-caption-strong text-on-surface">OPD (doctor consultations):</span> {f.opdHours}. Each doctor’s own consulting hours are shown on their card; bookable slots fall within them.
                 </p>
               )}
-              {!open24 && f.emergency24x7 === false && <p className="font-caption text-caption text-on-surface-variant">Outpatient centre — no overnight emergency care. <Link href={`/${f.city}/hospitals?emergency=true`} className="text-primary-container underline">Find a 24x7 hospital</Link>.</p>}
+              {/* Imported records only say "no emergency" by default, so this isn't claimed for them. */}
+              {!open24 && f.emergency24x7 === false && !f.source && <p className="font-caption text-caption text-on-surface-variant">Outpatient centre — no overnight emergency care. <Link href={`/${f.city}/hospitals?emergency=true`} className="text-primary-container underline">Find a 24x7 hospital</Link>.</p>}
             </section>
+            )}
 
             <section id="departments" className="scroll-mt-32 space-y-3">
               <h2 className="text-headline-h2 font-headline-h2 text-on-surface">Departments &amp; services</h2>

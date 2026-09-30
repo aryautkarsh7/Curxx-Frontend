@@ -79,9 +79,11 @@ export function FacilityCard({ f }: { f: Facility }) {
               <span className="material-symbols-outlined text-[16px] text-outline shrink-0">pin_drop</span>{f.address}
             </p>
             <div className="flex flex-wrap items-center gap-2 mt-3">
-              <span className={`inline-flex items-center gap-1 font-caption-strong text-micro px-2 py-1 rounded-md ${open24 ? 'bg-[#ECFDF5] text-[#047857]' : 'bg-[#FAFAF9] border border-[#E7E5E4] text-on-surface'}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${open24 ? 'bg-[#047857]' : 'bg-outline'}`}></span>{open24 ? 'Open 24 hours' : `Open ${f.openHours}`}
-              </span>
+              {f.openHours && (
+                <span className={`inline-flex items-center gap-1 font-caption-strong text-micro px-2 py-1 rounded-md ${open24 ? 'bg-[#ECFDF5] text-[#047857]' : 'bg-[#FAFAF9] border border-[#E7E5E4] text-on-surface'}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${open24 ? 'bg-[#047857]' : 'bg-outline'}`}></span>{open24 ? 'Open 24 hours' : `Open ${f.openHours}`}
+                </span>
+              )}
               {f.opdHours && f.opdHours !== f.openHours && (
                 <span className="inline-flex items-center gap-1 bg-[#FAFAF9] border border-[#E7E5E4] text-on-surface text-micro font-micro px-2 py-1 rounded-md">
                   <span className="material-symbols-outlined text-[14px]">stethoscope</span>OPD {f.opdHours}
