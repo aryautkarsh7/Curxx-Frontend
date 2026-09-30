@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ContactButtons from '@/components/profile/ContactButtons';
-import { rupees, type Doctor, type Slot } from '@/lib/api';
+import { canBook, rupees, type Doctor, type Slot } from '@/lib/api';
 
 /** audio = phone teleconsultation, booked on the doctor's video slots. */
 type Mode = 'clinic' | 'video' | 'audio';
@@ -39,7 +39,7 @@ type Props = {
 const mapsUrl = (q: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 
 export default function BookingWidget(props: Props) {
-  return props.doctor.bookable === false ? <VisitPanel doctor={props.doctor} contact={props.contact} /> : <SlotBooking {...props} />;
+  return !canBook(props.doctor) ? <VisitPanel doctor={props.doctor} contact={props.contact} /> : <SlotBooking {...props} />;
 }
 
 /** Listing-only doctors (no online booking yet): call the clinic or go there. */

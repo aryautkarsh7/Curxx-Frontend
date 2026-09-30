@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { MouseEvent } from 'react';
 import { slotLabel } from '@/components/DoctorCard';
 import NewBadge from '@/components/NewBadge';
-import { doctorPhoto, hasReviews, rupees, type Doctor } from '@/lib/api';
+import { canBook, doctorPhoto, hasReviews, rupees, type Doctor } from '@/lib/api';
 
 /** "MBBS, MD - Dermatology" → "MD", for the verification chip. */
 function degree(qualification: string) {
@@ -65,7 +65,7 @@ export default function HomeDoctorCard({ doctor, onOpen }: { doctor: Doctor; onO
             <span>Next slot: <strong className="text-on-surface">{slotLabel(doctor.nextSlotAt)}</strong></span>
           </div>
         )}
-        {doctor.bookable === false ? (
+        {!canBook(doctor) ? (
           <Link href={`/doctor/${doctor.slug}#book`} className="block py-2.5 px-3 rounded-lg bg-primary-container text-on-primary text-caption-strong font-caption-strong hover:bg-primary transition text-center">
             Call / Visit
           </Link>

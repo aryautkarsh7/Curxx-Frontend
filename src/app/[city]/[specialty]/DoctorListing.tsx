@@ -7,7 +7,7 @@ import ListingFilterGroups, { toChips } from '@/components/ListingFilterGroups';
 import MobileFilterSheet from '@/components/MobileFilterSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import type { DoctorList } from '@/lib/api';
+import { canBook, type DoctorList } from '@/lib/api';
 import { lower } from '@/lib/seo-content';
 
 export type Crumb = { label: string; href?: string };
@@ -33,9 +33,9 @@ type Props = DoctorList & {
 
 const SUBNAV = 'whitespace-nowrap text-on-surface-variant font-body-default text-body-default pb-1 hover:text-primary transition-colors duration-150';
 
-export default function DoctorListing({ city, cityName, place, plural, heading, subheading, resultsHeading, breadcrumbs, lockedArea, emptyAction, intro, children, doctors, total, pages, facets }: Props) {
+export default function DoctorListing({ city, cityName, place, plural, heading, subheading, resultsHeading, breadcrumbs, lockedArea, emptyAction, intro, children, doctors, total, pages, facets, unavailable }: Props) {
   // Promises only when the doctors on the page back them: verified credentials, and refunds or follow-ups on Curxx bookings.
-  const bookableHere = doctors.some((d) => (d.booking ?? (d.bookable === false ? 'none' : 'instant')) !== 'none');
+  const bookableHere = doctors.some(canBook);
   const shield = [
     ...(doctors.length > 0 && doctors.every((d) => d.verified) ? [['verified', '100% Verified Credentials', 'Every doctor’s State Medical Council registration is checked before they go live.']] : []),
     ...(bookableHere
@@ -46,7 +46,9 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
       : []),
   ];
   const { page, sort, filters, setParam, setAvailability, setSort, clearFilters, goToPage, openDoctor } = useListingControls();
-  const pageNumbers = Array.from({ length: Math.min(pages, 5) }, (_, i) => i + 1).filter((n) => n <= pages);
+  // Five page numbers around the current page (big cities have thousands of pages).
+  const firstPage = Math.max(1, Math.min(page - 2, pages - 4));
+  const pageNumbers = Array.from({ length: Math.min(pages, 5) }, (_, i) => firstPage + i);
   const activeChips = toChips(filters);
   const hide = lockedArea ? (['area'] as const) : undefined;
   return (
@@ -131,13 +133,13 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
             {doctors.length === 0 ? (
               <div className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-xl p-8 text-center shadow-sm flex flex-col items-center justify-center">
                 <div className="w-16 h-16 rounded-full bg-[#FFF1F2] border border-[#F9C6C9] flex items-center justify-center mb-4">
-                  <span className="material-symbols-outlined text-[32px] text-[#C1121F]">search_off</span>
+                  <span className="material-symbols-outlined text-[32px] text-[#C1121F]">{unavailable ? 'cloud_off' : 'search_off'}</span>
                 </div>
                 <p className="font-headline-h2 text-headline-h2 text-[#1C1917] tracking-tight">
-                  {activeChips.length ? `No ${lower(plural)} match these filters` : `No ${lower(plural)} listed in ${place} yet`}
+                  {unavailable ? 'Doctor listings are temporarily unavailable' : activeChips.length ? `No ${lower(plural)} match these filters` : `No ${lower(plural)} listed in ${place} yet`}
                 </p>
                 <p className="font-body-default text-body-default text-[#5c403d] max-w-[500px] mt-2 leading-relaxed">
-                  {activeChips.length ? 'Try clearing a filter or two.' : `We're adding ${lower(plural)} to Curxx. Meanwhile, you can see the doctors listed elsewhere.`}
+                  {unavailable ? 'We’re refreshing our doctor directory. Please try again in a few minutes.' : activeChips.length ? 'Try clearing a filter or two.' : `We're adding ${lower(plural)} to Curxx. Meanwhile, you can see the doctors listed elsewhere.`}
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-3 mt-6 w-full max-w-[440px]">
                   {activeChips.length > 0 && (

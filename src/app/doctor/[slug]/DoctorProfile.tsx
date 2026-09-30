@@ -14,7 +14,7 @@ import ContactButtons from '@/components/profile/ContactButtons';
 import ReportIssue from '@/components/profile/ReportIssue';
 import VideoGallery from '@/components/profile/VideoGallery';
 import NewBadge from '@/components/NewBadge';
-import { doctorPhoto, photo, rupees, type ConsultMode, type Doctor, type DoctorDetail, type Facility, type Slot, type Video } from '@/lib/api';
+import { canBook, doctorPhoto, photo, rupees, type ConsultMode, type Doctor, type DoctorDetail, type Facility, type Slot, type Video } from '@/lib/api';
 import { slotLabel } from '@/components/DoctorCard';
 import { doctorProfileContent } from '@/lib/doctor-content';
 import { lower } from '@/lib/seo-content';
@@ -55,7 +55,7 @@ export default function DoctorProfile({ doctor, facility, similar, slots, mode =
   const cityName = doctor.cityName ?? 'Bengaluru';
   const specialtyPlural = doctor.specialtyPlural ?? 'Doctors';
   const firstName = doctor.name.replace(/^Dr\.\s*/, '').split(' ')[0];
-  const bookable = doctor.bookable !== false;
+  const bookable = canBook(doctor);
   const approxLabel = doctor.feeVerified === false ? 'Approx. ' : '';
 
   async function share() {

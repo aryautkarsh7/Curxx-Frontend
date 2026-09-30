@@ -24,7 +24,7 @@ export async function loadDoctors(query: DoctorQuery): Promise<DoctorList> {
   try {
     return await api.doctors(query);
   } catch {
-    return { doctors: [], page: 1, limit: 10, total: 0, pages: 1 };
+    return { doctors: [], page: 1, limit: 10, total: 0, pages: 1, unavailable: true };
   }
 }
 

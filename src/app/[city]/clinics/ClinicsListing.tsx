@@ -34,6 +34,8 @@ type Props = {
   /** Departments offered in this city, most common first (from the API). */
   departments: Facet[];
   query: FacilityQuery;
+  /** The directory (or the API) is down for now: say so instead of "none listed". */
+  unavailable?: boolean;
 };
 
 export function FacilityCard({ f }: { f: Facility }) {
@@ -115,7 +117,10 @@ export function FacilityCard({ f }: { f: Facility }) {
   );
 }
 
-export default function ClinicsListing({ type, city, cityName, categories, items, total, page, pages, areas, departments, query }: Props) {
+export default function ClinicsListing({ type, city, cityName, categories, items, total, page, pages, areas, departments, query, unavailable }: Props) {
+  // Seven page numbers around the current page (big cities have hundreds of pages).
+  const firstPage = Math.max(1, Math.min(page - 3, pages - 6));
+  const pageNumbers = Array.from({ length: Math.min(pages, 7) }, (_, i) => firstPage + i);
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -253,7 +258,12 @@ export default function ClinicsListing({ type, city, cityName, categories, items
             <h2 id="facility-results" className="sr-only">{label} in {cityName}</h2>
             {items.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-[#E7E5E4] bg-surface-container-lowest p-8 text-center">
-                {filtered ? (
+                {unavailable ? (
+                  <>
+                    <p className="text-body-strong font-body-strong text-on-surface">{label} listings are temporarily unavailable</p>
+                    <p className="mt-1 text-body-default font-body-default text-on-surface-variant">We’re refreshing our directory. Please try again in a few minutes.</p>
+                  </>
+                ) : filtered ? (
                   <>
                     <p className="text-body-strong font-body-strong text-on-surface">No {label.toLowerCase()} match these filters</p>
                     <button type="button" onClick={clear} className="mt-3 h-10 px-4 rounded-lg bg-primary-container text-white font-caption-strong text-caption-strong">Clear filters</button>
@@ -269,7 +279,7 @@ export default function ClinicsListing({ type, city, cityName, categories, items
               <nav aria-label="Pagination" className="flex items-center justify-between pt-4 border-t border-[#E7E5E4]">
                 <span className="text-caption font-caption text-outline">Page {page} of {pages}</span>
                 <div className="flex items-center gap-1">
-                  {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
+                  {pageNumbers.map((n) => (
                     <button key={n} type="button" onClick={() => update((p) => (n === 1 ? p.delete('page') : p.set('page', String(n))), true)} aria-current={n === page ? 'page' : undefined} className={n === page ? 'w-9 h-9 rounded-lg bg-primary-container text-white font-caption-strong text-caption-strong' : 'w-9 h-9 rounded-lg border border-[#E7E5E4] text-on-surface font-caption-strong text-caption-strong hover:bg-[#FAFAF9]'}>{n}</button>
                   ))}
                 </div>

@@ -37,6 +37,7 @@ export default async function CityHospitalsPage({ params, searchParams }: Props)
       total={data.total}
       page={data.page}
       pages={data.pages}
+      unavailable={data.unavailable}
       areas={data.facets.areas}
       departments={data.facets.departments ?? []}
       query={query}

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { ApiError, api } from '@/lib/api';
+import { ApiError, api, canBook } from '@/lib/api';
 import { lower } from '@/lib/seo-content';
 import DoctorProfile from './DoctorProfile';
 
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { doctor } = data;
   const title = `${doctor.name} — ${doctor.title} in ${doctor.area}, ${doctor.cityName ?? 'Bengaluru'} | Curxx`;
   // Say only what's true for this doctor: online booking, video, and whether the fee is confirmed.
-  const bookable = (doctor.booking ?? (doctor.bookable === false ? 'none' : 'instant')) !== 'none';
+  const bookable = canBook(doctor);
   const video = doctor.offersVideo !== false;
   const from = video ? Math.min(doctor.fee, doctor.videoFee) : doctor.fee;
   const description = [

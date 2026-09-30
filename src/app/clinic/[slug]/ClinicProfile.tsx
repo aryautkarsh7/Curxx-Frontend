@@ -9,7 +9,7 @@ import ContactButtons from '@/components/profile/ContactButtons';
 import ReportIssue from '@/components/profile/ReportIssue';
 import Toast, { useToast } from '@/components/Toast';
 import NewBadge from '@/components/NewBadge';
-import { api, doctorPhoto, hasReviews, photo, rupees, type Doctor, type Facility, type Slot } from '@/lib/api';
+import { api, canBook, doctorPhoto, hasReviews, photo, rupees, type Doctor, type Facility, type Slot } from '@/lib/api';
 
 const AMENITY_ICON: Record<string, string> = {
   '24x7 Pharmacy': 'medication', 'Cashless Insurance Desk': 'credit_card', 'Ambulance Service': 'ambulance', 'Digital Reports': 'description',
@@ -25,7 +25,7 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
   const [toast, showToast] = useToast();
   const [dept, setDept] = useState<string | null>(null);
   // Listing-only doctors (no online booking) stay out of the OPD panel; their cards link to the profile.
-  const bookableDoctors = useMemo(() => doctors.filter((d) => d.bookable !== false), [doctors]);
+  const bookableDoctors = useMemo(() => doctors.filter(canBook), [doctors]);
   const secondPhoto = f.gallery?.[0] || (f.source ? '' : interior);
   const [doctorSlug, setDoctorSlug] = useState(bookableDoctors[0]?.slug ?? '');
   const [slots, setSlots] = useState<Slot[] | null>(null);
@@ -35,6 +35,7 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
   const shownDoctors = dept ? doctors.filter((d) => d.specialty === dept) : doctors;
   const doctor = doctors.find((d) => d.slug === doctorSlug) ?? null;
   const open24 = f.openHours.toLowerCase().includes('24');
+  const hasDepartments = f.departments.length > 0 || f.services.length > 0;
   const today = new Date().toLocaleDateString('en-IN', { weekday: 'long' });
 
   // In-clinic slots for the chosen doctor, next few days.
@@ -135,14 +136,15 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           <div className="flex-1 min-w-0 space-y-space-lg w-full">
             <nav aria-label="Sections" className="sticky top-16 z-20 bg-surface border-b border-[#E7E5E4] flex gap-6 overflow-x-auto no-scrollbar py-2">
-              {[['overview', 'Overview'], ['doctors', `Doctors (${doctors.length})`], ['timings', 'Timings'], ['departments', 'Departments']].map(([id, label]) => (
+              {/* Only sections the page has: imported centres often have no hours or departments yet. */}
+              {([['overview', 'Overview', true], ['doctors', `Doctors (${doctors.length})`, true], ['timings', 'Timings', Boolean(f.openHours)], ['departments', 'Departments', hasDepartments]] as const).filter(([, , shown]) => shown).map(([id, label]) => (
                 <a key={id} href={`#${id}`} className="text-on-surface-variant hover:text-primary font-body-default text-body-default whitespace-nowrap pb-1">{label}</a>
               ))}
             </nav>
 
             <section id="overview" className="scroll-mt-32 space-y-4">
               <h2 className="text-headline-h2 font-headline-h2 text-on-surface">About</h2>
-              <p className="text-body-default font-body-default text-on-surface-variant leading-relaxed">{f.about}</p>
+              <p className="text-body-default font-body-default text-on-surface-variant leading-relaxed">{f.about || `${f.name} is a ${(f.category ?? f.type).toLowerCase()}${f.area ? ` in ${f.area}` : ''}.`}</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {f.amenities.map((a) => (
                   <div key={a} className="p-3 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest flex flex-col gap-2">
@@ -198,7 +200,7 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
                       {d.nextSlotAt && <p className="font-micro text-micro text-[#8E0E17] bg-[#FFF1F2] border border-[#F9C6C9] rounded px-2 py-1 text-center">Next: {slotLabel(d.nextSlotAt)}</p>}
                       <div className="flex items-center justify-between gap-2 mt-auto">
                         <span className="font-body-strong text-body-strong text-on-surface">{d.feeVerified === false ? 'Approx. ' : ''}{rupees(d.fee)}</span>
-                        {d.bookable === false ? (
+                        {!canBook(d) ? (
                           <Link href={`/doctor/${d.slug}#book`} className="h-9 px-3.5 rounded-lg border border-primary-container text-primary-container font-caption-strong text-caption-strong inline-flex items-center">Call / Visit</Link>
                         ) : (
                           <button type="button" onClick={() => { setDoctorSlug(d.slug); document.getElementById('book-opd')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="h-9 px-3.5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong">Book visit</button>
@@ -230,17 +232,23 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
             </section>
             )}
 
+            {hasDepartments && (
             <section id="departments" className="scroll-mt-32 space-y-3">
               <h2 className="text-headline-h2 font-headline-h2 text-on-surface">Departments &amp; services</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {f.departments.length > 0 && (
                 <ul className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest space-y-2">
                   {f.departments.map((d) => <li key={d} className="flex items-center gap-2 font-caption text-caption text-on-surface"><span className="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>{d}</li>)}
                 </ul>
+                )}
+                {f.services.length > 0 && (
                 <ul className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest space-y-2">
                   {f.services.map((s) => <li key={s} className="flex items-center gap-2 font-caption text-caption text-on-surface"><span className="material-symbols-outlined text-[16px] text-primary-container">medical_services</span>{s}</li>)}
                 </ul>
+                )}
               </div>
             </section>
+            )}
           </div>
 
           {/* OPD BOOKING */}

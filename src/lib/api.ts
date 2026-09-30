@@ -89,6 +89,11 @@ export type Doctor = {
   source?: string;
 };
 
+/** How a doctor can be booked: the API's booking mode (older responses only had `bookable`). */
+export const bookingModeOf = (d: Pick<Doctor, 'booking' | 'bookable'>) => d.booking ?? (d.bookable === false ? 'none' : 'instant');
+/** Online booking (instant or request); otherwise the page offers Call / Visit. */
+export const canBook = (d: Pick<Doctor, 'booking' | 'bookable'>) => bookingModeOf(d) !== 'none';
+
 export type DoctorDetail = Doctor & {
   focusAreaNames: string[];
   specialtyName: string;
@@ -191,6 +196,9 @@ export type SitemapData = {
   medicines: SitemapEntry[];
 };
 export type SitemapEntry = { slug: string; updatedAt: string | null };
+/** GET /seo/sitemap/index: the sitemap without the doctor and hospital lists, which come in parts. */
+export type SitemapIndex = Omit<SitemapData, 'doctors' | 'facilities'> & { partSize: number; counts: { doctors: number; facilities: number } };
+export type SitemapPart = { kind: 'doctors' | 'facilities'; part: number; parts: number; entries: SitemapEntry[] };
 
 export type SurgeryStats = {
   city: { slug: string; name: string } | null;
@@ -708,7 +716,11 @@ export type DoctorQuery = {
   limit?: number;
 };
 
-export type DoctorList = { doctors: Doctor[]; page: number; limit: number; total: number; pages: number; facets?: { areas: Facet[]; languages: Facet[] }; matchedSpecialties?: string[] };
+export type DoctorList = {
+  doctors: Doctor[]; page: number; limit: number; total: number; pages: number; facets?: { areas: Facet[]; languages: Facet[] }; matchedSpecialties?: string[];
+  /** The doctor directory (or the API) is down for now: the list may be incomplete, so the page says so. */
+  unavailable?: boolean;
+};
 
 export type FacilityQuery = {
   city?: string;
@@ -747,6 +759,9 @@ export const api = {
   seoDoctors: (city: string, specialty?: string) => request<DoctorStats>(`/seo/doctors${qs({ city, specialty })}`, cached(300)),
   seoSurgeries: (city: string) => request<SurgeryStats>(`/seo/surgeries${qs({ city })}`, cached(300)),
   sitemap: () => request<SitemapData>('/seo/sitemap', cached(3600)),
+  sitemapIndex: () => request<SitemapIndex>('/seo/sitemap/index', cached(3600)),
+  // A part can pass the 2 MB data-cache limit; the sitemap file that uses it is itself cached for an hour.
+  sitemapPart: (kind: 'doctors' | 'facilities', part: number) => request<SitemapPart>(`/seo/sitemap/${kind}${qs({ part })}`, cached(3600)),
   surgeries: (city: string) => request<{ categories: string[]; city: { slug: string; name: string }; surgeries: SurgerySummary[] }>(`/surgeries${qs({ city })}`, cached(300)),
   surgery: (slug: string, city: string) => request<SurgeryDetail>(`/surgeries/${slug}${qs({ city })}`, cached(300)),
   suggest: (q: string, city: string) => request<Suggestions>(`/search/suggest${qs({ q, city })}`, cached(60)),
@@ -761,7 +776,7 @@ export const api = {
 
   // Catalogue — facilities
   facilities: (query: FacilityQuery = {}) =>
-    request<Paged<Facility> & { city?: string; facets: { areas: Facet[]; departments?: Facet[]; categories?: { value: string; label: string; group: string; icon: string; count: number }[] } }>(`/facilities${qs(query)}`, cached(60)),
+    request<Paged<Facility> & { city?: string; unavailable?: boolean; facets: { areas: Facet[]; departments?: Facet[]; categories?: { value: string; label: string; group: string; icon: string; count: number }[] } }>(`/facilities${qs(query)}`, cached(60)),
   facility: (slug: string) => request<{ facility: Facility; doctors: Doctor[]; similar?: Facility[] }>(`/facilities/${slug}`, cached(60)),
 
   // Catalogue — pharmacy & labs

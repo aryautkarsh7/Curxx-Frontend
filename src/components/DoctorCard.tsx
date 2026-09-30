@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import type { MouseEvent } from 'react';
 import NewBadge from '@/components/NewBadge';
-import { doctorPhoto, hasReviews, rupees, type Doctor, type Slot } from '@/lib/api';
+import { canBook, doctorPhoto, hasReviews, rupees, type Doctor, type Slot } from '@/lib/api';
 
 /** Human label for the next open slot, e.g. "Today, 4:30 PM". */
 export function slotLabel(startsAt: string) {
@@ -109,7 +109,7 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
                 <span>{nextSlot.free ? 'Free · ' : ''}{slotLabel(nextSlot.startsAt)}</span>
               </Link>
             )}
-            {doctor.bookable === false ? (
+            {!canBook(doctor) ? (
               // Listing-only doctors: the profile shows how to call or visit the clinic.
               <Link href={`${href}#book`} className="w-full h-10 bg-[#C1121F] hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong rounded-lg flex items-center justify-center gap-1 transition active:scale-95 shadow-sm">
                 <span className="material-symbols-outlined text-[16px]">call</span>Call / Visit
@@ -119,7 +119,7 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
                 Book Clinic Visit
               </Link>
             )}
-            {doctor.bookable !== false && doctor.offersVideo !== false && (
+            {canBook(doctor) && doctor.offersVideo !== false && (
               <Link href={`${href}?mode=video`} className="w-full h-9 bg-[#FFFFFF] hover:bg-[#FAFAF9] border border-[#C1121F] text-[#C1121F] font-caption-strong text-caption-strong rounded-lg flex items-center justify-center transition active:scale-95">
                 {doctor.freeVideo ? 'Video · Free first' : `Video ${rupees(doctor.videoFee)}`}
               </Link>
