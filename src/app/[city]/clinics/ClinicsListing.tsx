@@ -48,6 +48,7 @@ type Props = {
 
 export function FacilityCard({ f }: { f: Facility }) {
   const open24 = f.openHours.toLowerCase().includes('24');
+  const doctors = f.doctorCount ?? 0;
   return (
     <article className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 hover:shadow-md transition duration-150">
       <div className="flex flex-col md:flex-row gap-5">
@@ -160,15 +161,28 @@ export function FacilityCard({ f }: { f: Facility }) {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 pt-4 border-t border-[#E7E5E4]">
-            <p className="text-caption font-caption text-on-surface-variant">
-              <span className="text-caption-strong font-caption-strong text-primary">
-                {f.doctorCount ?? 0} {f.doctorCount === 1 ? 'doctor' : 'doctors'}
-              </span>{' '}
-              listed on Curxx · <span className="text-on-surface">Specialities:</span>{' '}
-              {f.departments.slice(0, 3).join(', ')}
-              {f.departments.length > 3 ? ` +${f.departments.length - 3}` : ''}
-            </p>
-            <div className="flex items-center gap-2 shrink-0">
+            {/* Only what the centre has: no "0 doctors listed", no empty "Specialities:". */}
+            {(doctors > 0 || f.departments.length > 0) && (
+              <p className="text-caption font-caption text-on-surface-variant">
+                {doctors > 0 && (
+                  <>
+                    <span className="text-caption-strong font-caption-strong text-primary">
+                      {doctors} {doctors === 1 ? 'doctor' : 'doctors'}
+                    </span>{' '}
+                    listed on Curxx
+                  </>
+                )}
+                {doctors > 0 && f.departments.length > 0 && ' · '}
+                {f.departments.length > 0 && (
+                  <>
+                    <span className="text-on-surface">Specialities:</span>{' '}
+                    {f.departments.slice(0, 3).join(', ')}
+                    {f.departments.length > 3 ? ` +${f.departments.length - 3}` : ''}
+                  </>
+                )}
+              </p>
+            )}
+            <div className="flex items-center gap-2 shrink-0 sm:ml-auto">
               <a
                 href={mapsUrl(`${f.name} ${f.address}`)}
                 target="_blank"

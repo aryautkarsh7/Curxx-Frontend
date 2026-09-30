@@ -28,10 +28,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await load((await params).slug);
   if (!data) return {};
   const { facility: f } = data;
+  const doctors = data.doctors.length;
   return {
     title: `${f.name}, ${f.area} — Doctors, Timings & Booking | Curxx`,
-    // Only the parts the record has: imported centres often have no tagline or hours.
-    description: `${[f.tagline, f.openHours, `${data.doctors.length} ${data.doctors.length === 1 ? 'doctor' : 'doctors'} listed on Curxx at ${f.name}, ${f.address}`].filter(Boolean).join('. ')}.`,
+    // Only the parts the record has: imported centres often have no tagline, hours or doctors yet.
+    description: `${[f.tagline, f.openHours, `${doctors ? `${doctors} ${doctors === 1 ? 'doctor' : 'doctors'} listed on Curxx at ` : ''}${f.name}, ${f.address}`].filter(Boolean).join('. ')}.`,
     alternates: { canonical: `/clinic/${f.slug}` },
   };
 }
