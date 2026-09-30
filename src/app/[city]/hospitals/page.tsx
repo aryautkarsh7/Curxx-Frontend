@@ -14,7 +14,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const category = (await searchParams).category;
   const type = FACILITY_TYPES.find((t) => t.slug === category);
   return {
-    title: { absolute: type ? `${type.name}s in ${name} — Book Doctors & Check Timings | Curxx` : `Hospitals in ${name} — 24x7 Emergency, Specialists & Cashless | Curxx` },
+    title: { absolute: type ? `${type.name}s in ${name} — Book Doctors & Check Timings | Curxx` : `Hospitals in ${name} — Doctors, Departments & Timings | Curxx` },
     description: type ? `${type.description} in ${name}: timings, departments, insurers and doctors you can book on Curxx.` : `Compare hospitals in ${name} by type — multispecialty, government, eye, maternity and more — with 24x7 emergency, departments, insurers and doctors you can book online.`,
     alternates: { canonical: `/${canonical}/hospitals${type ? `?category=${type.slug}` : ''}` },
   };

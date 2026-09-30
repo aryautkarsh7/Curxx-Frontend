@@ -569,6 +569,10 @@ export type SiteStats = {
   doctors: number;
   verifiedDoctors: number;
   instantDoctors: number;
+  /** Doctors who consult by video / offer a free first video consult / can be booked online (0 or missing = don't claim it). */
+  videoDoctors?: number;
+  freeVideoDoctors?: number;
+  bookableDoctors?: number;
   facilities: number;
   hospitals: number;
   clinics: number;

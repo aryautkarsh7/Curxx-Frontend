@@ -94,8 +94,15 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
   const rated = stats?.reviews && stats.averageRating ? { average: stats.averageRating, reviews: countLabel(stats.reviews) } : null;
   // "Verified" headings only when every doctor shown was verified by Curxx (imported doctors aren't).
   const verifiedShown = doctors.length > 0 && doctors.every((d) => d.verified);
+  // Video, free-video and online-booking promises only while listed doctors actually offer them.
+  const verifiedWord = stats?.verifiedDoctors ? 'verified ' : '';
+  const offersVideo = (stats?.videoDoctors ?? 0) > 0;
+  const offersFreeVideo = (stats?.freeVideoDoctors ?? 0) > 0;
+  const bookableOnline = (stats?.bookableDoctors ?? 0) > 0;
   const bands = items<Band>(sections, 'home/bands');
-  const services = items<ServiceCard>(sections, 'home/services');
+  const services = items<ServiceCard>(sections, 'home/services').filter(
+    (card) => (offersVideo || !card.href?.startsWith('/consult/video')) && (offersFreeVideo || !/free/i.test(`${card.title} ${card.href ?? ''}`)),
+  );
   const steps = items<Step>(sections, 'home/how-it-works');
   const faqSection = sections['home/faqs'];
   const faqs = items<Faq>(sections, 'home/faqs');
@@ -131,11 +138,13 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
 {/* Headline */}
 <div className="space-y-1">
 <h1 className="text-display font-display text-on-surface">Book India&apos;s Top Doctors, Online or At a Clinic Near You</h1>
-<p className="text-display font-display text-primary-container">Online, in 60 Seconds</p>
+<p className="text-display font-display text-primary-container">{offersVideo ? 'Online, in 60 Seconds' : 'Fees, Timings & Clinics in One Place'}</p>
 </div>
 {/* Subcopy */}
 <p className="text-body-default font-body-default text-on-surface-variant max-w-xl">
-            Connect with verified specialists across {SPECIALTY_COUNT_LABEL} clinical disciplines. Instant video consultations, seamless electronic prescriptions, and doorstep lab diagnostics.
+            {offersVideo
+              ? `Connect with ${verifiedWord}specialists across ${SPECIALTY_COUNT_LABEL} clinical disciplines. Instant video consultations, seamless electronic prescriptions, and doorstep lab diagnostics.`
+              : 'Find doctors near you, compare fees and clinic timings, and order lab tests and medicines to your door.'}
           </p>
 {/* Dual-Field Search Bar Card */}
 <div className="p-2 bg-surface-container-lowest rounded-xl border border-surface-variant shadow-sm flex flex-col sm:flex-row gap-2">
@@ -243,7 +252,9 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
 <section className="bg-surface-container-lowest border-b border-surface-variant">
 <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop py-10 sm:py-12">
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface">One Website for Every Way You See a Doctor</h2>
-<p className="text-body-default font-body-default text-on-surface-variant mt-2 max-w-3xl">Video call a doctor in 60 seconds, or walk into a partner clinic with a confirmed slot — Curxx gives you both, with the same verified doctors, the same digital prescription, and the same health record either way.</p>
+<p className="text-body-default font-body-default text-on-surface-variant mt-2 max-w-3xl">{offersVideo && bookableOnline
+  ? `Video call a doctor in 60 seconds, or walk into a clinic with a confirmed slot — Curxx gives you both, with the same ${verifiedWord}doctors, the same digital prescription, and the same health record either way.`
+  : 'Find a doctor near you, see their fees, timings and clinic, and reach the clinic in one tap. Video consultations and online booking are coming soon.'}</p>
 </div>
 </section>
 </FadeIn>
@@ -258,7 +269,15 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Find &amp; Book Any Doctor — Online or In-Clinic</h2>
 </div>
 <p className="text-body-default font-body-default text-on-surface-variant max-w-md md:text-right">
-            Browse {doctorsPlus ? `${doctorsPlus} ` : ''}verified medical professionals across {SPECIALTY_COUNT_LABEL} specialties on curxx.in. Filter by location, consultation fee, real-time availability, and patient ratings. Every doctor profile has two buttons: <strong className="text-on-surface">Video Consult</strong> for an instant online session, or <strong className="text-on-surface">Clinic Visit</strong> to book a fixed, zero-wait-time slot at their in-person practice.
+            {offersVideo && bookableOnline ? (
+              <>
+                Browse {doctorsPlus ? `${doctorsPlus} ` : ''}{verifiedWord}medical professionals across {SPECIALTY_COUNT_LABEL} specialties on curxx.in. Filter by location, consultation fee, real-time availability, and patient ratings. Every doctor profile has two buttons: <strong className="text-on-surface">Video Consult</strong> for an instant online session, or <strong className="text-on-surface">Clinic Visit</strong> to book a fixed slot at their in-person practice.
+              </>
+            ) : (
+              <>
+                Browse {doctorsListed ? `${doctorsListed} ` : ''}doctors listed on curxx.in and filter by location and consultation fee. Every profile shows the doctor&apos;s clinic, timings and fee, with a <strong className="text-on-surface">Call</strong> button to reach the clinic.
+              </>
+            )}
           </p>
 </div>
 {/* 4 Grid Cards */}
@@ -291,8 +310,10 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
 <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
 <div>
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Near {place}</span>
-<h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Prefer to See a Doctor In Person? Book a Clinic Visit Instantly</h2>
-<p className="text-caption font-caption text-on-surface-variant mt-1">Not every consultation needs to be virtual. Book a confirmed, zero-wait-time appointment at {accredited ? `any of our ${accredited} NABH-accredited clinics and hospitals` : 'clinics and hospitals near you'} — the same verified doctors, the same digital prescription and follow-up, just in person.</p>
+<h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">{bookableOnline ? 'Prefer to See a Doctor In Person? Book a Clinic Visit Instantly' : 'Prefer to See a Doctor In Person? Find a Clinic Near You'}</h2>
+<p className="text-caption font-caption text-on-surface-variant mt-1">{bookableOnline
+  ? `Not every consultation needs to be virtual. Book a confirmed appointment at ${accredited ? `any of our ${accredited} NABH-accredited clinics and hospitals` : 'clinics and hospitals near you'} — the same ${verifiedWord}doctors, the same digital prescription and follow-up, just in person.`
+  : 'Hospitals and clinics near you, with their doctors, timings and directions.'}</p>
 </div>
 <Link href={`/${city}/hospitals`} className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline">
 <span>View all hospitals &amp; clinics</span>
@@ -532,7 +553,7 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Transparent Process</span>
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface">How Curxx Works</h2>
 <p className="text-body-default font-body-default text-on-surface-variant">
-            Three simple steps to verified medical attention without queueing at hospitals.
+            {verifiedWord ? 'Three simple steps to verified medical attention without queueing at hospitals.' : 'Three simple steps to the right doctor.'}
           </p>
 </div>
 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">

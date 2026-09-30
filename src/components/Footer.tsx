@@ -17,7 +17,7 @@ const specialtyLinks = (city: string) => [
 const networkLinks = (city: string) => [
   { label: 'Emergency Care (108)', href: 'tel:108' },
   { label: 'Clinical Specialties', href: `/${city}/specialties` },
-  { label: 'Verified Doctors', href: `/${city}/doctors` },
+  { label: 'Doctors', href: `/${city}/doctors` },
   { label: 'Surgeries', href: `/${city}/surgeries` },
   { label: 'Hospital Network', href: `/${city}/hospitals` },
   { label: 'Clinics Near You', href: `/${city}/clinics` },
