@@ -1,14 +1,11 @@
 /**
- * Is this the public production site? Controls crawling (robots.txt, noindex) and canonical URLs.
- * NODE_ENV can't tell: Vercel builds every deployment, previews included, with NODE_ENV=production.
- * - APP_ENV (production | staging | development) wins when set.
- * - Otherwise Vercel's own VERCEL_ENV decides: only its "production" deployment is production.
- * - Anywhere else (local dev, a plain `next start`) counts as not production.
+ * Is this the public, indexable production site? Controls crawling (robots.txt, noindex).
+ * Only an explicit APP_ENV=production opens the site to search engines; anything else (unset, staging,
+ * development, and every Vercel preview) stays noindex. NODE_ENV can't tell: Vercel builds every
+ * deployment with NODE_ENV=production. Set APP_ENV=production on the Production environment at launch.
  */
 export function isProductionSite() {
-  const app = process.env.APP_ENV?.trim().toLowerCase();
-  if (app) return app === 'production';
-  return process.env.VERCEL_ENV === 'production';
+  return process.env.APP_ENV?.trim().toLowerCase() === 'production';
 }
 
 /** Canonical origin: SITE_URL, then NEXT_PUBLIC_SITE_URL, then the Vercel production domain. */
