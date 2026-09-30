@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ApiError, api } from '@/lib/api';
+import { lower } from '@/lib/seo-content';
 import DoctorProfile from './DoctorProfile';
 
 type Props = {
@@ -26,7 +27,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!data) return {};
   const { doctor } = data;
   const title = `${doctor.name} — ${doctor.title} in ${doctor.area}, ${doctor.cityName ?? 'Bengaluru'} | Curxx`;
-  const description = `Book ${doctor.name}, ${doctor.title.toLowerCase()} at ${doctor.clinicName}, ${doctor.area}. ${doctor.experienceYears} years of experience, consultations from ₹${doctor.videoFee}. Video consult or in-clinic visit on Curxx.`;
+  // Say only what's true for this doctor: online booking, video, and whether the fee is confirmed.
+  const bookable = (doctor.booking ?? (doctor.bookable === false ? 'none' : 'instant')) !== 'none';
+  const video = doctor.offersVideo !== false;
+  const from = video ? Math.min(doctor.fee, doctor.videoFee) : doctor.fee;
+  const description = [
+    `${bookable ? 'Book ' : ''}${doctor.name}, ${lower(doctor.title)} at ${doctor.clinicName}, ${doctor.area}.`,
+    doctor.experienceYears > 0 ? `${doctor.experienceYears} years of experience.` : '',
+    from > 0 ? `Consultation ${doctor.feeVerified === false ? 'approx. ' : 'from '}₹${from.toLocaleString('en-IN')}.` : '',
+    bookable ? (video ? 'Video consult or in-clinic visit on Curxx.' : 'In-clinic visits on Curxx.') : 'Timings, fees and clinic contact on Curxx.',
+  ]
+    .filter(Boolean)
+    // Keep it within 155 characters by dropping whole trailing sentences.
+    .reduce((out, part) => (out && `${out} ${part}`.length > 155 ? out : out ? `${out} ${part}` : part), '');
   return {
     title,
     description,

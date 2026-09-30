@@ -8,6 +8,7 @@ import MobileFilterSheet from '@/components/MobileFilterSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import type { DoctorList } from '@/lib/api';
+import { lower } from '@/lib/seo-content';
 
 export type Crumb = { label: string; href?: string };
 
@@ -25,12 +26,25 @@ type Props = DoctorList & {
   lockedArea?: boolean;
   /** Shown instead of the empty state when this page has no doctors (e.g. a quiet locality). */
   emptyAction?: { href: string; label: string };
+  /** Page copy under the H1 (template H2, stats strip, upper and read-more content). */
+  intro?: ReactNode;
   children?: ReactNode;
 };
 
 const SUBNAV = 'whitespace-nowrap text-on-surface-variant font-body-default text-body-default pb-1 hover:text-primary transition-colors duration-150';
 
-export default function DoctorListing({ city, cityName, place, plural, heading, subheading, resultsHeading, breadcrumbs, lockedArea, emptyAction, children, doctors, total, pages, facets }: Props) {
+export default function DoctorListing({ city, cityName, place, plural, heading, subheading, resultsHeading, breadcrumbs, lockedArea, emptyAction, intro, children, doctors, total, pages, facets }: Props) {
+  // Promises only when the doctors on the page back them: verified credentials, and refunds or follow-ups on Curxx bookings.
+  const bookableHere = doctors.some((d) => (d.booking ?? (d.bookable === false ? 'none' : 'instant')) !== 'none');
+  const shield = [
+    ...(doctors.length > 0 && doctors.every((d) => d.verified) ? [['verified', '100% Verified Credentials', 'Every doctor’s State Medical Council registration is checked before they go live.']] : []),
+    ...(bookableHere
+      ? [
+          ['currency_rupee', 'Zero Wait or Full Refund', 'If the doctor misses your slot, rebook free or get your money back.'],
+          ['chat', 'Free 7-Day Follow-Up', 'Ask your doctor follow-up questions on chat at no extra cost.'],
+        ]
+      : []),
+  ];
   const { page, sort, filters, setParam, setAvailability, setSort, clearFilters, goToPage, openDoctor } = useListingControls();
   const pageNumbers = Array.from({ length: Math.min(pages, 5) }, (_, i) => i + 1).filter((n) => n <= pages);
   const activeChips = toChips(filters);
@@ -76,7 +90,7 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
               <h1 className="font-headline-h1 text-headline-h1 text-[#1C1917] tracking-tight">{heading}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <span className="w-2 h-2 rounded-full bg-[#047857]"></span>
-                <p className="font-caption text-caption text-[#78716C]">{subheading ?? `${total.toLocaleString('en-IN')} verified ${plural.toLowerCase()} available in ${place} · Updated today`}</p>
+                <p className="font-caption text-caption text-[#78716C]">{subheading ?? `${total.toLocaleString('en-IN')} ${lower(plural)} available in ${place} · Updated today`}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -94,6 +108,7 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
               </div>
             </div>
           </div>
+          {intro}
         </div>
       </section>
       {/* ==================== THREE-COLUMN RESULTS LAYOUT ==================== */}
@@ -119,10 +134,10 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
                   <span className="material-symbols-outlined text-[32px] text-[#C1121F]">search_off</span>
                 </div>
                 <p className="font-headline-h2 text-headline-h2 text-[#1C1917] tracking-tight">
-                  {activeChips.length ? `No ${plural.toLowerCase()} match these filters` : `No ${plural.toLowerCase()} listed in ${place} yet`}
+                  {activeChips.length ? `No ${lower(plural)} match these filters` : `No ${lower(plural)} listed in ${place} yet`}
                 </p>
                 <p className="font-body-default text-body-default text-[#5c403d] max-w-[500px] mt-2 leading-relaxed">
-                  {activeChips.length ? 'Try clearing a filter or two.' : `We are adding ${plural.toLowerCase()} here. Doctors elsewhere in ${cityName} can see you, and many consult on video.`}
+                  {activeChips.length ? 'Try clearing a filter or two.' : `We're adding ${lower(plural)} to Curxx. Meanwhile, you can see the doctors listed elsewhere.`}
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-3 mt-6 w-full max-w-[440px]">
                   {activeChips.length > 0 && (
@@ -178,13 +193,10 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
                 Call 108 (24x7 Medical)
               </a>
             </div>
+            {shield.length > 0 && (
             <div className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-xl p-5 space-y-3.5">
               <p className="font-caption-strong text-caption-strong text-[#1C1917] tracking-wider uppercase">Curxx Care Shield</p>
-              {[
-                ['verified', '100% Verified Credentials', 'Every doctor’s State Medical Council registration is checked before they go live.'],
-                ['currency_rupee', 'Zero Wait or Full Refund', 'If the doctor misses your slot, rebook free or get your money back.'],
-                ['chat', 'Free 7-Day Follow-Up', 'Ask your doctor follow-up questions on chat at no extra cost.'],
-              ].map(([icon, title, body]) => (
+              {shield.map(([icon, title, body]) => (
                 <div key={title} className="flex items-start gap-2.5">
                   <span className="material-symbols-outlined text-[20px] text-[#047857] mt-0.5" style={icon === 'verified' ? { fontVariationSettings: "'FILL' 1" } : undefined}>{icon}</span>
                   <div>
@@ -194,11 +206,12 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
                 </div>
               ))}
             </div>
+            )}
           </aside>
         </div>
       </main>
       {children}
-      <MobileFilterSheet filters={filters} activeChips={activeChips} total={total} noun={plural.toLowerCase()} setParam={setParam} setAvailability={setAvailability} clearFilters={clearFilters} hide={hide ? [...hide] : undefined} areas={facets?.areas} languages={facets?.languages} />
+      <MobileFilterSheet filters={filters} activeChips={activeChips} total={total} noun={lower(plural)} setParam={setParam} setAvailability={setAvailability} clearFilters={clearFilters} hide={hide ? [...hide] : undefined} areas={facets?.areas} languages={facets?.languages} />
       <Footer />
     </>
   );

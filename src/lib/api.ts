@@ -5,7 +5,14 @@
  */
 import type { CityInfo, ConditionInfo, FacilityTypeInfo, SpecialtyInfo, SurgeryInfo } from './catalogue-data';
 
-const BASE = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1').replace(/\/$/, '');
+const CONFIGURED_API = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1').replace(/\/$/, '');
+/**
+ * Vercel preview deployments (staging branches) must never read or write live data: if a preview is
+ * built with the production API URL (e.g. a variable scoped to all environments), it gets an address
+ * that never answers instead. Set NEXT_PUBLIC_API_URL for Preview to the staging API.
+ */
+const IS_PREVIEW = (process.env.VERCEL_ENV ?? process.env.NEXT_PUBLIC_VERCEL_ENV) === 'preview';
+const BASE = IS_PREVIEW && CONFIGURED_API.includes('crux-backend-production') ? 'https://staging-api-not-configured.invalid/api/v1' : CONFIGURED_API;
 
 export const TOKEN_KEY = 'curxx_token';
 
@@ -72,6 +79,14 @@ export type Doctor = {
   /** Direct numbers for the Call / WhatsApp buttons (empty = the clinic's, then Curxx's). */
   phone?: string;
   whatsapp?: string;
+  /** False = listing only (no online booking): the profile offers Call / Visit instead. Missing = bookable. */
+  bookable?: boolean;
+  /** False when the fee is an estimate rather than confirmed by the doctor — shown as "Approx.". */
+  feeVerified?: boolean;
+  /** instant (book & pay) · request (send a request) · none (Call / Visit). From the API. */
+  booking?: 'instant' | 'request' | 'none';
+  /** Where an imported profile came from ("doctar"); empty for Curxx's own. */
+  source?: string;
 };
 
 export type DoctorDetail = Doctor & {
@@ -81,6 +96,10 @@ export type DoctorDetail = Doctor & {
   cityName: string;
   services: (SubSpecialty & { focus: boolean })[];
   reviewSummary: { average: number; total: number };
+  /** Weekly hours grouped by day, e.g. [{ days: 'Mon–Fri', hours: ['9:00 AM – 1:00 PM'] }]. Empty when unknown. */
+  timings?: { days: string; dayCount: number; hours: string[]; allDay: boolean }[];
+  /** Hand-written in the admin panel: its own About text wins over the generated one. */
+  managed?: boolean;
 };
 
 export type SubSpecialty = { slug: string; name: string; description: string; icon: string };
@@ -109,6 +128,92 @@ export type Specialty = {
 export type Slot = { id: string; startsAt: string; mode: 'clinic' | 'video'; fee: number; free?: boolean };
 
 export type Faq = { question: string; answer: string };
+
+/** A fee range; `approx` when a fee the doctor hasn't confirmed sets either end. */
+export type FeeRange = { min: number; max: number; approx: boolean };
+
+/** Live figures behind the dynamic SEO copy (GET /seo/doctors). Dates are ISO strings. */
+export type DoctorStats = {
+  scope: {
+    city: { slug: string; name: string } | null;
+    specialty: { slug: string; name: string; plural: string; conditions: string[]; whenToSee: string[] } | null;
+  };
+  total: number;
+  bookableCount: number;
+  clinicCount: number;
+  videoCount: number;
+  clinicOnlyCount: number;
+  freeVideoCount: number;
+  todayCount: number;
+  clinicTodayCount: number;
+  videoTodayCount: number;
+  clinicFee: FeeRange | null;
+  videoFee: FeeRange | null;
+  earliest: string | null;
+  avgExperience: number | null;
+  reviewCount: number;
+  avgRating: number | null;
+  specialtyCount: number;
+  cityCount: number;
+  clinicCityCount: number;
+  smallCityCount: number;
+  specialties: { slug: string; name: string; plural: string; count: number; cityCount: number; clinicFee: FeeRange | null; videoFee: FeeRange | null; earliest: string | null }[];
+  cities: { slug: string; name: string; count: number; clinicFee: FeeRange | null; videoFee: FeeRange | null; earliest: string | null }[];
+  areas: { name: string; slug: string | null; count: number; clinicFee: FeeRange | null }[];
+  languages: { name: string; count: number }[];
+  feeBands: { label: string; count: number; setting: string | null }[];
+  topDoctors: {
+    slug: string; name: string; city: string; cityName: string; area: string; experienceYears: number; rating: number | null; reviewCount: number;
+    fee: number | null; videoFee: number | null; feeApprox: boolean; next: string | null;
+  }[];
+};
+
+/** Live figures behind the surgery pages (GET /seo/surgeries). */
+/** GET /seo/sitemap: pages with real content only (no listings without doctors, no hidden sample data). */
+export type SitemapData = {
+  cities: {
+    slug: string;
+    doctors: number;
+    specialties: string[];
+    /** "doctors" or a specialty → locality slugs that have doctors. */
+    localities: Record<string, string[]>;
+    conditions: string[];
+    hospitals: number;
+    clinics: number;
+    /** Surgery slugs, only for cities whose surgery pages pass the index rule. */
+    surgeries: string[];
+  }[];
+  india: { doctors: number; specialties: string[] };
+  doctors: SitemapEntry[];
+  facilities: SitemapEntry[];
+  articles: SitemapEntry[];
+  labTests: SitemapEntry[];
+  medicines: SitemapEntry[];
+};
+export type SitemapEntry = { slug: string; updatedAt: string | null };
+
+export type SurgeryStats = {
+  city: { slug: string; name: string } | null;
+  hospitalCount: number;
+  surgeonCount: number;
+  procedureCount: number;
+  categoryCount: number;
+  minCost: number | null;
+  maxCost: number | null;
+  cheapest: string | null;
+  priciest: string | null;
+  costBands: { label: string; count: number }[];
+  shortStayCount: number;
+  daycareCount: number;
+  daycare: { slug: string; name: string }[];
+  hospitals: { slug: string; name: string; area: string; city: string; surgeons: number; departments: string[]; nabh: boolean; beds: number | null }[];
+  areas: { name: string; count: number }[];
+  surgeonTable: { slug: string; count: number; avgExperience: number | null }[];
+  cities: { slug: string; name: string; hospitals: number; surgeons: number }[];
+  cityCount: number;
+  directory: { category: string; procedures: string[] }[];
+  indexable: boolean;
+};
 export type LinkCount = { slug: string; name: string; count: number };
 
 /** SEO content for a specialty listing, specific to specialty × city × locality. */
@@ -123,7 +228,7 @@ export type SpecialtyContent = {
   conditions: string[];
   whenToSee: string[];
   faqs: Faq[];
-  topDoctors: { slug: string; name: string; experienceYears: number; rating: number; reviewCount: number; area: string; fee: number }[];
+  topDoctors: { slug: string; name: string; experienceYears: number; rating: number; reviewCount: number; area: string; fee: number; feeVerified?: boolean }[];
   facilities: { slug: string; name: string; area: string; type: 'hospital' | 'clinic' }[];
   localities: LinkCount[];
   otherCities: LinkCount[];
@@ -249,6 +354,8 @@ export type Facility = {
   gallery?: string[];
   doctorCount?: number;
   whatsapp?: string;
+  /** Where an imported record came from ("doctar"); empty for Curxx's own. Curxx hasn't verified imports. */
+  source?: string;
 };
 
 export type Medicine = {
@@ -633,6 +740,9 @@ export const api = {
   cities: () => request<{ cities: { slug: string; name: string; state: string; tier: number; doctorCount: number; localities: { slug: string; name: string; pincode: string }[] }[] }>('/cities', cached(600)),
   conditions: () => request<{ conditions: { slug: string; name: string; specialty: string; summary: string; popular: string | null }[] }>('/conditions', cached(600)),
   condition: (slug: string, city: string) => request<ConditionDetail>(`/conditions/${slug}${qs({ city })}`, cached(300)),
+  seoDoctors: (city: string, specialty?: string) => request<DoctorStats>(`/seo/doctors${qs({ city, specialty })}`, cached(300)),
+  seoSurgeries: (city: string) => request<SurgeryStats>(`/seo/surgeries${qs({ city })}`, cached(300)),
+  sitemap: () => request<SitemapData>('/seo/sitemap', cached(3600)),
   surgeries: (city: string) => request<{ categories: string[]; city: { slug: string; name: string }; surgeries: SurgerySummary[] }>(`/surgeries${qs({ city })}`, cached(300)),
   surgery: (slug: string, city: string) => request<SurgeryDetail>(`/surgeries/${slug}${qs({ city })}`, cached(300)),
   suggest: (q: string, city: string) => request<Suggestions>(`/search/suggest${qs({ q, city })}`, cached(60)),
@@ -743,6 +853,13 @@ export const api = {
 
 /** lh3 portrait URLs take a `=w<px>` size suffix; keep requests as small as they render. Other URLs are used as they are. */
 export const photo = (url: string, width: number) => (!url ? '' : url.includes('googleusercontent.com/') && !/=w\d+$/.test(url) ? `${url}=w${width}` : url);
+
+/** Shown for doctors without a photo, so a portrait is never an empty <img src>. */
+export const DOCTOR_PLACEHOLDER = '/images/doctor-placeholder.svg';
+export const doctorPhoto = (url: string | null | undefined, width: number) => (url ? photo(url, width) : DOCTOR_PLACEHOLDER);
+
+/** Ratings mean something only once there are reviews; before that a "New" badge shows instead. */
+export const hasReviews = (r: { reviewCount?: number | null }) => (r.reviewCount ?? 0) > 0;
 
 export const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN')}`;
 

@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
 import type { MouseEvent } from 'react';
-import { photo, rupees, type Doctor, type Slot } from '@/lib/api';
+import NewBadge from '@/components/NewBadge';
+import { doctorPhoto, hasReviews, rupees, type Doctor, type Slot } from '@/lib/api';
 
 /** Human label for the next open slot, e.g. "Today, 4:30 PM". */
 export function slotLabel(startsAt: string) {
@@ -36,7 +37,7 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
             decoding="async"
             alt={`${doctor.name}, ${doctor.title}`}
             className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]"
-            src={photo(doctor.photoUrl, 176)}
+            src={doctorPhoto(doctor.photoUrl, 176)}
           />
           {doctor.verified && (
             <span className="absolute bottom-0 right-0 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] rounded-full p-0.5 flex items-center justify-center shadow-sm">
@@ -80,18 +81,25 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
               )}
             </div>
           )}
-          <div className="flex items-center gap-1.5 mt-3 text-[#047857] font-caption-strong text-caption-strong">
-            <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>thumb_up</span>
-            <span>{doctor.recommendPercent}%</span>
-            <span className="text-[#78716C] font-caption text-caption">({doctor.reviewCount.toLocaleString('en-IN')} Patient Stories)</span>
-          </div>
+          {hasReviews(doctor) ? (
+            <div className="flex items-center gap-1.5 mt-3 text-[#047857] font-caption-strong text-caption-strong">
+              <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>thumb_up</span>
+              <span>{doctor.recommendPercent}%</span>
+              <span className="text-[#78716C] font-caption text-caption">({doctor.reviewCount.toLocaleString('en-IN')} Patient Stories)</span>
+            </div>
+          ) : (
+            <NewBadge className="mt-3" />
+          )}
         </div>
 
         {/* Right Rail (Price & Booking) */}
         <div className="w-full sm:w-40 flex flex-row sm:flex-col justify-between items-end sm:border-l border-[#E7E5E4] sm:pl-4 pt-3 sm:pt-0 border-t sm:border-t-0 gap-3">
           <div className="text-left sm:text-right">
             <span className="font-caption text-caption text-[#78716C] block">Consultation fee</span>
-            <div className="font-headline-h2 text-headline-h2 text-[#1C1917] font-bold">{rupees(doctor.fee)}</div>
+            <div className="font-headline-h2 text-headline-h2 text-[#1C1917] font-bold">
+              {doctor.feeVerified === false && <span className="font-caption text-caption text-[#78716C] font-normal mr-1">Approx.</span>}
+              {rupees(doctor.fee)}
+            </div>
           </div>
           <div className="w-full max-w-[180px] sm:max-w-none space-y-2 sm:mt-3">
             {nextSlot && (
@@ -101,10 +109,17 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
                 <span>{nextSlot.free ? 'Free · ' : ''}{slotLabel(nextSlot.startsAt)}</span>
               </Link>
             )}
-            <Link href={`${href}?mode=clinic`} className="w-full h-10 bg-[#C1121F] hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong rounded-lg flex items-center justify-center transition active:scale-95 shadow-sm">
-              Book Clinic Visit
-            </Link>
-            {doctor.offersVideo !== false && (
+            {doctor.bookable === false ? (
+              // Listing-only doctors: the profile shows how to call or visit the clinic.
+              <Link href={`${href}#book`} className="w-full h-10 bg-[#C1121F] hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong rounded-lg flex items-center justify-center gap-1 transition active:scale-95 shadow-sm">
+                <span className="material-symbols-outlined text-[16px]">call</span>Call / Visit
+              </Link>
+            ) : (
+              <Link href={`${href}?mode=clinic`} className="w-full h-10 bg-[#C1121F] hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong rounded-lg flex items-center justify-center transition active:scale-95 shadow-sm">
+                Book Clinic Visit
+              </Link>
+            )}
+            {doctor.bookable !== false && doctor.offersVideo !== false && (
               <Link href={`${href}?mode=video`} className="w-full h-9 bg-[#FFFFFF] hover:bg-[#FAFAF9] border border-[#C1121F] text-[#C1121F] font-caption-strong text-caption-strong rounded-lg flex items-center justify-center transition active:scale-95">
                 {doctor.freeVideo ? 'Video · Free first' : `Video ${rupees(doctor.videoFee)}`}
               </Link>

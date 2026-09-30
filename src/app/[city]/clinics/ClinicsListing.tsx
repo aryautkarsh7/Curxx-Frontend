@@ -4,7 +4,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import FilterPillSheet from '@/components/FilterPillSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import { photo, type Facet, type Facility, type FacilityQuery } from '@/lib/api';
+import NewBadge from '@/components/NewBadge';
+import { hasReviews, photo, type Facet, type Facility, type FacilityQuery } from '@/lib/api';
 
 const SORTS = [
   { value: 'rating', label: 'Rating (highest first)' },
@@ -57,18 +58,22 @@ export function FacilityCard({ f }: { f: Facility }) {
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-headline-h2 font-headline-h2 text-on-surface"><Link href={`/clinic/${f.slug}`} className="hover:text-primary transition-colors">{f.name}</Link></h3>
-                  <span className="inline-flex items-center gap-1 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-2 py-0.5 rounded-full"><span className="material-symbols-outlined text-[13px]">verified</span>Verified</span>
+                  {!f.source && <span className="inline-flex items-center gap-1 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] text-micro font-micro px-2 py-0.5 rounded-full"><span className="material-symbols-outlined text-[13px]">verified</span>Verified</span>}
                 </div>
                 <p className="text-caption-strong font-caption-strong text-outline mt-0.5">
                   {f.category && <span className="inline-flex items-center gap-1 mr-1.5 px-2 py-0.5 rounded-full bg-[#FFF1F2] border border-[#F9C6C9] text-[#8E0E17] text-micro font-micro align-middle">{f.category}</span>}
                   {f.tagline} · {f.area}
                 </p>
               </div>
-              <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface shrink-0">
-                <span className="material-symbols-outlined text-amber-500 text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                <span>{f.rating}</span>
-                <span className="text-outline font-caption">({f.reviewCount.toLocaleString('en-IN')} reviews)</span>
-              </div>
+              {hasReviews(f) ? (
+                <div className="flex items-center gap-1 text-caption-strong font-caption-strong text-on-surface shrink-0">
+                  <span className="material-symbols-outlined text-amber-500 text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                  <span>{f.rating}</span>
+                  <span className="text-outline font-caption">({f.reviewCount.toLocaleString('en-IN')} reviews)</span>
+                </div>
+              ) : (
+                <NewBadge className="shrink-0" />
+              )}
             </div>
             <p className="text-caption font-caption text-on-surface-variant flex items-start gap-1 mt-2">
               <span className="material-symbols-outlined text-[16px] text-outline shrink-0">pin_drop</span>{f.address}
@@ -91,7 +96,7 @@ export function FacilityCard({ f }: { f: Facility }) {
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 pt-4 border-t border-[#E7E5E4]">
             <p className="text-caption font-caption text-on-surface-variant">
-              <span className="text-caption-strong font-caption-strong text-primary">{f.doctorCount ?? 0} {f.doctorCount === 1 ? 'doctor' : 'doctors'}</span> bookable on Curxx · <span className="text-on-surface">Specialities:</span> {f.departments.slice(0, 3).join(', ')}{f.departments.length > 3 ? ` +${f.departments.length - 3}` : ''}
+              <span className="text-caption-strong font-caption-strong text-primary">{f.doctorCount ?? 0} {f.doctorCount === 1 ? 'doctor' : 'doctors'}</span> listed on Curxx · <span className="text-on-surface">Specialities:</span> {f.departments.slice(0, 3).join(', ')}{f.departments.length > 3 ? ` +${f.departments.length - 3}` : ''}
             </p>
             <div className="flex items-center gap-2 shrink-0">
               <a href={mapsUrl(`${f.name} ${f.address}`)} target="_blank" rel="noopener noreferrer" className="px-3.5 py-2 border border-[#E7E5E4] rounded-lg text-caption-strong font-caption-strong text-on-surface hover:bg-[#FAFAF9] flex items-center gap-1.5">
@@ -136,6 +141,8 @@ export default function ClinicsListing({ type, city, cityName, categories, items
     query.department && { key: 'department', label: query.department },
     query.q && { key: 'q', label: `“${query.q}”` },
   ].filter(Boolean) as { key: string; label: string }[];
+  // Nothing listed in the city at all (not just filtered out) gets its own empty state.
+  const filtered = chips.length > 0;
 
   const filters = (
     <div className="space-y-5">
@@ -207,16 +214,13 @@ export default function ClinicsListing({ type, city, cityName, categories, items
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
             <span className="font-caption-strong text-caption-strong text-on-surface">{label}</span>
           </nav>
-          <div className="hidden sm:flex items-center gap-2 text-micro font-micro text-tertiary bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-1 rounded-full">
-            <span className="material-symbols-outlined text-[14px]">verified</span><span>Verified directory · ABDM-linked records</span>
-          </div>
         </div>
       </div>
       <main className="flex-1 w-full max-w-[1440px] mx-auto px-margin sm:px-margin-desktop py-space-base pb-28 lg:pb-space-base">
         <div className="flex flex-col md:flex-row md:items-end justify-between pb-6 gap-4 border-b border-[#E7E5E4]">
           <div>
             <h1 className="text-headline-h1 font-headline-h1 text-on-surface tracking-tight">{query.category ? `${categories.find((c) => c.value === query.category)?.label ?? label}s` : label} in {cityName}</h1>
-            <p className="text-caption font-caption text-on-surface-variant mt-1">{total} verified {total === 1 ? label.toLowerCase().replace(/s$/, '') : label.toLowerCase()} · sorted by {SORTS.find((s) => s.value === (query.sort ?? 'rating'))!.label.toLowerCase()}</p>
+            <p className="text-caption font-caption text-on-surface-variant mt-1">{total} {total === 1 ? label.toLowerCase().replace(/s$/, '') : label.toLowerCase()} · sorted by {SORTS.find((s) => s.value === (query.sort ?? 'rating'))!.label.toLowerCase()}</p>
             <div className="flex gap-2 mt-3">
               {(['hospital', 'clinic'] as const).map((t) => (
                 <Link key={t} href={`/${city}/${t === 'hospital' ? 'hospitals' : 'clinics'}`} aria-current={t === type ? 'page' : undefined} className={`px-3 py-1.5 rounded-full border text-caption-strong font-caption-strong transition ${t === type ? 'bg-[#FFF1F2] border-[#F9C6C9] text-[#D92D3A]' : 'bg-[#FAFAF9] border-[#E7E5E4] text-[#78716C] hover:border-outline'}`}>{t === 'hospital' ? 'Hospitals' : 'Clinics'}</Link>
@@ -247,8 +251,14 @@ export default function ClinicsListing({ type, city, cityName, categories, items
             <h2 id="facility-results" className="sr-only">{label} in {cityName}</h2>
             {items.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-[#E7E5E4] bg-surface-container-lowest p-8 text-center">
-                <p className="text-body-strong font-body-strong text-on-surface">No {label.toLowerCase()} match these filters</p>
-                <button type="button" onClick={clear} className="mt-3 h-10 px-4 rounded-lg bg-primary-container text-white font-caption-strong text-caption-strong">Clear filters</button>
+                {filtered ? (
+                  <>
+                    <p className="text-body-strong font-body-strong text-on-surface">No {label.toLowerCase()} match these filters</p>
+                    <button type="button" onClick={clear} className="mt-3 h-10 px-4 rounded-lg bg-primary-container text-white font-caption-strong text-caption-strong">Clear filters</button>
+                  </>
+                ) : (
+                  <p className="text-body-strong font-body-strong text-on-surface">No {label.toLowerCase()} listed in {cityName} yet</p>
+                )}
               </div>
             ) : (
               items.map((f) => <FacilityCard key={f.slug} f={f} />)

@@ -62,7 +62,7 @@ export default function ListingSeoContent({ content, basePath }: Props) {
                   {content.topDoctors.map((d) => (
                     <li key={d.slug}>
                       <Link href={`/doctor/${d.slug}`} className="font-caption-strong text-caption-strong hover:text-[#C1121F]">{d.name}</Link>
-                      <span className="text-[#78716C]"> — {d.experienceYears} yrs experience · {d.rating.toFixed(1)}★ ({d.reviewCount} reviews) · {d.area} · ₹{d.fee.toLocaleString('en-IN')}</span>
+                      <span className="text-[#78716C]"> — {d.experienceYears} yrs experience · {d.rating.toFixed(1)}★ ({d.reviewCount} reviews) · {d.area} · {d.feeVerified === false ? 'approx. ' : ''}₹{d.fee.toLocaleString('en-IN')}</span>
                     </li>
                   ))}
                 </ol>
@@ -77,7 +77,8 @@ export default function ListingSeoContent({ content, basePath }: Props) {
   );
 }
 
-function InternalLinks({ content, basePath, localities, cityName }: { content: SpecialtyContent; basePath: string; localities: SpecialtyContent['localities']; cityName: string }) {
+/** "Find … near you" link grids: other localities, other cities, related specialties, treatments. */
+export function InternalLinks({ content, basePath, localities, cityName }: { content: SpecialtyContent; basePath: string; localities: SpecialtyContent['localities']; cityName: string }) {
   const { specialty, city } = content;
   const plural = specialty.plural;
   return (
@@ -113,6 +114,9 @@ function InternalLinks({ content, basePath, localities, cityName }: { content: S
                   {plural} in {c.name}
                 </Link>
               ))}
+              <Link className={LINK} href={`/india/${specialty.slug}`}>
+                {plural} across India
+              </Link>
             </div>
           </div>
         )}
@@ -153,8 +157,8 @@ function InternalLinks({ content, basePath, localities, cityName }: { content: S
 /** Generic FAQs for the all-doctors page, where there is no single specialty. */
 export function allDoctorsFaqs(cityName: string, total: number): Faq[] {
   return [
-    { question: `How do I book a doctor in ${cityName} on Curxx?`, answer: `Search by specialty, symptom or doctor name, compare ${total.toLocaleString('en-IN')} verified doctors in ${cityName} by fee, experience and rating, then pick a clinic visit or video slot on the doctor’s profile. You get an instant confirmation by SMS.` },
-    { question: 'Are the doctors on Curxx verified?', answer: 'Yes. Every doctor’s medical registration is checked against the State Medical Council register, along with their degrees and clinic details, before their profile goes live.' },
+    { question: `How do I book a doctor in ${cityName} on Curxx?`, answer: `Search by specialty, symptom or doctor name, compare ${total.toLocaleString('en-IN')} doctors in ${cityName} by fee, experience and rating, then pick a clinic visit or video slot on the doctor’s profile and confirm with your mobile number. Doctors without online booking show a Call button instead.` },
+    { question: 'What does a doctor’s profile show?', answer: 'Each profile shows the qualifications, experience, clinic location, consultation fee and timings shared with Curxx. Fees marked “approx.” are estimates, so confirm them with the clinic before you visit.' },
     { question: 'Can I consult a doctor online instead of visiting the clinic?', answer: 'Most doctors offer secure video consultations. Choose “Video Consultation” in the filters to see them; many also offer a free first video consult.' },
     { question: 'Does a consultation include a free follow-up?', answer: 'Every booking includes a free 7-day chat follow-up with the doctor, so you can share reports or ask about your medicines without paying again.' },
   ];

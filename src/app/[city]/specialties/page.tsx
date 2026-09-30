@@ -67,7 +67,7 @@ export default async function SpecialtiesPage({ params }: Props) {
             <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Clinical Specialties</span>
             <h1 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">All {SPECIALTY_COUNT_LABEL} Specialties in {cityName}</h1>
             <p className="text-body-default font-body-default text-on-surface-variant mt-1">
-              Verified doctors across {SPECIALTIES.length} clinical disciplines{doctorTotal ? ` — ${doctorTotal.toLocaleString('en-IN')} in ${cityName}` : ''}, for video consults and clinic visits.
+              Doctors across {SPECIALTIES.length} clinical disciplines{doctorTotal ? ` — ${doctorTotal.toLocaleString('en-IN')} listed in ${cityName}` : ''}.
             </p>
             <nav aria-label="Jump to a category" className="flex flex-wrap gap-2 pt-4">
               {groups.map((g) => (

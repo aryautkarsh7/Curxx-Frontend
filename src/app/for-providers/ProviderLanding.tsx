@@ -182,11 +182,11 @@ export default function ProviderLanding({ doctorsLabel, plans, testimonials, faq
 </div>
 <div className="flex items-center gap-2.5">
 <div className="w-8 h-8 rounded-lg bg-[#FFF1F2] flex items-center justify-center text-primary font-semibold text-caption">
-                    PS
+                    RS
                   </div>
 <div>
-<p className="text-caption-strong font-caption-strong text-on-surface">Dr. Priya Sharma</p>
-<p className="text-micro font-micro text-[#78716C]">Patient: Rahul Sen • ABHA Synced</p>
+<p className="text-caption-strong font-caption-strong text-on-surface">Rahul Sen</p>
+<p className="text-micro font-micro text-[#78716C]">Video consult • ABHA Synced</p>
 </div>
 </div>
 </div>
@@ -203,33 +203,6 @@ export default function ProviderLanding({ doctorsLabel, plans, testimonials, faq
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-</section>
-{/* 3. STATS BAND */}
-<section className="w-full bg-[#FAFAF9] border-b border-[#E7E5E4] py-8">
-<div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop">
-<div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-<div className="text-center md:text-left border-r last:border-r-0 border-[#E7E5E4] pr-4">
-<p className="text-display font-display text-[32px] font-bold text-primary tracking-tight">2.4M</p>
-<p className="text-caption font-caption-strong text-on-surface mt-1">Monthly Patient Searches</p>
-<p className="text-micro font-micro text-[#78716C]">High-intent local discovery</p>
-</div>
-<div className="text-center md:text-left border-r last:border-r-0 border-[#E7E5E4] pr-4">
-<p className="text-display font-display text-[32px] font-bold text-primary tracking-tight">38%</p>
-<p className="text-caption font-caption-strong text-on-surface mt-1">Average Booking Increase</p>
-<p className="text-micro font-micro text-[#78716C]">Within the first 90 days</p>
-</div>
-<div className="text-center md:text-left border-r last:border-r-0 border-[#E7E5E4] pr-4">
-<p className="text-display font-display text-[32px] font-bold text-primary tracking-tight">4 hrs</p>
-<p className="text-caption font-caption-strong text-on-surface mt-1">Saved per Week</p>
-<p className="text-micro font-micro text-[#78716C]">On admin &amp; Rx workflows</p>
-</div>
-<div className="text-center md:text-left">
-<p className="text-display font-display text-[32px] font-bold text-primary tracking-tight">96%</p>
-<p className="text-caption font-caption-strong text-on-surface mt-1">Provider Retention Rate</p>
-<p className="text-micro font-micro text-[#78716C]">Annual clinician renewals</p>
 </div>
 </div>
 </div>
