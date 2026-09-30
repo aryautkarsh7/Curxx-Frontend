@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ApiError, api, type Registration } from '@/lib/api';
 import { setSession } from '@/lib/session';
 
@@ -9,7 +9,7 @@ const INPUT = 'w-full h-11 px-3 bg-white border border-[#E7E5E4] rounded-lg font
 
 type Props = { initialMode?: AuthMode; onSignedIn: () => void; onModeChange?: (mode: AuthMode) => void };
 
-/** Login and Register as two clear paths, both finished with a mobile OTP. */
+/** Login and Register as two clear paths, both finished with a 4-digit mobile OTP. */
 export default function AuthForm({ initialMode = 'login', onSignedIn, onModeChange }: Props) {
   const [mode, setModeState] = useState<AuthMode>(initialMode);
   const [step, setStep] = useState<'details' | 'otp'>('details');
@@ -19,11 +19,20 @@ export default function AuthForm({ initialMode = 'login', onSignedIn, onModeChan
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ text: string; switchTo?: AuthMode } | null>(null);
   const [devCode, setDevCode] = useState('');
+  const [cooldown, setCooldown] = useState(0);
 
   const phoneValid = /^[6-9]\d{9}$/.test(phone);
   const emailValid = !profile.email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email);
   const detailsValid = phoneValid && (mode === 'login' || (profile.name.trim().length >= 2 && emailValid));
-  const otpValid = /^\d{6}$/.test(otp);
+  const otpValid = /^\d{4}$/.test(otp);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   function setMode(next: AuthMode) {
     setModeState(next);
@@ -33,8 +42,8 @@ export default function AuthForm({ initialMode = 'login', onSignedIn, onModeChan
     onModeChange?.(next);
   }
 
-  async function sendOtp(e: React.FormEvent) {
-    e.preventDefault();
+  async function sendOtp(e?: React.FormEvent) {
+    if (e) e.preventDefault();
     if (!detailsValid || busy) return;
     setBusy(true);
     setError(null);
@@ -42,6 +51,7 @@ export default function AuthForm({ initialMode = 'login', onSignedIn, onModeChan
       const { devCode: code } = await api.requestOtp(phone, mode);
       setDevCode(code ?? '');
       setStep('otp');
+      setCooldown(60);
     } catch (err) {
       if (err instanceof ApiError && err.code === 'not_registered') setError({ text: err.message, switchTo: 'register' });
       else if (err instanceof ApiError && err.code === 'already_registered') setError({ text: err.message, switchTo: 'login' });
@@ -83,7 +93,7 @@ export default function AuthForm({ initialMode = 'login', onSignedIn, onModeChan
 
       <p className="font-caption text-caption text-[#78716C]">
         {step === 'otp'
-          ? `Enter the 6-digit code sent to +91 ${phone}`
+          ? `Enter the 4-digit code sent to +91 ${phone}`
           : mode === 'login'
             ? 'Welcome back. Log in with your mobile number to see appointments, prescriptions and your ABHA locker.'
             : 'New to Curxx? Create your account in 30 seconds — we’ll verify your mobile number with an OTP.'}
@@ -101,7 +111,7 @@ export default function AuthForm({ initialMode = 'login', onSignedIn, onModeChan
       )}
 
       {step === 'details' ? (
-        <form className="space-y-3.5" onSubmit={sendOtp} noValidate>
+        <form className="space-y-3.5" onSubmit={(e) => sendOtp(e)} noValidate>
           {mode === 'register' && (
             <label className="block space-y-1.5">
               <span className="font-caption-strong text-caption-strong text-[#1C1917]">Full name *</span>
@@ -172,19 +182,29 @@ export default function AuthForm({ initialMode = 'login', onSignedIn, onModeChan
             autoFocus
             inputMode="numeric"
             autoComplete="one-time-code"
-            maxLength={6}
+            maxLength={4}
             value={otp}
             onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-            placeholder="••••••"
+            placeholder="••••"
             aria-label="One-time password"
             className="w-full h-11 px-3 bg-white border border-[#E7E5E4] rounded-lg text-center tracking-[0.5em] font-body-strong text-body-strong text-[#1C1917] outline-none focus:border-primary-container focus:ring-2 focus:ring-[rgba(193,18,31,0.15)] tabular-nums"
           />
           <button type="submit" disabled={!otpValid || busy} className="w-full h-12 rounded-lg bg-primary-container hover:bg-[#8E0E17] disabled:bg-[#A8A29E] text-white font-body-strong text-body-strong transition">
             {busy ? 'Verifying…' : mode === 'login' ? 'Verify & Log in' : 'Verify & Create account'}
           </button>
-          <button type="button" onClick={() => { setStep('details'); setOtp(''); setError(null); }} className="w-full font-caption-strong text-caption-strong text-[#D92D3A]">
-            Change number
-          </button>
+          <div className="flex items-center justify-between text-caption font-caption">
+            <button
+              type="button"
+              disabled={cooldown > 0 || busy}
+              onClick={() => sendOtp()}
+              className="font-caption-strong text-primary-container disabled:text-[#A8A29E] disabled:no-underline underline"
+            >
+              {cooldown > 0 ? `Resend OTP in ${cooldown}s` : 'Resend OTP'}
+            </button>
+            <button type="button" onClick={() => { setStep('details'); setOtp(''); setError(null); }} className="font-caption-strong text-[#D92D3A]">
+              Change number
+            </button>
+          </div>
         </form>
       )}
     </div>
