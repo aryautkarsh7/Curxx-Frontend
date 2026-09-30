@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import ListingSeoContent, { InternalLinks, allDoctorsFaqs } from '@/components/listing/ListingSeoContent';
 import FaqAccordion from '@/components/seo/FaqAccordion';
 import { SeoBody, SeoIntro } from '@/components/seo/SeoContent';
-import { api, type DoctorList, type DoctorQuery, type DoctorStats, type SpecialtyContent } from '@/lib/api';
+import { api, hasReviews, type DoctorList, type DoctorQuery, type DoctorStats, type SpecialtyContent } from '@/lib/api';
 import { cityDoctorsPage, citySpecialtyPage, lower, type SeoPage } from '@/lib/seo-content';
 import { liveCatalogue, resolveCity, resolveSpecialty } from '@/lib/catalogue-live';
 import type { CityInfo, SpecialtyInfo } from '@/lib/catalogue-data';
@@ -184,7 +184,14 @@ export async function renderListing({ city, specialty: slug, locality }: Scope, 
         plural={q ? 'Doctors' : specialty.plural}
         heading={heading}
         subheading={subheading}
-        resultsHeading={q ? `Best matches for “${q}”` : nobody ? `${specialty.plural} in ${place}` : widened ? `${specialty.plural} near ${area!.name}, ${cityInfo.name}` : `Top-rated ${lower(specialty.plural)} available in ${place}`}
+        resultsHeading={
+          q ? `Best matches for “${q}”`
+          : nobody ? `${specialty.plural} in ${place}`
+          : widened ? `${specialty.plural} near ${area!.name}, ${cityInfo.name}`
+          // "Top-rated" only when someone here has been rated.
+          : listing.doctors.some(hasReviews) ? `Top-rated ${lower(specialty.plural)} available in ${place}`
+          : `${specialty.plural} available in ${place}`
+        }
         breadcrumbs={breadcrumbs}
         lockedArea={Boolean(area) && !widened}
         emptyAction={emptyAction}

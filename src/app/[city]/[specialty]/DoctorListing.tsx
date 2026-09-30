@@ -34,6 +34,17 @@ type Props = DoctorList & {
 const SUBNAV = 'whitespace-nowrap text-on-surface-variant font-body-default text-body-default pb-1 hover:text-primary transition-colors duration-150';
 
 export default function DoctorListing({ city, cityName, place, plural, heading, subheading, resultsHeading, breadcrumbs, lockedArea, emptyAction, intro, children, doctors, total, pages, facets }: Props) {
+  // Promises only when the doctors on the page back them: verified credentials, and refunds or follow-ups on Curxx bookings.
+  const bookableHere = doctors.some((d) => (d.booking ?? (d.bookable === false ? 'none' : 'instant')) !== 'none');
+  const shield = [
+    ...(doctors.length > 0 && doctors.every((d) => d.verified) ? [['verified', '100% Verified Credentials', 'Every doctor’s State Medical Council registration is checked before they go live.']] : []),
+    ...(bookableHere
+      ? [
+          ['currency_rupee', 'Zero Wait or Full Refund', 'If the doctor misses your slot, rebook free or get your money back.'],
+          ['chat', 'Free 7-Day Follow-Up', 'Ask your doctor follow-up questions on chat at no extra cost.'],
+        ]
+      : []),
+  ];
   const { page, sort, filters, setParam, setAvailability, setSort, clearFilters, goToPage, openDoctor } = useListingControls();
   const pageNumbers = Array.from({ length: Math.min(pages, 5) }, (_, i) => i + 1).filter((n) => n <= pages);
   const activeChips = toChips(filters);
@@ -182,13 +193,10 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
                 Call 108 (24x7 Medical)
               </a>
             </div>
+            {shield.length > 0 && (
             <div className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-xl p-5 space-y-3.5">
               <p className="font-caption-strong text-caption-strong text-[#1C1917] tracking-wider uppercase">Curxx Care Shield</p>
-              {[
-                ['verified', '100% Verified Credentials', 'Every doctor’s State Medical Council registration is checked before they go live.'],
-                ['currency_rupee', 'Zero Wait or Full Refund', 'If the doctor misses your slot, rebook free or get your money back.'],
-                ['chat', 'Free 7-Day Follow-Up', 'Ask your doctor follow-up questions on chat at no extra cost.'],
-              ].map(([icon, title, body]) => (
+              {shield.map(([icon, title, body]) => (
                 <div key={title} className="flex items-start gap-2.5">
                   <span className="material-symbols-outlined text-[20px] text-[#047857] mt-0.5" style={icon === 'verified' ? { fontVariationSettings: "'FILL' 1" } : undefined}>{icon}</span>
                   <div>
@@ -198,6 +206,7 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
                 </div>
               ))}
             </div>
+            )}
           </aside>
         </div>
       </main>

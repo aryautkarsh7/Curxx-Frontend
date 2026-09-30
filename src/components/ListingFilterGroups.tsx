@@ -18,8 +18,6 @@ export const EXPERIENCE = [
   { value: 15, label: '15+ Years' },
 ] as const;
 
-export const AREAS = ['Indiranagar', 'Koramangala', 'Whitefield', 'HSR Layout', 'Jayanagar', 'Hebbal', 'HAL Airport Road'];
-export const LANGUAGES = ['English', 'Hindi', 'Kannada', 'Tamil', 'Telugu', 'Malayalam'];
 
 export type Chip = { key: string; label: string };
 
@@ -50,8 +48,9 @@ type Props = {
 
 /** Filter controls for the doctor listing — rendered in the desktop rail and in the mobile sheet. */
 export default function ListingFilterGroups({ filters, activeChips, setParam, setAvailability, hide = [], areas, languages }: Props) {
-  const areaOptions = areas?.length ? areas : AREAS.map((value) => ({ value, count: 0 }));
-  const languageOptions = languages?.length ? languages.slice(0, 8) : LANGUAGES.map((value) => ({ value, count: 0 }));
+  // Only what this listing has (a page with no doctors offers none); a chosen value stays so it can be cleared.
+  const areaOptions = areas?.length ? areas : filters.area ? [{ value: filters.area, count: 0 }] : [];
+  const languageOptions = languages?.length ? languages.slice(0, 8) : filters.language ? [{ value: filters.language, count: 0 }] : [];
   return (
     <div className="space-y-5">
 
@@ -142,7 +141,7 @@ export default function ListingFilterGroups({ filters, activeChips, setParam, se
 </div>
 
 {/* Locality */}
-{!hide.includes('area') && (
+{!hide.includes('area') && areaOptions.length > 0 && (
 <div className="space-y-2 pt-2 border-t border-[#E7E5E4]">
 <p className="font-caption-strong text-caption-strong text-[#1C1917]">Locality</p>
 <div className="max-h-40 overflow-y-auto space-y-1.5 text-caption font-caption text-[#1C1917] pr-1">
@@ -158,6 +157,7 @@ export default function ListingFilterGroups({ filters, activeChips, setParam, se
 )}
 
 {/* Spoken Languages */}
+{languageOptions.length > 0 && (
 <div className="space-y-2 pt-2 border-t border-[#E7E5E4]">
 <p className="font-caption-strong text-caption-strong text-[#1C1917]">Spoken Languages</p>
 <div className="grid grid-cols-2 gap-2 text-caption font-caption text-[#1C1917]">
@@ -169,6 +169,7 @@ export default function ListingFilterGroups({ filters, activeChips, setParam, se
 ))}
 </div>
 </div>
+)}
     </div>
   );
 }
