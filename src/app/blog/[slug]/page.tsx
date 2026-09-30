@@ -41,6 +41,8 @@ export default async function BlogArticlePage({ params }: Props) {
   const city = author?.city ?? 'bangalore';
   const condition = (article as { condition?: string }).condition;
   const published = new Date(article.publishedAt);
+  // A byline without a doctor (the author isn't listed on Curxx) is the editorial team: no profile, no review claim.
+  const byDoctor = Boolean(article.author.slug);
 
   return (
     <>
@@ -53,8 +55,9 @@ export default async function BlogArticlePage({ params }: Props) {
           description: article.excerpt,
           datePublished: article.publishedAt,
           image: article.coverUrl ? photo(article.coverUrl, 1200) : undefined,
-          author: { '@type': 'Physician', name: article.author.name, url: `/doctor/${article.author.slug}` },
-          reviewedBy: { '@type': 'Physician', name: article.author.name },
+          ...(byDoctor
+            ? { author: { '@type': 'Physician', name: article.author.name, url: `/doctor/${article.author.slug}` }, reviewedBy: { '@type': 'Physician', name: article.author.name } }
+            : { author: { '@type': 'Organization', name: article.author.name } }),
           publisher: { '@type': 'Organization', name: 'Curxx' },
         }}
       />
@@ -75,8 +78,14 @@ export default async function BlogArticlePage({ params }: Props) {
               {author?.photoUrl && <img src={photo(author.photoUrl, 96)} alt="" className="w-11 h-11 rounded-full object-cover" />}
               <div className="text-caption font-caption text-on-surface-variant">
                 Written by{' '}
-                <Link href={`/doctor/${article.author.slug}`} className="font-caption-strong text-caption-strong text-on-surface hover:text-primary-container">{article.author.name}</Link>, {article.author.title}
-                <span className="block">Updated {published.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })} · Medically reviewed</span>
+                {byDoctor ? (
+                  <>
+                    <Link href={`/doctor/${article.author.slug}`} className="font-caption-strong text-caption-strong text-on-surface hover:text-primary-container">{article.author.name}</Link>, {article.author.title}
+                  </>
+                ) : (
+                  <span className="font-caption-strong text-caption-strong text-on-surface">{article.author.name}</span>
+                )}
+                <span className="block">Updated {published.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}{byDoctor ? ' · Medically reviewed' : ''}</span>
               </div>
             </div>
           </header>

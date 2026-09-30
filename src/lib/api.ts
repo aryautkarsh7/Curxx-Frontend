@@ -169,6 +169,29 @@ export type DoctorStats = {
 };
 
 /** Live figures behind the surgery pages (GET /seo/surgeries). */
+/** GET /seo/sitemap: pages with real content only (no listings without doctors, no hidden sample data). */
+export type SitemapData = {
+  cities: {
+    slug: string;
+    doctors: number;
+    specialties: string[];
+    /** "doctors" or a specialty → locality slugs that have doctors. */
+    localities: Record<string, string[]>;
+    conditions: string[];
+    hospitals: number;
+    clinics: number;
+    /** Surgery slugs, only for cities whose surgery pages pass the index rule. */
+    surgeries: string[];
+  }[];
+  india: { doctors: number; specialties: string[] };
+  doctors: SitemapEntry[];
+  facilities: SitemapEntry[];
+  articles: SitemapEntry[];
+  labTests: SitemapEntry[];
+  medicines: SitemapEntry[];
+};
+export type SitemapEntry = { slug: string; updatedAt: string | null };
+
 export type SurgeryStats = {
   city: { slug: string; name: string } | null;
   hospitalCount: number;
@@ -331,6 +354,8 @@ export type Facility = {
   gallery?: string[];
   doctorCount?: number;
   whatsapp?: string;
+  /** Where an imported record came from ("doctar"); empty for Curxx's own. Curxx hasn't verified imports. */
+  source?: string;
 };
 
 export type Medicine = {
@@ -717,6 +742,7 @@ export const api = {
   condition: (slug: string, city: string) => request<ConditionDetail>(`/conditions/${slug}${qs({ city })}`, cached(300)),
   seoDoctors: (city: string, specialty?: string) => request<DoctorStats>(`/seo/doctors${qs({ city, specialty })}`, cached(300)),
   seoSurgeries: (city: string) => request<SurgeryStats>(`/seo/surgeries${qs({ city })}`, cached(300)),
+  sitemap: () => request<SitemapData>('/seo/sitemap', cached(3600)),
   surgeries: (city: string) => request<{ categories: string[]; city: { slug: string; name: string }; surgeries: SurgerySummary[] }>(`/surgeries${qs({ city })}`, cached(300)),
   surgery: (slug: string, city: string) => request<SurgeryDetail>(`/surgeries/${slug}${qs({ city })}`, cached(300)),
   suggest: (q: string, city: string) => request<Suggestions>(`/search/suggest${qs({ q, city })}`, cached(60)),

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import SeoLandingPage, { LinkGrid } from '@/components/seo/SeoLandingPage';
+import SeoLandingPage, { EmptyLandingPage, LinkGrid } from '@/components/seo/SeoLandingPage';
 import { api } from '@/lib/api';
 import { indiaDoctorsPage } from '@/lib/seo-content';
 
@@ -8,15 +8,16 @@ import { indiaDoctorsPage } from '@/lib/seo-content';
 async function load() {
   try {
     const stats = await api.seoDoctors('india');
-    const page = indiaDoctorsPage(stats);
-    return page ? { stats, page } : null;
+    return { stats, page: indiaDoctorsPage(stats) };
   } catch {
     return null;
   }
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = (await load())?.page;
+  const data = await load();
+  if (data && !data.stats.total) return { title: { absolute: 'Doctors in India | Curxx' }, alternates: { canonical: '/india/doctors' }, robots: { index: false, follow: true } };
+  const page = data?.page;
   if (!page) return { title: { absolute: 'Doctors in India – Book Online | Curxx' }, alternates: { canonical: '/india/doctors' } };
   return {
     title: { absolute: page.title },
@@ -28,7 +29,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function IndiaDoctorsPage() {
   const data = await load();
-  if (!data) notFound();
+  if (data && !data.stats.total) {
+    return <EmptyLandingPage heading="Doctors in India" message="No doctors listed here yet" action={{ href: '/', label: 'Back to the homepage' }} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'India' }, { label: 'Doctors' }]} />;
+  }
+  if (!data?.page) notFound();
   const { page, stats } = data;
   return (
     <SeoLandingPage page={page} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'India' }, { label: 'Doctors' }]}>

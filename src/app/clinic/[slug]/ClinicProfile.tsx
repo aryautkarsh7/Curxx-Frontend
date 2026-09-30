@@ -26,6 +26,7 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
   const [dept, setDept] = useState<string | null>(null);
   // Listing-only doctors (no online booking) stay out of the OPD panel; their cards link to the profile.
   const bookableDoctors = useMemo(() => doctors.filter((d) => d.bookable !== false), [doctors]);
+  const secondPhoto = f.gallery?.[0] || (f.source ? '' : interior);
   const [doctorSlug, setDoctorSlug] = useState(bookableDoctors[0]?.slug ?? '');
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [slotId, setSlotId] = useState<string | null>(null);
@@ -80,19 +81,25 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
           <span className="text-on-surface font-caption-strong text-caption-strong truncate">{f.name}</span>
         </nav>
 
-        {/* GALLERY */}
+        {/* GALLERY: the centre's own photos. The stock interior photo only stands in for Curxx's own listings, never an imported one. */}
+        {(f.photoUrl || secondPhoto) && (
         <section className="grid grid-cols-12 gap-3 h-[220px] sm:h-[340px] rounded-2xl overflow-hidden bg-surface-container-lowest border border-[#E7E5E4] shadow-sm mb-space-base">
-          <div className="col-span-12 sm:col-span-8 relative overflow-hidden h-full">
-            {f.photoUrl && <img className="w-full h-full object-cover" alt={`${f.name} exterior`} src={photo(f.photoUrl, 1200)} />}
-            <div className="absolute bottom-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[#E7E5E4] flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[18px]">verified</span>
-              <span className="font-caption-strong text-caption-strong text-on-surface">{f.tagline}</span>
+          <div className={`col-span-12 ${secondPhoto ? 'sm:col-span-8' : ''} relative overflow-hidden h-full`}>
+            {(f.photoUrl || secondPhoto) && <img className="w-full h-full object-cover" alt={`${f.name} exterior`} src={photo(f.photoUrl || secondPhoto!, 1200)} />}
+            {f.tagline && !f.source && (
+              <div className="absolute bottom-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[#E7E5E4] flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-[18px]">verified</span>
+                <span className="font-caption-strong text-caption-strong text-on-surface">{f.tagline}</span>
+              </div>
+            )}
+          </div>
+          {f.photoUrl && secondPhoto && (
+            <div className="hidden sm:block col-span-4 h-full overflow-hidden rounded-lg">
+              <img loading="lazy" className="w-full h-full object-cover" alt={`${f.shortName} interior`} src={photo(secondPhoto, 600)} />
             </div>
-          </div>
-          <div className="hidden sm:block col-span-4 h-full overflow-hidden rounded-lg">
-            <img loading="lazy" className="w-full h-full object-cover" alt={`${f.shortName} interior`} src={photo(f.gallery?.[0] || interior, 600)} />
-          </div>
+          )}
         </section>
+        )}
 
         {/* HERO */}
         <section className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 sm:p-6 shadow-sm mb-space-lg flex flex-col lg:flex-row lg:items-start justify-between gap-5">
@@ -105,7 +112,7 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
             </div>
             <h1 className="text-display font-display text-on-surface tracking-tight">{f.name}</h1>
             <p className="text-body-default font-body-default text-on-surface-variant">
-              {[f.established && `Since ${f.established}`, f.beds > 0 && `${f.beds} beds`, `${f.departments.length} departments`, `${doctors.length} doctors on Curxx`].filter(Boolean).join(' · ')}
+              {[f.established && `Since ${f.established}`, f.beds > 0 && `${f.beds} beds`, f.departments.length > 0 && `${f.departments.length} ${f.departments.length === 1 ? 'department' : 'departments'}`, doctors.length > 0 && `${doctors.length} ${doctors.length === 1 ? 'doctor' : 'doctors'} on Curxx`].filter(Boolean).join(' · ')}
             </p>
             <p className="text-caption font-caption text-on-surface-variant flex items-start gap-1"><span className="material-symbols-outlined text-[16px] text-outline">pin_drop</span>{f.address}</p>
             {hasReviews(f) ? (
@@ -174,7 +181,7 @@ export default function ClinicProfile({ facility: f, doctors, interior, contact 
                 </div>
               )}
               {shownDoctors.length === 0 ? (
-                <p className="text-body-default font-body-default text-on-surface-variant">No doctors from this centre are bookable on Curxx yet.</p>
+                <p className="text-body-default font-body-default text-on-surface-variant">No doctors from this centre are listed on Curxx yet.</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {shownDoctors.map((d) => (

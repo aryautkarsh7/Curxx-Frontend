@@ -45,11 +45,14 @@ async function loadStats(city: string, specialty: string): Promise<DoctorStats |
   }
 }
 
-/** Diksha's template copy for /{city}/doctors and /{city}/{specialty} (not locality pages). */
-async function templatePage(city: string, specialty: string): Promise<SeoPage | null> {
+/**
+ * Diksha's template copy for /{city}/doctors and /{city}/{specialty} (not locality pages), and whether
+ * nobody is listed there yet (a clean empty page, kept out of the index).
+ */
+async function templatePage(city: string, specialty: string): Promise<{ page: SeoPage | null; empty: boolean }> {
   const stats = await loadStats(city, specialty);
-  if (!stats) return null;
-  return specialty === ALL_DOCTORS.slug ? cityDoctorsPage(stats) : citySpecialtyPage(stats);
+  if (!stats) return { page: null, empty: false };
+  return { page: specialty === ALL_DOCTORS.slug ? cityDoctorsPage(stats) : citySpecialtyPage(stats), empty: stats.total === 0 };
 }
 
 /** Filters and paging from the URL, applied on top of the page's own scope. */
@@ -83,14 +86,20 @@ export async function listingMetadata({ city, specialty: slug, locality }: Scope
   const q = one(params.q)?.trim();
   const path = `/${city}/${slug}${area ? `/${area.slug}` : ''}`;
   const template = !area && !q ? await templatePage(city, slug) : null;
-  if (template) {
+  if (template?.page) {
+    const page = template.page;
     return {
-      title: { absolute: template.title },
-      description: template.description,
-      alternates: { canonical: template.canonical },
+      title: { absolute: page.title },
+      description: page.description,
+      alternates: { canonical: page.canonical },
       ...(isVariant(params) ? { robots: { index: false, follow: true } } : {}),
-      openGraph: { title: template.title, description: template.description, type: 'website', url: template.canonical },
+      openGraph: { title: page.title, description: page.description, type: 'website', url: page.canonical },
     };
+  }
+  if (template?.empty) {
+    const title = `${specialty.plural} in ${place} | Curxx`;
+    const description = `No ${lower(specialty.plural)} in ${place} are listed on Curxx yet.`;
+    return { title: { absolute: title }, description, alternates: { canonical: path }, robots: { index: false, follow: true }, openGraph: { title, description, type: 'website', url: path } };
   }
   const title = q
     ? `Doctors for ${q} in ${place} — Book Online or In-Clinic | Curxx`
@@ -119,17 +128,28 @@ export async function renderListing({ city, specialty: slug, locality }: Scope, 
   const place = area ? `${area.name}, ${cityInfo.name}` : cityInfo.name;
   const filters = queryFrom(params);
   const q = filters.q;
+  const basePath = `/${city}/${slug}`;
 
-  const [local, content, template] = await Promise.all([
+  const [local, content, templated] = await Promise.all([
     loadDoctors({ ...filters, city, specialty: slug, area: area?.name ?? filters.area }),
     all ? Promise.resolve(null) : loadContent(slug, city, area?.slug),
     area ? Promise.resolve(null) : templatePage(city, slug),
   ]);
+  const template = templated?.page ?? null;
   // Nobody in this locality yet: show the nearest alternative — the same specialty across the city.
   const widened = Boolean(area) && local.total === 0 && !isVariant(params);
   const listing = widened ? await loadDoctors({ ...filters, city, specialty: slug }) : local;
+  // Nobody listed at all (not just filtered out): a clean empty state that points somewhere that has doctors.
+  const nobody = listing.total === 0 && !isVariant(params);
+  const cityHasDoctors = nobody && !all ? ((await loadStats(city, ALL_DOCTORS.slug))?.total ?? 0) > 0 : false;
+  const emptyAction = nobody
+    ? cityHasDoctors
+      ? { href: `/${city}/doctors`, label: `See all doctors in ${cityInfo.name}` }
+      : { href: '/india/doctors', label: 'See doctors in other cities' }
+    : area
+      ? { href: basePath, label: `See all ${lower(specialty.plural)} in ${cityInfo.name}` }
+      : undefined;
 
-  const basePath = `/${city}/${slug}`;
   const breadcrumbs: Crumb[] = [
     { label: 'Home', href: '/' },
     { label: cityInfo.name, href: `/${city}/specialties` },
@@ -139,9 +159,11 @@ export async function renderListing({ city, specialty: slug, locality }: Scope, 
   const matched = listing.matchedSpecialties?.map((s) => specialties.find((sp) => sp.slug === s)?.plural).filter(Boolean).slice(0, 3) as string[] | undefined;
   const subheading = q
     ? `${listing.total.toLocaleString('en-IN')} doctors${matched?.length ? ` — ${matched.join(', ')}` : ''} · ${place}`
-    : widened
-      ? `No ${lower(specialty.plural)} listed in ${area!.name} yet — showing ${listing.total} across ${cityInfo.name}`
-      : template?.subline;
+    : nobody
+      ? `No ${lower(specialty.plural)} listed yet`
+      : widened
+        ? `No ${lower(specialty.plural)} listed in ${area!.name} yet — showing ${listing.total} across ${cityInfo.name}`
+        : template?.subline;
   // Template copy describes the whole page, so filtered and paged views leave the intro out.
   const intro = template && !isVariant(params) ? <SeoIntro page={template} className="mt-5 pt-5 border-t border-[#E7E5E4]" /> : undefined;
 
@@ -162,13 +184,13 @@ export async function renderListing({ city, specialty: slug, locality }: Scope, 
         plural={q ? 'Doctors' : specialty.plural}
         heading={heading}
         subheading={subheading}
-        resultsHeading={q ? `Best matches for “${q}”` : widened ? `${specialty.plural} near ${area!.name}, ${cityInfo.name}` : `Top-rated ${lower(specialty.plural)} available in ${place}`}
+        resultsHeading={q ? `Best matches for “${q}”` : nobody ? `${specialty.plural} in ${place}` : widened ? `${specialty.plural} near ${area!.name}, ${cityInfo.name}` : `Top-rated ${lower(specialty.plural)} available in ${place}`}
         breadcrumbs={breadcrumbs}
         lockedArea={Boolean(area) && !widened}
-        emptyAction={area ? { href: basePath, label: `See all ${lower(specialty.plural)} in ${cityInfo.name}` } : undefined}
+        emptyAction={emptyAction}
         intro={intro}
       >
-        {template ? (
+        {nobody ? null : template ? (
           <>
             <section className="bg-[#FAFAF9] border-y border-[#E7E5E4] py-12">
               <SeoBody page={template} className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop" />

@@ -39,7 +39,7 @@ import { useEmergency } from '@/components/EmergencyModal';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import SearchSuggest, { searchHref } from '@/components/SearchSuggest';
-import { api, photo } from '@/lib/api';
+import { api, hasReviews, photo } from '@/lib/api';
 import { DEFAULT_CITY } from '@/lib/cities';
 import { useCity } from '@/lib/city-store';
 import { conditionHref, specialtyCountLabel } from '@/lib/specialties';
@@ -88,7 +88,12 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
   const { settings, stats, sections } = site;
   const claim = (key: string) => settings[key] ?? '';
   const doctorsPlus = countLabel(stats?.verifiedDoctors);
+  const doctorsListed = countLabel(stats?.doctors);
   const accredited = countLabel(stats?.accreditedFacilities);
+  // Ratings are only claimed when patients have actually left reviews.
+  const rated = stats?.reviews && stats.averageRating ? { average: stats.averageRating, reviews: countLabel(stats.reviews) } : null;
+  // "Verified" headings only when every doctor shown was verified by Curxx (imported doctors aren't).
+  const verifiedShown = doctors.length > 0 && doctors.every((d) => d.verified);
   const bands = items<Band>(sections, 'home/bands');
   const services = items<ServiceCard>(sections, 'home/services');
   const steps = items<Step>(sections, 'home/how-it-works');
@@ -120,7 +125,7 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
 <div className="inline-flex items-center space-x-2.5 px-3 py-1 rounded-full bg-surface-container-low border border-surface-variant w-max max-w-full">
 <span className="w-2 h-2 shrink-0 rounded-full bg-tertiary"></span>
 <span className="text-micro font-micro uppercase tracking-wide sm:tracking-wider text-on-surface-variant font-semibold truncate">
-              TELEHEALTH NETWORK{stats ? ` · ${stats.verifiedDoctors.toLocaleString('en-IN')} DOCTORS ACTIVE NOW` : ''}
+              TELEHEALTH NETWORK{doctorsListed ? ` · ${doctorsListed} DOCTORS LISTED` : ''}
             </span>
 </div>
 {/* Headline */}
@@ -167,22 +172,28 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
 <button type="button" onClick={() => emergency.open({ continueTo: { href: conditionHref(city, 'chest-pain'), label: 'Not an emergency? See cardiologists' } })} className="px-3 py-1 rounded-full border border-surface-variant bg-surface-container-low text-caption font-caption text-on-surface-variant hover:border-outline cursor-pointer transition">Chest Pain</button>
 </div>
 </div>
-{/* Trust Stats Row */}
+{/* Trust Stats Row: each item only when the data (or a claim confirmed in the admin) backs it */}
+{(doctorsPlus || doctorsListed || rated || claim('claim-certification-title')) && (
 <div className="pt-4 border-t border-surface-variant grid grid-cols-3 gap-4">
+{(doctorsPlus || doctorsListed) && (
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-outline text-[20px]" data-icon="verified_user">verified_user</span>
 <div>
-<div className="text-caption-strong font-caption-strong text-on-surface">{doctorsPlus ? `${doctorsPlus} Verified` : 'Verified'}</div>
-<div className="text-micro font-micro text-on-surface-variant">Active Indian MDs</div>
+<div className="text-caption-strong font-caption-strong text-on-surface">{doctorsPlus ? `${doctorsPlus} Verified` : `${doctorsListed} Doctors`}</div>
+<div className="text-micro font-micro text-on-surface-variant">{doctorsPlus ? 'Active Indian MDs' : 'Listed on Curxx'}</div>
 </div>
 </div>
+)}
+{rated && (
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-outline text-[20px]" data-icon="star">star</span>
 <div>
-<div className="text-caption-strong font-caption-strong text-on-surface">{stats?.averageRating ? `${stats.averageRating}/5 Rating` : 'Patient Rated'}</div>
-<div className="text-micro font-micro text-on-surface-variant">{claim('claim-consultations') ? `${claim('claim-consultations')} Consultations` : 'Verified Reviews'}</div>
+<div className="text-caption-strong font-caption-strong text-on-surface">{`${rated.average}/5 Rating`}</div>
+<div className="text-micro font-micro text-on-surface-variant">{claim('claim-consultations') ? `${claim('claim-consultations')} Consultations` : `${rated.reviews} Patient Reviews`}</div>
 </div>
 </div>
+)}
+{claim('claim-certification-title') && (
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-outline text-[20px]" data-icon="health_and_safety">health_and_safety</span>
 <div>
@@ -190,7 +201,9 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
 <div className="text-micro font-micro text-on-surface-variant">{claim('claim-certification-subtitle')}</div>
 </div>
 </div>
+)}
 </div>
+)}
 </div>
 {/* Right Column: Interactive Doctor Card (approx 45%) */}
 <div className="lg:col-span-5 relative">
@@ -204,7 +217,8 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
 <span className="text-micro font-micro font-semibold text-on-surface">120s Triage Active</span>
 </div>
 </div>
-{/* Floating Video Queue Card at Bottom */}
+{/* Floating Video Queue Card at Bottom: only while an online GP can actually take the call */}
+{(gp || (stats?.instantDoctors ?? 0) > 0) && (
 <div className="mt-3 p-3.5 bg-surface-container-low rounded-xl border border-surface-variant flex items-center justify-between">
 <div className="flex items-center space-x-3">
 <div className="w-10 h-10 rounded-lg bg-surface-container-lowest border border-outline-variant flex items-center justify-center text-primary-container">
@@ -219,6 +233,7 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
                 Join Queue
               </Link>
 </div>
+)}
 </div>
 </div>
 </div>
@@ -277,7 +292,7 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
 <div>
 <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Near {place}</span>
 <h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Prefer to See a Doctor In Person? Book a Clinic Visit Instantly</h2>
-<p className="text-caption font-caption text-on-surface-variant mt-1">Not every consultation needs to be virtual. Book a confirmed, zero-wait-time appointment at any of our {accredited ? `${accredited} ` : ''}NABH-accredited clinics and hospitals — the same verified doctors, the same digital prescription and follow-up, just in person.</p>
+<p className="text-caption font-caption text-on-surface-variant mt-1">Not every consultation needs to be virtual. Book a confirmed, zero-wait-time appointment at {accredited ? `any of our ${accredited} NABH-accredited clinics and hospitals` : 'clinics and hospitals near you'} — the same verified doctors, the same digital prescription and follow-up, just in person.</p>
 </div>
 <Link href={`/${city}/hospitals`} className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline">
 <span>View all hospitals &amp; clinics</span>
@@ -298,11 +313,11 @@ export default function HomePage({ doctors: initialDoctors, facilities: initialF
 <h3 className="text-headline-h3 font-headline-h3 text-on-surface leading-tight">
 <Link className="hover:text-primary-container transition-colors" href={`/clinic/${facility.slug}`}>{facility.shortName}</Link>
 </h3>
-<p className="text-caption font-caption text-on-surface-variant mt-1">{facility.tagline}</p>
+{facility.tagline && <p className="text-caption font-caption text-on-surface-variant mt-1">{facility.tagline}</p>}
 </div>
 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-micro font-micro text-on-surface-variant">
 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">location_on</span>{facility.area}</span>
-<span className="flex items-center gap-1 text-tertiary"><span className="material-symbols-outlined text-[14px]">star</span>{facility.rating}</span>
+{hasReviews(facility) && <span className="flex items-center gap-1 text-tertiary"><span className="material-symbols-outlined text-[14px]">star</span>{facility.rating}</span>}
 </div>
 {facility.emergency24x7 && (
 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FFF1F2] border border-[#F9C6C9] text-micro font-micro text-primary-container">
@@ -389,14 +404,16 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 <FadeIn>
 <section className="bg-surface-container-lowest py-16 border-b border-surface-variant" id="doctors">
 <div className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop space-y-10">
+{doctors.length > 0 && (
+<>
 {/* Section Header */}
 <div className="flex items-end justify-between">
 <div>
-<span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">Strict 4-Tier Verification</span>
-<h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">Top Verified Doctors for You</h2>
+<span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">{verifiedShown ? 'Strict 4-Tier Verification' : `Near ${place}`}</span>
+<h2 className="text-headline-h1 font-headline-h1 text-on-surface mt-1">{verifiedShown ? 'Top Verified Doctors for You' : 'Doctors Near You'}</h2>
 </div>
 <Link className="hidden sm:inline-flex items-center space-x-1 text-caption-strong font-caption-strong text-primary-container hover:underline" href={`/${city}/doctors`}>
-<span>View all verified doctors</span>
+<span>{verifiedShown ? 'View all verified doctors' : 'View all doctors'}</span>
 <span className="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
 </Link>
 </div>
@@ -406,6 +423,8 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 <HomeDoctorCard key={doctor.id} doctor={doctor} onOpen={openCard(`/doctor/${doctor.slug}`)} />
 ))}
 </div>
+</>
+)}
 {videos.length > 0 && <VideoGallery id="videos" videos={videos} heading="Watch: doctors answer your questions" subheading="Short health tips and explainers from verified Curxx doctors" />}
 {/* AI TRIAGE BAND */}
 <div className="p-6 md:p-8 bg-surface-container-low rounded-2xl border border-outline-variant/70 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
@@ -617,7 +636,7 @@ View All {SPECIALTY_COUNT_LABEL} Specialties<span className="material-symbols-ou
 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-caption font-caption text-inverse-on-surface/90">
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-[20px] text-tertiary-fixed" data-icon="verified">verified</span>
-<span>{doctorsPlus ? `${doctorsPlus} Verified Indian Doctors` : 'Verified Indian Doctors'}</span>
+<span>{doctorsPlus ? `${doctorsPlus} Verified Indian Doctors` : doctorsListed ? `${doctorsListed} Indian Doctors Listed` : 'Indian Doctors'}</span>
 </div>
 <div className="flex items-center space-x-2">
 <span className="material-symbols-outlined text-[20px] text-tertiary-fixed" data-icon="encrypted">encrypted</span>

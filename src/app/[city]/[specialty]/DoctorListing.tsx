@@ -126,7 +126,7 @@ export default function DoctorListing({ city, cityName, place, plural, heading, 
                   {activeChips.length ? `No ${lower(plural)} match these filters` : `No ${lower(plural)} listed in ${place} yet`}
                 </p>
                 <p className="font-body-default text-body-default text-[#5c403d] max-w-[500px] mt-2 leading-relaxed">
-                  {activeChips.length ? 'Try clearing a filter or two.' : `We are adding ${lower(plural)} here. Doctors elsewhere in ${cityName} can see you, and many consult on video.`}
+                  {activeChips.length ? 'Try clearing a filter or two.' : `We're adding ${lower(plural)} to Curxx. Meanwhile, you can see the doctors listed elsewhere.`}
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-3 mt-6 w-full max-w-[440px]">
                   {activeChips.length > 0 && (

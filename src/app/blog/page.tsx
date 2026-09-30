@@ -71,7 +71,7 @@ export default async function BlogPage({ searchParams }: Props) {
                 <span className="text-micro font-micro uppercase tracking-wider text-primary-container font-semibold">{categoryLabel(lead.category)} · {lead.readMinutes} min read</span>
                 <h2 className="text-headline-h1 font-headline-h1 text-on-surface">{lead.title}</h2>
                 <p className="text-body-default font-body-default text-on-surface-variant">{lead.excerpt}</p>
-                <p className="text-caption font-caption text-on-surface-variant">By {lead.author.name}, {lead.author.title}</p>
+                <p className="text-caption font-caption text-on-surface-variant">By {[lead.author.name, lead.author.title].filter(Boolean).join(', ')}</p>
               </div>
             </Link>
           )}

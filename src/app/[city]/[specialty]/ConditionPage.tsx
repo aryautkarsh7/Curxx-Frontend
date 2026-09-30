@@ -23,9 +23,11 @@ export async function conditionMetadata(city: string, slug: string): Promise<Met
   const { condition, specialty } = detail;
   const cityName = (await resolveCity(city))!.name;
   const title = `${condition.name} Treatment in ${cityName} — Consult ${specialty?.plural ?? 'Doctors'} Online or In-Clinic | Curxx`;
-  const description = `${condition.summary} Book a verified ${specialty?.name.toLowerCase() ?? 'doctor'} in ${cityName} for ${condition.name.toLowerCase()} — video consult or clinic visit.`;
+  const description = `${condition.summary} Find ${specialty ? `a ${specialty.name.toLowerCase()}` : 'a doctor'} in ${cityName} for ${condition.name.toLowerCase()} on Curxx.`;
   const path = conditionHref(city, slug);
-  return { title: { absolute: title }, description, alternates: { canonical: path }, openGraph: { title, description, url: path, type: 'article' } };
+  // No doctors for it in this city yet: keep the page out of the index until there are.
+  const empty = detail.doctorCount === 0;
+  return { title: { absolute: title }, description, alternates: { canonical: path }, ...(empty ? { robots: { index: false, follow: true } } : {}), openGraph: { title, description, url: path, type: 'article' } };
 }
 
 const LINK = 'text-[#78716C] hover:text-[#C1121F] transition-colors';
@@ -68,7 +70,7 @@ export default async function ConditionPage({ city, slug, searchParams }: { city
         place={cityInfo.name}
         plural={specialty.plural}
         heading={`${condition.name} Treatment in ${cityInfo.name}`}
-        subheading={`${listing.total.toLocaleString('en-IN')} verified ${specialty.plural.toLowerCase()} for ${condition.name.toLowerCase()} · video consult or clinic visit`}
+        subheading={listing.total ? `${listing.total.toLocaleString('en-IN')} ${(listing.total === 1 ? specialty.name : specialty.plural).toLowerCase()} for ${condition.name.toLowerCase()}` : `No ${specialty.plural.toLowerCase()} listed yet`}
         resultsHeading={`${specialty.plural} for ${condition.name} in ${cityInfo.name}`}
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: cityInfo.name, href: `/${city}/specialties` }, { label: specialty.plural, href: `/${city}/${specialty.slug}` }, { label: condition.name }]}
         emptyAction={{ href: `/${city}/${specialty.slug}`, label: `See all ${specialty.plural.toLowerCase()}` }}
@@ -79,8 +81,10 @@ export default async function ConditionPage({ city, slug, searchParams }: { city
               <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">About {condition.name}</h2>
               <p className="text-body-default font-body-default text-[#5c403d] leading-relaxed">{condition.summary}</p>
               <p className="text-body-default font-body-default text-[#5c403d] leading-relaxed">
-                {specialty.plural} treat {condition.name.toLowerCase()}. Curxx lists {detail.doctorCount} verified {specialty.plural.toLowerCase()} in {cityInfo.name}
-                {detail.focus ? ` — look for doctors who focus on ${detail.focus.name.toLowerCase()}` : ''}. {specialty.video ? 'You can see one at a clinic near you or on a secure video call.' : 'Book a clinic visit at a time that suits you.'}
+                {specialty.plural} treat {condition.name.toLowerCase()}.{' '}
+                {detail.doctorCount
+                  ? `Curxx lists ${detail.doctorCount} ${(detail.doctorCount === 1 ? specialty.name : specialty.plural).toLowerCase()} in ${cityInfo.name}${detail.focus ? ` — look for doctors who focus on ${detail.focus.name.toLowerCase()}` : ''}. Each profile shows the clinic, fee and timings.`
+                  : `No ${specialty.plural.toLowerCase()} in ${cityInfo.name} are listed on Curxx yet.`}
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

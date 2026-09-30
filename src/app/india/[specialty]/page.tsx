@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import SeoLandingPage, { LinkGrid } from '@/components/seo/SeoLandingPage';
+import SeoLandingPage, { EmptyLandingPage, LinkGrid } from '@/components/seo/SeoLandingPage';
 import { api } from '@/lib/api';
 import { resolveSpecialty } from '@/lib/catalogue-live';
 import { indiaSpecialtyPage } from '@/lib/seo-content';
@@ -20,6 +20,11 @@ async function load(slug: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await load((await params).specialty);
+  const sp = data?.stats.scope.specialty;
+  if (data && !data.stats.total && sp) {
+    // Nobody listed anywhere yet: a clean empty page, kept out of the index.
+    return { title: { absolute: `${sp.plural} in India | Curxx` }, description: `No ${sp.plural.toLowerCase()} are listed on Curxx yet.`, alternates: { canonical: `/india/${sp.slug}` }, robots: { index: false, follow: true } };
+  }
   if (!data?.page) return {};
   const { page } = data;
   return {
@@ -32,6 +37,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function IndiaSpecialtyPage({ params }: Props) {
   const data = await load((await params).specialty);
+  const empty = data?.stats.scope.specialty && !data.stats.total ? data.stats.scope.specialty : null;
+  if (empty) {
+    return (
+      <EmptyLandingPage
+        heading={`${empty.plural} in India`}
+        message={`No ${empty.plural.toLowerCase()} listed here yet`}
+        action={{ href: '/india/doctors', label: 'See all doctors in India' }}
+        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'India', href: '/india/doctors' }, { label: empty.plural }]}
+      />
+    );
+  }
   if (!data?.page) notFound();
   const { page, stats } = data;
   const sp = stats.scope.specialty!;

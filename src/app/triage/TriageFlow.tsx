@@ -240,7 +240,7 @@ export default function TriageFlow() {
 
       <div className="bg-surface border-t border-outline-variant px-5 py-3.5 flex items-center gap-3">
         <span className="material-symbols-outlined text-primary text-[18px] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>info</span>
-        <p className="font-caption text-caption text-on-surface-variant leading-snug">This is guidance to help you choose the right doctor, not a diagnosis. Suggestions for {cityName} come from verified doctors on Curxx.</p>
+        <p className="font-caption text-caption text-on-surface-variant leading-snug">This is guidance to help you choose the right doctor, not a diagnosis. Suggestions for {cityName} come from doctors listed on Curxx.</p>
       </div>
     </div>
   );
