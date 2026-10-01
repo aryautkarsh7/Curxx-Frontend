@@ -91,6 +91,8 @@ export type Doctor = {
   about: string;
   verified: boolean;
   registration?: string;
+  /** The doctor claimed this profile and Curxx checked their medical council registration. */
+  registrationVerified?: boolean;
   education?: { degree: string; institute: string; year: number }[];
   /** Sub-specialty slugs this doctor treats, matching `Specialty.subSpecialties`. */
   focusAreas?: string[];
@@ -1320,6 +1322,8 @@ export const api = {
     source?: string;
     /** Partner sign-ups: the profile type picked on Create account. */
     role?: PartnerRole;
+    /** "Claim this profile": the doctor profile's slug. */
+    claim?: string;
   }) => request<{ lead: { id: string; kind: string } }>('/leads', send('POST', body)),
 
   // Auth & profile

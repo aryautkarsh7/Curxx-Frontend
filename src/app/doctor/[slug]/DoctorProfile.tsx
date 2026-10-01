@@ -212,21 +212,28 @@ export default function DoctorProfile({
                     {doctor.title}
                     {doctor.title !== doctor.specialtyName ? ` · ${doctor.specialtyName}` : ''}
                   </p>
-                  {doctor.registration &&
-                    (doctor.verified ? (
-                      <p className="flex items-center gap-1.5 pt-1 text-[#78716C] font-caption text-caption">
-                        <span className="material-symbols-outlined text-[16px] text-[#047857]">
-                          shield
+                  {doctor.registration && doctor.verified && (
+                    <p className="flex items-center gap-1.5 pt-1 text-[#78716C] font-caption text-caption">
+                      <span className="material-symbols-outlined text-[16px] text-[#047857]">
+                        shield
+                      </span>
+                      Reg. No: {doctor.registration} · credentials verified by Curxx
+                    </p>
+                  )}
+                  {doctor.registrationVerified && (
+                    // Set by the Curxx team after the doctor claimed the profile and the registration was checked.
+                    <p className="pt-1.5">
+                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#047857] text-white px-3 py-1.5 font-caption-strong text-caption-strong shadow-sm">
+                        <span
+                          className="material-symbols-outlined text-[18px]"
+                          style={{ fontVariationSettings: "'FILL' 1" }}
+                        >
+                          verified_user
                         </span>
-                        Reg. No: {doctor.registration} · credentials verified by Curxx
-                      </p>
-                    ) : (
-                      // Not checked by Curxx (e.g. imported listings): state the number, claim nothing.
-                      <p className="flex items-center gap-1.5 pt-1 text-[#78716C] font-caption text-caption">
-                        <span className="material-symbols-outlined text-[16px]">info</span>
-                        Registration no. on record: {doctor.registration}
-                      </p>
-                    ))}
+                        Medical Registration Verified
+                      </span>
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="mt-6 bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-4 grid grid-cols-3 divide-x divide-[#E7E5E4]">
@@ -309,7 +316,20 @@ export default function DoctorProfile({
                   whatsapps={[doctor.whatsapp, facility?.whatsapp, contact?.whatsapp]}
                   message={`Hi, I'd like to book a consultation with ${doctor.name} (found on Curxx).`}
                 />
-                <ReportIssue targetType="doctor" slug={doctor.slug} name={doctor.name} />
+                <div className="flex items-center gap-3 flex-wrap">
+                  {doctor.source && !doctor.registrationVerified && (
+                    <Link
+                      href={`/partner-with-us?role=doctor&claim=${encodeURIComponent(doctor.slug)}#enquiry`}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E7E5E4] text-caption-strong font-caption-strong text-[#1C1917] hover:bg-[#FAFAF9]"
+                    >
+                      <span className="material-symbols-outlined text-[16px] text-[#C1121F]">
+                        badge
+                      </span>
+                      Claim this profile
+                    </Link>
+                  )}
+                  <ReportIssue targetType="doctor" slug={doctor.slug} name={doctor.name} />
+                </div>
               </div>
             </article>
           </div>

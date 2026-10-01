@@ -13,6 +13,8 @@ const input =
 export default function PartnerEnquiryForm() {
   const params = useSearchParams();
   const [role, setRole] = useState<PartnerRole | ''>(partnerRole(params.get('role')));
+  // "Claim this profile" on a doctor's page: that profile's address (slug).
+  const claim = /^[a-z0-9-]{1,160}$/.test(params.get('claim') ?? '') ? params.get('claim')! : '';
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -37,6 +39,7 @@ export default function PartnerEnquiryForm() {
       await api.lead({
         kind: role === 'hospital' ? 'hospital' : 'provider',
         ...(role ? { role } : {}),
+        ...(claim ? { claim } : {}),
         ...form,
         source: 'partner-with-us',
       });
@@ -69,6 +72,12 @@ export default function PartnerEnquiryForm() {
       onSubmit={submit}
       className="p-6 rounded-2xl border border-surface-variant bg-surface-container-lowest shadow-sm grid grid-cols-1 sm:grid-cols-2 gap-4"
     >
+      {claim && (
+        <p className="sm:col-span-2 p-3 rounded-lg bg-[#FFF1F2] border border-[#F9C6C9] text-caption font-caption text-[#8E0E17]">
+          You are claiming the doctor profile /doctor/{claim}. Our team checks your medical council
+          registration before the profile is marked as verified.
+        </p>
+      )}
       <label className="space-y-1.5 sm:col-span-2">
         <span className="text-caption-strong font-caption-strong text-on-surface">I am a</span>
         <select
