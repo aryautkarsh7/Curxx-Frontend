@@ -5,8 +5,9 @@ import { useState } from 'react';
 import FilterPillSheet from '@/components/FilterPillSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import DiagnosticCentreCard from '@/components/labs/DiagnosticCentreCard';
 import LabCard from '@/components/labs/LabCard';
-import type { Facet, LabDirectoryQuery, LabSummary, Near } from '@/lib/api';
+import type { Facet, Facility, LabDirectoryQuery, LabSummary, Near } from '@/lib/api';
 import { useCart } from '@/lib/cart';
 
 const SORTS = [
@@ -31,6 +32,11 @@ type Props = {
   tests: { slug: string; name: string; kind: string }[];
   query: LabDirectoryQuery;
   failed: boolean;
+  /** Diagnostic centres from the Doctar directory (no tests or prices: Call and Directions only). */
+  centres: Facility[];
+  centresTotal: number;
+  centresPage: number;
+  centresPages: number;
 };
 
 export default function LabsListing({
@@ -44,6 +50,10 @@ export default function LabsListing({
   tests,
   query,
   failed,
+  centres,
+  centresTotal,
+  centresPage,
+  centresPages,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -94,6 +104,55 @@ export default function LabsListing({
     query.area && { key: 'area', label: query.area },
     query.q && { key: 'q', label: `“${query.q}”` },
   ].filter(Boolean) as { key: string; label: string }[];
+  // No partner labs in this city (none bookable): the page lists the diagnostic centres instead.
+  const noPartnerLabs = !failed && total === 0 && chips.length === 0;
+
+  const centreList =
+    centres.length > 0 ? (
+      <div className="space-y-4">
+        {centres.map((c) => (
+          <DiagnosticCentreCard key={c.slug} centre={c} />
+        ))}
+        {centresPages > 1 && (
+          <nav
+            aria-label="Diagnostic centres pages"
+            className="flex items-center justify-between pt-2 text-caption font-caption"
+          >
+            {centresPage > 1 ? (
+              <Link
+                href={`${pathname}${centresPage > 2 ? `?page=${centresPage - 1}` : ''}`}
+                rel="prev"
+                className="text-primary-container font-caption-strong"
+              >
+                ← Previous
+              </Link>
+            ) : (
+              <span />
+            )}
+            <span className="text-outline">
+              Page {centresPage} of {centresPages}
+            </span>
+            {centresPage < centresPages ? (
+              <Link
+                href={`${pathname}?page=${centresPage + 1}`}
+                rel="next"
+                className="text-primary-container font-caption-strong"
+              >
+                Next →
+              </Link>
+            ) : (
+              <span />
+            )}
+          </nav>
+        )}
+      </div>
+    ) : (
+      <div className="rounded-2xl border border-dashed border-[#E7E5E4] bg-surface-container-lowest p-8 text-center">
+        <p className="text-body-strong font-body-strong text-on-surface">
+          No diagnostic centres listed in {cityName} yet
+        </p>
+      </div>
+    );
 
   const filters = (
     <div className="space-y-5">
@@ -275,85 +334,98 @@ export default function LabsListing({
             <h1 className="text-headline-h1 font-headline-h1 text-on-surface tracking-tight">
               {testName ? `Labs for ${testName} in ${cityName}` : `Diagnostic labs in ${cityName}`}
             </h1>
-            <p className="text-caption font-caption text-on-surface-variant mt-1">
-              {total} partner {total === 1 ? 'lab' : 'labs'} near{' '}
-              <span className="font-caption-strong text-on-surface">
-                {near.area} ({near.pincode})
-              </span>{' '}
-              · {SORTS.find((s) => s.value === (query.sort ?? 'distance'))!.label.toLowerCase()}
-            </p>
-            <form onSubmit={changeLocation} className="mt-3 flex items-start gap-2">
-              <label className="relative">
-                <span className="sr-only">Your pincode</span>
-                <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[18px] text-outline">
-                  my_location
-                </span>
-                <input
-                  value={pincode}
-                  onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  inputMode="numeric"
-                  placeholder="Your pincode"
-                  aria-invalid={Boolean(pincodeError)}
-                  className="w-40 h-10 pl-9 pr-3 rounded-lg border border-[#E7E5E4] bg-white text-caption font-caption tabular-nums outline-none focus:border-primary-container"
-                />
-              </label>
-              <button
-                type="submit"
-                className="h-10 px-4 rounded-lg border border-[#E7E5E4] bg-white text-caption-strong font-caption-strong text-on-surface hover:border-outline"
-              >
-                Update
-              </button>
-            </form>
+            {noPartnerLabs ? (
+              <p className="text-caption font-caption text-on-surface-variant mt-1">
+                {centresTotal.toLocaleString('en-IN')} diagnostic{' '}
+                {centresTotal === 1 ? 'centre' : 'centres'} in {cityName}
+              </p>
+            ) : (
+              <p className="text-caption font-caption text-on-surface-variant mt-1">
+                {total} partner {total === 1 ? 'lab' : 'labs'} near{' '}
+                <span className="font-caption-strong text-on-surface">
+                  {near.area} ({near.pincode})
+                </span>{' '}
+                · {SORTS.find((s) => s.value === (query.sort ?? 'distance'))!.label.toLowerCase()}
+              </p>
+            )}
+            {!noPartnerLabs && (
+              <form onSubmit={changeLocation} className="mt-3 flex items-start gap-2">
+                <label className="relative">
+                  <span className="sr-only">Your pincode</span>
+                  <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[18px] text-outline">
+                    my_location
+                  </span>
+                  <input
+                    value={pincode}
+                    onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    inputMode="numeric"
+                    placeholder="Your pincode"
+                    aria-invalid={Boolean(pincodeError)}
+                    className="w-40 h-10 pl-9 pr-3 rounded-lg border border-[#E7E5E4] bg-white text-caption font-caption tabular-nums outline-none focus:border-primary-container"
+                  />
+                </label>
+                <button
+                  type="submit"
+                  className="h-10 px-4 rounded-lg border border-[#E7E5E4] bg-white text-caption-strong font-caption-strong text-on-surface hover:border-outline"
+                >
+                  Update
+                </button>
+              </form>
+            )}
             {pincodeError && (
               <p role="alert" className="mt-1 font-caption text-caption text-[#8E0E17]">
                 {pincodeError}
               </p>
             )}
           </div>
-          <label className="flex items-center gap-3">
-            <span className="text-caption font-caption text-outline">Sort by:</span>
-            <span className="relative">
-              <select
-                value={query.sort ?? 'distance'}
-                onChange={(e) =>
-                  update((p) =>
-                    e.target.value === 'distance'
-                      ? p.delete('sort')
-                      : p.set('sort', e.target.value),
-                  )
-                }
-                className="appearance-none bg-surface-container-lowest border border-[#E7E5E4] rounded-lg text-caption-strong font-caption-strong text-on-surface pl-3.5 pr-8 py-2 cursor-pointer shadow-sm"
-              >
-                {SORTS.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-              <span className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-outline text-[18px]">
-                unfold_more
+          {!noPartnerLabs && (
+            <label className="flex items-center gap-3">
+              <span className="text-caption font-caption text-outline">Sort by:</span>
+              <span className="relative">
+                <select
+                  value={query.sort ?? 'distance'}
+                  onChange={(e) =>
+                    update((p) =>
+                      e.target.value === 'distance'
+                        ? p.delete('sort')
+                        : p.set('sort', e.target.value),
+                    )
+                  }
+                  className="appearance-none bg-surface-container-lowest border border-[#E7E5E4] rounded-lg text-caption-strong font-caption-strong text-on-surface pl-3.5 pr-8 py-2 cursor-pointer shadow-sm"
+                >
+                  {SORTS.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+                <span className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-outline text-[18px]">
+                  unfold_more
+                </span>
               </span>
-            </span>
-          </label>
+            </label>
+          )}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-gutter-desktop mt-6 items-start">
-          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-20 bg-surface-container-lowest border border-[#E7E5E4] rounded-xl p-5 shadow-sm max-h-[calc(100vh-6rem)] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E7E5E4]">
-              <div className="flex items-center gap-1.5 font-headline-h3 text-headline-h3 text-on-surface">
-                <span className="material-symbols-outlined text-outline text-[18px]">tune</span>
-                Filters
+          {!noPartnerLabs && (
+            <aside className="hidden lg:block w-[280px] shrink-0 sticky top-20 bg-surface-container-lowest border border-[#E7E5E4] rounded-xl p-5 shadow-sm max-h-[calc(100vh-6rem)] overflow-y-auto">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E7E5E4]">
+                <div className="flex items-center gap-1.5 font-headline-h3 text-headline-h3 text-on-surface">
+                  <span className="material-symbols-outlined text-outline text-[18px]">tune</span>
+                  Filters
+                </div>
+                <button
+                  type="button"
+                  onClick={clear}
+                  className="font-caption-strong text-caption-strong text-[#C1121F]"
+                >
+                  Clear all
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={clear}
-                className="font-caption-strong text-caption-strong text-[#C1121F]"
-              >
-                Clear all
-              </button>
-            </div>
-            {filters}
-          </aside>
+              {filters}
+            </aside>
+          )}
 
           <section className="flex-1 min-w-0 space-y-4 w-full">
             {cart.hydrated && cart.count > 0 && (
@@ -393,6 +465,8 @@ export default function LabsListing({
                   Try again
                 </button>
               </div>
+            ) : noPartnerLabs ? (
+              centreList
             ) : items.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-[#E7E5E4] bg-surface-container-lowest p-8 text-center">
                 <p className="text-body-strong font-body-strong text-on-surface">
@@ -415,75 +489,88 @@ export default function LabsListing({
               items.map((lab) => <LabCard key={lab.slug} lab={lab} testName={testName} />)
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-              <div className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 shadow-sm space-y-3">
-                <div className="flex items-center gap-2 pb-2 border-b border-[#E7E5E4]">
-                  <span className="material-symbols-outlined text-primary-container text-[20px]">
-                    route
-                  </span>
-                  <h3 className="font-headline-h3 text-headline-h3 text-on-surface">
-                    How lab booking works
-                  </h3>
+            {!noPartnerLabs && !failed && centres.length > 0 && (
+              <section className="space-y-4 pt-6">
+                <h2 className="text-headline-h2 font-headline-h2 text-on-surface">
+                  Diagnostic centres in {cityName}
+                </h2>
+                {centreList}
+              </section>
+            )}
+
+            {!noPartnerLabs && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                <div className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 shadow-sm space-y-3">
+                  <div className="flex items-center gap-2 pb-2 border-b border-[#E7E5E4]">
+                    <span className="material-symbols-outlined text-primary-container text-[20px]">
+                      route
+                    </span>
+                    <h3 className="font-headline-h3 text-headline-h3 text-on-surface">
+                      How lab booking works
+                    </h3>
+                  </div>
+                  <ol className="space-y-3 text-caption font-caption text-on-surface-variant">
+                    {[
+                      ['Pick your tests', 'Same price at every partner lab.'],
+                      [
+                        'Home visit or walk in',
+                        'We assign the nearest lab that collects at your pincode, or you choose a lab to visit.',
+                      ],
+                      [
+                        'Report in your locker',
+                        'Signed by the lab’s pathologist, filed to your Curxx health records.',
+                      ],
+                    ].map(([title, body], i) => (
+                      <li key={title} className="flex gap-3">
+                        <span className="w-6 h-6 shrink-0 rounded-full bg-[#FFF1F2] text-primary-container font-caption-strong text-micro flex items-center justify-center">
+                          {i + 1}
+                        </span>
+                        <span>
+                          <span className="block font-caption-strong text-on-surface">{title}</span>
+                          {body}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                  <Link
+                    href="/lab-tests"
+                    className="w-full h-10 rounded-lg border border-[#E7E5E4] text-caption-strong font-caption-strong text-on-surface hover:bg-[#FAFAF9] flex items-center justify-center"
+                  >
+                    Browse lab tests
+                  </Link>
                 </div>
-                <ol className="space-y-3 text-caption font-caption text-on-surface-variant">
-                  {[
-                    ['Pick your tests', 'Same price at every partner lab.'],
-                    [
-                      'Home visit or walk in',
-                      'We assign the nearest lab that collects at your pincode, or you choose a lab to visit.',
-                    ],
-                    [
-                      'Report in your locker',
-                      'Signed by the lab’s pathologist, filed to your Curxx health records.',
-                    ],
-                  ].map(([title, body], i) => (
-                    <li key={title} className="flex gap-3">
-                      <span className="w-6 h-6 shrink-0 rounded-full bg-[#FFF1F2] text-primary-container font-caption-strong text-micro flex items-center justify-center">
-                        {i + 1}
-                      </span>
-                      <span>
-                        <span className="block font-caption-strong text-on-surface">{title}</span>
-                        {body}
-                      </span>
-                    </li>
-                  ))}
-                </ol>
-                <Link
-                  href="/lab-tests"
-                  className="w-full h-10 rounded-lg border border-[#E7E5E4] text-caption-strong font-caption-strong text-on-surface hover:bg-[#FAFAF9] flex items-center justify-center"
-                >
-                  Browse lab tests
-                </Link>
-              </div>
-              <div className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 shadow-sm space-y-3">
-                <div className="flex items-center gap-2 pb-2 border-b border-[#E7E5E4]">
-                  <span className="material-symbols-outlined text-tertiary text-[20px]">
-                    verified
-                  </span>
-                  <h3 className="font-headline-h3 text-headline-h3 text-on-surface">
-                    What the badges mean
-                  </h3>
+                <div className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 shadow-sm space-y-3">
+                  <div className="flex items-center gap-2 pb-2 border-b border-[#E7E5E4]">
+                    <span className="material-symbols-outlined text-tertiary text-[20px]">
+                      verified
+                    </span>
+                    <h3 className="font-headline-h3 text-headline-h3 text-on-surface">
+                      What the badges mean
+                    </h3>
+                  </div>
+                  <dl className="space-y-2 text-caption font-caption text-on-surface-variant">
+                    {Object.entries(ACCREDITATION_HINT).map(([k, v]) => (
+                      <div key={k}>
+                        <dt className="inline font-caption-strong text-on-surface">{k}: </dt>
+                        <dd className="inline">{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <p className="text-caption font-caption text-on-surface-variant">
+                    Reference labs run every test in-house; diagnostic centres run routine panels
+                    and send specialised assays to a reference lab the same day.
+                  </p>
                 </div>
-                <dl className="space-y-2 text-caption font-caption text-on-surface-variant">
-                  {Object.entries(ACCREDITATION_HINT).map(([k, v]) => (
-                    <div key={k}>
-                      <dt className="inline font-caption-strong text-on-surface">{k}: </dt>
-                      <dd className="inline">{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <p className="text-caption font-caption text-on-surface-variant">
-                  Reference labs run every test in-house; diagnostic centres run routine panels and
-                  send specialised assays to a reference lab the same day.
-                </p>
               </div>
-            </div>
+            )}
           </section>
         </div>
       </main>
-      <FilterPillSheet activeCount={chips.length} total={total} noun="labs" onClear={clear}>
-        {filters}
-      </FilterPillSheet>
+      {!noPartnerLabs && (
+        <FilterPillSheet activeCount={chips.length} total={total} noun="labs" onClear={clear}>
+          {filters}
+        </FilterPillSheet>
+      )}
       <Footer />
     </>
   );

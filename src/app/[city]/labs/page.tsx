@@ -44,12 +44,23 @@ export default async function CityLabsPage({ params, searchParams }: Props) {
     walkIn: one(sp.walkIn) === 'true' || undefined,
     sort: sort === 'rating' || sort === 'reviews' ? sort : 'distance',
   };
-  const [data, tests] = await Promise.all([
+  const page = Math.max(1, Number(one(sp.page)) || 1);
+  const [data, tests, centres] = await Promise.all([
     api.labs(query).catch(() => null),
     api
       .labTests({ limit: 60 })
       .then((r) => r.items.map((t) => ({ slug: t.slug, name: t.name, kind: t.kind })))
       .catch(() => []),
+    // Diagnostic centres from the Doctar directory: listed with Call and Directions only.
+    api
+      .facilities({
+        city: canonical,
+        category: 'diagnostic-center',
+        sort: 'rating',
+        page,
+        limit: 20,
+      })
+      .catch(() => null),
   ]);
   return (
     <LabsListing
@@ -68,6 +79,10 @@ export default async function CityLabsPage({ params, searchParams }: Props) {
       tests={tests}
       query={query}
       failed={!data}
+      centres={centres?.items ?? []}
+      centresTotal={centres?.total ?? 0}
+      centresPage={centres?.page ?? 1}
+      centresPages={centres?.pages ?? 1}
     />
   );
 }
