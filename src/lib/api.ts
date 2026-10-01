@@ -28,6 +28,17 @@ const BASE =
 
 export const TOKEN_KEY = 'curxx_token';
 
+/** Profile types other than Patient on Create account: they sign up as partners (a lead), not an account. */
+export type PartnerRole = 'doctor' | 'hospital' | 'professional' | 'diagnostic';
+export const PARTNER_ROLES: { value: PartnerRole; label: string }[] = [
+  { value: 'doctor', label: 'Doctor' },
+  { value: 'hospital', label: 'Hospital owner' },
+  { value: 'professional', label: 'Healthcare professional' },
+  { value: 'diagnostic', label: 'Diagnostic center' },
+];
+export const partnerRole = (v: string | null | undefined): PartnerRole | '' =>
+  PARTNER_ROLES.some((r) => r.value === v) ? (v as PartnerRole) : '';
+
 export class ApiError extends Error {
   constructor(
     readonly status: number,
@@ -1307,6 +1318,8 @@ export const api = {
     specialty?: string;
     message?: string;
     source?: string;
+    /** Partner sign-ups: the profile type picked on Create account. */
+    role?: PartnerRole;
   }) => request<{ lead: { id: string; kind: string } }>('/leads', send('POST', body)),
 
   // Auth & profile

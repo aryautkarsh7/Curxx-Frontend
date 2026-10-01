@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import PartnerEnquiryForm from '@/components/PartnerEnquiryForm';
 import PartnerSections from '@/components/PartnerSections';
 import TrustStrip from '@/components/TrustStrip';
 import type { PartnerSection } from '@/lib/content-types';
@@ -60,7 +62,7 @@ export default async function PartnerWithUsPage() {
             </p>
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <a
-                href="mailto:partners@curxx.example?subject=Partner%20with%20Curxx"
+                href="#enquiry"
                 className="inline-flex items-center gap-1.5 h-12 px-6 rounded-lg bg-primary-container hover:bg-[#8E0E17] text-white font-body-strong text-body-strong transition"
               >
                 Request a callback
@@ -85,6 +87,22 @@ export default async function PartnerWithUsPage() {
               ))}
             </nav>
           </div>
+        </section>
+
+        <section
+          id="enquiry"
+          className="w-full max-w-[1200px] mx-auto px-margin sm:px-margin-desktop pt-space-2xl scroll-mt-24 space-y-4"
+        >
+          <h2 className="text-headline-h1 font-headline-h1 text-on-surface">
+            Join Curxx as a partner
+          </h2>
+          <p className="text-body-default font-body-default text-on-surface-variant max-w-2xl">
+            Doctors, hospital owners, healthcare professionals and diagnostic centres: leave your
+            details and our partner team will call you back.
+          </p>
+          <Suspense>
+            <PartnerEnquiryForm />
+          </Suspense>
         </section>
 
         <PartnerSections
