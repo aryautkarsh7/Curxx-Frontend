@@ -9,14 +9,16 @@ type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const info = await resolveCity((await params).city);
+  // Each page of the diagnostic centres list is crawlable on its own (?page=N, self canonical).
+  const page = Math.max(1, Number(one((await searchParams).page)) || 1);
   if (!info) return {};
   const { slug: canonical, name } = info;
   return {
     title: { absolute: `Diagnostic Labs in ${name} — NABL Accredited, Home Collection | Curxx` },
     description: `NABL and CAP accredited diagnostic labs and imaging centres in ${name} with timings, tests offered, home sample collection areas and walk-in counters.`,
-    alternates: { canonical: `/${canonical}/labs` },
+    alternates: { canonical: `/${canonical}/labs${page > 1 ? `?page=${page}` : ''}` },
   };
 }
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;

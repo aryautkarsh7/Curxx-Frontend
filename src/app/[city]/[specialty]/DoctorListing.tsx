@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useListingControls } from './useListingControls';
 import DoctorCard from '@/components/DoctorCard';
@@ -7,7 +8,8 @@ import ListingFilterGroups, { toChips } from '@/components/ListingFilterGroups';
 import MobileFilterSheet from '@/components/MobileFilterSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import { canBook, uniqueDoctors, type DoctorList } from '@/lib/api';
+import InfiniteList, { withPage } from '@/components/listing/InfiniteList';
+import { api, canBook, uniqueDoctors, type DoctorList, type DoctorQuery } from '@/lib/api';
 import { lower } from '@/lib/seo-content';
 
 export type Crumb = { label: string; href?: string };
@@ -29,6 +31,8 @@ type Props = DoctorList & {
   /** Page copy under the H1 (template H2, stats strip, upper and read-more content). */
   intro?: ReactNode;
   children?: ReactNode;
+  /** The query this page was rendered with: the next pages load with it (infinite scroll). */
+  query: DoctorQuery;
 };
 
 const SUBNAV =
@@ -49,10 +53,14 @@ export default function DoctorListing({
   children,
   doctors,
   total,
+  page: serverPage,
   pages,
   facets,
   unavailable,
+  query,
 }: Props) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   // Promises only when the doctors on the page back them: verified credentials, and refunds or follow-ups on Curxx bookings.
   const bookableHere = doctors.some(canBook);
   const shield = [
@@ -80,20 +88,8 @@ export default function DoctorListing({
         ]
       : []),
   ];
-  const {
-    page,
-    sort,
-    filters,
-    setParam,
-    setAvailability,
-    setSort,
-    clearFilters,
-    goToPage,
-    openDoctor,
-  } = useListingControls();
-  // Five page numbers around the current page (big cities have thousands of pages).
-  const firstPage = Math.max(1, Math.min(page - 2, pages - 4));
-  const pageNumbers = Array.from({ length: Math.min(pages, 5) }, (_, i) => firstPage + i);
+  const { sort, filters, setParam, setAvailability, setSort, clearFilters, openDoctor } =
+    useListingControls();
   const activeChips = toChips(filters);
   const hide = lockedArea ? (['area'] as const) : undefined;
   return (
@@ -282,54 +278,24 @@ export default function DoctorListing({
                 </div>
               </div>
             ) : (
-              uniqueDoctors(doctors).map((doctor) => (
-                <DoctorCard
-                  key={doctor.id}
-                  doctor={doctor}
-                  nextSlot={doctor.nextSlot ?? null}
-                  onOpen={openDoctor(`/doctor/${doctor.slug}`)}
-                />
-              ))
-            )}
-            {pages > 1 && (
-              <nav
-                aria-label="Pagination"
-                className="flex items-center justify-center gap-2 pt-6 pb-2 flex-wrap"
-              >
-                <button
-                  type="button"
-                  disabled={page <= 1}
-                  onClick={() => goToPage(page - 1)}
-                  className="px-3.5 py-2 border border-[#E7E5E4] rounded-lg font-caption-strong text-caption text-[#78716C] hover:bg-surface-container transition flex items-center gap-1 disabled:opacity-40"
-                >
-                  <span className="material-symbols-outlined text-[16px]">chevron_left</span>
-                  Previous
-                </button>
-                {pageNumbers.map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => goToPage(n)}
-                    aria-current={page === n ? 'page' : undefined}
-                    className={
-                      page === n
-                        ? 'w-9 h-9 bg-[#C1121F] text-white font-caption-strong text-caption rounded-lg flex items-center justify-center'
-                        : 'w-9 h-9 border border-[#E7E5E4] text-[#1C1917] font-caption-strong text-caption rounded-lg hover:bg-surface-container flex items-center justify-center'
-                    }
-                  >
-                    {n}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  disabled={page >= pages}
-                  onClick={() => goToPage(page + 1)}
-                  className="px-3.5 py-2 border border-[#E7E5E4] rounded-lg font-caption-strong text-caption text-[#1C1917] hover:bg-surface-container transition flex items-center gap-1 disabled:opacity-40"
-                >
-                  Next
-                  <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-                </button>
-              </nav>
+              <InfiniteList
+                initial={doctors}
+                page={serverPage}
+                pages={pages}
+                noun="doctors"
+                load={(n) => api.doctors({ ...query, page: n }).then((r) => r.doctors)}
+                pageHref={(n) => withPage(pathname, searchParams.toString(), n)}
+                render={(list) =>
+                  uniqueDoctors(list).map((doctor) => (
+                    <DoctorCard
+                      key={doctor.id}
+                      doctor={doctor}
+                      nextSlot={doctor.nextSlot ?? null}
+                      onOpen={openDoctor(`/doctor/${doctor.slug}`)}
+                    />
+                  ))
+                }
+              />
             )}
           </section>
           {/* Utilities — plain text labels, not headings, so the outline stays about the doctors. */}

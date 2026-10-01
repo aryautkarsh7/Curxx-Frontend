@@ -53,7 +53,8 @@ export default async function ConditionPage({
   const { condition, specialty } = detail;
   const cityInfo = (await resolveCity(city))!;
   const filters = queryFrom(searchParams);
-  const listing = await loadDoctors({ ...filters, q: undefined, city, specialty: specialty.slug });
+  const query = { ...filters, q: undefined, city, specialty: specialty.slug };
+  const listing = await loadDoctors(query);
   const path = conditionHref(city, slug);
 
   const lists: [string, string[]][] = [
@@ -85,6 +86,7 @@ export default async function ConditionPage({
       />
       <DoctorListing
         {...listing}
+        query={query}
         city={city}
         cityName={cityInfo.name}
         place={cityInfo.name}

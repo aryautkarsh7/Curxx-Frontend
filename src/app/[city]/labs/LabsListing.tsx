@@ -6,8 +6,16 @@ import FilterPillSheet from '@/components/FilterPillSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import DiagnosticCentreCard from '@/components/labs/DiagnosticCentreCard';
+import InfiniteList, { withPage } from '@/components/listing/InfiniteList';
 import LabCard from '@/components/labs/LabCard';
-import type { Facet, Facility, LabDirectoryQuery, LabSummary, Near } from '@/lib/api';
+import {
+  api,
+  type Facet,
+  type Facility,
+  type LabDirectoryQuery,
+  type LabSummary,
+  type Near,
+} from '@/lib/api';
 import { useCart } from '@/lib/cart';
 
 const SORTS = [
@@ -110,41 +118,25 @@ export default function LabsListing({
   const centreList =
     centres.length > 0 ? (
       <div className="space-y-4">
-        {centres.map((c) => (
-          <DiagnosticCentreCard key={c.slug} centre={c} />
-        ))}
-        {centresPages > 1 && (
-          <nav
-            aria-label="Diagnostic centres pages"
-            className="flex items-center justify-between pt-2 text-caption font-caption"
-          >
-            {centresPage > 1 ? (
-              <Link
-                href={`${pathname}${centresPage > 2 ? `?page=${centresPage - 1}` : ''}`}
-                rel="prev"
-                className="text-primary-container font-caption-strong"
-              >
-                ← Previous
-              </Link>
-            ) : (
-              <span />
-            )}
-            <span className="text-outline">
-              Page {centresPage} of {centresPages}
-            </span>
-            {centresPage < centresPages ? (
-              <Link
-                href={`${pathname}?page=${centresPage + 1}`}
-                rel="next"
-                className="text-primary-container font-caption-strong"
-              >
-                Next →
-              </Link>
-            ) : (
-              <span />
-            )}
-          </nav>
-        )}
+        <InfiniteList
+          initial={centres}
+          page={centresPage}
+          pages={centresPages}
+          noun="diagnostic centres"
+          load={(n) =>
+            api
+              .facilities({
+                city,
+                category: 'diagnostic-center',
+                sort: 'rating',
+                page: n,
+                limit: 20,
+              })
+              .then((r) => r.items)
+          }
+          pageHref={(n) => withPage(pathname, params.toString(), n)}
+          render={(list) => list.map((c) => <DiagnosticCentreCard key={c.slug} centre={c} />)}
+        />
       </div>
     ) : (
       <div className="rounded-2xl border border-dashed border-[#E7E5E4] bg-surface-container-lowest p-8 text-center">

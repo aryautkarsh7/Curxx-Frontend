@@ -90,9 +90,17 @@ export function queryFrom(params: SearchParams): Omit<DoctorQuery, 'city' | 'spe
   };
 }
 
-/** Any filter or search makes a page a variant of its canonical listing. */
+/**
+ * Any filter or search makes a page a variant of its canonical listing. ?page=N is not one: each page of
+ * the infinite-scroll listing is a crawlable page of its own (self canonical).
+ */
 const isVariant = (params: SearchParams) =>
-  Object.keys(params).some((k) => params[k] !== undefined && k !== 'utm_source');
+  Object.keys(params).some((k) => params[k] !== undefined && k !== 'utm_source' && k !== 'page');
+/** ?page=N (N > 1) on a canonical address, for paged listings. */
+export const pagedCanonical = (path: string, params: SearchParams) => {
+  const page = num(params.page) ?? 1;
+  return page > 1 ? `${path}${path.includes('?') ? '&' : '?'}page=${page}` : path;
+};
 
 type Scope = { city: string; specialty: string; locality?: string };
 
@@ -113,7 +121,7 @@ export async function listingMetadata(
     return {
       title: { absolute: page.title },
       description: page.description,
-      alternates: { canonical: page.canonical },
+      alternates: { canonical: pagedCanonical(page.canonical, params) },
       ...(isVariant(params) ? { robots: { index: false, follow: true } } : {}),
       openGraph: {
         title: page.title,
@@ -147,7 +155,7 @@ export async function listingMetadata(
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical: path },
+    alternates: { canonical: pagedCanonical(path, params) },
     // Filtered and searched views point to the clean listing rather than competing with it.
     ...(isVariant(params) || thin ? { robots: { index: false, follow: true } } : {}),
     openGraph: { title, description, type: 'website', url: path },
@@ -168,15 +176,17 @@ export async function renderListing(
   const q = filters.q;
   const basePath = `/${city}/${slug}`;
 
+  const localQuery = { ...filters, city, specialty: slug, area: area?.name ?? filters.area };
   const [local, content, templated] = await Promise.all([
-    loadDoctors({ ...filters, city, specialty: slug, area: area?.name ?? filters.area }),
+    loadDoctors(localQuery),
     all ? Promise.resolve(null) : loadContent(slug, city, area?.slug),
     area ? Promise.resolve(null) : templatePage(city, slug),
   ]);
   const template = templated?.page ?? null;
   // Nobody in this locality yet: show the nearest alternative — the same specialty across the city.
   const widened = Boolean(area) && local.total === 0 && !isVariant(params);
-  const listing = widened ? await loadDoctors({ ...filters, city, specialty: slug }) : local;
+  const listingQuery = widened ? { ...filters, city, specialty: slug } : localQuery;
+  const listing = widened ? await loadDoctors(listingQuery) : local;
   // Nobody listed at all (not just filtered out): a clean empty state that points somewhere that has doctors.
   const nobody = listing.total === 0 && !isVariant(params);
   const cityHasDoctors =
@@ -230,6 +240,7 @@ export async function renderListing(
       <JsonLd data={schema} />
       <DoctorListing
         {...listing}
+        query={listingQuery}
         city={city}
         cityName={cityInfo.name}
         place={place}

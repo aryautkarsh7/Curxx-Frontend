@@ -14,7 +14,10 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   if (!info) return {};
   const { slug: canonical, name } = info;
   const { facilityTypes: FACILITY_TYPES } = await liveCatalogue();
-  const category = (await searchParams).category;
+  const sp = await searchParams;
+  const category = sp.category;
+  // Each page of the infinite-scroll listing is crawlable on its own (?page=N, self canonical).
+  const page = Math.max(1, Number(Array.isArray(sp.page) ? sp.page[0] : sp.page) || 1);
   const type = FACILITY_TYPES.find((t) => t.slug === category);
   return {
     title: {
@@ -25,7 +28,9 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     description: type
       ? `${type.description} in ${name}: timings, departments, insurers and doctors you can book on Curxx.`
       : `Compare hospitals in ${name} by type — multispecialty, government, eye, maternity and more — with 24x7 emergency, departments, insurers and doctors you can book online.`,
-    alternates: { canonical: `/${canonical}/hospitals${type ? `?category=${type.slug}` : ''}` },
+    alternates: {
+      canonical: `/${canonical}/hospitals${type ? `?category=${type.slug}` : ''}${page > 1 ? `${type ? '&' : '?'}page=${page}` : ''}`,
+    },
   };
 }
 

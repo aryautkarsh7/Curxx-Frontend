@@ -5,7 +5,8 @@ import FilterPillSheet from '@/components/FilterPillSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import NewBadge from '@/components/NewBadge';
-import { hasReviews, photo, type Facet, type Facility, type FacilityQuery } from '@/lib/api';
+import InfiniteList, { withPage } from '@/components/listing/InfiniteList';
+import { api, hasReviews, photo, type Facet, type Facility, type FacilityQuery } from '@/lib/api';
 
 const SORTS = [
   { value: 'rating', label: 'Rating (highest first)' },
@@ -222,9 +223,6 @@ export default function ClinicsListing({
   query,
   unavailable,
 }: Props) {
-  // Seven page numbers around the current page (big cities have hundreds of pages).
-  const firstPage = Math.max(1, Math.min(page - 3, pages - 6));
-  const pageNumbers = Array.from({ length: Math.min(pages, 7) }, (_, i) => firstPage + i);
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -505,36 +503,20 @@ export default function ClinicsListing({
                 )}
               </div>
             ) : (
-              items.map((f) => <FacilityCard key={f.slug} f={f} />)
-            )}
-            {pages > 1 && (
-              <nav
-                aria-label="Pagination"
-                className="flex items-center justify-between pt-4 border-t border-[#E7E5E4]"
-              >
-                <span className="text-caption font-caption text-outline">
-                  Page {page} of {pages}
-                </span>
-                <div className="flex items-center gap-1">
-                  {pageNumbers.map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      onClick={() =>
-                        update((p) => (n === 1 ? p.delete('page') : p.set('page', String(n))), true)
-                      }
-                      aria-current={n === page ? 'page' : undefined}
-                      className={
-                        n === page
-                          ? 'w-9 h-9 rounded-lg bg-primary-container text-white font-caption-strong text-caption-strong'
-                          : 'w-9 h-9 rounded-lg border border-[#E7E5E4] text-on-surface font-caption-strong text-caption-strong hover:bg-[#FAFAF9]'
-                      }
-                    >
-                      {n}
-                    </button>
-                  ))}
-                </div>
-              </nav>
+              <InfiniteList
+                initial={items}
+                page={page}
+                pages={pages}
+                noun={label.toLowerCase()}
+                load={(n) => api.facilities({ ...query, page: n }).then((r) => r.items)}
+                pageHref={(n) => withPage(pathname, params.toString(), n)}
+                render={(list) =>
+                  // A centre is listed once even if it shifted between pages while loading.
+                  list
+                    .filter((f, i) => list.findIndex((x) => x.slug === f.slug) === i)
+                    .map((f) => <FacilityCard key={f.slug} f={f} />)
+                }
+              />
             )}
           </section>
 
