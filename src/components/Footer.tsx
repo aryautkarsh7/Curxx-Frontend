@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { POPULAR_CITIES, getCity } from '@/lib/cities';
 import { useCity } from '@/lib/city-store';
 import { SPECIALTY_COUNT_LABEL } from '@/lib/specialties';
+import { HELPLINE, HELPLINE_HREF } from '@/lib/helpline';
 
 const specialtyLinks = (city: string) => [
   { label: 'General Medicine', href: `/${city}/general-physician` },
@@ -123,17 +124,17 @@ export default function Footer() {
           <div className="md:col-span-3">
             <div className="p-5 rounded-xl border border-surface-variant bg-surface-container-lowest space-y-3">
               <div className="text-micro font-micro font-semibold text-primary-container uppercase tracking-wider">
-                Medical Dispatch
+                Helpline · Contact us
               </div>
               <a
                 className="block text-headline-h3 font-headline-h3 text-on-surface font-mono font-bold"
-                href="tel:+918047190108"
+                href={HELPLINE_HREF}
               >
-                +91 80 4719 0108
+                {HELPLINE.display}
               </a>
               <p className="text-micro font-micro text-on-surface-variant">
-                Trained emergency medical coordinators standing by 24x7 across all major Indian
-                metros.
+                Call Curxx for help with doctors, bookings, orders and your account. For a medical
+                emergency, call 108.
               </p>
             </div>
           </div>

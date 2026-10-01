@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { HELPLINE, HELPLINE_HREF } from '@/lib/helpline';
 
 /** Hinglish prompt for practice owners, linking through to Partner With Us. */
 export default function PartnerCta() {
@@ -10,7 +11,10 @@ export default function PartnerCta() {
             Doctor ya clinic owner ho?
           </p>
           <p className="text-body-default font-body-default text-on-surface-variant">
-            Apni practice grow karo Curxx Pro ke saath.
+            Apni practice grow karo Curxx Pro ke saath. Call{' '}
+            <a href={HELPLINE_HREF} className="font-body-strong text-primary-container">
+              {HELPLINE.display}
+            </a>
           </p>
         </div>
         <Link

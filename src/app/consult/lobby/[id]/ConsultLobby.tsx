@@ -8,6 +8,7 @@ import { ApiError, api, photo, rupees, type Appointment } from '@/lib/api';
 import { formatSlot } from '@/lib/booking';
 import { playTestSound, useLocalMedia } from '@/lib/media';
 import { getToken, useSession } from '@/lib/session';
+import { HELPLINE, HELPLINE_HREF } from '@/lib/helpline';
 
 export default function ConsultLobby({ id }: { id: string }) {
   return (
@@ -439,9 +440,9 @@ function DeviceCheck({ appointment: a, now }: { appointment: Appointment; now: n
                 Need help? Call{' '}
                 <a
                   className="text-primary font-caption-strong hover:underline"
-                  href="tel:18002879963"
+                  href={HELPLINE_HREF}
                 >
-                  1800-287-9963
+                  {HELPLINE.display}
                 </a>
               </p>
             </div>

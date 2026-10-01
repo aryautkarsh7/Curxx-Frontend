@@ -10,6 +10,7 @@ import { ApiError, api, errorMessage, rupees, type Order } from '@/lib/api';
 import { LabMap, directionsUrl } from '@/components/labs/LabCard';
 import { cancellable, orderSteps, statusLabel, statusTone } from '@/lib/orders';
 import { getToken } from '@/lib/session';
+import { HELPLINE, HELPLINE_HREF } from '@/lib/helpline';
 
 export default function OrderTracking({ reference }: { reference: string }) {
   return (
@@ -363,11 +364,11 @@ function Tracking({ reference }: { reference: string }) {
           </button>
         )}
         <a
-          href="tel:18002879963"
+          href={HELPLINE_HREF}
           className="h-11 px-5 inline-flex items-center gap-1.5 rounded-lg border border-[#E7E5E4] bg-white text-[#1C1917] font-caption-strong text-caption-strong"
         >
           <span className="material-symbols-outlined text-[18px]">support_agent</span>Help with this
-          order
+          order · {HELPLINE.display}
         </a>
       </div>
     </div>

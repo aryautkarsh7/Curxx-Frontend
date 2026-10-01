@@ -17,6 +17,7 @@ import {
 import { useCart } from '@/lib/cart';
 import type { Feature } from '@/lib/content-types';
 import { getToken, useSession } from '@/lib/session';
+import { HELPLINE, HELPLINE_HREF } from '@/lib/helpline';
 
 type Props = {
   categories: MedicineCategory[];
@@ -604,10 +605,10 @@ export default function MedicineStore({
             </Link>
             <a
               className="w-full sm:w-auto h-12 px-5 bg-surface-container-lowest hover:bg-surface-container border border-surface-variant rounded-lg text-on-surface font-body-strong text-body-default flex items-center justify-center gap-2 transition duration-150"
-              href="tel:18002879963"
+              href={HELPLINE_HREF}
             >
               <span className="material-symbols-outlined text-lg text-primary-container">call</span>
-              <span>1800-287-9963</span>
+              <span>{HELPLINE.display}</span>
             </a>
           </div>
         </section>

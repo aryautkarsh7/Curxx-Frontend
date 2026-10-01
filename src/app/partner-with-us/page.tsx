@@ -8,6 +8,7 @@ import PartnerSections from '@/components/PartnerSections';
 import TrustStrip from '@/components/TrustStrip';
 import type { PartnerSection } from '@/lib/content-types';
 import { items, loadSite } from '@/lib/site';
+import { HELPLINE, HELPLINE_HREF } from '@/lib/helpline';
 
 const TITLE = 'Partner With Curxx — For Doctors, Clinics, Hospitals & Corporates';
 const DESCRIPTION =
@@ -98,7 +99,11 @@ export default async function PartnerWithUsPage() {
           </h2>
           <p className="text-body-default font-body-default text-on-surface-variant max-w-2xl">
             Doctors, hospital owners, healthcare professionals and diagnostic centres: leave your
-            details and our partner team will call you back.
+            details and our partner team will call you back, or call us on{' '}
+            <a href={HELPLINE_HREF} className="font-body-strong text-primary-container">
+              {HELPLINE.display}
+            </a>
+            .
           </p>
           <Suspense>
             <PartnerEnquiryForm />
@@ -138,7 +143,11 @@ export default async function PartnerWithUsPage() {
               </p>
               <p className="text-body-default font-body-default text-on-surface-variant">
                 Write to partners@curxx.example and our onboarding team will call you back within
-                one working day.
+                one working day. Or call the Curxx helpline:{' '}
+                <a href={HELPLINE_HREF} className="font-body-strong text-primary-container">
+                  {HELPLINE.display}
+                </a>
+                .
               </p>
             </div>
             <a
