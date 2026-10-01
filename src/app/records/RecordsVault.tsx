@@ -403,21 +403,33 @@ function Vault() {
           <div className="p-4">
             <TableSkeleton rows={4} />
           </div>
+        ) : records.length === 0 ? (
+          <div className="px-6 py-12 text-center space-y-3">
+            <span className="material-symbols-outlined text-[36px] text-[#78716C]">
+              folder_open
+            </span>
+            <p className="font-body-strong text-body-strong text-[#1C1917]">No records yet</p>
+            <p className="font-body-default text-body-default text-[#78716C] max-w-md mx-auto">
+              Upload prescriptions, lab reports and scans to keep them in one place and share them
+              with your doctor.
+            </p>
+            <button
+              type="button"
+              onClick={() => setUploadOpen(true)}
+              className="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong shadow-sm"
+            >
+              <span className="material-symbols-outlined text-[18px]">upload_file</span>
+              Upload a record
+            </button>
+          </div>
         ) : shown.length === 0 ? (
           <div className="p-8 text-center space-y-2">
             <span className="material-symbols-outlined text-[32px] text-[#78716C]">
               folder_open
             </span>
             <p className="font-body-default text-body-default text-[#78716C]">
-              {records.length === 0 ? 'Your locker is empty.' : 'No records match these filters.'}
+              No records match these filters.
             </p>
-            <button
-              type="button"
-              onClick={() => setUploadOpen(true)}
-              className="font-caption-strong text-caption-strong text-primary-container hover:underline"
-            >
-              Upload a record
-            </button>
           </div>
         ) : (
           <>
