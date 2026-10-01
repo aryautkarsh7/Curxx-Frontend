@@ -31,7 +31,7 @@ export default function HomeDoctorCard({
               decoding="async"
               alt={doctor.name}
               className="w-full h-full object-cover"
-              src={doctorPhoto(doctor.photoUrl, 112)}
+              src={doctorPhoto(doctor.photoUrl, 112, doctor.gender)}
             />
           </div>
           <div>

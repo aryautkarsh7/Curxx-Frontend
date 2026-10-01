@@ -64,7 +64,7 @@ export default function SavedItems() {
                 className="p-4 rounded-xl border border-[#E7E5E4] bg-white flex items-center gap-3"
               >
                 <img
-                  src={doctorPhoto(d.photoUrl, 96)}
+                  src={doctorPhoto(d.photoUrl, 96, d.gender)}
                   alt=""
                   className="w-12 h-12 rounded-full object-cover"
                 />

@@ -46,7 +46,10 @@ const KINDS: {
   },
 ];
 
-type Recipient = Pick<Doctor, 'slug' | 'name' | 'title' | 'clinicName' | 'area' | 'photoUrl'>;
+type Recipient = Pick<
+  Doctor,
+  'slug' | 'name' | 'title' | 'clinicName' | 'area' | 'photoUrl' | 'gender'
+>;
 
 type Props = {
   open: boolean;
@@ -237,7 +240,7 @@ export default function ShareRecordModal({
                     <div className="p-3 bg-[#FFF1F2] border-2 border-primary rounded-xl flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
                         <img
-                          src={doctorPhoto(doctor.photoUrl, 80)}
+                          src={doctorPhoto(doctor.photoUrl, 80, doctor.gender)}
                           alt=""
                           className="w-10 h-10 rounded-lg object-cover shrink-0"
                         />
@@ -281,7 +284,7 @@ export default function ShareRecordModal({
                                 className="w-full p-2.5 bg-surface-container-lowest border border-surface-variant hover:border-outline rounded-xl flex items-center gap-3 text-left"
                               >
                                 <img
-                                  src={doctorPhoto(d.photoUrl, 80)}
+                                  src={doctorPhoto(d.photoUrl, 80, d.gender)}
                                   alt=""
                                   className="w-9 h-9 rounded-lg object-cover shrink-0"
                                 />

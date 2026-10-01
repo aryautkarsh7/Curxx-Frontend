@@ -1506,10 +1506,22 @@ export const photo = (url: string, width: number) =>
       ? `${url}=w${width}`
       : url;
 
-/** Shown for doctors without a photo, so a portrait is never an empty <img src>. */
-export const DOCTOR_PLACEHOLDER = '/images/doctor-placeholder.svg';
-export const doctorPhoto = (url: string | null | undefined, width: number) =>
-  url ? photo(url, width) : DOCTOR_PLACEHOLDER;
+/** Shown for doctors without a photo, so a portrait is never an empty <img src>: by gender, else neutral. */
+export const DOCTOR_PLACEHOLDER = '/images/doctor-neutral.svg';
+export const DOCTOR_AVATARS = {
+  male: '/images/doctor-male.svg',
+  female: '/images/doctor-female.svg',
+} as const;
+export const doctorPhoto = (
+  url: string | null | undefined,
+  width: number,
+  gender?: string | null,
+) =>
+  url
+    ? photo(url, width)
+    : gender === 'male' || gender === 'female'
+      ? DOCTOR_AVATARS[gender]
+      : DOCTOR_PLACEHOLDER;
 
 /** Ratings mean something only once there are reviews; before that a "New" badge shows instead. */
 export const hasReviews = (r: { reviewCount?: number | null }) => (r.reviewCount ?? 0) > 0;

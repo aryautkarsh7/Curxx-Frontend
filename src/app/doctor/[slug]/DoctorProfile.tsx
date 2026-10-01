@@ -182,7 +182,7 @@ export default function DoctorProfile({
                   <img
                     alt={doctor.name}
                     className="w-24 h-24 sm:w-[120px] sm:h-[120px] rounded-full object-cover border-2 border-white shadow-sm ring-1 ring-[#E7E5E4]"
-                    src={doctorPhoto(doctor.photoUrl, 240)}
+                    src={doctorPhoto(doctor.photoUrl, 240, doctor.gender)}
                   />
                   {doctor.verified && (
                     <span
@@ -640,7 +640,7 @@ export default function DoctorProfile({
                   className="p-4 rounded-xl border border-[#E7E5E4] bg-white hover:border-[#A8A29E] flex items-center gap-3"
                 >
                   <img
-                    src={doctorPhoto(d.photoUrl, 112)}
+                    src={doctorPhoto(d.photoUrl, 112, d.gender)}
                     alt={d.name}
                     loading="lazy"
                     className="w-14 h-14 rounded-full object-cover"

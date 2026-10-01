@@ -42,7 +42,7 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
             decoding="async"
             alt={`${doctor.name}, ${doctor.title}`}
             className="w-[88px] h-[88px] rounded-full object-cover border border-[#E7E5E4]"
-            src={doctorPhoto(doctor.photoUrl, 176)}
+            src={doctorPhoto(doctor.photoUrl, 176, doctor.gender)}
           />
           {doctor.verified && (
             <span className="absolute bottom-0 right-0 bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] rounded-full p-0.5 flex items-center justify-center shadow-sm">

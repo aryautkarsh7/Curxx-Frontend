@@ -558,7 +558,7 @@ function TriageOutcome({
                 className="p-4 rounded-xl border border-surface-variant bg-surface-container-lowest flex flex-col sm:flex-row sm:items-center gap-4"
               >
                 <img
-                  src={doctorPhoto(d.photoUrl, 128)}
+                  src={doctorPhoto(d.photoUrl, 128, d.gender)}
                   alt=""
                   loading="lazy"
                   className="w-16 h-16 rounded-full object-cover"

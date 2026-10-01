@@ -145,7 +145,7 @@ function SelectSlot() {
                 decoding="async"
                 alt={doctor.name}
                 className="w-16 h-16 rounded-full object-cover border border-[#E7E5E4]"
-                src={doctorPhoto(doctor.photoUrl, 128)}
+                src={doctorPhoto(doctor.photoUrl, 128, doctor.gender)}
               />
               <div className="absolute -bottom-1 -right-1 bg-white p-0.5 rounded-full shadow-xs">
                 <span

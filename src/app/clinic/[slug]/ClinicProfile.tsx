@@ -392,7 +392,7 @@ export default function ClinicProfile({
                     >
                       <div className="flex items-center gap-3">
                         <img
-                          src={doctorPhoto(d.photoUrl, 112)}
+                          src={doctorPhoto(d.photoUrl, 112, d.gender)}
                           alt={d.name}
                           loading="lazy"
                           className="w-14 h-14 rounded-full object-cover border border-[#E7E5E4]"

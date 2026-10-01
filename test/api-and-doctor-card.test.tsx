@@ -45,6 +45,10 @@ describe('API display helpers', () => {
       'https://lh3.googleusercontent.com/a/profile=w80',
     );
     expect(doctorPhoto(undefined, 176)).toBe(DOCTOR_PLACEHOLDER);
+    expect(doctorPhoto('', 176, 'female')).toBe('/images/doctor-female.svg');
+    expect(doctorPhoto(null, 176, 'male')).toBe('/images/doctor-male.svg');
+    expect(DOCTOR_PLACEHOLDER).toBe('/images/doctor-neutral.svg');
+    expect(doctorPhoto('https://example.com/a.jpg', 176, 'male')).toBe('https://example.com/a.jpg');
     expect(hasReviews({ reviewCount: 0 })).toBe(false);
     expect(hasReviews({ reviewCount: 1 })).toBe(true);
   });
