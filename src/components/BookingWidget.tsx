@@ -1,8 +1,9 @@
 'use client';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ContactButtons from '@/components/profile/ContactButtons';
-import { canBook, rupees, type Doctor, type Slot } from '@/lib/api';
+import { canBook, rupees, type Doctor, type Practice, type Slot } from '@/lib/api';
 
 /** audio = phone teleconsultation, booked on the doctor's video slots. */
 type Mode = 'clinic' | 'video' | 'audio';
@@ -38,6 +39,8 @@ type Props = {
     whatsapps: (string | undefined | null)[];
     address: string;
   };
+  /** Where the doctor consults (Doctar's schedules): shown when they can't be booked online. */
+  practices?: Practice[];
 };
 
 const mapsUrl = (q: string) =>
@@ -45,15 +48,20 @@ const mapsUrl = (q: string) =>
 
 export default function BookingWidget(props: Props) {
   return !canBook(props.doctor) ? (
-    <VisitPanel doctor={props.doctor} contact={props.contact} />
+    <VisitPanel doctor={props.doctor} contact={props.contact} practices={props.practices} />
   ) : (
     <SlotBooking {...props} />
   );
 }
 
 /** Listing-only doctors (no online booking yet): call the clinic or go there. */
-function VisitPanel({ doctor, contact }: Pick<Props, 'doctor' | 'contact'>) {
+function VisitPanel({
+  doctor,
+  contact,
+  practices = [],
+}: Pick<Props, 'doctor' | 'contact' | 'practices'>) {
   const address = contact?.address || `${doctor.clinicName}, ${doctor.area}`;
+  const withHours = practices.some((p) => p.timings.length > 0);
   return (
     <div className="bg-white border border-[#E7E5E4] rounded-2xl p-6 shadow-sm space-y-5">
       <div className="border-b border-[#E7E5E4] pb-4">
@@ -73,20 +81,64 @@ function VisitPanel({ doctor, contact }: Pick<Props, 'doctor' | 'contact'>) {
           </div>
         )}
       </div>
-      <div className="space-y-1">
-        <p className="font-body-strong text-body-strong text-[#1C1917] flex items-center gap-1.5">
-          <span className="material-symbols-outlined text-[18px] text-[#C1121F]">
-            local_hospital
-          </span>
-          {doctor.clinicName}
-        </p>
-        <p className="font-caption text-caption text-[#78716C]">{address}</p>
-      </div>
+      {practices.length > 0 ? (
+        <div className="space-y-3">
+          <p className="font-body-strong text-body-strong text-[#1C1917]">Timings &amp; fees</p>
+          {practices.map((p) => (
+            <div key={p.facilitySlug} className="rounded-xl border border-[#E7E5E4] p-3 space-y-2">
+              <div>
+                <Link
+                  href={`/clinic/${p.facilitySlug}`}
+                  className="font-body-strong text-body-strong text-[#1C1917] hover:text-[#C1121F] flex items-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-[18px] text-[#C1121F]">
+                    local_hospital
+                  </span>
+                  {p.name}
+                </Link>
+                <p className="font-caption text-caption text-[#78716C]">{p.address || p.area}</p>
+              </div>
+              {p.timings.length > 0 ? (
+                <ul className="space-y-1 font-caption text-caption">
+                  {p.timings.map((t) => (
+                    <li key={t.days} className="flex items-start justify-between gap-3">
+                      <span className="text-[#78716C]">{t.days}</span>
+                      <span className="text-[#1C1917] text-right">{t.hours.join(', ')}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="font-caption text-caption text-[#78716C]">
+                  Timings not listed here. Call to confirm.
+                </p>
+              )}
+              <p className="font-caption text-caption text-[#1C1917]">
+                Fee{' '}
+                <span className="font-caption-strong text-caption-strong">
+                  {doctor.feeVerified === false || p.feeFromSchedule ? 'Approx. ' : ''}
+                  {rupees(p.fee)}
+                </span>
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-1">
+          <p className="font-body-strong text-body-strong text-[#1C1917] flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[18px] text-[#C1121F]">
+              local_hospital
+            </span>
+            {doctor.clinicName}
+          </p>
+          <p className="font-caption text-caption text-[#78716C]">{address}</p>
+        </div>
+      )}
       <p className="px-3 py-2 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] font-caption text-caption text-[#1C1917] flex items-start gap-1.5">
         <span className="material-symbols-outlined text-[16px] text-[#78716C]">info</span>
         <span>
-          Online booking isn’t available for {doctor.name} yet. Call to confirm timings, or visit
-          the clinic.
+          {withHours
+            ? `Online booking isn’t available for ${doctor.name} yet. Timings come from the clinic’s schedule and can change: call before you go.`
+            : `Online booking isn’t available for ${doctor.name} yet. Call to confirm timings, or visit the clinic.`}
         </span>
       </p>
       <div className="flex flex-wrap gap-2">

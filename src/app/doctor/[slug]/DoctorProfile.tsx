@@ -346,6 +346,7 @@ export default function DoctorProfile({
               initialMode={widgetMode}
               initialSlotId={initialSlot}
               onSelect={onSelect}
+              practices={doctor.practices}
               contact={{
                 phones: [doctor.phone, facility?.phone, contact?.phone],
                 whatsapps: [doctor.whatsapp, facility?.whatsapp, contact?.whatsapp],

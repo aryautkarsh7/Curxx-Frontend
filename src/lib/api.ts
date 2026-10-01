@@ -138,6 +138,21 @@ export type DoctorDetail = Doctor & {
   timings?: { days: string; dayCount: number; hours: string[]; allDay: boolean }[];
   /** Hand-written in the admin panel: its own About text wins over the generated one. */
   managed?: boolean;
+  /** Doctar doctors: each place they consult at, with that place's hours and fee (from Doctar's schedules). */
+  practices?: Practice[];
+};
+
+export type Practice = {
+  facilitySlug: string;
+  name: string;
+  area: string;
+  address: string;
+  city: string;
+  consultHours: string;
+  fee: number;
+  /** The place's own fee from Doctar's schedule (else the doctor's general fee). */
+  feeFromSchedule: boolean;
+  timings: { days: string; dayCount: number; hours: string[]; allDay: boolean }[];
 };
 
 export type SubSpecialty = { slug: string; name: string; description: string; icon: string };
