@@ -1,3 +1,4 @@
+import { thinLocality } from '@/lib/locality';
 import type { Metadata } from 'next';
 import ListingSeoContent, {
   InternalLinks,
@@ -139,17 +140,16 @@ export async function listingMetadata(
   const description = q
     ? `Find doctors for ${q} in ${place}. Compare fees, experience and patient ratings, then book a video consult or a clinic visit on Curxx.`
     : `Book ${lower(specialty.plural)} in ${place} for a video consult or a clinic visit. Compare fees, experience and patient ratings, then confirm your slot on Curxx.`;
-  // A locality with no doctors of this specialty yet is thin content: keep it out of the index.
-  const empty =
-    area && slug !== ALL_DOCTORS.slug
-      ? (await loadContent(slug, city, area.slug))?.stats.doctors === 0
-      : false;
+  // A locality page with only a couple of doctors is thin content: crawled (follow), not indexed.
+  const thin = area
+    ? thinLocality((await loadDoctors({ city, specialty: slug, area: area.name, limit: 1 })).total)
+    : false;
   return {
     title: { absolute: title },
     description,
     alternates: { canonical: path },
     // Filtered and searched views point to the clean listing rather than competing with it.
-    ...(isVariant(params) || empty ? { robots: { index: false, follow: true } } : {}),
+    ...(isVariant(params) || thin ? { robots: { index: false, follow: true } } : {}),
     openGraph: { title, description, type: 'website', url: path },
   };
 }

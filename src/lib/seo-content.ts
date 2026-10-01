@@ -9,6 +9,7 @@
  * - A fee range set by an unconfirmed fee reads "approx."; surgery costs read as estimates.
  * - "Book" only where someone can actually be booked online; otherwise "find".
  */
+import { localityHref } from './locality';
 import type { DoctorStats, Faq, FeeRange, SurgeryStats } from './api';
 
 // ---------------------------------------------------------------- Formatting
@@ -369,9 +370,11 @@ export function cityDoctorsPage(s: DoctorStats): SeoPage | null {
         a.name,
         num(a.count),
         feeCell(a.clinicFee),
-        a.slug
-          ? { text: `View doctors in ${a.name}`, href: `/${city.slug}/doctors/${a.slug}` }
-          : '–',
+        // Every row links: the locality page, else the city listing filtered to that area.
+        {
+          text: `View doctors in ${a.name}`,
+          href: localityHref(city.slug, 'doctors', a),
+        },
       ]),
     });
   }
@@ -657,9 +660,10 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
           a.name,
           num(a.count),
           feeCell(a.clinicFee),
-          a.slug
-            ? { text: `${plural} in ${a.name}`, href: `/${city!.slug}/${sp.slug}/${a.slug}` }
-            : '–',
+          {
+            text: `${plural} in ${a.name}`,
+            href: localityHref(city!.slug, sp.slug, a),
+          },
         ]),
       });
   }
