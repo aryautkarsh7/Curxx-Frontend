@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Footer from '@/components/Footer';
 import ReportIssue from '@/components/profile/ReportIssue';
@@ -8,7 +7,7 @@ import Header from '@/components/Header';
 import MedicineCard from '@/components/pharmacy/MedicineCard';
 import Toast, { useToast } from '@/components/Toast';
 import { discountPct, rupees, type Medicine, photo } from '@/lib/api';
-import { addToCart, useCart } from '@/lib/cart';
+import { useCart } from '@/lib/cart';
 
 type Props = {
   medicine: Medicine;
@@ -25,38 +24,18 @@ function deliveryEstimate(pincode: string): { ok: boolean; text: string } {
 }
 
 export default function MedicineDetail({ medicine: m, substitutes, similar, categoryName }: Props) {
-  const router = useRouter();
   const cart = useCart();
   const [toast, showToast] = useToast();
-  const [qty, setQty] = useState(1);
   const [pincode, setPincode] = useState('');
   const [delivery, setDelivery] = useState<{ ok: boolean; text: string } | null>(null);
   const off = discountPct(m.price, m.mrp);
   const outOfStock = m.stock <= 0;
-  const maxQty = Math.min(10, m.stock);
   const inCart = cart.qtyOf(m.slug);
-
-  function add(goToCart = false) {
-    addToCart(
-      {
-        slug: m.slug,
-        name: m.name,
-        price: m.price,
-        mrp: m.mrp,
-        rxRequired: m.rxRequired,
-        subtitle: m.subtitle,
-      },
-      qty,
-    );
-    if (goToCart) router.push('/cart');
-    else showToast(`${qty} × ${m.name} added to cart`);
-  }
 
   const sections = [
     { id: 'about', label: 'Description' },
-    (m.uses?.length ?? 0) > 0 && { id: 'uses', label: 'Uses' },
+    { id: 'uses-side-effects', label: 'Uses & side effects' },
     m.howToUse && { id: 'how-to-use', label: 'How to use' },
-    (m.sideEffects?.length ?? 0) > 0 && { id: 'side-effects', label: 'Side effects' },
     (m.safetyAdvice?.length ?? 0) > 0 && { id: 'safety-advice', label: 'Safety advice' },
     { id: 'substitutes', label: 'Substitutes' },
   ].filter(Boolean) as { id: string; label: string }[];
@@ -290,55 +269,13 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
             </form>
 
             <div className="hidden lg:flex flex-col gap-3 pt-1">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center border border-surface-variant rounded-lg bg-surface-container-lowest h-12 px-2">
-                  <button
-                    type="button"
-                    onClick={() => setQty((q) => Math.max(1, q - 1))}
-                    aria-label="Decrease quantity"
-                    className="w-8 h-8 flex items-center justify-center text-outline hover:text-on-surface"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">remove</span>
-                  </button>
-                  <span className="w-8 text-center font-body-strong text-body-strong text-on-surface tabular-nums">
-                    {qty}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
-                    disabled={qty >= maxQty}
-                    aria-label="Increase quantity"
-                    className="w-8 h-8 flex items-center justify-center text-outline hover:text-on-surface disabled:opacity-40"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">add</span>
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => add(false)}
-                  disabled={outOfStock}
-                  className="flex-1 h-12 bg-primary-container text-on-primary rounded-lg font-body-strong text-body-strong flex items-center justify-center gap-2 hover:bg-[#8E0E17] disabled:bg-[#A8A29E] transition-all duration-150 shadow-sm active:scale-95"
-                >
-                  <span className="material-symbols-outlined text-[20px]">shopping_cart</span>Add to
-                  Cart
-                </button>
-              </div>
-              <button
-                type="button"
-                onClick={() => add(true)}
-                disabled={outOfStock}
-                className="w-full h-12 bg-surface-container-lowest border border-primary-container text-primary rounded-lg font-body-strong text-body-strong hover:bg-[#FFF1F2] disabled:opacity-50 transition-colors duration-150"
+              <a
+                href="#uses-side-effects"
+                className="w-full h-12 bg-primary-container text-on-primary rounded-lg font-body-strong text-body-strong flex items-center justify-center gap-2 hover:bg-[#8E0E17] transition-all duration-150 shadow-sm active:scale-95"
               >
-                Buy Now
-              </button>
-              {inCart > 0 && (
-                <Link
-                  href="/cart"
-                  className="text-center font-caption-strong text-caption text-primary-container hover:underline"
-                >
-                  {inCart} in your cart · Go to cart
-                </Link>
-              )}
+                <span className="material-symbols-outlined text-[20px]">medication</span>
+                Check Uses &amp; Side Effects
+              </a>
             </div>
 
             <div className="flex items-center justify-between flex-wrap gap-2 border-t border-surface-variant pt-3 px-1 text-outline font-micro text-micro">
@@ -385,9 +322,19 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
             <p className="text-body-default font-body-default text-on-surface-variant mt-2 leading-relaxed max-w-4xl">
               {m.description}
             </p>
-            {(m.uses?.length ?? 0) > 0 && (
-              <div id="uses" className="mt-6 scroll-mt-32">
-                <h3 className="text-headline-h3 font-headline-h3 text-on-surface">Uses</h3>
+          </section>
+
+          {/* Only the medicine's own data: nothing is written here when a field is missing. */}
+          <section
+            id="uses-side-effects"
+            className="bg-surface-container-lowest border border-surface-variant rounded-xl p-space-lg scroll-mt-32 space-y-6"
+          >
+            <h2 className="text-headline-h2 font-headline-h2 text-on-surface">
+              Uses &amp; Side Effects of {m.name}
+            </h2>
+            <div>
+              <h3 className="text-headline-h3 font-headline-h3 text-on-surface">Uses</h3>
+              {(m.uses?.length ?? 0) > 0 ? (
                 <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {m.uses!.map((u) => (
                     <li
@@ -401,8 +348,37 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
                     </li>
                   ))}
                 </ul>
-              </div>
-            )}
+              ) : (
+                <p className="mt-2 text-body-default font-body-default text-on-surface-variant">
+                  Information not available yet
+                </p>
+              )}
+            </div>
+            <div>
+              <h3 className="text-headline-h3 font-headline-h3 text-on-surface">Side effects</h3>
+              {(m.sideEffects?.length ?? 0) > 0 ? (
+                <>
+                  <p className="text-caption font-caption text-on-surface-variant mt-1">
+                    Most are mild and settle as your body adjusts. Contact your doctor if they
+                    persist or worsen.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {m.sideEffects!.map((e) => (
+                      <span
+                        key={e}
+                        className="px-3 py-1.5 rounded-full bg-surface-container-low border border-surface-variant text-caption-strong font-caption-strong text-on-surface"
+                      >
+                        {e}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="mt-2 text-body-default font-body-default text-on-surface-variant">
+                  Information not available yet
+                </p>
+              )}
+            </div>
           </section>
 
           {m.howToUse && (
@@ -417,29 +393,6 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
               {m.storage && (
                 <p className="text-caption font-caption text-outline mt-3">Storage: {m.storage}</p>
               )}
-            </section>
-          )}
-
-          {(m.sideEffects?.length ?? 0) > 0 && (
-            <section
-              id="side-effects"
-              className="bg-surface-container-lowest border border-surface-variant rounded-xl p-space-lg scroll-mt-32"
-            >
-              <h2 className="text-headline-h2 font-headline-h2 text-on-surface">Side effects</h2>
-              <p className="text-caption font-caption text-on-surface-variant mt-1">
-                Most are mild and settle as your body adjusts. Contact your doctor if they persist
-                or worsen.
-              </p>
-              <div className="flex flex-wrap gap-2 mt-3">
-                {m.sideEffects!.map((s) => (
-                  <span
-                    key={s}
-                    className="px-3 py-1.5 rounded-full bg-surface-container-low border border-surface-variant text-caption-strong font-caption-strong text-on-surface"
-                  >
-                    {s}
-                  </span>
-                ))}
-              </div>
             </section>
           )}
 
@@ -538,22 +491,13 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
             )
           )}
         </div>
-        <button
-          type="button"
-          onClick={() => add(false)}
-          disabled={outOfStock}
-          className="flex-1 h-11 border border-primary-container text-primary rounded-lg font-body-strong text-body-strong disabled:opacity-50"
+        <a
+          href="#uses-side-effects"
+          className="flex-1 h-11 bg-primary-container text-on-primary rounded-lg font-body-strong text-body-strong flex items-center justify-center gap-1.5"
         >
-          Add
-        </button>
-        <button
-          type="button"
-          onClick={() => add(true)}
-          disabled={outOfStock}
-          className="flex-1 h-11 bg-primary-container text-on-primary rounded-lg font-body-strong text-body-strong disabled:bg-[#A8A29E]"
-        >
-          Buy now
-        </button>
+          <span className="material-symbols-outlined text-[18px]">medication</span>
+          Check Uses &amp; Side Effects
+        </a>
       </div>
       <Toast message={toast} />
       <Footer />
