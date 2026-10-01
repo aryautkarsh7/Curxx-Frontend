@@ -1324,6 +1324,27 @@ export const api = {
     forWhom?: 'self' | 'child' | 'parent' | 'other';
     city?: string;
   }) => request<TriageResult>('/triage', send('POST', body)),
+  /** "Request an appointment" for a doctor who can't be booked online; the Curxx team calls back to confirm. */
+  requestAppointment: (
+    slug: string,
+    body: {
+      name: string;
+      phone: string;
+      preferredDay: string;
+      preferredTime: 'any' | 'morning' | 'afternoon' | 'evening';
+      facilitySlug?: string;
+    },
+  ) =>
+    request<{
+      request: {
+        reference: string;
+        status: 'requested';
+        doctorName: string;
+        facilityName: string;
+        preferredDay: string;
+        preferredTime: string;
+      };
+    }>(`/doctors/${encodeURIComponent(slug)}/requests`, send('POST', body)),
   lead: (body: {
     kind: 'provider' | 'hospital' | 'corporate' | 'callback' | 'newsletter' | 'surgery' | 'plus';
     surgery?: string;

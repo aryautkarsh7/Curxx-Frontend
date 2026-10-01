@@ -56,3 +56,24 @@ describe('Booking card for doctors without online booking', () => {
     expect(t).toContain('Call to confirm timings');
   });
 });
+
+describe('Request an appointment', () => {
+  it('is offered on Doctar listings, not when the team switched requests off', () => {
+    const on = renderToStaticMarkup(
+      <BookingWidget doctor={doctor} slots={[]} practices={[practice]} />,
+    );
+    expect(on).toContain('Request an appointment');
+    const off = renderToStaticMarkup(
+      <BookingWidget doctor={{ ...doctor, bookable: false }} slots={[]} practices={[practice]} />,
+    );
+    expect(off).not.toContain('Request an appointment');
+  });
+
+  it('offers the next 14 days in Indian time', async () => {
+    const { nextDays } = await import('../src/components/profile/AppointmentRequestForm');
+    const days = nextDays(new Date('2026-10-01T20:00:00.000Z'));
+    expect(days).toHaveLength(14);
+    expect(days[0]!.value).toBe('2026-10-02'); // 1:30 AM on 2 Oct in India
+    expect(days[0]!.label).toMatch(/^Today, /);
+  });
+});

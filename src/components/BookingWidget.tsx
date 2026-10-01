@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import AppointmentRequestForm from '@/components/profile/AppointmentRequestForm';
 import ContactButtons from '@/components/profile/ContactButtons';
 import { canBook, rupees, type Doctor, type Practice, type Slot } from '@/lib/api';
 
@@ -141,6 +142,9 @@ function VisitPanel({
             : `Online booking isn’t available for ${doctor.name} yet. Call to confirm timings, or visit the clinic.`}
         </span>
       </p>
+      {doctor.source && doctor.bookable !== false && (
+        <AppointmentRequestForm slug={doctor.slug} doctorName={doctor.name} practices={practices} />
+      )}
       <div className="flex flex-wrap gap-2">
         <ContactButtons
           targetType="doctor"
