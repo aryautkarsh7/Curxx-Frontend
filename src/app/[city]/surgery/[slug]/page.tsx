@@ -6,9 +6,11 @@ import Header from '@/components/Header';
 import FaqAccordion from '@/components/seo/FaqAccordion';
 import SurgeryLeadForm from '@/components/surgery/SurgeryLeadForm';
 import DoctorCard from '@/components/DoctorCard';
+import SurgeryTable from '@/components/surgery/SurgeryTable';
 import { ApiError, api, hasReviews, rupees, uniqueDoctors } from '@/lib/api';
 import { resolveCity } from '@/lib/catalogue-live';
 import { JsonLd } from '@/lib/seo';
+import { surgeryPageCopy } from '@/lib/surgery-template';
 
 type Props = { params: Promise<{ city: string; slug: string }> };
 
@@ -30,6 +32,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!data) return {};
   const { surgery } = data;
   const name = info.name;
+  // The single surgery template's title and description, when the surgery has its figures.
+  const copy = data.template
+    ? surgeryPageCopy(
+        surgery,
+        { slug: canonical, name },
+        data.specialty?.plural ?? 'Surgeons',
+        data.template,
+      )
+    : null;
+  if (copy)
+    return {
+      title: { absolute: copy.title },
+      ...(copy.description ? { description: copy.description } : {}),
+      alternates: { canonical: `/${canonical}/surgery/${slug}` },
+    };
   return {
     title: {
       absolute: `${surgery.name} in ${name} — Est. Cost ${rupees(surgery.cost[0])}–${rupees(surgery.cost[1])}, Hospitals | Curxx`,
@@ -56,8 +73,26 @@ export default async function SurgeryPage({ params }: Props) {
   if (canonical !== city) permanentRedirect(`/${canonical}/surgery/${slug}`);
   const data = await load(slug, canonical);
   if (!data) notFound();
-  const { surgery, hospitals, surgeons, related, otherCities, faqs, specialty } = data;
+  const { surgery, hospitals, surgeons, related, otherCities, specialty, template } = data;
   const cityName = info.name;
+  const copy = template
+    ? surgeryPageCopy(
+        surgery,
+        { slug: canonical, name: cityName },
+        specialty?.plural ?? 'Surgeons',
+        template,
+      )
+    : null;
+  // One FAQ list (its structured data is exactly what's shown): the template's five, then the page's
+  // others that they don't already answer (insurance, how to book).
+  const faqs = copy
+    ? [
+        ...copy.faqs,
+        ...data.faqs.filter(
+          (f) => !/^What is the cost|^How long is the hospital stay/i.test(f.question),
+        ),
+      ]
+    : data.faqs;
 
   // Procedures added from the cost sheet carry fewer details: leave out whatever isn't known.
   const facts = (
@@ -121,8 +156,13 @@ export default async function SurgeryPage({ params }: Props) {
                   {specialty ? ` · ${specialty.name}` : ''}
                 </span>
                 <h1 className="text-headline-h1 font-headline-h1 text-on-surface">
-                  {surgery.name} in {cityName}
+                  {copy ? copy.h1 : `${surgery.name} in ${cityName}`}
                 </h1>
+                {copy?.intro && (
+                  <p className="text-body-default font-body-default text-on-surface">
+                    {copy.intro}
+                  </p>
+                )}
                 <p className="text-body-default font-body-default text-on-surface-variant">
                   {surgery.description}
                 </p>
@@ -245,7 +285,10 @@ export default async function SurgeryPage({ params }: Props) {
                   )}
                 </section>
               )}
-              {hospitals.length > 0 && (
+              {copy?.tables.surgeons && <SurgeryTable table={copy.tables.surgeons} />}
+              {copy?.tables.areas && <SurgeryTable table={copy.tables.areas} />}
+              {copy?.tables.hospitals && <SurgeryTable table={copy.tables.hospitals} />}
+              {!copy?.tables.hospitals && hospitals.length > 0 && (
                 <section className="space-y-3">
                   <h2 className="text-headline-h2 font-headline-h2 text-on-surface">
                     Hospitals for {surgery.name} in {cityName}
@@ -288,8 +331,70 @@ export default async function SurgeryPage({ params }: Props) {
                   </div>
                 </section>
               )}
+              {copy?.tables.cities && <SurgeryTable table={copy.tables.cities} />}
+              {copy?.cost && (
+                <section className="space-y-3">
+                  <h2 className="text-headline-h2 font-headline-h2 text-on-surface">
+                    {copy.cost.heading}
+                  </h2>
+                  <p className="text-body-default font-body-default text-on-surface">
+                    {copy.cost.intro}
+                  </p>
+                  <ul className="space-y-1.5 text-body-default font-body-default text-on-surface">
+                    {copy.cost.bullets.map((b) => (
+                      <li key={b} className="flex gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary-container mt-2.5 shrink-0"></span>
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-body-default font-body-default text-on-surface-variant">
+                    {copy.cost.closing}
+                  </p>
+                </section>
+              )}
               <FaqAccordion faqs={faqs} heading={`${surgery.name}: Frequently Asked Questions`} />
-              {related.length > 0 && (
+              {copy && (copy.links.nearby.length > 0 || copy.links.related.length > 0) && (
+                <section className="space-y-4">
+                  {copy.links.nearby.length > 0 && (
+                    <div className="space-y-2">
+                      <h2 className="text-headline-h3 font-headline-h3 text-on-surface">
+                        {copy.links.nearbyHeading}
+                      </h2>
+                      <div className="flex flex-wrap gap-2">
+                        {copy.links.nearby.map((l) => (
+                          <Link
+                            key={l.href}
+                            href={l.href}
+                            className="px-3 py-1.5 rounded-full border border-surface-variant text-caption font-caption text-on-surface-variant hover:border-outline"
+                          >
+                            {l.text}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {copy.links.related.length > 0 && (
+                    <div className="space-y-2">
+                      <h2 className="text-headline-h3 font-headline-h3 text-on-surface">
+                        {copy.links.relatedHeading}
+                      </h2>
+                      <div className="flex flex-wrap gap-2">
+                        {copy.links.related.map((l) => (
+                          <Link
+                            key={l.href}
+                            href={l.href}
+                            className="px-3 py-1.5 rounded-full border border-surface-variant text-caption font-caption text-on-surface-variant hover:border-outline"
+                          >
+                            {l.text}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </section>
+              )}
+              {!copy && related.length > 0 && (
                 <section className="space-y-3">
                   <h2 className="text-headline-h2 font-headline-h2 text-on-surface">
                     Related Procedures

@@ -10,6 +10,7 @@ import type {
   SpecialtyInfo,
   SurgeryInfo,
 } from './catalogue-data';
+import type { SurgeryTemplateFacts } from './surgery-template';
 
 const CONFIGURED_API = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1').replace(
   /\/$/,
@@ -436,6 +437,8 @@ export type SurgerySummary = {
   insurance: boolean;
 };
 export type SurgeryDetail = {
+  /** The single surgery template's facts (lib/surgery-template.ts); null when the surgery has no specialty. */
+  template: SurgeryTemplateFacts | null;
   surgery: SurgerySummary & {
     treats: string[];
     techniques: string[];
