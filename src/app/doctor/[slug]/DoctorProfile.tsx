@@ -77,7 +77,6 @@ export default function DoctorProfile({
   const city = doctor.city;
   const cityName = doctor.cityName ?? 'Bengaluru';
   const specialtyPlural = doctor.specialtyPlural ?? 'Doctors';
-  const firstName = doctor.name.replace(/^Dr\.\s*/, '').split(' ')[0];
   const bookable = canBook(doctor);
   const approxLabel = doctor.feeVerified === false ? 'Approx. ' : '';
 
@@ -507,7 +506,7 @@ export default function DoctorProfile({
               className="bg-white border border-[#E7E5E4] rounded-2xl p-5 sm:p-8 space-y-4 scroll-mt-32"
             >
               <h2 className="font-headline-h2 text-headline-h2 text-[#1C1917]">
-                Where {firstName} practises
+                Where {doctor.name} practises
               </h2>
               <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-[#E7E5E4]">
                 {facility?.photoUrl && (
@@ -547,7 +546,7 @@ export default function DoctorProfile({
                   )}
                   {doctor.consultHours && (
                     <p className="font-caption text-caption text-[#78716C]">
-                      {firstName} consults here {doctor.consultHours}
+                      {doctor.name} consults here {doctor.consultHours}
                     </p>
                   )}
                   <p className="font-caption text-caption text-[#1C1917]">
