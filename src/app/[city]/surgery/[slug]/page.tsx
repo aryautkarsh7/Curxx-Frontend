@@ -5,7 +5,8 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import FaqAccordion from '@/components/seo/FaqAccordion';
 import SurgeryLeadForm from '@/components/surgery/SurgeryLeadForm';
-import { ApiError, api, hasReviews, photo, rupees } from '@/lib/api';
+import DoctorCard from '@/components/DoctorCard';
+import { ApiError, api, hasReviews, rupees, uniqueDoctors } from '@/lib/api';
 import { resolveCity } from '@/lib/catalogue-live';
 import { JsonLd } from '@/lib/seo';
 
@@ -280,34 +281,9 @@ export default async function SurgeryPage({ params }: Props) {
                   <h2 className="text-headline-h2 font-headline-h2 text-on-surface">
                     Experienced {specialty?.plural ?? 'Surgeons'} in {cityName}
                   </h2>
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    {surgeons.map((d) => (
-                      <Link
-                        key={d.slug}
-                        href={`/doctor/${d.slug}`}
-                        className="p-4 rounded-xl border border-surface-variant hover:border-outline transition flex items-center gap-3"
-                      >
-                        {d.photoUrl && (
-                          <img
-                            src={photo(d.photoUrl, 112)}
-                            alt=""
-                            loading="lazy"
-                            className="w-14 h-14 rounded-full object-cover"
-                          />
-                        )}
-                        <span className="min-w-0">
-                          <h3 className="font-body-strong text-body-strong text-on-surface truncate">
-                            {d.name}
-                          </h3>
-                          <span className="block font-caption text-caption text-on-surface-variant truncate">
-                            {d.title} · {d.experienceYears} yrs
-                          </span>
-                          <span className="block font-micro text-micro text-on-surface-variant truncate">
-                            {d.clinicName}, {d.area}
-                            {hasReviews(d) ? ` · ★ ${d.rating}` : ''}
-                          </span>
-                        </span>
-                      </Link>
+                  <div className="space-y-4">
+                    {uniqueDoctors(surgeons).map((d) => (
+                      <DoctorCard key={d.slug} doctor={d} />
                     ))}
                   </div>
                 </section>

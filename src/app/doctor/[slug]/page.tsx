@@ -52,7 +52,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: `/doctor/${doctor.slug}` },
+    // Doctar's second record of a listed doctor points search engines to the listed one.
+    alternates: { canonical: `/doctor/${doctor.duplicateOf || doctor.slug}` },
     openGraph: { title, description, type: 'profile' },
   };
 }

@@ -24,7 +24,8 @@ type Props = {
   doctor: Doctor;
   /** Earliest open slot from /doctors/:slug/slots, when the listing has loaded it. */
   nextSlot?: Slot | null;
-  onOpen: (e: MouseEvent<HTMLElement>) => void;
+  /** Card-wide click (listings). Without it only the name and buttons link (server-rendered lists). */
+  onOpen?: (e: MouseEvent<HTMLElement>) => void;
 };
 
 export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
@@ -32,7 +33,7 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
   return (
     <div
       onClick={onOpen}
-      className="bg-[#FFFFFF] border border-[#E7E5E4] rounded-xl p-5 hover:border-neutral-300 transition duration-150 relative cursor-pointer"
+      className={`bg-[#FFFFFF] border border-[#E7E5E4] rounded-xl p-5 hover:border-neutral-300 transition duration-150 relative${onOpen ? ' cursor-pointer' : ''}`}
     >
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Left Portrait & Verified Badge */}
@@ -60,7 +61,9 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
         <div className="flex-1 min-w-0 pr-2">
           <div className="flex items-center gap-1.5">
             <h3 className="font-headline-h2 text-headline-h2 text-[#1C1917] break-words">
-              {doctor.name}
+              <Link href={href} className="hover:text-[#C1121F]">
+                {doctor.name}
+              </Link>
             </h3>
             {doctor.verified && (
               <span
@@ -72,6 +75,12 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
             )}
           </div>
           <p className="font-caption text-caption text-[#78716C] mt-0.5">{doctor.qualification}</p>
+          {doctor.registrationVerified && (
+            <p className="mt-1 inline-flex items-center gap-1 rounded bg-[#047857] text-white px-1.5 py-0.5 font-micro text-micro">
+              <span className="material-symbols-outlined text-[12px]">verified_user</span>
+              Medical Registration Verified
+            </p>
+          )}
           <p className="font-caption-strong text-caption-strong text-[#1C1917] mt-1">
             {doctor.title} · {doctor.experienceYears} Years Experience
           </p>
@@ -82,7 +91,7 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-            {doctor.languages.slice(0, 3).map((language) => (
+            {(doctor.languages ?? []).slice(0, 3).map((language) => (
               <span
                 key={language}
                 className="px-2 py-0.5 bg-[#FAFAF9] border border-[#E7E5E4] rounded text-micro font-micro text-[#78716C]"
@@ -116,7 +125,7 @@ export default function DoctorCard({ doctor, nextSlot, onOpen }: Props) {
               </span>
               <span>{doctor.recommendPercent}%</span>
               <span className="text-[#78716C] font-caption text-caption">
-                ({doctor.reviewCount.toLocaleString('en-IN')} Patient Stories)
+                ({(doctor.reviewCount ?? 0).toLocaleString('en-IN')} Patient Stories)
               </span>
             </div>
           ) : (

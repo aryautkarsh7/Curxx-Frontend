@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { slotLabel } from '@/components/DoctorCard';
+import DoctorCard from '@/components/DoctorCard';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import ContactButtons from '@/components/profile/ContactButtons';
@@ -12,13 +12,13 @@ import NewBadge from '@/components/NewBadge';
 import {
   api,
   canBook,
-  doctorPhoto,
   hasReviews,
   photo,
   rupees,
   type Doctor,
   type Facility,
   type Slot,
+  uniqueDoctors,
 } from '@/lib/api';
 
 const AMENITY_ICON: Record<string, string> = {
@@ -384,75 +384,9 @@ export default function ClinicProfile({
                   No doctors from this centre are listed on Curxx yet.
                 </p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {shownDoctors.map((d) => (
-                    <div
-                      key={d.slug}
-                      className="p-4 rounded-xl border border-[#E7E5E4] bg-surface-container-lowest flex flex-col gap-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={doctorPhoto(d.photoUrl, 112, d.gender)}
-                          alt={d.name}
-                          loading="lazy"
-                          className="w-14 h-14 rounded-full object-cover border border-[#E7E5E4]"
-                        />
-                        <div className="min-w-0">
-                          <Link
-                            href={`/doctor/${d.slug}`}
-                            className="block font-body-strong text-body-strong text-on-surface hover:text-primary truncate"
-                          >
-                            {d.name}
-                          </Link>
-                          <p className="font-caption text-caption text-on-surface-variant truncate">
-                            {d.title}
-                          </p>
-                          <p className="font-micro text-micro text-outline">
-                            {d.experienceYears} yrs
-                            {hasReviews(d)
-                              ? ` · ${d.recommendPercent}% recommend`
-                              : ' · New on Curxx'}
-                          </p>
-                          {d.consultHours && (
-                            <p className="font-micro text-micro text-on-surface-variant">
-                              Consults {d.consultHours}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      {d.nextSlotAt && (
-                        <p className="font-micro text-micro text-[#8E0E17] bg-[#FFF1F2] border border-[#F9C6C9] rounded px-2 py-1 text-center">
-                          Next: {slotLabel(d.nextSlotAt)}
-                        </p>
-                      )}
-                      <div className="flex items-center justify-between gap-2 mt-auto">
-                        <span className="font-body-strong text-body-strong text-on-surface">
-                          {d.feeVerified === false ? 'Approx. ' : ''}
-                          {rupees(d.fee)}
-                        </span>
-                        {!canBook(d) ? (
-                          <Link
-                            href={`/doctor/${d.slug}#book`}
-                            className="h-9 px-3.5 rounded-lg border border-primary-container text-primary-container font-caption-strong text-caption-strong inline-flex items-center"
-                          >
-                            Call / Visit
-                          </Link>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setDoctorSlug(d.slug);
-                              document
-                                .getElementById('book-opd')
-                                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }}
-                            className="h-9 px-3.5 rounded-lg bg-primary-container hover:bg-primary text-white font-caption-strong text-caption-strong"
-                          >
-                            Book visit
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                <div className="space-y-4">
+                  {uniqueDoctors(shownDoctors).map((d) => (
+                    <DoctorCard key={d.slug} doctor={d} />
                   ))}
                 </div>
               )}

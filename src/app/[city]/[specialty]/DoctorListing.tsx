@@ -7,7 +7,7 @@ import ListingFilterGroups, { toChips } from '@/components/ListingFilterGroups';
 import MobileFilterSheet from '@/components/MobileFilterSheet';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import { canBook, type DoctorList } from '@/lib/api';
+import { canBook, uniqueDoctors, type DoctorList } from '@/lib/api';
 import { lower } from '@/lib/seo-content';
 
 export type Crumb = { label: string; href?: string };
@@ -282,7 +282,7 @@ export default function DoctorListing({
                 </div>
               </div>
             ) : (
-              doctors.map((doctor) => (
+              uniqueDoctors(doctors).map((doctor) => (
                 <DoctorCard
                   key={doctor.id}
                   doctor={doctor}

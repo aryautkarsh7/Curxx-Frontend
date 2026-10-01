@@ -25,8 +25,9 @@ import {
   type Facility,
   type Slot,
   type Video,
+  uniqueDoctors,
 } from '@/lib/api';
-import { slotLabel } from '@/components/DoctorCard';
+import DoctorCard, { slotLabel } from '@/components/DoctorCard';
 import { doctorProfileContent } from '@/lib/doctor-content';
 import { lower } from '@/lib/seo-content';
 
@@ -632,32 +633,9 @@ export default function DoctorProfile({
                 View all<span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {similar.map((d) => (
-                <Link
-                  key={d.slug}
-                  href={`/doctor/${d.slug}`}
-                  className="p-4 rounded-xl border border-[#E7E5E4] bg-white hover:border-[#A8A29E] flex items-center gap-3"
-                >
-                  <img
-                    src={doctorPhoto(d.photoUrl, 112, d.gender)}
-                    alt={d.name}
-                    loading="lazy"
-                    className="w-14 h-14 rounded-full object-cover"
-                  />
-                  <span className="min-w-0">
-                    <h3 className="block font-body-strong text-body-strong text-[#1C1917] truncate">
-                      {d.name}
-                    </h3>
-                    <span className="block font-caption text-caption text-[#78716C] truncate">
-                      {d.title} · {d.experienceYears} yrs
-                    </span>
-                    <span className="block font-caption-strong text-caption text-[#1C1917]">
-                      {d.feeVerified === false ? 'Approx. ' : ''}
-                      {rupees(d.fee)} · {d.area}
-                    </span>
-                  </span>
-                </Link>
+            <div className="space-y-4">
+              {uniqueDoctors(similar).map((d) => (
+                <DoctorCard key={d.slug} doctor={d} />
               ))}
             </div>
           </section>

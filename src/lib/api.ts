@@ -121,6 +121,25 @@ export type Doctor = {
   source?: string;
 };
 
+/**
+ * Each doctor once: by URL, and by name + title + years of experience (Doctar can list one person twice,
+ * and lists that merge Curxx's and Doctar's records can repeat someone).
+ */
+export function uniqueDoctors<
+  T extends Pick<Doctor, 'slug' | 'name' | 'title' | 'experienceYears'>,
+>(doctors: T[]): T[] {
+  const seen = new Set<string>();
+  return doctors.filter((d) => {
+    const keys = [
+      `slug:${d.slug}`,
+      `who:${d.name.toLowerCase().replace(/[^a-z]/g, '')}|${d.title}|${d.experienceYears}`,
+    ];
+    if (keys.some((k) => seen.has(k))) return false;
+    keys.forEach((k) => seen.add(k));
+    return true;
+  });
+}
+
 /** How a doctor can be booked: the API's booking mode (older responses only had `bookable`). */
 export const bookingModeOf = (d: Pick<Doctor, 'booking' | 'bookable'>) =>
   d.booking ?? (d.bookable === false ? 'none' : 'instant');
@@ -140,6 +159,8 @@ export type DoctorDetail = Doctor & {
   managed?: boolean;
   /** Doctar doctors: each place they consult at, with that place's hours and fee (from Doctar's schedules). */
   practices?: Practice[];
+  /** A second Doctar record of a listed doctor: the listed profile's slug (used as the canonical). */
+  duplicateOf?: string | null;
 };
 
 export type Practice = {
@@ -440,21 +461,8 @@ export type SurgeryDetail = {
     insurers: string[];
     emergency24x7: boolean;
   }[];
-  surgeons: Pick<
-    Doctor,
-    | 'id'
-    | 'slug'
-    | 'name'
-    | 'title'
-    | 'experienceYears'
-    | 'rating'
-    | 'reviewCount'
-    | 'area'
-    | 'clinicName'
-    | 'photoUrl'
-    | 'qualification'
-    | 'fee'
-  >[];
+  /** The most experienced doctors of the surgery's specialty in the city (full records, for the doctor card). */
+  surgeons: Doctor[];
   related: SurgerySummary[];
   otherCities: { slug: string; name: string }[];
   faqs: Faq[];

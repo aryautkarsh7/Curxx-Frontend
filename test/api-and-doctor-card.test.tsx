@@ -71,3 +71,21 @@ describe('DoctorCard', () => {
     expect(markup).toContain('₹750');
   });
 });
+
+describe('one doctor card everywhere', () => {
+  it('works without a card-wide click (server-rendered lists): the name links to the profile', () => {
+    const markup = renderToStaticMarkup(<DoctorCard doctor={doctor} />);
+    expect(markup).toContain('href="/doctor/dr-asha-rao"');
+    expect(markup).not.toContain('cursor-pointer');
+  });
+
+  it('lists each doctor once', async () => {
+    const { uniqueDoctors } = await import('../src/lib/api');
+    const twin = { ...doctor, slug: 'asha-rao-dermatologist-bengaluru' };
+    const other = { ...doctor, slug: 'dr-asha-rao-2', experienceYears: 3 };
+    expect(uniqueDoctors([doctor, twin, doctor, other]).map((d) => d.slug)).toEqual([
+      'dr-asha-rao',
+      'dr-asha-rao-2',
+    ]);
+  });
+});
