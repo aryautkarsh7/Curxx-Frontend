@@ -209,9 +209,9 @@ describe('single surgery template', () => {
     );
   });
 
-  it('tables: beds "—" when unknown, this city in bold, every area row links', () => {
+  it('tables: beds "Not listed" when unknown, this city in bold, every area row links', () => {
     const copy = surgeryPageCopy(surgery, mumbai, 'General Surgeons', facts, now);
-    expect(copy.tables.hospitals!.rows[1]!.cells[3]).toBe('—');
+    expect(copy.tables.hospitals!.rows[1]!.cells[3]).toEqual({ muted: 'Not listed' });
     expect(copy.tables.cities!.rows.find((r) => r.current)!.cells[0]).toBe('Mumbai');
     expect(copy.tables.cities!.note).toBe(
       'Among listed cities, Nagpur has the lowest estimated cost (₹38,500) and Mumbai the highest (₹1,20,000). Mumbai sits at 3 of 3 on cost.',
@@ -221,5 +221,45 @@ describe('single surgery template', () => {
       '/mumbai/general-surgeon?area=Ghatkopar%20West',
     ]);
     expect(copy.cost!.bullets[1]).toBe('Technique (Laparoscopic repair or Open repair)');
+  });
+
+  it('counts agree with their noun (1 surgeon, 2 surgeons) and no area shows a dash', () => {
+    const one: SurgeryTemplateFacts = {
+      ...facts,
+      surgeons: { ...facts.surgeons, count: 1 },
+      hospitals: { ...facts.hospitals, count: 1 },
+      localities: [
+        {
+          name: 'Andheri West',
+          slug: 'andheri-west',
+          surgeons: 1,
+          hospitals: 11,
+          surgeonNames: ['Dr. Asha Rao'],
+          hospitalNames: ['Testcare Hospital'],
+          total: 12,
+        },
+        {
+          name: 'Malad West',
+          slug: null,
+          surgeons: 0,
+          hospitals: 1,
+          surgeonNames: [],
+          hospitalNames: ['Orchid Hospital'],
+          total: 1,
+        },
+      ],
+    };
+    const copy = surgeryPageCopy(surgery, mumbai, 'General Surgeons', one, now);
+    const all = strings(copy).join(' | ');
+    expect(copy.tables.areas!.note).toBe(
+      'Andheri West has the most listings in Mumbai (1 surgeon, 11 hospitals).',
+    );
+    expect(all).not.toMatch(/\b1 (surgeons|hospitals|more surgeons)\b/);
+    expect(copy.tables.surgeons!.note).toContain('Showing 3 of 1 surgeon in Mumbai.');
+    expect(copy.tables.areas!.rows[1]!.cells[1]).toEqual({ muted: 'Hospitals only' });
+    for (const t of Object.values(copy.tables))
+      for (const row of t?.rows ?? []) expect(row.cells).not.toContain('—');
+    const many = surgeryPageCopy(surgery, mumbai, 'General Surgeons', facts, now);
+    expect(strings(many).join(' | ')).toMatch(/12 (Surgeons|surgeons)/);
   });
 });

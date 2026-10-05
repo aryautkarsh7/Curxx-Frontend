@@ -1,3 +1,4 @@
+import { count } from '@/lib/plural';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
@@ -136,7 +137,7 @@ export default async function SpecialtiesPage({ params }: Props) {
                       </div>
                       {live?.doctorCount ? (
                         <div className="text-micro font-micro text-[#047857] mt-0.5">
-                          {live.doctorCount} doctors
+                          {count(live.doctorCount, 'doctor')}
                         </div>
                       ) : null}
                     </Link>

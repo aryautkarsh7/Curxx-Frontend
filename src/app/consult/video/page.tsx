@@ -1,3 +1,4 @@
+import { count } from '@/lib/plural';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import ConsultSteps from '@/components/ConsultSteps';
@@ -46,7 +47,8 @@ export default async function ConsultSpecialtyPage() {
             {doctorsOnline > 0 && (
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low border border-surface-variant text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">
                 <span className="w-2 h-2 rounded-full bg-tertiary" />
-                {doctorsOnline} doctors available on video this week
+                {count(doctorsOnline, 'doctor')} {doctorsOnline === 1 ? 'is' : 'are'} available on
+                video this week
               </span>
             )}
             <h1 className="text-headline-h1 font-headline-h1 text-on-surface">

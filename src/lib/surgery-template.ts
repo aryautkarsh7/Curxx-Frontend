@@ -7,6 +7,7 @@
  *   bullet), and a raw {placeholder} can never reach the page.
  */
 import { localityHref } from './locality';
+import { count, nounFor, singular } from './plural';
 
 export type SurgeryTemplateFacts = {
   state: string;
@@ -55,7 +56,10 @@ type Surgery = {
 };
 
 type Link = { text: string; href: string };
-type Cell = string | Link;
+/** Muted text: a cell with nothing to list (never an empty dash). */
+type Muted = { muted: string };
+export type Cell = string | Link | Muted;
+const NOT_LISTED: Muted = { muted: 'Not listed' };
 export type CopyTable = {
   id: string;
   heading: string;
@@ -120,6 +124,16 @@ export function surgeryPageCopy(
     surgeon_count: s.count > 0 ? num(s.count) : null,
     surgeon_count_minus1: s.count > 1 ? num(s.count - 1) : null,
     hospital_count: h.count > 0 ? num(h.count) : null,
+    // Counts with their noun, so "1 surgeon" / "2 surgeons" always agree.
+    surgeons_label: s.count > 0 ? count(s.count, 'surgeon') : null,
+    surgeons_label_title: s.count > 0 ? count(s.count, 'Surgeon') : null,
+    surgeons_more_label: s.count > 1 ? count(s.count - 1, 'more surgeon') : null,
+    hospitals_label: h.count > 0 ? count(h.count, 'hospital') : null,
+    surgeon_noun: nounFor(s.count, 'surgeon'),
+    specialist_label:
+      s.count > 0
+        ? `${num(s.count)} ${s.count === 1 ? singular(specialtyPlural) : specialtyPlural}`
+        : null,
     min_cost: costKnown ? inr(surgery.cost[0]) : null,
     max_cost: costKnown ? inr(surgery.cost[1]) : null,
     stay: surgery.stay,
@@ -135,8 +149,8 @@ export function surgeryPageCopy(
     avg_exp: s.avgExperience,
     // The area with the most listings (surgeons + hospitals), as in the area-wise table.
     top_locality: loc?.name,
-    top_locality_surgeon_count: loc ? num(loc.surgeons) : null,
-    top_locality_hospital_count: loc ? num(loc.hospitals) : null,
+    top_locality_surgeons_label: loc ? count(loc.surgeons, 'surgeon') : null,
+    top_locality_hospitals_label: loc ? count(loc.hospitals, 'hospital') : null,
     hospital_1: h.top[0]?.name,
     hospital_2: h.top[1]?.name,
     hospital_3: h.top[2]?.name,
@@ -150,7 +164,7 @@ export function surgeryPageCopy(
 
   // ---- Meta title: A / B / C by hash; over ~60 characters falls back to C (the template's rule).
   const titles = [
-    '{surgery_name} in {city} – {surgeon_count} Surgeons, Cost {min_cost}–{max_cost} | Curxx',
+    '{surgery_name} in {city} – {surgeons_label_title}, Cost {min_cost}–{max_cost} | Curxx',
     'Best {surgery_name} Surgeons in {city}: {top_surgeon} & More | Curxx',
     '{surgery_name} Cost in {city} ({year}) – Hospitals & Surgeons | Curxx',
   ];
@@ -160,8 +174,8 @@ export function surgeryPageCopy(
 
   // ---- Meta description: by hash, else the next variant that has every value.
   const descriptions = [
-    'Compare {surgeon_count} surgeons and {hospital_count} hospitals for {surgery_name_lc} in {city}, {state}. Estimated cost {min_cost}–{max_cost}. Book a free consultation.',
-    '{top_surgeon} ({top_surgeon_exp} yrs, {top_surgeon_hospital}) and {surgeon_count_minus1} more surgeons for {surgery_name_lc} in {city}. Stay: {stay}. Recovery: {recovery}.',
+    'Compare {surgeons_label} and {hospitals_label} for {surgery_name_lc} in {city}, {state}. Estimated cost {min_cost}–{max_cost}. Book a free consultation.',
+    '{top_surgeon} ({top_surgeon_exp} yrs, {top_surgeon_hospital}) and {surgeons_more_label} for {surgery_name_lc} in {city}. Stay: {stay}. Recovery: {recovery}.',
     'Planning {surgery_name_lc} in {city}? See area-wise surgeons in {top_locality}, hospital list, cost range {min_cost}–{max_cost} and a free callback.',
   ];
   const d0 = (hash >>> 3) % 3;
@@ -174,14 +188,14 @@ export function surgeryPageCopy(
     () =>
       sentences(
         vars,
-        '{surgery_name} in {city} is offered by {surgeon_count} {specialty_plural} and {hospital_count} hospitals listed on Curxx.',
+        '{surgery_name} in {city} is offered by {specialist_label} and {hospitals_label} listed on Curxx.',
         'The most experienced surgeon is {top_surgeon} ({top_surgeon_exp} years, {top_surgeon_hospital}, {top_surgeon_locality}).',
         'Estimated cost in {city} is {min_cost} to {max_cost}, with a hospital stay of {stay} and recovery of {recovery}.',
       ),
     () =>
       sentences(
         vars,
-        'Looking for {surgery_name_lc} in {city}, {state}? Surgeons here have an average experience of {avg_exp} years, and most listings are in {top_locality} ({top_locality_surgeon_count} surgeons).',
+        'Looking for {surgery_name_lc} in {city}, {state}? Surgeons here have an average experience of {avg_exp} years, and most listings are in {top_locality} ({top_locality_surgeons_label}).',
         'Hospitals such as {hospital_1}, {hospital_2} and {hospital_3} offer this procedure.',
         'Typical cost: {min_cost}–{max_cost}.',
       ),
@@ -205,9 +219,9 @@ export function surgeryPageCopy(
         rows: s.top.map((d) => ({
           cells: [
             { text: d.name, href: `/doctor/${d.slug}` },
-            d.experienceYears > 0 ? `${d.experienceYears} yrs` : '—',
-            d.hospital || '—',
-            d.area || '—',
+            d.experienceYears > 0 ? `${d.experienceYears} yrs` : NOT_LISTED,
+            d.hospital || NOT_LISTED,
+            d.area || NOT_LISTED,
           ],
         })),
         note: sentences(
@@ -217,7 +231,7 @@ export function surgeryPageCopy(
             min_exp: s.minExperience,
             max_exp: s.maxExperience,
           },
-          'Showing {shown_count} of {surgeon_count} surgeons in {city}.',
+          'Showing {shown_count} of {surgeon_count} {surgeon_noun} in {city}.',
           'Experience ranges from {min_exp} to {max_exp} years.',
         ),
       }
@@ -232,19 +246,19 @@ export function surgeryPageCopy(
         rows: facts.localities.map((l) => ({
           cells: [
             { text: l.name, href: localityHref(city.slug, surgery.specialty, l) },
-            l.surgeonNames.length ? l.surgeonNames.join(', ') : '—',
-            l.hospitalNames.length ? l.hospitalNames.join(', ') : '—',
+            l.surgeonNames.length ? l.surgeonNames.join(', ') : { muted: 'Hospitals only' },
+            l.hospitalNames.length ? l.hospitalNames.join(', ') : { muted: 'Surgeons only' },
             num(l.total),
           ],
         })),
         note: loc
           ? fill(
-              '{top_area} has the most listings in {city} ({top_area_surgeons} surgeons, {top_area_hospitals} hospitals).',
+              '{top_area} has the most listings in {city} ({top_area_surgeons}, {top_area_hospitals}).',
               {
                 ...vars,
                 top_area: loc.name,
-                top_area_surgeons: num(loc.surgeons),
-                top_area_hospitals: num(loc.hospitals),
+                top_area_surgeons: count(loc.surgeons, 'surgeon'),
+                top_area_hospitals: count(loc.hospitals, 'hospital'),
               },
             )
           : null,
@@ -260,9 +274,9 @@ export function surgeryPageCopy(
         rows: h.top.map((x) => ({
           cells: [
             { text: x.name, href: `/clinic/${x.slug}` },
-            x.category || '—',
-            x.area || '—',
-            x.beds ? num(x.beds) : '—',
+            x.category || NOT_LISTED,
+            x.area || NOT_LISTED,
+            x.beds ? num(x.beds) : NOT_LISTED,
           ],
         })),
         note: null,
@@ -294,10 +308,10 @@ export function surgeryPageCopy(
               x.slug === city.slug
                 ? x.name
                 : { text: x.name, href: `/${x.slug}/surgery/${surgery.slug}` },
-              x.cost ? `${inr(x.cost[0])}–${inr(x.cost[1])}` : '—',
+              x.cost ? `${inr(x.cost[0])}–${inr(x.cost[1])}` : NOT_LISTED,
               num(x.surgeons),
               num(x.hospitals),
-              x.avgExperience ? `${x.avgExperience} yrs` : '—',
+              x.avgExperience ? `${x.avgExperience} yrs` : NOT_LISTED,
             ],
           })),
           note:
@@ -360,7 +374,7 @@ export function surgeryPageCopy(
     faq(
       'Who are the experienced surgeons for {surgery_name_lc} in {city}?',
       fill(
-        'Curxx lists {surgeon_count} surgeons in {city}. The most experienced are {surgeon_1} ({surgeon_1_exp} yrs, {surgeon_1_hospital}), {surgeon_2} ({surgeon_2_exp} yrs, {surgeon_2_hospital}) and {surgeon_3} ({surgeon_3_exp} yrs, {surgeon_3_hospital}).',
+        'Curxx lists {surgeons_label} in {city}. The most experienced are {surgeon_1} ({surgeon_1_exp} yrs, {surgeon_1_hospital}), {surgeon_2} ({surgeon_2_exp} yrs, {surgeon_2_hospital}) and {surgeon_3} ({surgeon_3_exp} yrs, {surgeon_3_hospital}).',
         faqVars,
       ),
     ),
@@ -381,7 +395,7 @@ export function surgeryPageCopy(
     faq(
       'Which area of {city} has the most surgeons?',
       fill(
-        '{top_locality} has the most listings, with {top_locality_surgeon_count} surgeons and {top_locality_hospital_count} hospitals.',
+        '{top_locality} has the most listings, with {top_locality_surgeons_label} and {top_locality_hospitals_label}.',
         faqVars,
       ),
     ),

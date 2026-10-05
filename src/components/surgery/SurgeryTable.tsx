@@ -31,6 +31,8 @@ export default function SurgeryTable({ table }: { table: CopyTable }) {
                   <td key={j} className="px-3 py-2 align-top">
                     {typeof cell === 'string' ? (
                       cell
+                    ) : 'muted' in cell ? (
+                      <span className="text-on-surface-variant">{cell.muted}</span>
                     ) : (
                       <Link href={cell.href} className="text-primary-container hover:underline">
                         {cell.text}
