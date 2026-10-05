@@ -11,7 +11,7 @@ import PlusSignup from './PlusSignup';
 export const metadata: Metadata = {
   title: { absolute: 'Curxx Plus — Unlimited Doctor Consultations for Your Whole Family | Curxx' },
   description:
-    'One family plan with unlimited online doctor consultations, priority clinic booking, discounted lab tests and medicines, and a free annual health checkup.',
+    'One family plan with unlimited online doctor consultations, priority clinic booking, discounted lab tests, and a free annual health checkup.',
   alternates: { canonical: '/curxx-plus' },
 };
 

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: '%s',
   },
   description:
-    'Book verified doctors online or at a clinic near you. Order medicines, home lab tests, and manage digital health records — all on one trusted website.',
+    'Book verified doctors online or at a clinic near you. Read about medicines, book home lab tests, and manage digital health records — all on one trusted website.',
 };
 
 /** Cities added or edited in the admin panel since the snapshot was generated (usually none). */

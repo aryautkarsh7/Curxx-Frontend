@@ -51,7 +51,7 @@ export default function AuthPage({ initialMode }: { initialMode: AuthMode }) {
             {mode === 'login' ? 'Log in to Curxx' : 'Create your Curxx account'}
           </h1>
           <p className="text-caption font-caption text-on-surface-variant">
-            Book doctors, order medicines and keep every report in one place.
+            Book doctors, read about medicines and keep every report in one place.
           </p>
         </div>
         <div className="p-6 rounded-2xl border border-surface-variant bg-surface-container-lowest shadow-sm">

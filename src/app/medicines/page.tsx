@@ -1,19 +1,18 @@
 import type { Metadata } from 'next';
 import { api, type MedicineQuery } from '@/lib/api';
-import type { Feature } from '@/lib/content-types';
 import { items, loadSite } from '@/lib/site';
 import MedicineStore from './MedicineStore';
 
 export const metadata: Metadata = {
-  title: 'Order Medicines Online, Delivered in 2 Hours | Curxx',
+  title: 'Medicines: Uses, Side Effects, Composition & Substitutes | Curxx',
   description:
-    'Genuine prescription medicines, devices and wellness essentials from licensed pharmacies across India. Upload a prescription or shop by category.',
+    'Browse medicines and check their uses, side effects, composition and substitutes. Information only: Curxx does not sell or deliver medicines.',
   alternates: { canonical: '/medicines' },
 };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;
-const SORTS = ['popular', 'price_asc', 'price_desc', 'discount', 'rating'] as const;
+const SORTS = ['popular', 'price_asc', 'price_desc', 'rating'] as const;
 
 export default async function MedicinesPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
@@ -27,18 +26,14 @@ export default async function MedicinesPage({ searchParams }: { searchParams: Se
     limit: 12,
   };
 
-  // The storefront still renders if the API is briefly unavailable.
+  // The page still renders if the API is briefly unavailable.
   const empty = { items: [], total: 0, page: 1, limit: 12, pages: 1 };
-  const [categories, results, deals, site] = await Promise.all([
+  const [categories, results, site] = await Promise.all([
     api
       .medicineCategories()
       .then((r) => r.categories)
       .catch(() => []),
     api.medicines(query).catch(() => empty),
-    api
-      .medicines({ category: 'deals', sort: 'discount', limit: 4 })
-      .then((r) => r.items)
-      .catch(() => []),
     loadSite('medicines'),
   ]);
 
@@ -46,10 +41,8 @@ export default async function MedicinesPage({ searchParams }: { searchParams: Se
     <MedicineStore
       categories={categories}
       results={results}
-      deals={deals}
       query={query}
       popularSearches={items<string>(site.sections, 'medicines/popular-searches')}
-      trust={items<Feature>(site.sections, 'medicines/trust')}
     />
   );
 }

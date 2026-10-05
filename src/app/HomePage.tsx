@@ -197,7 +197,7 @@ export default function HomePage({
               <p className="text-body-default font-body-default text-on-surface-variant max-w-xl">
                 {offersVideo
                   ? `Connect with ${verifiedWord}specialists across ${SPECIALTY_COUNT_LABEL} clinical disciplines. Instant video consultations, seamless electronic prescriptions, and doorstep lab diagnostics.`
-                  : 'Find doctors near you, compare fees and clinic timings, and order lab tests and medicines to your door.'}
+                  : 'Find doctors near you, compare fees and clinic timings, and book lab tests.'}
               </p>
               {/* Dual-Field Search Bar Card */}
               <div className="p-2 bg-surface-container-lowest rounded-xl border border-surface-variant shadow-sm flex flex-col sm:flex-row gap-2">
@@ -1050,8 +1050,8 @@ export default function HomePage({
                   Healthcare that moves at your pace
                 </h2>
                 <p className="text-body-default font-body-default text-on-primary/90 max-w-xl">
-                  Download the Curxx app for 1-click video consultations, real-time medicine
-                  tracking, and SOS medical dispatch wherever you are in India.
+                  Download the Curxx app for 1-click video consultations, appointment reminders, and
+                  SOS medical dispatch wherever you are in India.
                 </p>
                 <div className="flex flex-wrap gap-3 pt-2">
                   <a

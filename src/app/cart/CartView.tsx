@@ -25,21 +25,14 @@ export default function CartView() {
             <span className="material-symbols-outlined text-[40px] text-outline">shopping_bag</span>
             <p className="font-body-strong text-body-strong text-on-surface">Your cart is empty</p>
             <p className="font-caption text-caption text-on-surface-variant">
-              Add medicines from the store, or upload a prescription and a pharmacist will do it for
-              you.
+              Medicines are information only on Curxx. Lab tests added to a cart show up here.
             </p>
             <div className="flex flex-wrap justify-center gap-3 pt-1">
               <Link
-                href="/medicines"
+                href="/lab-tests"
                 className="h-11 px-5 inline-flex items-center rounded-lg bg-primary-container hover:bg-[#8E0E17] text-white font-caption-strong text-caption-strong"
               >
-                Shop medicines
-              </Link>
-              <Link
-                href="/medicines/upload"
-                className="h-11 px-5 inline-flex items-center rounded-lg border border-surface-variant bg-white text-on-surface font-caption-strong text-caption-strong"
-              >
-                Upload prescription
+                Browse lab tests
               </Link>
             </div>
           </div>
@@ -102,7 +95,7 @@ export default function CartView() {
                 ))}
               </ul>
               <Link
-                href="/medicines"
+                href="/lab-tests"
                 className="inline-flex items-center gap-1 font-caption-strong text-caption text-primary-container hover:underline"
               >
                 <span className="material-symbols-outlined text-[16px]">add</span>Add more items

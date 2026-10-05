@@ -10,12 +10,12 @@ import HomePage from './HomePage';
 export const metadata: Metadata = {
   title: 'Doctor Appointments Online & At Clinics Near You – Curxx',
   description:
-    'Book verified doctors online or at a clinic near you. Order medicines, home lab tests, and manage digital health records — all on one trusted website.',
+    'Book verified doctors online or at a clinic near you. Read about medicines, book home lab tests, and manage digital health records — all on one trusted website.',
   alternates: { canonical: '/' },
   openGraph: {
     title: 'Doctor Appointments Online & At Clinics Near You – Curxx',
     description:
-      'Book verified doctors online or at a clinic near you. Order medicines, home lab tests, and manage digital health records — all on one trusted website.',
+      'Book verified doctors online or at a clinic near you. Read about medicines, book home lab tests, and manage digital health records — all on one trusted website.',
     url: '/',
     type: 'website',
   },

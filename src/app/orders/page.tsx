@@ -6,10 +6,7 @@ export const metadata: Metadata = { title: 'My Orders | Curxx', robots: { index:
 
 export default function OrdersPage() {
   return (
-    <StaticPage
-      title="My orders"
-      intro="Medicine deliveries and home lab collections, with live status."
-    >
+    <StaticPage title="My orders" intro="Your home lab collections, with live status.">
       <OrderList />
     </StaticPage>
   );

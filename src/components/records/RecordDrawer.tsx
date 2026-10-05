@@ -157,7 +157,7 @@ export default function RecordDrawer({ record, onClose, onDownload, onShare, onD
                     className="inline-flex items-center gap-1 font-caption-strong text-caption text-primary-container hover:underline"
                   >
                     <span className="material-symbols-outlined text-[16px]">local_pharmacy</span>
-                    Order these medicines
+                    Read about these medicines
                   </Link>
                 </section>
               )}

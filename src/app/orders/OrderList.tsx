@@ -71,14 +71,8 @@ function Orders() {
           </p>
           <div className="flex justify-center gap-3">
             <Link
-              href="/medicines"
-              className="h-10 px-4 inline-flex items-center rounded-lg bg-primary-container text-white font-caption-strong text-caption-strong"
-            >
-              Shop medicines
-            </Link>
-            <Link
               href="/lab-tests"
-              className="h-10 px-4 inline-flex items-center rounded-lg border border-[#E7E5E4] text-[#1C1917] font-caption-strong text-caption-strong"
+              className="h-10 px-4 inline-flex items-center rounded-lg bg-primary-container text-white font-caption-strong text-caption-strong"
             >
               Book a lab test
             </Link>

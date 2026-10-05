@@ -133,8 +133,8 @@ export default function Footer() {
                 {HELPLINE.display}
               </a>
               <p className="text-micro font-micro text-on-surface-variant">
-                Call Curxx for help with doctors, bookings, orders and your account. For a medical
-                emergency, call 108.
+                Call Curxx for help with doctors, bookings, lab tests and your account. For a
+                medical emergency, call 108.
               </p>
             </div>
           </div>
