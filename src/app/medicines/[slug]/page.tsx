@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!data) return {};
   const { medicine: m } = data;
   return {
-    title: `${m.name} — Price, Uses & Side Effects | Curxx`,
-    description: `Buy ${m.name} (${m.composition}) online at ₹${m.price}. ${m.description?.slice(0, 110) ?? ''}`,
+    title: `${m.name} — Uses, Side Effects & Substitutes | Curxx`,
+    description: `${m.name} (${m.composition}): uses, side effects, composition and substitutes. ${m.description?.slice(0, 110) ?? ''}`,
     alternates: { canonical: `/medicines/${m.slug}` },
   };
 }

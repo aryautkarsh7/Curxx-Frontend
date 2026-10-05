@@ -1,13 +1,10 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
 import Footer from '@/components/Footer';
 import ReportIssue from '@/components/profile/ReportIssue';
 import Header from '@/components/Header';
 import MedicineCard from '@/components/pharmacy/MedicineCard';
-import Toast, { useToast } from '@/components/Toast';
-import { discountPct, rupees, type Medicine, photo } from '@/lib/api';
-import { useCart } from '@/lib/cart';
+import { rupees, type Medicine, photo } from '@/lib/api';
 
 type Props = {
   medicine: Medicine;
@@ -16,22 +13,7 @@ type Props = {
   categoryName: string | null;
 };
 
-/** Bengaluru pincodes get express delivery; the rest of India standard courier. */
-function deliveryEstimate(pincode: string): { ok: boolean; text: string } {
-  if (!/^[1-9]\d{5}$/.test(pincode)) return { ok: false, text: 'Enter a valid 6-digit pincode' };
-  if (pincode.startsWith('560')) return { ok: true, text: 'Express delivery in 2 hours' };
-  return { ok: true, text: 'Delivery in 2–4 working days' };
-}
-
 export default function MedicineDetail({ medicine: m, substitutes, similar, categoryName }: Props) {
-  const cart = useCart();
-  const [toast, showToast] = useToast();
-  const [pincode, setPincode] = useState('');
-  const [delivery, setDelivery] = useState<{ ok: boolean; text: string } | null>(null);
-  const off = discountPct(m.price, m.mrp);
-  const outOfStock = m.stock <= 0;
-  const inCart = cart.qtyOf(m.slug);
-
   const sections = [
     { id: 'about', label: 'Description' },
     { id: 'uses-side-effects', label: 'Uses & side effects' },
@@ -108,36 +90,6 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
                 </div>
               )}
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
-              {[
-                {
-                  icon: 'verified_user',
-                  title: '100% Genuine',
-                  body: `Direct from ${m.manufacturer}`,
-                },
-                {
-                  icon: 'health_and_safety',
-                  title: 'WHO-GMP Batch',
-                  body: 'Certified manufacturing',
-                },
-                { icon: 'thermostat', title: 'Stored Right', body: m.storage ?? 'Below 30°C' },
-              ].map((s) => (
-                <div
-                  key={s.title}
-                  className="p-3 bg-surface-container-lowest border border-surface-variant rounded-lg flex items-center gap-2.5"
-                >
-                  <div className="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-tertiary shrink-0">
-                    <span className="material-symbols-outlined text-[18px]">{s.icon}</span>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-caption-strong text-caption-strong text-on-surface">
-                      {s.title}
-                    </p>
-                    <p className="font-micro text-micro text-outline line-clamp-2">{s.body}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className="lg:col-span-5 flex flex-col gap-space-md">
@@ -183,19 +135,9 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
                     MRP {rupees(m.mrp)}
                   </span>
                 )}
-                {off > 0 && (
-                  <span className="px-2 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#047857] font-caption-strong text-caption">
-                    {off}% OFF
-                  </span>
-                )}
               </div>
               <p className="font-micro text-micro text-outline">
-                Inclusive of all taxes · Free delivery on orders above ₹499
-              </p>
-              <p
-                className={`font-caption-strong text-caption mt-1 ${outOfStock ? 'text-[#8E0E17]' : m.stock < 15 ? 'text-[#B45309]' : 'text-[#047857]'}`}
-              >
-                {outOfStock ? 'Out of stock' : m.stock < 15 ? `Only ${m.stock} left` : 'In stock'}
+                For information only. The price at a pharmacy may differ.
               </p>
             </div>
 
@@ -206,67 +148,14 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
                 </div>
                 <div className="flex-1">
                   <h2 className="font-body-strong text-body-strong text-[#8E0E17]">
-                    Valid prescription required
+                    Prescription medicine
                   </h2>
                   <p className="font-caption text-caption text-on-surface-variant mt-0.5">
-                    You can add it to your cart now; we&apos;ll ask for a prescription from your
-                    health locker or a new upload at checkout.
+                    Take it only as prescribed by your doctor.
                   </p>
-                  <Link
-                    href="/medicines/upload"
-                    className="inline-flex items-center gap-1 mt-2 text-primary font-caption-strong text-caption underline decoration-primary underline-offset-2 hover:opacity-80"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">upload_file</span>Upload
-                    prescription now
-                  </Link>
                 </div>
               </div>
             )}
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setDelivery(deliveryEstimate(pincode));
-              }}
-              className="bg-surface-container-lowest border border-surface-variant rounded-xl p-3.5"
-            >
-              <div className="flex items-center justify-between gap-3 flex-wrap">
-                <label className="flex items-center gap-2 flex-1 min-w-[180px]">
-                  <span className="material-symbols-outlined text-outline text-[20px]">
-                    local_shipping
-                  </span>
-                  <span className="sr-only">Delivery pincode</span>
-                  <input
-                    inputMode="numeric"
-                    maxLength={6}
-                    value={pincode}
-                    onChange={(e) => {
-                      setPincode(e.target.value.replace(/\D/g, ''));
-                      setDelivery(null);
-                    }}
-                    className="w-28 bg-transparent border-0 border-b border-surface-variant focus:border-primary-container p-0 text-body-strong text-on-surface focus:ring-0 focus:outline-none tabular-nums"
-                    placeholder="Pincode"
-                  />
-                  <button
-                    type="submit"
-                    className="text-primary font-caption-strong text-caption hover:underline"
-                  >
-                    Check
-                  </button>
-                </label>
-                {delivery && (
-                  <span
-                    className={`font-caption-strong text-caption flex items-center gap-1 ${delivery.ok ? 'text-[#047857]' : 'text-[#8E0E17]'}`}
-                    role="status"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">
-                      {delivery.ok ? 'bolt' : 'error'}
-                    </span>
-                    {delivery.text}
-                  </span>
-                )}
-              </div>
-            </form>
 
             <div className="hidden lg:flex flex-col gap-3 pt-1">
               <a
@@ -276,21 +165,6 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
                 <span className="material-symbols-outlined text-[20px]">medication</span>
                 Check Uses &amp; Side Effects
               </a>
-            </div>
-
-            <div className="flex items-center justify-between flex-wrap gap-2 border-t border-surface-variant pt-3 px-1 text-outline font-micro text-micro">
-              <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[15px]">lock</span>Genuine &amp;
-                sealed
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[15px]">replay</span>7-day returns
-                (unopened)
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[15px]">ac_unit</span>Cold-chain
-                safe
-              </span>
             </div>
           </div>
         </section>
@@ -431,7 +305,7 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
             </p>
             {substitutes.length === 0 ? (
               <p className="text-body-default font-body-default text-on-surface-variant mt-3">
-                No substitutes with this exact composition are stocked right now.
+                No other medicine with this exact composition is listed.
               </p>
             ) : (
               <div className="mt-4 divide-y divide-surface-variant border border-surface-variant rounded-lg">
@@ -461,15 +335,11 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
           {similar.length > 0 && (
             <section className="space-y-space-base">
               <h2 className="text-headline-h2 font-headline-h2 text-on-surface">
-                Frequently bought in {categoryName ?? 'this category'}
+                Related medicines in {categoryName ?? 'this category'}
               </h2>
               <div className="grid grid-cols-1 min-[420px]:grid-cols-2 lg:grid-cols-4 gap-space-base">
                 {similar.slice(0, 4).map((s) => (
-                  <MedicineCard
-                    key={s.slug}
-                    medicine={s}
-                    onAdded={(n) => showToast(`${n} added to cart`)}
-                  />
+                  <MedicineCard key={s.slug} medicine={s} />
                 ))}
               </div>
             </section>
@@ -481,14 +351,8 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
       <div className="lg:hidden fixed bottom-16 inset-x-0 z-40 bg-surface-container-lowest border-t border-surface-variant px-4 py-3 flex items-center gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
         <div className="min-w-0">
           <p className="font-headline-h3 text-headline-h3 text-on-surface">{rupees(m.price)}</p>
-          {inCart > 0 ? (
-            <Link href="/cart" className="font-micro text-micro text-primary-container underline">
-              {inCart} in cart
-            </Link>
-          ) : (
-            m.mrp > m.price && (
-              <p className="font-micro text-micro text-outline line-through">MRP {rupees(m.mrp)}</p>
-            )
+          {m.mrp > m.price && (
+            <p className="font-micro text-micro text-outline line-through">MRP {rupees(m.mrp)}</p>
           )}
         </div>
         <a
@@ -499,7 +363,6 @@ export default function MedicineDetail({ medicine: m, substitutes, similar, cate
           Check Uses &amp; Side Effects
         </a>
       </div>
-      <Toast message={toast} />
       <Footer />
     </>
   );

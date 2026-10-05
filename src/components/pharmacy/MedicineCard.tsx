@@ -1,56 +1,19 @@
-'use client';
 import Link from 'next/link';
-import { discountPct, rupees, type Medicine, photo } from '@/lib/api';
-import { addToCart, useCart } from '@/lib/cart';
-import QtyStepper from './QtyStepper';
+import { rupees, type Medicine, photo } from '@/lib/api';
 
 type Props = {
   medicine: Pick<
     Medicine,
     'slug' | 'name' | 'subtitle' | 'price' | 'mrp' | 'icon' | 'imageUrl' | 'rxRequired'
-  > & { stock?: number };
-  variant?: 'grid' | 'deal';
-  onAdded?: (name: string) => void;
+  >;
 };
 
-export default function MedicineCard({ medicine: m, variant = 'grid', onAdded }: Props) {
-  const cart = useCart();
-  const off = discountPct(m.price, m.mrp);
-  const outOfStock = m.stock !== undefined && m.stock <= 0;
-
-  function add() {
-    addToCart({
-      slug: m.slug,
-      name: m.name,
-      price: m.price,
-      mrp: m.mrp,
-      rxRequired: m.rxRequired,
-      subtitle: m.subtitle,
-    });
-    onAdded?.(m.name);
-  }
-
+/** A medicine to read about: name, short description, MRP, and a link to its page. No buying. */
+export default function MedicineCard({ medicine: m }: Props) {
   return (
     <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-space-base flex flex-col justify-between shadow-sm relative overflow-hidden hover:border-outline-variant transition-colors">
-      {variant === 'deal' && (
-        <div className="absolute top-0 left-0 bg-primary-container text-on-primary text-micro font-micro font-bold px-2.5 py-0.5 rounded-br-lg">
-          Deal of the Day
-        </div>
-      )}
-      {off > 0 && (
-        <span
-          className={`absolute ${variant === 'deal' ? 'top-2' : 'top-3'} right-3 text-micro font-micro text-tertiary-container font-bold bg-tertiary-container/10 px-2 py-0.5 rounded`}
-        >
-          {off}% OFF
-        </span>
-      )}
-      <Link
-        href={`/medicines/${m.slug}`}
-        className={`space-y-3 ${variant === 'deal' ? 'pt-4' : ''}`}
-      >
-        <div
-          className={`${variant === 'deal' ? 'w-full h-32' : 'w-full h-24'} rounded-lg bg-surface-container-low flex items-center justify-center text-outline overflow-hidden`}
-        >
+      <Link href={`/medicines/${m.slug}`} className="space-y-3">
+        <div className="w-full h-24 rounded-lg bg-surface-container-low flex items-center justify-center text-outline overflow-hidden">
           {m.imageUrl ? (
             <img
               src={photo(m.imageUrl, 320)}
@@ -91,23 +54,12 @@ export default function MedicineCard({ medicine: m, variant = 'grid', onAdded }:
             {rupees(m.price)}
           </p>
         </div>
-        {outOfStock ? (
-          <span className="text-caption-strong font-caption-strong text-outline">Out of stock</span>
-        ) : cart.has(m.slug) ? (
-          <QtyStepper slug={m.slug} />
-        ) : (
-          <button
-            type="button"
-            onClick={add}
-            className={
-              variant === 'deal'
-                ? 'h-9 px-3.5 bg-primary-container hover:bg-primary text-on-primary font-caption-strong text-caption rounded-lg transition duration-150 active:scale-95'
-                : 'px-4 py-1.5 border border-surface-variant rounded-lg text-caption-strong font-caption-strong text-primary-container hover:bg-surface-container-low transition-colors'
-            }
-          >
-            {variant === 'deal' ? 'Add to Cart' : '+ Add'}
-          </button>
-        )}
+        <Link
+          href={`/medicines/${m.slug}`}
+          className="px-4 py-1.5 border border-surface-variant rounded-lg text-caption-strong font-caption-strong text-primary-container hover:bg-surface-container-low transition-colors"
+        >
+          View details
+        </Link>
       </div>
     </div>
   );
