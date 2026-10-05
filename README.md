@@ -9,21 +9,23 @@ npm run lint
 npm run test
 ```
 
-## Getting Started
-
-First, run the development server:
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env     # defaults point at the local API
+npm run dev              # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The site reads the API from `NEXT_PUBLIC_API_URL` (default `http://localhost:4000/api/v1`), so start
+the API first (`npm run dev` in `../backend`, http://localhost:4000).
+
+| Variable               | Meaning                                                            |
+| ---------------------- | ------------------------------------------------------------------ |
+| `NEXT_PUBLIC_API_URL`  | API base URL                                                       |
+| `NEXT_PUBLIC_SITE_URL` | Canonical site origin                                              |
+| `APP_ENV`              | `production` lets search engines index the site; anything else not |
+| `SITE_URL`             | Optional server-side override of the canonical origin              |
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
