@@ -57,7 +57,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ? `Estimated cost in ${name}: ${rupees(surgery.cost[0])} to ${rupees(surgery.cost[1])}.`
         : '',
       surgery.stay ? `Hospital stay: ${surgery.stay}.` : '',
-      'Book a free surgeon consultation.',
     ]
       .filter(Boolean)
       .join(' '),
@@ -348,9 +347,6 @@ export default async function SurgeryPage({ params }: Props) {
                       </li>
                     ))}
                   </ul>
-                  <p className="text-body-default font-body-default text-on-surface-variant">
-                    {copy.cost.closing}
-                  </p>
                 </section>
               )}
               <FaqAccordion faqs={faqs} heading={`${surgery.name}: Frequently Asked Questions`} />

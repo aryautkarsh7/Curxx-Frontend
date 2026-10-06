@@ -7,7 +7,15 @@
  *   bullet), and a raw {placeholder} can never reach the page.
  */
 import { localityHref } from './locality';
-import { count, nounFor, singular } from './plural';
+import {
+  clipDescription,
+  count,
+  nounFor,
+  rangeCell,
+  rangeText,
+  singular,
+  stableHash,
+} from './content-helpers';
 
 export type SurgeryTemplateFacts = {
   state: string;
@@ -69,14 +77,7 @@ export type CopyTable = {
 };
 
 /** FNV-1a: a small, stable hash of city + surgery. */
-export function pageHash(city: string, surgery: string) {
-  let h = 0x811c9dc5;
-  for (const ch of `${city}:${surgery}`) {
-    h ^= ch.charCodeAt(0);
-    h = Math.imul(h, 0x01000193) >>> 0;
-  }
-  return h;
-}
+export const pageHash = (city: string, surgery: string) => stableHash(city, surgery);
 
 type Vars = Record<string, string | number | null | undefined>;
 /** The template with every {name} filled, or null when any value is missing (never a raw placeholder). */
@@ -136,6 +137,9 @@ export function surgeryPageCopy(
         : null,
     min_cost: costKnown ? inr(surgery.cost[0]) : null,
     max_cost: costKnown ? inr(surgery.cost[1]) : null,
+    // "₹45,000–₹1,20,000", or one value when min and max are the same.
+    cost_range: costKnown ? rangeCell(surgery.cost[0], surgery.cost[1], '–') : null,
+    cost_range_to: costKnown ? rangeText(surgery.cost[0], surgery.cost[1]) : null,
     stay: surgery.stay,
     recovery: surgery.recovery,
     proc_time:
@@ -164,7 +168,7 @@ export function surgeryPageCopy(
 
   // ---- Meta title: A / B / C by hash; over ~60 characters falls back to C (the template's rule).
   const titles = [
-    '{surgery_name} in {city} – {surgeons_label_title}, Cost {min_cost}–{max_cost} | Curxx',
+    '{surgery_name} in {city} – {surgeons_label_title}, Cost {cost_range} | Curxx',
     'Best {surgery_name} Surgeons in {city}: {top_surgeon} & More | Curxx',
     '{surgery_name} Cost in {city} ({year}) – Hospitals & Surgeons | Curxx',
   ];
@@ -174,13 +178,13 @@ export function surgeryPageCopy(
 
   // ---- Meta description: by hash, else the next variant that has every value.
   const descriptions = [
-    'Compare {surgeons_label} and {hospitals_label} for {surgery_name_lc} in {city}, {state}. Estimated cost {min_cost}–{max_cost}. Book a free consultation.',
+    'Compare {surgeons_label} and {hospitals_label} for {surgery_name_lc} in {city}, {state}. Estimated cost {cost_range}.',
     '{top_surgeon} ({top_surgeon_exp} yrs, {top_surgeon_hospital}) and {surgeons_more_label} for {surgery_name_lc} in {city}. Stay: {stay}. Recovery: {recovery}.',
-    'Planning {surgery_name_lc} in {city}? See area-wise surgeons in {top_locality}, hospital list, cost range {min_cost}–{max_cost} and a free callback.',
+    'Planning {surgery_name_lc} in {city}? See area-wise surgeons in {top_locality}, the hospital list and the cost range {cost_range}.',
   ];
   const d0 = (hash >>> 3) % 3;
-  const description =
-    [0, 1, 2].map((i) => fill(descriptions[(d0 + i) % 3]!, vars)).find(Boolean) ?? null;
+  const picked0 = [0, 1, 2].map((i) => fill(descriptions[(d0 + i) % 3]!, vars)).find(Boolean);
+  const description = picked0 ? clipDescription(picked0) : null;
 
   // ---- H1 + intro (3 variants by hash).
   const h1 = fill('{surgery_name} in {city}: Surgeons, Hospitals & Cost', vars)!;
@@ -190,19 +194,19 @@ export function surgeryPageCopy(
         vars,
         '{surgery_name} in {city} is offered by {specialist_label} and {hospitals_label} listed on Curxx.',
         'The most experienced surgeon is {top_surgeon} ({top_surgeon_exp} years, {top_surgeon_hospital}, {top_surgeon_locality}).',
-        'Estimated cost in {city} is {min_cost} to {max_cost}, with a hospital stay of {stay} and recovery of {recovery}.',
+        'Estimated cost in {city} is {cost_range_to}, with a hospital stay of {stay} and recovery of {recovery}.',
       ),
     () =>
       sentences(
         vars,
         'Looking for {surgery_name_lc} in {city}, {state}? Surgeons here have an average experience of {avg_exp} years, and most listings are in {top_locality} ({top_locality_surgeons_label}).',
         'Hospitals such as {hospital_1}, {hospital_2} and {hospital_3} offer this procedure.',
-        'Typical cost: {min_cost}–{max_cost}.',
+        'Typical cost: {cost_range}.',
       ),
     () =>
       sentences(
         vars,
-        'In {city}, {surgery_name_lc} costs about {min_cost}–{max_cost} depending on hospital, room type and technique.',
+        'In {city}, {surgery_name_lc} costs about {cost_range} depending on hospital, room type and technique.',
         'Surgeons like {surgeon_1}, {surgeon_2} and {surgeon_3} take consultations across {locality_1}, {locality_2} and {locality_3}.',
         'Procedure time is {proc_time}.',
       ),
@@ -339,7 +343,7 @@ export function surgeryPageCopy(
     ? {
         heading: fill('{surgery_name} Cost in {city}', vars)!,
         intro: fill(
-          'The estimated cost of {surgery_name_lc} in {city} is {min_cost} to {max_cost}. The final bill depends on:',
+          'The estimated cost of {surgery_name_lc} in {city} is {cost_range_to}. The final bill depends on:',
           vars,
         )!,
         bullets: [
@@ -350,7 +354,6 @@ export function surgeryPageCopy(
             : 'Room type and length of stay',
           'Insurance and policy waiting periods',
         ].filter((b): b is string => Boolean(b)),
-        closing: 'A Curxx care coordinator shares an itemised estimate before you decide.',
       }
     : null;
 
@@ -381,7 +384,7 @@ export function surgeryPageCopy(
     faq(
       'What is the cost of {surgery_name_lc} in {city}?',
       fill(
-        'Estimated {min_cost}–{max_cost} in {city}. Final cost depends on hospital, room type and technique.',
+        'Estimated {cost_range} in {city}. Final cost depends on hospital, room type and technique.',
         faqVars,
       ),
     ),
