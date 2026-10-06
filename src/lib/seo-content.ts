@@ -131,7 +131,8 @@ function clinicVsVideoTable(
   ];
   if (s.clinicTodayCount > 0 || s.videoTodayCount > 0)
     rows.push(row('Available today', num(s.clinicTodayCount), num(s.videoTodayCount)));
-  if (opts.cities) rows.push(row('Cities', num(s.clinicCityCount), 'All India'));
+  // "All India" for video only once video booking works from any city; until then the row is clinic-only.
+  if (opts.cities && !video) rows.push(row('Cities', num(s.clinicCityCount), ''));
   if (s.freeVideoCount > 0 && video)
     rows.push(row('Free first consult', '–', count(s.freeVideoCount, 'doctor')));
   if (opts.bestFor)
