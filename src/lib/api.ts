@@ -225,6 +225,8 @@ export type DoctorStats = {
       whenToSee: string[];
     } | null;
   };
+  /** True when every listed doctor is admin-verified at Doctar (the server only lists verified ones). */
+  verifiedOnly?: boolean;
   total: number;
   bookableCount: number;
   clinicCount: number;

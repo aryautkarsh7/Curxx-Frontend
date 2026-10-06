@@ -122,8 +122,9 @@ function clinicVsVideoTable(
       `${num(s.clinicCount)} of ${num(s.total)}`,
       `${num(s.videoCount)} of ${num(s.total)}`,
     ),
-    row('Available today', num(s.clinicTodayCount), num(s.videoTodayCount)),
   ];
+  if (s.clinicTodayCount > 0 || s.videoTodayCount > 0)
+    rows.push(row('Available today', num(s.clinicTodayCount), num(s.videoTodayCount)));
   if (opts.cities) rows.push(row('Cities', num(s.clinicCityCount), 'All India'));
   if (s.freeVideoCount > 0 && video)
     rows.push(row('Free first consult', '–', count(s.freeVideoCount, 'doctor')));
@@ -183,7 +184,7 @@ const howToBook = (s: DoctorStats): Faq => ({
   answer:
     s.bookableCount > 0
       ? `Pick a doctor, choose a date and time, and confirm with your mobile number (you sign in with a one-time code). The booking shows in My Appointments straight away.${s.bookableCount < s.total ? ' Some doctors can only be booked by calling their clinic; their profile shows a Call button.' : ''}`
-      : 'Open a doctor’s profile and call the clinic to book. Online booking for these doctors is coming soon.',
+      : 'Open a doctor’s profile and call the clinic to book.',
 });
 
 function topRatedText(s: DoctorStats, withCity: boolean) {
@@ -260,6 +261,29 @@ const statsChips = (s: DoctorStats) =>
   ].filter(Boolean);
 
 const verb = (s: DoctorStats) => (s.bookableCount > 0 ? 'Book' : 'Find');
+/** "Verified " only when the server lists nothing but admin-verified doctors (DOCTAR_VERIFIED_ONLY). */
+const ver = (s: DoctorStats) => (s.verifiedOnly ? 'Verified ' : '');
+const verLc = (s: DoctorStats) => (s.verifiedOnly ? 'verified ' : '');
+
+/** A cell that says nothing: such a column is left out when every row has one. */
+const EMPTY_CELLS = new Set(['', '–', '-', 'New', 'Not offered']);
+/** Leaves out every column (except the first) whose cells are all empty, and rows that end up empty. */
+export function dropEmptyColumns(t: SeoTable): SeoTable {
+  const keep = t.columns.map(
+    (_, i) =>
+      i === 0 ||
+      t.rows.some((r) => {
+        const c = r[i];
+        return c !== undefined && !(typeof c === 'string' && EMPTY_CELLS.has(c));
+      }),
+  );
+  if (keep.every(Boolean)) return t;
+  return {
+    ...t,
+    columns: t.columns.filter((_, i) => keep[i]),
+    rows: t.rows.map((r) => r.filter((_, i) => keep[i])),
+  };
+}
 
 // ---------------------------------------------------------------- /{city}/doctors
 
@@ -329,7 +353,7 @@ export function cityDoctorsPage(s: DoctorStats): SeoPage | null {
       id: 'doctors-by-locality',
       heading: `Doctors by Locality in ${c}`,
       columns: ['Locality', 'Doctors', 'Clinic Fee Range', 'Link'],
-      rows: top(areas, 12).map((a) => [
+      rows: top(areas, 8).map((a) => [
         a.name,
         num(a.count),
         feeCell(a.clinicFee),
@@ -379,26 +403,29 @@ export function cityDoctorsPage(s: DoctorStats): SeoPage | null {
     s.clinicCount > 0 && s.clinicFee ? `Clinic visits from ${feeFrom(s.clinicFee)}` : '',
     s.videoCount > 0 && s.videoFee ? `video consults from ${feeFrom(s.videoFee)}` : '',
   ].filter(Boolean);
-  const title = `${num(s.total)} Doctors in ${c} – Book Online | Curxx`;
+  const title = `${num(s.total)} ${ver(s)}Doctors in ${c} – ${verb(s) === 'Book' ? 'Book Online' : 'Find Clinics'} | Curxx`;
   return {
-    title: fit(title, `Doctors in ${c} – Book Online | Curxx`),
+    title: fit(
+      title,
+      `Doctors in ${c} – ${verb(s) === 'Book' ? 'Book Online' : 'Find Clinics'} | Curxx`,
+    ),
     description: clip(
       sentences(
-        `Compare ${count(s.total, 'doctor')} in ${c}.`,
+        `Compare ${num(s.total)} ${verLc(s)}${s.total === 1 ? 'doctor' : 'doctors'} in ${c}.`,
         cost.length ? `${cost.join(', ')}.` : '',
-        `${verb(s)} online on Curxx.`,
+        s.bookableCount > 0 ? 'Book online on Curxx.' : 'Find a clinic on Curxx.',
       ),
     ),
     h1: `Doctors in ${c}`,
-    subline: `${count(s.total, 'doctor')} available in ${c}`,
-    h2: `${verb(s)} Doctors in ${c}: Compare Fees, Experience & Availability`,
+    subline: `${num(s.total)} ${verLc(s)}${s.total === 1 ? 'doctor' : 'doctors'} available in ${c}`,
+    h2: `${verb(s)} ${ver(s)}Doctors in ${c}: Compare Fees, Experience & Availability`,
     stats: [
-      `${num(s.total)} Doctors`,
+      `${num(s.total)} ${ver(s)}${s.total === 1 ? 'Doctor' : 'Doctors'}`,
       `${s.specialtyCount} ${s.specialtyCount === 1 ? 'Specialty' : 'Specialties'}`,
       ...feeChips(s),
     ],
     upper: sentences(
-      `Curxx lists ${count(s.total, 'doctor')} in ${c} across ${count(s.specialtyCount, 'specialty', 'specialties')}.`,
+      `Curxx lists ${num(s.total)} ${verLc(s)}${s.total === 1 ? 'doctor' : 'doctors'} in ${c} across ${count(s.specialtyCount, 'specialty', 'specialties')}.`,
       s.clinicCount > 0 && s.clinicFee
         ? `Clinic visit fees in ${c} range from ${feeSpan(s.clinicFee)}${s.videoCount > 0 && s.videoFee ? `, and video consultations cost ${feeSpan(s.videoFee)}` : ''}.`
         : s.videoCount > 0 && s.videoFee
@@ -407,10 +434,10 @@ export function cityDoctorsPage(s: DoctorStats): SeoPage | null {
       s.freeVideoCount > 0
         ? `${num(s.freeVideoCount)} ${verbFor(s.freeVideoCount, 'doctor offers', 'doctors offer')} a free first video consult.`
         : '',
-      `Compare experience, patient ratings and earliest available slots, then ${s.bookableCount > 0 ? 'book online' : 'contact the clinic'}.`,
+      `Compare ${list(['experience', s.reviewCount > 0 && s.avgRating !== null ? 'patient ratings' : '', s.earliest ? 'earliest available slots' : ''].filter(Boolean))}, then ${s.bookableCount > 0 ? 'book online' : 'contact the clinic'}.`,
     ),
     readMore,
-    tables,
+    tables: tables.map(dropEmptyColumns),
     faqs,
     faqHeading: `Frequently Asked Questions About Doctors in ${c}`,
     canonical: `/${city.slug}/doctors`,
@@ -445,7 +472,7 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
   ].filter(Boolean);
   const description = clip(
     sentences(
-      `${verb(s)} ${num(s.total)} ${pluralLc}${national ? ` across ${count(s.cityCount, 'city', 'cities')} in India` : ` in ${place}`}.`,
+      `${verb(s)} ${num(s.total)} ${verLc(s)}${pluralLc}${national ? ` across ${count(s.cityCount, 'city', 'cities')} in India` : ` in ${place}`}.`,
       cost.length ? `${cost.join(', ')}.` : '',
       national ? 'Compare on Curxx.' : 'Compare experience and ratings on Curxx.',
     ),
@@ -455,8 +482,8 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
   const areas = s.areas;
   const upper = sentences(
     national
-      ? `Curxx lists ${num(s.total)} ${pluralLc} across ${count(s.cityCount, 'city', 'cities')} in India.`
-      : `Curxx lists ${num(s.total)} ${pluralLc} in ${place}.`,
+      ? `Curxx lists ${num(s.total)} ${verLc(s)}${pluralLc} across ${count(s.cityCount, 'city', 'cities')} in India.`
+      : `Curxx lists ${num(s.total)} ${verLc(s)}${pluralLc} in ${place}.`,
     s.clinicCount > 0 && s.clinicFee ? `Clinic consultations cost ${feeSpan(s.clinicFee)}.` : '',
     videoSentence(s, pluralLc, national),
     s.freeVideoCount > 0
@@ -665,22 +692,22 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
     h1: `${plural} in ${place}`,
     subline: [
       national
-        ? `${num(s.total)} ${pluralLc} · ${count(s.cityCount, 'city', 'cities')}`
-        : `${num(s.total)} ${pluralLc}`,
+        ? `${num(s.total)} ${verLc(s)}${pluralLc} · ${count(s.cityCount, 'city', 'cities')}`
+        : `${num(s.total)} ${verLc(s)}${pluralLc}`,
       s.todayCount > 0 ? `${num(s.todayCount)} available today` : '',
     ]
       .filter(Boolean)
       .join(' · '),
     h2: `${verb(s)} ${an(singular)} in ${place}: Compare Fees, ${national ? 'Cities' : 'Experience'} & Availability`,
     stats: [
-      national ? `${num(s.total)} ${plural}` : `${num(s.total)} Doctors`,
+      national ? `${num(s.total)} ${ver(s)}${plural}` : `${num(s.total)} ${ver(s)}Doctors`,
       ...(national ? [`${s.cityCount} ${s.cityCount === 1 ? 'City' : 'Cities'}`] : []),
       ...feeChips(s),
       ...statsChips(s),
     ],
     upper,
     readMore,
-    tables,
+    tables: tables.map(dropEmptyColumns),
     faqs,
     faqHeading: `Frequently Asked Questions About ${plural} in ${place}`,
     canonical: path,
@@ -812,27 +839,27 @@ export function indiaDoctorsPage(s: DoctorStats): SeoPage | null {
 
   return {
     title: fit(
-      `${num(s.total)} Doctors in India – Book Online | Curxx`,
-      'Doctors in India – Book Online | Curxx',
+      `${num(s.total)} ${ver(s)}Doctors in India – ${verb(s) === 'Book' ? 'Book Online' : 'Find Clinics'} | Curxx`,
+      `Doctors in India – ${verb(s) === 'Book' ? 'Book Online' : 'Find Clinics'} | Curxx`,
     ),
     description: clip(
       sentences(
-        `Compare ${count(s.total, 'doctor')} across ${count(s.cityCount, 'city', 'cities')} in India.`,
+        `Compare ${num(s.total)} ${verLc(s)}${s.total === 1 ? 'doctor' : 'doctors'} across ${count(s.cityCount, 'city', 'cities')} in India.`,
         cost.length ? `${cost.join(', ')}.` : '',
         `${verb(s)} on Curxx.`,
       ),
     ),
     h1: 'Doctors in India',
-    subline: `${count(s.total, 'doctor')} · ${count(s.cityCount, 'city', 'cities')} · ${count(s.specialtyCount, 'specialty', 'specialties')}`,
-    h2: `${verb(s)} Doctors in India: Compare Fees, Cities & Availability`,
+    subline: `${num(s.total)} ${verLc(s)}${s.total === 1 ? 'doctor' : 'doctors'} · ${count(s.cityCount, 'city', 'cities')} · ${count(s.specialtyCount, 'specialty', 'specialties')}`,
+    h2: `${verb(s)} ${ver(s)}Doctors in India: Compare Fees, Cities & Availability`,
     stats: [
-      `${num(s.total)} Doctors`,
+      `${num(s.total)} ${ver(s)}Doctors`,
       `${s.cityCount} ${s.cityCount === 1 ? 'City' : 'Cities'}`,
       `${s.specialtyCount} Specialties`,
       ...feeChips(s),
     ],
     upper: sentences(
-      `Curxx lists ${count(s.total, 'doctor')} across ${count(s.cityCount, 'city', 'cities')} in India, covering ${count(s.specialtyCount, 'specialty', 'specialties')}.`,
+      `Curxx lists ${num(s.total)} ${verLc(s)}${s.total === 1 ? 'doctor' : 'doctors'} across ${count(s.cityCount, 'city', 'cities')} in India, covering ${count(s.specialtyCount, 'specialty', 'specialties')}.`,
       s.clinicCount > 0 && s.clinicFee
         ? `Clinic consultations cost ${feeSpan(s.clinicFee)}, depending on the city and specialty.`
         : '',
@@ -846,7 +873,7 @@ export function indiaDoctorsPage(s: DoctorStats): SeoPage | null {
       `Choose a city, compare fees and ratings, and ${s.bookableCount > 0 ? 'book online' : 'contact the clinic'}.`,
     ),
     readMore,
-    tables,
+    tables: tables.map(dropEmptyColumns),
     faqs,
     faqHeading: 'Frequently Asked Questions About Doctors in India',
     canonical: '/india/doctors',
@@ -898,7 +925,9 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
       : sentences(
           `Compare ${count(s.procedureCount, 'surgery', 'surgeries')} in ${place}${s.hospitalCount ? ` at ${count(s.hospitalCount, 'hospital')}` : ''}.`,
           `Estimated costs from ${inr(s.minCost)}.`,
-          `Compare surgeons and hospitals listed on Curxx.`,
+          s.surgeonCount > 0 && s.hospitalCount > 0
+            ? 'Compare surgeons and hospitals listed on Curxx.'
+            : '',
         ),
   );
 
@@ -960,9 +989,13 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
     heading: 'How to use this page',
     list: [
       'Choose your procedure and read its estimated cost, hospital stay and recovery time.',
-      'Compare the hospitals and surgeons listed for your city.',
-      'Send an enquiry through the form on this page, or contact a listed hospital directly.',
-    ],
+      s.hospitalCount > 0 || s.surgeonCount > 0
+        ? `Compare the ${list([s.hospitalCount > 0 ? 'hospitals' : '', s.surgeonCount > 0 ? 'surgeons' : ''].filter(Boolean))} listed for your city.`
+        : '',
+      s.hospitalCount > 0 || national
+        ? 'Send an enquiry through the form on this page, or contact a listed hospital directly.'
+        : 'Send an enquiry through the form on this page.',
+    ].filter(Boolean),
   });
   readMore.push({
     heading: 'Is this an emergency?',
@@ -1070,11 +1103,9 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
     description,
     h1: `Surgery in ${place}: Hospitals & Costs`,
     subline: [
-      s.hospitalCount
-        ? `${num(s.hospitalCount)} ${s.hospitalCount === 1 ? 'hospital' : 'hospitals'}`
-        : '',
+      s.hospitalCount ? count(s.hospitalCount, 'hospital') : '',
       s.surgeonCount ? count(s.surgeonCount, 'surgeon') : '',
-      `${s.procedureCount} procedures`,
+      count(s.procedureCount, 'procedure'),
     ]
       .filter(Boolean)
       .join(' · '),
@@ -1083,15 +1114,15 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
         ? `Planned Surgery in ${place}: Compare Hospitals and Costs`
         : `Planned Surgery in ${place}: Compare Costs`,
     stats: [
-      s.hospitalCount ? `${num(s.hospitalCount)} Hospitals` : '',
-      s.surgeonCount ? `${num(s.surgeonCount)} Surgeons` : '',
-      `${s.procedureCount} Procedures`,
+      s.hospitalCount ? count(s.hospitalCount, 'Hospital') : '',
+      s.surgeonCount ? count(s.surgeonCount, 'Surgeon') : '',
+      count(s.procedureCount, 'Procedure'),
       `Est. from ${inr(s.minCost)}`,
-      s.daycareCount ? `${num(s.daycareCount)} Day-care Procedures` : '',
+      s.daycareCount ? `${count(s.daycareCount, 'Day-care Procedure')}` : '',
     ].filter(Boolean),
     upper,
     readMore,
-    tables,
+    tables: tables.map(dropEmptyColumns),
     faqs,
     faqHeading: `Surgery in ${place}: Frequently Asked Questions`,
     canonical: national ? '/india/surgeries' : `/${s.city!.slug}/surgeries`,
