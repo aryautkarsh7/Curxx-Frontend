@@ -9,18 +9,15 @@ import { SurgeryCards, ProcedureDirectory } from '@/components/surgery/SurgeryCa
 import { api, type SurgerySummary } from '@/lib/api';
 import { liveCatalogue, resolveCity } from '@/lib/catalogue-live';
 import { surgeriesPage } from '@/lib/seo-content';
+import { loadFigures } from '@/lib/seo-load';
 
 type Props = { params: Promise<{ city: string }> };
 
 /** Diksha's surgery template for this city, or null if the figures can't be loaded. */
 async function template(city: string) {
-  try {
-    const stats = await api.seoSurgeries(city);
-    const page = surgeriesPage(stats);
-    return page ? { stats, page } : null;
-  } catch {
-    return null;
-  }
+  const stats = await loadFigures(() => api.seoSurgeries(city));
+  const page = stats ? surgeriesPage(stats) : null;
+  return stats && page ? { stats, page } : null;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -94,10 +91,10 @@ export default async function SurgeriesPage({ params }: Props) {
           <div className="grid lg:grid-cols-[minmax(0,1fr)_360px] gap-8 items-start">
             <div className="space-y-3 min-w-0">
               <span className="text-micro font-micro font-semibold uppercase tracking-wider text-on-surface-variant">
-                Planned surgery, handled end to end
+                Planned surgery: procedures, costs and hospitals
               </span>
               <h1 className="text-headline-h1 font-headline-h1 text-on-surface">
-                {page?.h1 ?? `Surgery in ${cityName}: Hospitals, Costs & Free Consultation`}
+                {page?.h1 ?? `Surgery in ${cityName}: Hospitals & Costs`}
               </h1>
               {page && (
                 <p className="text-caption font-caption text-on-surface-variant">{page.subline}</p>

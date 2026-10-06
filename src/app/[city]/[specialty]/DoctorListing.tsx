@@ -166,7 +166,7 @@ export default function DoctorListing({
                 <span className="w-2 h-2 rounded-full bg-[#047857]"></span>
                 <p className="font-caption text-caption text-[#78716C]">
                   {subheading ??
-                    `${total.toLocaleString('en-IN')} ${lower(plural)} available in ${place} · Updated today`}
+                    `${total.toLocaleString('en-IN')} ${lower(plural)} available in ${place}`}
                 </p>
               </div>
             </div>

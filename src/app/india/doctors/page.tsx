@@ -3,15 +3,12 @@ import { notFound } from 'next/navigation';
 import SeoLandingPage, { EmptyLandingPage, LinkGrid } from '@/components/seo/SeoLandingPage';
 import { api } from '@/lib/api';
 import { indiaDoctorsPage } from '@/lib/seo-content';
+import { loadFigures } from '@/lib/seo-load';
 
 /** /india/doctors: every doctor on Curxx, by city and specialty (Diksha's India template, page A). */
 async function load() {
-  try {
-    const stats = await api.seoDoctors('india');
-    return { stats, page: indiaDoctorsPage(stats) };
-  } catch {
-    return null;
-  }
+  const stats = await loadFigures(() => api.seoDoctors('india'));
+  return stats ? { stats, page: indiaDoctorsPage(stats) } : null;
 }
 
 export async function generateMetadata(): Promise<Metadata> {

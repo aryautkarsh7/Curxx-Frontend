@@ -4,16 +4,13 @@ import SeoLandingPage from '@/components/seo/SeoLandingPage';
 import { ProcedureDirectory } from '@/components/surgery/SurgeryCatalogue';
 import { api } from '@/lib/api';
 import { surgeriesPage } from '@/lib/seo-content';
+import { loadFigures } from '@/lib/seo-load';
 
 /** /india/surgeries: hospitals and surgeons by city, and the procedure catalogue (surgery template, India). */
 async function load() {
-  try {
-    const stats = await api.seoSurgeries('india');
-    const page = surgeriesPage(stats);
-    return page ? { stats, page } : null;
-  } catch {
-    return null;
-  }
+  const stats = await loadFigures(() => api.seoSurgeries('india'));
+  const page = stats ? surgeriesPage(stats) : null;
+  return stats && page ? { stats, page } : null;
 }
 
 export async function generateMetadata(): Promise<Metadata> {

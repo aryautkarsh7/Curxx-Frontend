@@ -221,15 +221,5 @@ export function allDoctorsFaqs(cityName: string, total: number): Faq[] {
       answer:
         'Each profile shows the qualifications, experience, clinic location, consultation fee and timings shared with Curxx. Fees marked “approx.” are estimates, so confirm them with the clinic before you visit.',
     },
-    {
-      question: 'Can I consult a doctor online instead of visiting the clinic?',
-      answer:
-        'Most doctors offer secure video consultations. Choose “Video Consultation” in the filters to see them; many also offer a free first video consult.',
-    },
-    {
-      question: 'Does a consultation include a free follow-up?',
-      answer:
-        'Every booking includes a free 7-day chat follow-up with the doctor, so you can share reports or ask about your medicines without paying again.',
-    },
   ];
 }

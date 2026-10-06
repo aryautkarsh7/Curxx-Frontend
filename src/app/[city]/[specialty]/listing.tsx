@@ -17,6 +17,7 @@ import {
 import { cityDoctorsPage, citySpecialtyPage, lower, type SeoPage } from '@/lib/seo-content';
 import { liveCatalogue, resolveCity, resolveSpecialty } from '@/lib/catalogue-live';
 import type { CityInfo, SpecialtyInfo } from '@/lib/catalogue-data';
+import { loadFigures } from '@/lib/seo-load';
 import { JsonLd } from '@/lib/seo';
 import { ALL_DOCTORS } from '@/lib/specialties';
 import DoctorListing, { type Crumb } from './DoctorListing';
@@ -50,11 +51,9 @@ async function loadContent(specialty: string, city: string, area?: string) {
 
 /** Figures for the city / city + specialty template copy; null on an API hiccup (the page falls back). */
 async function loadStats(city: string, specialty: string): Promise<DoctorStats | null> {
-  try {
-    return await api.seoDoctors(city, specialty === ALL_DOCTORS.slug ? undefined : specialty);
-  } catch {
-    return null;
-  }
+  return loadFigures(() =>
+    api.seoDoctors(city, specialty === ALL_DOCTORS.slug ? undefined : specialty),
+  );
 }
 
 /**

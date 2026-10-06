@@ -9,7 +9,7 @@ type Props = {
   options?: { slug: string; name: string }[];
 };
 
-/** "Book a free consultation": a care coordinator calls back with a surgeon, estimate and insurance help. */
+/** "Send an enquiry": the procedure and a mobile number, saved as a lead. */
 export default function SurgeryLeadForm({ surgery, city, cityName, options = [] }: Props) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -51,8 +51,7 @@ export default function SurgeryLeadForm({ surgery, city, cityName, options = [] 
           received
         </p>
         <p className="font-caption text-caption text-on-surface">
-          A Curxx care coordinator will call +91 {phone} within 30 minutes (9 AM – 9 PM) to book
-          your free surgeon consultation in {cityName}.
+          We have your enquiry for {cityName} and your number, +91 {phone}.
         </p>
       </div>
     );
@@ -65,11 +64,10 @@ export default function SurgeryLeadForm({ surgery, city, cityName, options = [] 
       aria-labelledby="lead-title"
     >
       <p id="lead-title" className="font-headline-h3 text-headline-h3 text-on-surface">
-        Book a free consultation
+        Send an enquiry
       </p>
       <p className="font-caption text-caption text-on-surface-variant">
-        Talk to an experienced surgeon in {cityName}. Get a cost estimate and help with insurance —
-        no charge.
+        Tell us which procedure you are looking at in {cityName} and how to reach you.
       </p>
       {error && (
         <p
@@ -130,21 +128,8 @@ export default function SurgeryLeadForm({ surgery, city, cityName, options = [] 
         disabled={!valid || busy}
         className="w-full h-12 rounded-lg bg-primary-container hover:bg-[#8E0E17] disabled:bg-[#A8A29E] text-white font-body-strong text-body-strong"
       >
-        {busy ? 'Sending…' : 'Get a free call back'}
+        {busy ? 'Sending…' : 'Send enquiry'}
       </button>
-      <ul className="grid grid-cols-2 gap-2 pt-1 text-micro font-micro text-on-surface-variant">
-        {[
-          'Free surgeon consultation',
-          'Cashless insurance help',
-          'No-cost EMI options',
-          'Free pick-up & drop',
-        ].map((t) => (
-          <li key={t} className="flex items-center gap-1">
-            <span className="material-symbols-outlined text-[14px] text-[#047857]">check</span>
-            {t}
-          </li>
-        ))}
-      </ul>
     </form>
   );
 }

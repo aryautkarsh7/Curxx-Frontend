@@ -77,8 +77,8 @@ export function ProcedureDirectory({
         More Procedures (Estimate on Request)
       </h2>
       <p className="text-body-default font-body-default text-on-surface-variant max-w-3xl">
-        Curxx doesn’t list costs for these {total.toLocaleString('en-IN')} procedures yet. Leave
-        your number in the form and a care coordinator will share an estimate.
+        Curxx doesn’t list costs for these {total.toLocaleString('en-IN')} procedures yet. Send an
+        enquiry through the form to ask about one.
       </p>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
         {groups.map((g) => (

@@ -4,18 +4,15 @@ import SeoLandingPage, { EmptyLandingPage, LinkGrid } from '@/components/seo/Seo
 import { api } from '@/lib/api';
 import { resolveSpecialty } from '@/lib/catalogue-live';
 import { indiaSpecialtyPage } from '@/lib/seo-content';
+import { loadFigures } from '@/lib/seo-load';
 
 type Props = { params: Promise<{ specialty: string }> };
 
 /** /india/{specialty}: one specialty across every city (Diksha's India template, page B). */
 async function load(slug: string) {
   if (!(await resolveSpecialty(slug))) return null;
-  try {
-    const stats = await api.seoDoctors('india', slug);
-    return { stats, page: indiaSpecialtyPage(stats) };
-  } catch {
-    return null;
-  }
+  const stats = await loadFigures(() => api.seoDoctors('india', slug));
+  return stats ? { stats, page: indiaSpecialtyPage(stats) } : null;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

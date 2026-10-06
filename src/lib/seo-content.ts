@@ -10,41 +10,37 @@
  * - "Book" only where someone can actually be booked online; otherwise "find".
  */
 import { localityHref } from './locality';
-import { count } from './plural';
+import {
+  an,
+  clipDescription as clip,
+  count,
+  fitTitle as fit,
+  inr,
+  istSlot as slotText,
+  leaders,
+  list,
+  lower,
+  num,
+  rangeCell,
+  rangeText,
+  sentences,
+} from './content-helpers';
+
+export { an, inr, list, lower, num, slotText };
 import type { DoctorStats, Faq, FeeRange, SurgeryStats } from './api';
 
 // ---------------------------------------------------------------- Formatting
 
-export const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
-export const num = (n: number) => n.toLocaleString('en-IN');
-/** ["a"] → "a"; ["a","b","c"] → "a, b and c". */
-export const list = (items: string[]) =>
-  items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
 const approx = (r: FeeRange) => (r.approx ? 'approx. ' : '');
 /** "₹300 – ₹1,500" (tables and chips). */
 export const feeCell = (r: FeeRange | null | undefined, empty = '–') =>
-  !r ? empty : `${approx(r)}${r.min === r.max ? inr(r.min) : `${inr(r.min)} – ${inr(r.max)}`}`;
+  !r ? empty : `${approx(r)}${rangeCell(r.min, r.max)}`;
 /** "₹300 to ₹1,500" (sentences). */
-const feeSpan = (r: FeeRange) =>
-  `${approx(r)}${r.min === r.max ? inr(r.min) : `${inr(r.min)} to ${inr(r.max)}`}`;
+const feeSpan = (r: FeeRange) => `${approx(r)}${rangeText(r.min, r.max)}`;
 const feeFrom = (r: FeeRange) => `${approx(r)}${inr(r.min)}`;
-/** "General Physicians" → "general physicians"; acronyms keep their capitals ("ENT specialists"). */
-export const lower = (s: string) =>
-  s
-    .split(' ')
-    .map((w) => (/^[A-Z]{2,}/.test(w) ? w : w.toLowerCase()))
-    .join(' ');
-/** "a dermatologist", "an ENT Specialist", "an orthopedist", "a urologist". */
-export const an = (phrase: string) =>
-  `${/^(uni|uro|use|usu|eu|one)/i.test(phrase) ? 'a' : /^[aeiou]/i.test(phrase) || /^[AEFHILMNORSX][A-Z]/.test(phrase) ? 'an' : 'a'} ${phrase}`;
 /** "1 of them offers" / "3 of them offer". */
 const verbFor = (n: number, one: string, many: string) => (n === 1 ? one : many);
 
-/** Rows sharing the top count, and the rest: "A and B have the most (2 each)" instead of a false "A has the most". */
-function leaders<T extends { name: string; count: number }>(rows: T[]) {
-  const tied = rows.filter((r) => r.count === rows[0]?.count);
-  return { tied, rest: rows.slice(tied.length) };
-}
 /** "Jadavpur has the most (4)" or "Jadavpur and Salt Lake have the most (2 each)". */
 function mostSentence(rows: { name: string; count: number }[], what = '') {
   const { tied } = leaders(rows);
@@ -59,35 +55,6 @@ function mostAnswer(rows: { name: string; count: number }[], noun = '') {
     ? `${list(tied.map((r) => r.name))}, with ${num(tied[0]!.count)}${noun} each.`
     : `${rows[0]!.name}, with ${num(rows[0]!.count)}${noun}.`;
 }
-
-/** A slot time in IST: "Today, 10:30 AM", "Tomorrow, 9:00 AM" or "Wed, 2 Oct, 9:00 AM". */
-export function slotText(iso: string | null | undefined, now = new Date()) {
-  if (!iso) return null;
-  const d = new Date(iso);
-  const day = (x: Date) => x.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
-  const time = d
-    .toLocaleTimeString('en-IN', {
-      timeZone: 'Asia/Kolkata',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    })
-    .toUpperCase();
-  if (day(d) === day(now)) return `Today, ${time}`;
-  if (day(d) === day(new Date(now.getTime() + 86_400_000))) return `Tomorrow, ${time}`;
-  return `${d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'short', day: 'numeric', month: 'short' })}, ${time}`;
-}
-
-/** Titles over 60 characters use the template's shorter fallback. */
-const fit = (title: string, fallback: string) => (title.length <= 60 ? title : fallback);
-/** Descriptions over 155 characters drop whole trailing sentences. */
-function clip(text: string, max = 155) {
-  let out = text.trim();
-  while (out.length > max && out.includes('. ')) out = out.slice(0, out.lastIndexOf('. ') + 1);
-  return out;
-}
-const sentences = (...parts: (string | false | null | undefined)[]) =>
-  parts.filter(Boolean).join(' ');
 
 // ---------------------------------------------------------------- Page structure
 
@@ -126,7 +93,6 @@ const EMERGENCY =
   'Chest pain, trouble breathing, heavy bleeding or a severe allergic reaction need emergency care. Call 108 immediately.';
 const BEST_FOR_CLINIC = 'a physical examination, procedures or tests';
 const BEST_FOR_VIDEO = 'a first opinion, a report review or a follow-up';
-const FOLLOW_UP = 'Free 7-day chat';
 const PROFILE_DETAILS =
   'Each profile shows the qualifications, experience, clinic location, consultation fee and timings shared with Curxx. Fees marked “approx.” are estimates, so confirm them with the clinic before you visit.';
 
@@ -165,7 +131,6 @@ function clinicVsVideoTable(
     rows.push(
       row('Best for', BEST_FOR_CLINIC.replace(/^a /, ''), BEST_FOR_VIDEO.replace(/^a /, '')),
     );
-  rows.push(row('Follow-up', FOLLOW_UP, FOLLOW_UP));
   return {
     id: opts.id,
     heading: opts.heading,
@@ -327,16 +292,13 @@ export function cityDoctorsPage(s: DoctorStats): SeoPage | null {
               s.videoFee && s.clinicFee && s.videoFee.min < s.clinicFee.min
                 ? 'Video is usually cheaper.'
                 : '',
-              'Bookings made on Curxx include a free 7-day chat follow-up, so you can share reports or ask about medicines at no extra cost.',
             ),
           ],
         }
       : null,
     {
-      heading: 'Not sure which specialist to see?',
-      paragraphs: [
-        `Describe your symptoms in our Triage tool and it will suggest the right specialty in ${c} in about a minute. For chest pain, breathing trouble or heavy bleeding, call 108 immediately instead of booking.`,
-      ],
+      heading: 'When should you not wait for an appointment?',
+      paragraphs: [EMERGENCY],
     },
     langs.length
       ? { heading: 'Languages', paragraphs: [`Doctors in ${c} consult in ${list(langs)}.`] }
@@ -411,10 +373,6 @@ export function cityDoctorsPage(s: DoctorStats): SeoPage | null {
           answer: mostAnswer(areas, ' doctors'),
         }
       : null,
-    {
-      question: 'Is a follow-up included?',
-      answer: 'Bookings made on Curxx include a free 7-day chat follow-up with the doctor.',
-    },
   ].filter(Boolean) as Faq[];
 
   const cost = [
@@ -432,7 +390,7 @@ export function cityDoctorsPage(s: DoctorStats): SeoPage | null {
       ),
     ),
     h1: `Doctors in ${c}`,
-    subline: `${count(s.total, 'doctor')} available in ${c} · Updated today`,
+    subline: `${count(s.total, 'doctor')} available in ${c}`,
     h2: `${verb(s)} Doctors in ${c}: Compare Fees, Experience & Availability`,
     stats: [
       `${num(s.total)} Doctors`,
@@ -608,7 +566,6 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
           s.clinicOnlyCount > 0
             ? `Note: ${num(s.clinicOnlyCount)} of the ${count(s.total, 'doctor')} ${s.clinicOnlyCount === 1 ? 'does' : 'do'} not offer video.`
             : '',
-          'Bookings made on Curxx include a free 7-day chat follow-up.',
         ),
       ],
     });
@@ -711,7 +668,6 @@ function specialtyPage(s: DoctorStats, national: boolean): SeoPage | null {
         ? `${num(s.total)} ${pluralLc} · ${count(s.cityCount, 'city', 'cities')}`
         : `${num(s.total)} ${pluralLc}`,
       s.todayCount > 0 ? `${num(s.todayCount)} available today` : '',
-      'Updated today',
     ]
       .filter(Boolean)
       .join(' · '),
@@ -769,7 +725,7 @@ export function indiaDoctorsPage(s: DoctorStats): SeoPage | null {
       ? {
           heading: 'Can I consult a doctor online from any city?',
           paragraphs: [
-            `${count(s.videoCount, 'doctor')} ${s.videoCount === 1 ? 'offers' : 'offer'} video consultations, so your city does not limit your choice. Video fees range from ${feeSpan(s.videoFee)}. Bookings made on Curxx include a free 7-day chat follow-up.`,
+            `${count(s.videoCount, 'doctor')} ${s.videoCount === 1 ? 'offers' : 'offer'} video consultations, so your city does not limit your choice. Video fees range from ${feeSpan(s.videoFee)}.`,
           ],
         }
       : null,
@@ -783,10 +739,8 @@ export function indiaDoctorsPage(s: DoctorStats): SeoPage | null {
       : null,
     { heading: 'What does each doctor profile show?', paragraphs: [PROFILE_DETAILS] },
     {
-      heading: 'Not sure which specialist to see?',
-      paragraphs: [
-        'Describe your symptoms in our Triage tool and it will suggest the right specialty. For chest pain, breathing trouble or heavy bleeding, call 108 immediately.',
-      ],
+      heading: 'When should you not wait for an appointment?',
+      paragraphs: [EMERGENCY],
     },
   ].filter(Boolean) as SeoSection[];
 
@@ -854,10 +808,6 @@ export function indiaDoctorsPage(s: DoctorStats): SeoPage | null {
             question: 'Can I consult a doctor online in India?',
             answer: `Yes, ${num(s.videoCount)} of ${num(s.total)} offer video. The rest are clinic-only.`,
           },
-    {
-      question: 'Is a follow-up included?',
-      answer: 'Bookings made on Curxx include a free 7-day chat follow-up.',
-    },
   ].filter(Boolean) as Faq[];
 
   return {
@@ -873,7 +823,7 @@ export function indiaDoctorsPage(s: DoctorStats): SeoPage | null {
       ),
     ),
     h1: 'Doctors in India',
-    subline: `${count(s.total, 'doctor')} · ${count(s.cityCount, 'city', 'cities')} · ${count(s.specialtyCount, 'specialty', 'specialties')} · Updated today`,
+    subline: `${count(s.total, 'doctor')} · ${count(s.cityCount, 'city', 'cities')} · ${count(s.specialtyCount, 'specialty', 'specialties')}`,
     h2: `${verb(s)} Doctors in India: Compare Fees, Cities & Availability`,
     stats: [
       `${num(s.total)} Doctors`,
@@ -936,7 +886,7 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
           `Surgery in ${place}: Hospitals & Cost | Curxx`,
         )
       : fit(
-          `Surgery in ${place}: Est. Cost from ${inr(s.minCost)} & Free Consult | Curxx`,
+          `Surgery in ${place}: Est. Cost from ${inr(s.minCost)} | Curxx`,
           `Surgery in ${place}: Hospitals & Cost | Curxx`,
         );
   const description = clip(
@@ -944,12 +894,11 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
       ? sentences(
           `Compare ${count(s.procedureCount, 'surgery', 'surgeries')} across ${count(s.hospitalCount, 'hospital')} in ${count(s.cityCount, 'city', 'cities')}.`,
           `Estimated costs from ${inr(s.minCost)}.`,
-          'Book a free surgeon consultation.',
         )
       : sentences(
           `Compare ${count(s.procedureCount, 'surgery', 'surgeries')} in ${place}${s.hospitalCount ? ` at ${count(s.hospitalCount, 'hospital')}` : ''}.`,
           `Estimated costs from ${inr(s.minCost)}.`,
-          'Book a free surgeon consultation.',
+          `Compare surgeons and hospitals listed on Curxx.`,
         ),
   );
 
@@ -969,7 +918,9 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
     s.shortStayCount > 0
       ? `${num(s.shortStayCount)} procedures need a hospital stay of one day or less${s.daycareCount > 0 ? `, including ${num(s.daycareCount)} day-care procedures` : ''}.`
       : '',
-    'Book a free consultation with an experienced surgeon and get an itemised cost estimate.',
+    national || s.surgeonCount > 0
+      ? 'Compare surgeons and hospitals, then read each procedure’s estimated cost, hospital stay and recovery time.'
+      : 'Read each procedure’s estimated cost, hospital stay and recovery time.',
   );
 
   const readMore: SeoSection[] = [];
@@ -1006,13 +957,11 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
     });
   readMore.push({ heading: 'Is surgery covered by health insurance?', paragraphs: [INSURANCE] });
   readMore.push({
-    heading: 'How does Curxx help?',
+    heading: 'How to use this page',
     list: [
-      'Choose your procedure and leave your mobile number.',
-      'A Curxx care coordinator calls to understand what you need.',
-      'We book a consultation with an experienced surgeon.',
-      'You get an itemised cost estimate before you decide.',
-      'We help with insurance paperwork and admission.',
+      'Choose your procedure and read its estimated cost, hospital stay and recovery time.',
+      'Compare the hospitals and surgeons listed for your city.',
+      'Send an enquiry through the form on this page, or contact a listed hospital directly.',
     ],
   });
   readMore.push({
@@ -1100,9 +1049,9 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
       : null,
     { question: 'Is surgery covered by health insurance?', answer: INSURANCE },
     {
-      question: `How do I book a free consultation${national ? '' : ` in ${place}`}?`,
+      question: `How do I ask about a surgery${national ? '' : ` in ${place}`}?`,
       answer:
-        'Choose your procedure, leave your mobile number in the form, and a Curxx care coordinator will call you.',
+        'Choose your procedure, then send your name and mobile number through the form on this page. You can also contact a listed hospital directly.',
     },
     s.surgeonCount > 0
       ? {
@@ -1119,7 +1068,7 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
   return {
     title,
     description,
-    h1: `Surgery in ${place}: Hospitals, Costs & Free Consultation`,
+    h1: `Surgery in ${place}: Hospitals & Costs`,
     subline: [
       s.hospitalCount
         ? `${num(s.hospitalCount)} ${s.hospitalCount === 1 ? 'hospital' : 'hospitals'}`
@@ -1131,8 +1080,8 @@ export function surgeriesPage(s: SurgeryStats): SeoPage | null {
       .join(' · '),
     h2:
       s.hospitalCount > 0
-        ? `Planned Surgery in ${place}: Compare Hospitals, Costs & Book a Free Consultation`
-        : `Planned Surgery in ${place}: Compare Costs & Book a Free Consultation`,
+        ? `Planned Surgery in ${place}: Compare Hospitals and Costs`
+        : `Planned Surgery in ${place}: Compare Costs`,
     stats: [
       s.hospitalCount ? `${num(s.hospitalCount)} Hospitals` : '',
       s.surgeonCount ? `${num(s.surgeonCount)} Surgeons` : '',
