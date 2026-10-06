@@ -349,6 +349,23 @@ export type SurgeryStats = {
   directory: { category: string; procedures: string[] }[];
   indexable: boolean;
 };
+/** Live figures behind /{city}/hospitals (GET /seo/hospitals). */
+export type HospitalStats = {
+  city: { slug: string; name: string; tier: 1 | 2 };
+  total: number;
+  types: { name: string; count: number; share: number }[];
+  areas: { name: string; count: number; share: number }[];
+  areaCount: number;
+  specialities: { name: string; count: number }[];
+  specialityCount: number;
+  governmentCount: number;
+  privateCount: number;
+  eyeCount: number;
+  maternityCount: number;
+  teachingCount: number;
+  /** When the listings were last read from the source. */
+  refreshedAt: string | null;
+};
 export type LinkCount = { slug: string; name: string; count: number };
 
 /** SEO content for a specialty listing, specific to specialty × city × locality. */
@@ -1153,6 +1170,8 @@ export const api = {
     request<ConditionDetail>(`/conditions/${slug}${qs({ city })}`, cached(300)),
   seoDoctors: (city: string, specialty?: string) =>
     request<DoctorStats>(`/seo/doctors${qs({ city, specialty })}`, cached(300)),
+  seoHospitals: (city: string) =>
+    request<HospitalStats>(`/seo/hospitals${qs({ city })}`, cached(300)),
   seoSurgeries: (city: string) =>
     request<SurgeryStats>(`/seo/surgeries${qs({ city })}`, cached(300)),
   sitemap: () => request<SitemapData>('/seo/sitemap', cached(3600)),

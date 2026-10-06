@@ -75,6 +75,9 @@ export function SeoBody({ page, className = '' }: { page: SeoPage; className?: s
       {page.tables.map((t) => (
         <section key={t.id} id={t.id} className="space-y-3 scroll-mt-24">
           <h2 className="font-headline-h3 text-headline-h3 text-[#1C1917]">{t.heading}</h2>
+          {t.lead && (
+            <p className="font-caption text-caption text-[#5c403d] max-w-[900px]">{t.lead}</p>
+          )}
           <div className="overflow-x-auto rounded-xl border border-[#E7E5E4] bg-[#FFFFFF]">
             <table className="w-full min-w-[560px] text-left font-caption text-caption">
               <thead className="bg-[#FAFAF9] text-[#78716C]">
@@ -123,7 +126,13 @@ export function SeoBody({ page, className = '' }: { page: SeoPage; className?: s
           )}
         </section>
       ))}
+      {page.sections?.map((section) => (
+        <Section key={section.heading} section={section} />
+      ))}
       <FaqAccordion faqs={page.faqs} heading={page.faqHeading} answerAs="p" />
+      {page.footnote && (
+        <p className="font-caption text-caption text-[#78716C] max-w-[900px]">{page.footnote}</p>
+      )}
     </div>
   );
 }

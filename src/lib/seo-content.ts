@@ -64,6 +64,8 @@ export type SeoTable = {
   heading: string;
   columns: string[];
   rows: Cell[][];
+  /** One sentence above the table. */
+  lead?: string;
   note?: { text: string; href: string };
 };
 export type SeoSection = {
@@ -84,6 +86,10 @@ export type SeoPage = {
   tables: SeoTable[];
   faqs: Faq[];
   faqHeading: string;
+  /** Visible sections under the tables (callouts, how to choose), unlike the collapsed read-more. */
+  sections?: SeoSection[];
+  /** A closing note under the FAQs. */
+  footnote?: string;
   canonical: string;
   /** False = keep the page out of the index (template index rules). */
   index?: boolean;

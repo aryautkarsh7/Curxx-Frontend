@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
+import { SeoBody } from '@/components/seo/SeoContent';
+import { api } from '@/lib/api';
 import { liveCatalogue, resolveCity } from '@/lib/catalogue-live';
+import { hospitalsPage } from '@/lib/hospitals-content';
+import { loadFigures } from '@/lib/seo-load';
 import ClinicsListing from '../clinics/ClinicsListing';
 import { loadFacilities } from '../clinics/loadFacilities';
 
@@ -19,15 +23,17 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   // Each page of the infinite-scroll listing is crawlable on its own (?page=N, self canonical).
   const page = Math.max(1, Number(Array.isArray(sp.page) ? sp.page[0] : sp.page) || 1);
   const type = FACILITY_TYPES.find((t) => t.slug === category);
+  const stats = type ? null : await loadFigures(() => api.seoHospitals(canonical));
+  const copy = stats ? hospitalsPage(stats) : null;
   return {
     title: {
       absolute: type
         ? `${type.name}s in ${name} — Book Doctors & Check Timings | Curxx`
-        : `Hospitals in ${name} — Doctors, Departments & Timings | Curxx`,
+        : (copy?.title ?? `Hospitals in ${name} | Curxx`),
     },
     description: type
-      ? `${type.description} in ${name}: timings, departments, insurers and doctors you can book on Curxx.`
-      : `Compare hospitals in ${name} by type — multispecialty, government, eye, maternity and more — with 24x7 emergency, departments, insurers and doctors you can book online.`,
+      ? `${type.description} in ${name}: timings, departments and doctors listed on Curxx.`
+      : copy?.description,
     alternates: {
       canonical: `/${canonical}/hospitals${type ? `?category=${type.slug}` : ''}${page > 1 ? `${type ? '&' : '?'}page=${page}` : ''}`,
     },
@@ -40,7 +46,14 @@ export default async function CityHospitalsPage({ params, searchParams }: Props)
   if (!info) notFound();
   const canonical = info.slug;
   if (canonical !== city) permanentRedirect(`/${canonical}/hospitals`);
-  const { query, data } = await loadFacilities('hospital', canonical, await searchParams);
+  const sp = await searchParams;
+  const { query, data } = await loadFacilities('hospital', canonical, sp);
+  // The copy describes the whole city, so filtered views leave it out.
+  const filtered = Object.keys(sp).some(
+    (k) => sp[k] !== undefined && k !== 'page' && k !== 'utm_source',
+  );
+  const stats = filtered ? null : await loadFigures(() => api.seoHospitals(canonical));
+  const copy = stats ? hospitalsPage(stats) : null;
   return (
     <ClinicsListing
       type="hospital"
@@ -55,6 +68,20 @@ export default async function CityHospitalsPage({ params, searchParams }: Props)
       areas={data.facets.areas}
       departments={data.facets.departments ?? []}
       query={query}
+      intro={
+        copy ? (
+          <p className="mt-4 max-w-[900px] font-body-default text-body-default text-[#5c403d] leading-relaxed">
+            {copy.upper}
+          </p>
+        ) : undefined
+      }
+      below={
+        copy ? (
+          <section className="mt-12 py-10 border-t border-[#E7E5E4]">
+            <SeoBody page={copy} />
+          </section>
+        ) : undefined
+      }
     />
   );
 }

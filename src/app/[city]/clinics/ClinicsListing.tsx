@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import FilterPillSheet from '@/components/FilterPillSheet';
 import Footer from '@/components/Footer';
@@ -45,6 +46,10 @@ type Props = {
   query: FacilityQuery;
   /** The directory (or the API) is down for now: say so instead of "none listed". */
   unavailable?: boolean;
+  /** Generated intro under the heading (the city hospitals page). */
+  intro?: ReactNode;
+  /** Generated tables, callouts and FAQs under the list. */
+  below?: ReactNode;
 };
 
 export function FacilityCard({ f }: { f: Facility }) {
@@ -222,6 +227,8 @@ export default function ClinicsListing({
   departments,
   query,
   unavailable,
+  intro,
+  below,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -449,6 +456,7 @@ export default function ClinicsListing({
             </span>
           </label>
         </div>
+        {intro}
 
         <div className="flex flex-col lg:flex-row gap-gutter-desktop mt-6 items-start">
           <aside className="hidden lg:block w-[280px] shrink-0 sticky top-20 bg-surface-container-lowest border border-[#E7E5E4] rounded-xl p-5 shadow-sm max-h-[calc(100vh-6rem)] overflow-y-auto">
@@ -567,29 +575,9 @@ export default function ClinicsListing({
                 </Link>
               )}
             </div>
-            <div className="bg-surface-container-lowest border border-[#E7E5E4] rounded-2xl p-5 shadow-sm space-y-3">
-              <div className="flex items-center gap-2 pb-2 border-b border-[#E7E5E4]">
-                <span className="material-symbols-outlined text-tertiary text-[20px]">
-                  health_and_safety
-                </span>
-                <p className="font-headline-h3 text-headline-h3 text-on-surface">
-                  Cashless &amp; ABHA
-                </p>
-              </div>
-              <p className="text-caption font-caption text-on-surface-variant">
-                Most listed centres accept Star Health, HDFC ERGO, ICICI Lombard and CGHS. Check
-                each profile for its insurer list, and share your Curxx records with the front desk
-                from your health locker.
-              </p>
-              <Link
-                href="/records"
-                className="text-caption-strong font-caption-strong text-primary hover:underline"
-              >
-                Open health locker →
-              </Link>
-            </div>
           </aside>
         </div>
+        {below}
       </main>
       <FilterPillSheet
         activeCount={chips.length}
