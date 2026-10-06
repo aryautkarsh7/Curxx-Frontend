@@ -7,6 +7,8 @@ import MobileTabBar from '@/components/MobileTabBar';
 import MotionRoot from '@/components/MotionRoot';
 import { CITY_LIST } from '@/lib/catalogue-data';
 import { liveCatalogue } from '@/lib/catalogue-live';
+import { HELPLINE } from '@/lib/helpline';
+import { JsonLd } from '@/lib/seo';
 import { SITE_URL, isProductionSite } from '@/lib/site-env';
 
 const inter = Inter({
@@ -50,6 +52,20 @@ export default async function RootLayout({
         />
       </head>
       <body className="bg-surface-container-lowest text-on-surface font-body-default text-body-default selection:bg-surface-variant selection:text-primary min-h-screen flex flex-col pb-16 lg:pb-0">
+        <JsonLd
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'Curxx',
+            url: SITE_URL,
+            contactPoint: {
+              '@type': 'ContactPoint',
+              telephone: HELPLINE.tel,
+              contactType: 'customer support',
+              areaServed: 'IN',
+            },
+          }}
+        />
         <LiveCities cities={await changedCities()} />
         <MotionRoot>
           <EmergencyProvider>

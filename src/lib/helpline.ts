@@ -3,9 +3,9 @@
  * partner pages all read it. (108, the national ambulance number, is separate.)
  */
 export const HELPLINE = {
-  /** As written on the page. */
+  /** As written on the page (8585084840). */
   display: '+91 85850 84840',
-  /** For tel: links. */
+  /** For tel: links and the JSON-LD contactPoint. */
   tel: '+918585084840',
 } as const;
 export const HELPLINE_HREF = `tel:${HELPLINE.tel}`;
